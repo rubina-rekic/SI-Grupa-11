@@ -1,10 +1,10 @@
 # 📋 Product Vision 
 
----
 
 ## Naziv Projekta
 
 Sistem za optimizaciju ruta punjenja i pražnjenja poštanskih sandučića
+
 
 ## Problem koji sistem rješava
 
@@ -19,6 +19,7 @@ Dodatni problem predstavlja to što ne postoji jednostavan način za brzu promje
 * **Poštari / Terenski radnici:** Izvršavaju obilazak na terenu. Kroz sistem dobijaju isplanirane rute i informacije o prioritetima, te bilježe status (da li je sandučić obrađen, preskočen itd.).
 * **Sistemski administratori:** Zaduženi za održavanje sistema i podataka — unose i ažuriraju informacije o sandučićima, njihovim lokacijama, pravilima rada i ostale tehničke parametre.
 * **Menadžment / Nadzor:** Ne učestvuju direktno u planiranju operacija, ali koriste sistem za pregled operativnih izvještaja, praćenje efikasnosti resursa i donošenje strateških odluka.
+
 
 ## Vrijednost sistema
 
@@ -41,6 +42,7 @@ Sistem štedi vrijeme i smanjuje operativne troškove tako što zamjenjuje neefi
 * **Napredni algoritmi rutiranja:** Upotreba složenih metaheurističkih algoritama ostaje za nekad kasnije.
 * **Integracija sa vanjskim sistemima:** Nema povezivanja sa eksternim sistemima (za obračun plata) ili naprednim GIS servisima.
 
+
 ## Ključna ograničenja i pretpostavke
 
 ### 1. Tehnička ograničenja
@@ -48,9 +50,11 @@ Sistem štedi vrijeme i smanjuje operativne troškove tako što zamjenjuje neefi
 * **Zavisnost o internet konekciji:** Podrazumijeva se da poštari na terenu imaju stalnu internet konekciju jer se ne razvija offline mod.
 * **Preciznost mapa:** Sistem se oslanja na besplatne podatke servisa OpenStreetMap, te preciznost zavisi od ažurnosti tog servisa.
 
+
 ### 2. Poslovna i funkcionalna ograničenja
 * **Statističko praćenje:** Progres se bilježi ručnom promjenom statusa, a ne automatskim trackingom.
 * **Fiksne rute:** Planirane rute su statične za jedan radni dan nakon što se jednom izgenerišu.
+
 
 ### 3. Pretpostavke
 * **Dostupnost hardvera:** Svaki poštar posjeduje pametni telefon sa pristupom internetu.
