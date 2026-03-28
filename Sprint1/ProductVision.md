@@ -6,9 +6,7 @@
 
 Sistem za optimizaciju ruta punjenja i pražnjenja poštanskih sandučića
 
----
-
-## Problem Koji sistem rješava
+## Problem koji sistem rješava
 
 Trenutni proces obilazaka poštanskih sandučića (za njihovo punjenje i pražnjenje) u velikoj mjeri se oslanja na iskustvo i lično poznavanje terena od strane poštara ili dispečera. Rute se rijetko (gotovo nikada) prilagođavaju stvarnim potrebama na terenu, što dovodi do neefikasnog korištenja vremena i resursa. Ne uzimaju se u obzir faktori poput prioriteta sandučića, vremenskih ograničenja ili specifičnih radnih pravila, pa može doći do kašnjenja ili nepotrebnih obilazaka.
 
