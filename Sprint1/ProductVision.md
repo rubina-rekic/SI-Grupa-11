@@ -1,4 +1,4 @@
-# 📋 Product Vision 
+# Product Vision 
 
 
 ## Naziv Projekta
@@ -17,7 +17,7 @@ Dodatni problem predstavlja to što ne postoji jednostavan način za brzu promje
 
 * **Dispečeri / Operateri:** Planiraju obilazak sandučića, prave dnevne rute i prate šta se dešava na terenu. U slučaju problema, oni reaguju i prilagođavaju plan.
 * **Poštari / Terenski radnici:** Izvršavaju obilazak na terenu. Kroz sistem dobijaju isplanirane rute i informacije o prioritetima, te bilježe status (da li je sandučić obrađen, preskočen itd.).
-* **Sistemski administratori:** Zaduženi za održavanje sistema i podataka — unose i ažuriraju informacije o sandučićima, njihovim lokacijama, pravilima rada i ostale tehničke parametre.
+* **Sistemski administratori:** Zaduženi za održavanje sistema i podataka. Unose i ažuriraju informacije o sandučićima, njihovim lokacijama, pravilima rada i ostale tehničke parametre.
 * **Menadžment / Nadzor:** Ne učestvuju direktno u planiranju operacija, ali koriste sistem za pregled operativnih izvještaja, praćenje efikasnosti resursa i donošenje strateških odluka.
 
 
