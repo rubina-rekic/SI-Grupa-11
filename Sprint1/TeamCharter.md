@@ -12,7 +12,7 @@
 | Ibrahim Tabaković | 19325 | itabakovic1@etf.unsa.ba |
 | Aldin Bulbul | [Broj indeksa] | abulbu1@etf.unsa.ba |
 | Rubina Rekić | 19797 | rrekic1@etf.unsa.ba |
-| Nejla Karalić | [Broj indeksa] | nkaralic2@etf.unsa.ba |
+| Nejla Karalić | 19318 | nkaralic2@etf.unsa.ba |
 | Kerim Šikalo | 19615 | ksikalo1@etf.unsa.ba |
 | Faruk Avdagić | 19350 | favdagic1@etf.unsa.ba |
 | Emrah Žunić | 19784 | ezunic1@etf.unsa.ba |
