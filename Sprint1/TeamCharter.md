@@ -35,15 +35,13 @@
 
 ---
 
-## Početne odgovornosti
+## Raspoređene odgovornosti
 
 * **Koordinacija sprinta:** Ibrahim Tabaković
-* **Backlog i zahtjevi:** Rubina Rekić
-* **Arhitektura i tehničke odluke:** Kerim Šikalo i Faruk Avdagić
-* **Testiranje i kvalitet:** Aldin Bulbul i Emrah Žunić
-* **Dokumentacija i evidencije:** Nejla Karalić
-
-> **Napomena:** Odgovornosti se mogu rotirati tokom projekta po dogovoru tima.
+* **Backlog i zahtjevi:** Emrah Žunić i Kerim Šikalo
+* **Arhitektura i tehničke odluke:** Kerim Šikalo i Emrah Žunić
+* **Testiranje i kvalitet:** Faruk Avdagić i Nejla Karalić 
+* **Dokumentacija i evidencije:** Rubina Rekić i Aldin Bulbul
 
 ---
 
