@@ -10,7 +10,7 @@
 | Ime i prezime | Broj indeksa | Kontakt |
 | :--- | :--- | :--- |
 | Ibrahim Tabaković | 19325 | itabakovic1@etf.unsa.ba |
-| Aldin Bulbul | [Broj indeksa] | abulbu1@etf.unsa.ba |
+| Aldin Bulbul | [19168] | abulbu1@etf.unsa.ba |
 | Rubina Rekić | 19797 | rrekic1@etf.unsa.ba |
 | Nejla Karalić | 19318 | nkaralic2@etf.unsa.ba |
 | Kerim Šikalo | 19615 | ksikalo1@etf.unsa.ba |
