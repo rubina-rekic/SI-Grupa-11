@@ -6,8 +6,8 @@
 |---|---|---|---|---|---|---|---|---|
 | PBI-001 | Definisati problem i ciljeve sistema | Razraditi problem koji sistem rješava, očekivanu vrijednost i osnovne ciljeve proizvoda. | research | High | 3h 30min | Done | Sprint 1 |  |
 | PBI-002 | Izraditi Product Vision | Pripremiti i finalizirati Product Vision dokument na osnovu dogovorenog scope-a i potreba korisnika. | documentation | High | 4h | Done | Sprint 1 |  |
-| PBI-003 | Identifikovati stakeholdere sistema | Prepoznati glavne stakeholder grupe, njihove interese, očekivanja i uticaj na sistem. | research | High | 2h 30min | To Do | Sprint 1 |  |
-| PBI-004 | Izraditi Stakeholder Map | Dokumentovati stakeholdere kroz preglednu mapu sa ulogama i prioritetom komunikacije. | documentation | High | 2h | To Do | Sprint 1 |  |
+| PBI-003 | Identifikovati stakeholdere sistema | Prepoznati glavne stakeholder grupe, njihove interese, očekivanja i uticaj na sistem. | research | High | 2h 30min | Done | Sprint 1 |  |
+| PBI-004 | Izraditi Stakeholder Map | Dokumentovati stakeholdere kroz preglednu mapu sa ulogama i prioritetom komunikacije. | documentation | High | 2h | Done | Sprint 1 |  |
 | PBI-005 | Napraviti početni Product Backlog | Sastaviti početni backlog na osnovu Product Visiona, scope-a i početnih pretpostavki tima. | documentation | High | 3h | Done | Sprint 1 | Živi dokument |
 | PBI-006 | Razraditi prioritetne user storyje | Definisati najvažnije user storyje za osnovne MVP funkcionalnosti. | documentation | High | 4h 30min | To Do | Sprint 2 |  |
 | PBI-007 | Definisati acceptance criteria | Napisati mjerljive i provjerljive acceptance kriterije za prioritetne storyje. | documentation | High | 4h | To Do | Sprint 2 |  |
