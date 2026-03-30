@@ -19,19 +19,19 @@
 ---
 
 ## Način komunikacije
-
-* **Primarni kanal komunikacije:** Viber, Google Meet
-* **Očekivano vrijeme odgovora:** sat vremena
-* **Način zakazivanja sastanaka:** Preko Viber grupe
+* **Viber grupa:** Primarni kanal za svakodnevnu, brzu i efikasnu operativnu komunikaciju.
+* **Google Meet (Scrum sastanci):** Platforma za sedmične sastanke, planiranje sprinta, retrospektive i, ukoliko se za istim javi potreba, vanredne sastanke namijenjene diskusiji otvorenih pitanja i hitnom donošenju odluka.
+* **Očekivano vrijeme odgovora:** Unutar **60 minuta** tokom radnih dana (09:00h - 20:00h).
+* **Način zakazivanja sastanaka:** Termin se dogovara na početku svakog sprinta putem Viber grupe.
 
 ---
 
 ## Radna pravila tima
 
 * **Kada i kako tim radi zajedno:** Radimo asinhrono uz jedan obavezni sedmični sastanak online
-* **Kako se zadaci dogovaraju i prate:** GitHub, Pratimo sve u toku sedmice i još jednom sve što je urađeno provjerimo dan pred
-* **Kako se dokumentuju odluke:** [Google Docs dokument](https://docs.google.com/document/d/15KstKJXTOAg75hpTYUTH-_EOTOmRzK78b5EuyZgTyrY/edit?tab=t.0)
-* **Kako se rješavaju neslaganja:** Većinskim glasanjem
+* **Kako se zadaci dogovaraju i prate:** Zadaci se definišu i uloge dodjeljuju tokom sprint planiranja. Napredak se prati označavanjem statusa na **JIRA** platformi i **GitHub-u**, uz finalnu verifikaciju dan prije isteka sprinta.
+* **Kako se dokumentuju odluke:** Sve ključne projektne i tehničke odluke, zajedno sa obrazloženjem za njihov odabir, trajno se bilježe u [Google Docs dokument](https://docs.google.com/document/d/15KstKJXTOAg75hpTYUTH-_EOTOmRzK78b5EuyZgTyrY/edit?tab=t.0)
+* **Kako se rješavaju neslaganja:** Argumentovana rasprava uz donošenje odluka većinskim glasanjem.
 
 ---
 
@@ -49,6 +49,6 @@
 
 ## Pravila u slučaju neispunjavanja obaveza
 
-* **Kako se član upozorava:** Upozoravamo ga preko maila i Viber grupe
-* **Kada se problem prijavljuje nastavnom osoblju:** Nakon 2 ignorisana upozorenja
-* **Kako se evidentiraju problemi u timu:** U [Google Docs dokument](https://docs.google.com/document/d/15KstKJXTOAg75hpTYUTH-_EOTOmRzK78b5EuyZgTyrY/edit?tab=t.0) na dnu pod naslovom "Dokumentacija Problema u Timu"
+* **Kako se član upozorava:** Prvo upozorenje se upućuje putem e-maila i/ili Viber grupe.
+* **Kada se problem prijavljuje nastavnom osoblju:** Nakon dva uzastopna ignorisana upozorenja ili ugrožavanja ciljeva sprinta.
+* **Kako se evidentiraju problemi u timu:** U [Google Docs dokument](https://docs.google.com/document/d/15KstKJXTOAg75hpTYUTH-_EOTOmRzK78b5EuyZgTyrY/edit?tab=t.0) pod naslovom "Dokumentacija Problema u Timu"
