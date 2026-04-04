@@ -71,9 +71,9 @@ Osigurava da samo autentifikovani korisnici mogu manipulisati rutama i podacima 
 **Opis:** Kao **registrovani korisnik**, želim **unijeti svoje pristupne podatke u login formu**, kako bih **ostvario pristup radnom okruženju**. <br>
 **Poslovna vrijednost:** Osnovni mehanizam autentifikacije i zaštite korisničkog profila. <br>
 **Prioritet:** High <br>
-**Pretpostavke i otvorena pitanja:** - *Pretpostavka:* Korisnik je prethodno uspješno prošao proces registracije (PBI-011).<br>
-- *Otvoreno pitanje:* Da li sistem treba ograničiti broj neuspješnih pokušaja prijave prije privremenog zaključavanja računa?
-**Veze sa drugim storyjima:** - **Striktna zavisnost:** Zavisi od **US-01** (Registracija).
+**Pretpostavke i otvorena pitanja:**<br> - *Pretpostavka:* Korisnik je prethodno uspješno prošao proces registracije (PBI-011).<br>
+- *Otvoreno pitanje:* Da li sistem treba ograničiti broj neuspješnih pokušaja prijave prije privremenog zaključavanja računa?<br>
+**Veze sa drugim storyjima:** - **Striktna zavisnost:** Zavisi od **US-01** (Registracija).<br>
 - **Logički povezano:** Prethodi svim storyjima koji zahtijevaju autorizaciju.
 
 ---
@@ -93,7 +93,7 @@ Osigurava da samo autentifikovani korisnici mogu manipulisati rutama i podacima 
 **Opis:** Kao **korisnik**, želim da **sistem pamti moju prijavu dok ne zatvorim preglednik ili se odjavim**, kako bi **rad bio kontinuiran i bez prekida**.<br>
 **Poslovna vrijednost:** Povećanje efikasnosti rada, posebno za dispečere koji sistem koriste duži vremenski period tokom dana.<br>
 **Prioritet:** Low<br>
-**Pretpostavke i otvorena pitanja:** - *Otvoreno pitanje:* Koliko dugo sesija treba biti aktivna u slučaju neaktivnosti korisnika?<br>
+**Pretpostavke i otvorena pitanja:**<br> - *Otvoreno pitanje:* Koliko dugo sesija treba biti aktivna u slučaju neaktivnosti korisnika?<br>
 **Veze sa drugim storyjima:** Nadovezuje se na **US-04**.
 
 ---
@@ -117,9 +117,9 @@ Osigurava sigurnost korisničkih profila i sprečava neovlašteno korištenje se
 **Opis:** Kao **prijavljeni korisnik**, želim **klikom na dugme za odjavu prekinuti aktivnu sesiju**, kako bi **sistem zahtijevao ponovnu prijavu za dalji rad**.<br>
 **Poslovna vrijednost:** Zaštita integriteta podataka i sprječavanje zloupotrebe sesije od strane trećih lica. <br>
 **Prioritet:** Medium<br>
-**Pretpostavke i otvorena pitanja:** - *Pretpostavka:* Korisnik se nalazi na bilo kojoj stranici unutar sistema gdje je vidljiv navigacijski meni.<br>
+**Pretpostavke i otvorena pitanja:** <br> - *Pretpostavka:* Korisnik se nalazi na bilo kojoj stranici unutar sistema gdje je vidljiv navigacijski meni.<br>
 - *Otvoreno pitanje:* Da li sistem treba automatski odjaviti korisnika nakon određenog perioda neaktivnosti (npr. 30 minuta) radi dodatne sigurnosti?<br>
-**Veze sa drugim storyjima:** - **Striktna zavisnost:** Direktno zavisi od **US-04** (Prijava korisnika) – ne može se odjaviti neko ko nije prijavljen.<br>
+**Veze sa drugim storyjima:**<br> - **Striktna zavisnost:** Direktno zavisi od **US-04** (Prijava korisnika) – ne može se odjaviti neko ko nije prijavljen.<br>
 - **Logički slijed:** Nakon odjave, korisnik se preusmjerava na početnu stranicu ili formu za ponovnu prijavu.
 
 ---
@@ -145,9 +145,9 @@ Implementacija uloga sprječava ljudske greške i zloupotrebu sistema. Poštari 
 **Opis:** Kao **administrator**, želim **dodijeliti specifičnu ulogu svakom registrovanom korisniku**, kako bi **sistem mogao kontrolisati dostupne funkcionalnosti**.<br>
 **Poslovna vrijednost:** Osnovna kontrola pristupa (Access Control) koja omogućava skalabilnost tima.
 **Prioritet:** High<br>
-**Pretpostavke i otvorena pitanja:** - *Pretpostavka:* Korisnik je već registrovan u sistemu.<br>
+**Pretpostavke i otvorena pitanja:**<br> - *Pretpostavka:* Korisnik je već registrovan u sistemu.<br>
 - *Otvoreno pitanje:* Da li jedan korisnik može imati više uloga istovremeno (npr. Dispečer koji je ujedno i Administrator)?
-**Veze sa drugim storyjima:** - **Zavisi od:** US-01 (Registracija).<br>
+**Veze sa drugim storyjima:**<br> - **Zavisi od:** US-01 (Registracija).<br>
 - **Osnova za:** Sve funkcionalnosti koje slijede (Dodavanje sandučića, generisanje ruta).
 
 ---
@@ -157,8 +157,8 @@ Implementacija uloga sprječava ljudske greške i zloupotrebu sistema. Poštari 
 **Opis:** Kao **prijavljeni korisnik**, želim da **nakon prijave vidim meni i opcije specifične za moju ulogu (npr. poštar vidi samo 'Moja ruta')**, kako bih **brže obavljao posao bez suvišnih informacija**.<br>
 **Poslovna vrijednost:** Povećanje efikasnosti uposlenika kroz pojednostavljen i relevantan korisnički interfejs.<br>
 **Prioritet:** High<br>
-**Pretpostavke i otvorena pitanja:** - *Pretpostavka:* Sistem prepoznaje ID uloge pri svakom učitavanju stranice.<br>
-**Veze sa drugim storyjima:** - **Zavisi od:** US-04 (Prijava korisnika) i US-08 (Definisanje uloga).<br>
+**Pretpostavke i otvorena pitanja:**<br> - *Pretpostavka:* Sistem prepoznaje ID uloge pri svakom učitavanju stranice.<br>
+**Veze sa drugim storyjima:** <br>- **Zavisi od:** US-04 (Prijava korisnika) i US-08 (Definisanje uloga).<br>
 
 ---
 
@@ -167,9 +167,9 @@ Implementacija uloga sprječava ljudske greške i zloupotrebu sistema. Poštari 
 **Opis:** Kao **korisnik sa ograničenim pravima**, želim da mi **sistem onemogući direktan pristup URL-ovima koji nisu namijenjeni mojoj ulozi**, kako bi **sigurnost podataka ostala netaknuta**.<br>
 **Poslovna vrijednost:** Sprječavanje sigurnosnih propusta (tzv. "Insecure Direct Object References").<br>
 **Prioritet:** Medium<br>
-**Pretpostavke i otvorena pitanja:** - *Pretpostavka:* Čak i ako korisnik zna tačan link (npr. /admin/delete), sistem mu ne smije dozvoliti izvršenje akcije.<br>
+**Pretpostavke i otvorena pitanja:** <br>- *Pretpostavka:* Čak i ako korisnik zna tačan link (npr. /admin/delete), sistem mu ne smije dozvoliti izvršenje akcije.<br>
 - *Otvoreno pitanje:* Da li sistem treba logirati svaki neuspješan pokušaj pristupa zabranjenim stranicama radi sigurnosne analize?<br>
-**Veze sa drugim storyjima:** - **Zavisi od:** US-08 (Definisanje uloga).
+**Veze sa drugim storyjima:**<br> - **Zavisi od:** US-08 (Definisanje uloga).
 
 ---
 
@@ -193,9 +193,9 @@ Ovaj modul je ključan za operativno planiranje. Bez tačne baze poštara, dispe
 **Opis:** Kao **administrator**, želim **popuniti formu sa podacima o novom uposleniku**, kako bi **on postao vidljiv u listi za dodjelu dnevnih ruta**.<br>
 **Poslovna vrijednost:** Digitalizacija evidencije terenskih radnika.<br>
 **Prioritet:** High<br>
-**Pretpostavke i otvorena pitanja:** - *Pretpostavka:* Administrator ima pristup panelu za upravljanje osobljem.<br>
+**Pretpostavke i otvorena pitanja:** <br>- *Pretpostavka:* Administrator ima pristup panelu za upravljanje osobljem.<br>
 - *Otvoreno pitanje:* Da li poštar automatski dobija kredencijale za login čim ga admin doda, ili se to radi u odvojenom koraku?<br>
-**Veze sa drugim storyjima:** - **Osnova za:** US-13 (Pregled liste poštara) i US-22 (Dodjela rute).
+**Veze sa drugim storyjima:** <br>- **Osnova za:** US-13 (Pregled liste poštara) i US-22 (Dodjela rute).
 
 ---
 
@@ -216,9 +216,9 @@ Omogućava brz pregled dostupnih ljudskih resursa, što direktno utiče na brzin
 **Opis:** Kao **administrator ili dispečer**, želim **imati pregled svih poštara u obliku tabele sa opcijom pretrage po imenu**, kako bih **brzo pronašao određenog uposlenika**.<br>
 **Poslovna vrijednost:** Transparentnost i lakša navigacija kroz bazu uposlenika.<br>
 **Prioritet:** Medium<br>
-**Pretpostavke i otvorena pitanja:** - *Pretpostavka:* Lista prikazuje samo relevantne podatke (npr. bez lozinki).<br>
+**Pretpostavke i otvorena pitanja:** <br>- *Pretpostavka:* Lista prikazuje samo relevantne podatke (npr. bez lozinki).<br>
 - *Otvoreno pitanje:* Da li u listi treba biti vidljiva i zadnja poznata lokacija poštara radi bolje koordinacije?<br>
-**Veze sa drugim storyjima:** - **Zavisi od:** US-11 (Unos poštara).
+**Veze sa drugim storyjima:** <br> - **Zavisi od:** US-11 (Unos poštara).
 
 ---
 ## PBI-017 Dodavanje poštanskih sandučića
@@ -237,24 +237,24 @@ Precizna evidencija sandučića je temelj optimizacije. Unos GPS koordinata elim
 ### Detaljna razrada Story-ja 
 
 #### ID storyja: US-14
-**Naziv storyja:** Unos lokacije sandučića putem koordinata
-**Opis:** Kao **administrator**, želim **unijeti geografsku širinu (Latitude) i dužinu (Longitude) za svaki sandučić**, kako bi **sistem mogao izračunati najkraću distancu između njih**.
-**Poslovna vrijednost:** Omogućava matematičku preciznost pri generisanju dnevnih ruta i smanjuje potrošnju goriva.
-**Prioritet:** High
-**Pretpostavke i otvorena pitanja:** - *Pretpostavka:* Korisnik ima pristup Google Maps ili sličnom servisu za očitavanje koordinata.
+**Naziv storyja:** Unos lokacije sandučića putem koordinata<br>
+**Opis:** Kao **administrator**, želim **unijeti geografsku širinu (Latitude) i dužinu (Longitude) za svaki sandučić**, kako bi **sistem mogao izračunati najkraću distancu između njih**.<br>
+**Poslovna vrijednost:** Omogućava matematičku preciznost pri generisanju dnevnih ruta i smanjuje potrošnju goriva.<br>
+**Prioritet:** High<br>
+**Pretpostavke i otvorena pitanja:**<br> - *Pretpostavka:* Korisnik ima pristup Google Maps ili sličnom servisu za očitavanje koordinata.<br>
 - *Otvoreno pitanje:* Da li sistem treba omogućiti "pinovanje" lokacije direktno na mapi unutar aplikacije umjesto ručnog kucanja brojeva?
-**Veze sa drugim storyjima:** - **Osnova za:** US-22 (Generisanje dnevne rute).
+**Veze sa drugim storyjima:**<br> - **Osnova za:** US-22 (Generisanje dnevne rute).
 
 ---
 
 #### ID storyja: US-15
-**Naziv storyja:** Konfiguracija prioriteta sandučića
-**Opis:** Kao **administrator**, želim **dodijeliti nivo hitnosti svakom sandučiću**, kako bi **algoritam znao koje lokacije ne smiju biti preskočene u kritičnim terminima**.
-**Poslovna vrijednost:** Diferencijacija usluge prema važnosti lokacije (npr. sandučići ispred bolnica ili državnih institucija).
-**Prioritet:** Medium
-**Pretpostavke i otvorena pitanja:** - *Pretpostavka:* Postoje bar tri nivoa prioriteta (Nizak, Srednji, Visok).
-- *Otvoreno pitanje:* Da li se prioritet treba automatski podizati ako sandučić nije ispražnjen duže od 24 sata?
-**Veze sa drugim storyjima:** - **Zavisi od:** US-14 (Postojanje lokacije).
+**Naziv storyja:** Konfiguracija prioriteta sandučića<br>
+**Opis:** Kao **administrator**, želim **dodijeliti nivo hitnosti svakom sandučiću**, kako bi **algoritam znao koje lokacije ne smiju biti preskočene u kritičnim terminima**.<br>
+**Poslovna vrijednost:** Diferencijacija usluge prema važnosti lokacije (npr. sandučići ispred bolnica ili državnih institucija).<br>
+**Prioritet:** Medium<br>
+**Pretpostavke i otvorena pitanja:** <br>- *Pretpostavka:* Postoje bar tri nivoa prioriteta (Nizak, Srednji, Visok).<br>
+- *Otvoreno pitanje:* Da li se prioritet treba automatski podizati ako sandučić nije ispražnjen duže od 24 sata?<br>
+**Veze sa drugim storyjima:**<br> - **Zavisi od:** US-14 (Postojanje lokacije).
 
 ---
 
@@ -271,12 +271,12 @@ Vizuelni pregled svih tačaka u sistemu omogućava dispečeru da brzo uoči anom
 ---
 
 #### ID storyja: US-16
-**Naziv storyja:** Pregled liste sandučića sa filterima
-**Opis:** Kao **dispečer**, želim **filtrirati sandučiće po naseljima ili po statusu zadnjeg pražnjenja**, kako bih **izdvojio samo one kritične za rad**.
-**Poslovna vrijednost:** Brža navigacija i bolja organizacija resursa.
-**Prioritet:** Medium
-**Pretpostavke i otvorena pitanja:** - *Otvoreno pitanje:* Da li treba omogućiti izvoz ove liste u PDF format za potrebe arhive?
-**Veze sa drugim storyjima:** - **Zavisi od:** US-14 (Dodavanje sandučića).
+**Naziv storyja:** Pregled liste sandučića sa filterima<br>
+**Opis:** Kao **dispečer**, želim **filtrirati sandučiće po naseljima ili po statusu zadnjeg pražnjenja**, kako bih **izdvojio samo one kritične za rad**. <br>
+**Poslovna vrijednost:** Brža navigacija i bolja organizacija resursa. <br>
+**Prioritet:** Medium <br>
+**Pretpostavke i otvorena pitanja:** <br> - *Otvoreno pitanje:* Da li treba omogućiti izvoz ove liste u PDF format za potrebe arhive? <br>
+**Veze sa drugim storyjima:** <br>- **Zavisi od:** US-14 (Dodavanje sandučića).
 
 ---
 ## PBI-019 Izmjena podataka o sandučiću
@@ -294,13 +294,13 @@ Održavanje tačnosti baze podataka. Pogrešne koordinate dovode do gubitka vrem
 ### Detaljna razrada Story-ja 
 
 #### ID storyja: US-17
-**Naziv storyja:** Ažuriranje informacija o lokaciji
-**Opis:** Kao **administrator**, želim **otvoriti formu za uređivanje postojećeg sandučića i spasiti nove podatke**, kako bi **promjene bile odmah vidljive svim korisnicima sistema**.
-**Poslovna vrijednost:** Fleksibilnost sistema u slučaju urbanističkih promjena ili tehničkih grešaka pri prvom unosu.
-**Prioritet:** Medium
-**Pretpostavke i otvorena pitanja:** - *Pretpostavka:* Sandučić već postoji u bazi podataka.
-- *Otvoreno pitanje:* Da li sistem treba čuvati historiju promjena (ko je i kada izmijenio lokaciju) radi interne kontrole?
-**Veze sa drugim storyjima:** - **Zavisi od:** US-14 (Dodavanje sandučića).
+**Naziv storyja:** Ažuriranje informacija o lokaciji<br>
+**Opis:** Kao **administrator**, želim **otvoriti formu za uređivanje postojećeg sandučića i spasiti nove podatke**, kako bi **promjene bile odmah vidljive svim korisnicima sistema**.<br>
+**Poslovna vrijednost:** Fleksibilnost sistema u slučaju urbanističkih promjena ili tehničkih grešaka pri prvom unosu.<br>
+**Prioritet:** Medium<br>
+**Pretpostavke i otvorena pitanja:** <br>- *Pretpostavka:* Sandučić već postoji u bazi podataka.<br>
+- *Otvoreno pitanje:* Da li sistem treba čuvati historiju promjena (ko je i kada izmijenio lokaciju) radi interne kontrole?<br>
+**Veze sa drugim storyjima:** <br>- **Zavisi od:** US-14 (Dodavanje sandučića).
 
 ---
 
@@ -317,13 +317,13 @@ Spriječavanje slanja poštara na lokacije koje više ne postoje, čime se direk
 ---
 
 #### ID storyja: US-18
-**Naziv storyja:** Uklanjanje sandučića iz sistema
-**Opis:** Kao **administrator**, želim **označiti sandučić kao neaktivan ili ga trajno obrisati**, kako bi **algoritam za rutiranje prestao uzimati tu tačku u obzir**.
-**Poslovna vrijednost:** Čišćenje baze od zastarjelih podataka.
-**Prioritet:** Medium
-**Pretpostavke i otvorena pitanja:** - *Pretpostavka:* Sandučić koji se briše ne smije biti dio rute koja je trenutno u toku (In Progress).
-- *Otvoreno pitanje:* Da li je bolje koristiti "Soft Delete" (samo sakriti sandučić) umjesto trajnog brisanja iz baze podataka zbog arhive raniijh izvještaja?
-**Veze sa drugim storyjima:** - **Zavisi od:** US-14 (Dodavanje sandučića).
+**Naziv storyja:** Uklanjanje sandučića iz sistema<br>
+**Opis:** Kao **administrator**, želim **označiti sandučić kao neaktivan ili ga trajno obrisati**, kako bi **algoritam za rutiranje prestao uzimati tu tačku u obzir**.<br>
+**Poslovna vrijednost:** Čišćenje baze od zastarjelih podataka.<br>
+**Prioritet:** Medium<br>
+**Pretpostavke i otvorena pitanja:** <br>- *Pretpostavka:* Sandučić koji se briše ne smije biti dio rute koja je trenutno u toku (In Progress).<br>
+- *Otvoreno pitanje:* Da li je bolje koristiti "Soft Delete" (samo sakriti sandučić) umjesto trajnog brisanja iz baze podataka zbog arhive raniijh izvještaja?<br>
+**Veze sa drugim storyjima:**<br> - **Zavisi od:** US-14 (Dodavanje sandučića).<br>
 - **Utiče na:** US-22 (Generisanje dnevne rute).
 
 ---
@@ -344,33 +344,33 @@ Mapa je ključni alat za donošenje odluka. Umjesto listanja stotina redova u ta
 ### Detaljna razrada Story-ja 
 
 #### ID storyja: US-19
-**Naziv storyja:** Vizuelni prikaz lokacija na interaktivnoj mapi
-**Opis:** Kao **dispečer**, želim **otvoriti mapu grada na kojoj su označeni svi aktivni sandučići**, kako bih **imao globalni pregled poštanske mreže**.
-**Poslovna vrijednost:** Olakšava prostornu orijentaciju i planiranje ljudskih resursa.
-**Prioritet:** High
-**Pretpostavke i otvorena pitanja:** - *Pretpostavka:* Sistem koristi eksterni API (poput Leaflet ili Google Maps) za renderovanje mape.
-- *Otvoreno pitanje:* Da li mapa treba imati različite ikone (boje pinova) zavisno od prioriteta sandučića?
-**Veze sa drugim storyjima:** - **Zavisi od:** US-14 (GPS koordinate sandučića).
+**Naziv storyja:** Vizuelni prikaz lokacija na mapi<br>
+**Opis:** Kao **dispečer**, želim **otvoriti mapu grada na kojoj su označeni svi aktivni sandučići**, kako bih **imao globalni pregled poštanske mreže**.<br>
+**Poslovna vrijednost:** Olakšava prostornu orijentaciju i planiranje ljudskih resursa.<br>
+**Prioritet:** High <br>
+**Pretpostavke i otvorena pitanja:**<br> - *Pretpostavka:* Sistem koristi eksterni API za renderovanje mape.<br>
+- *Otvoreno pitanje:* Da li mapa treba imati različite ikone (boje pinova) zavisno od prioriteta sandučića?<br>
+**Veze sa drugim storyjima:**<br> - **Zavisi od:** US-14 (GPS koordinate sandučića).
 
 ---
 
 #### ID storyja: US-20
-**Naziv storyja:** Brzi uvid u detalje sandučića (Popup)
-**Opis:** Kao **korisnik**, želim **kliknuti na bilo koji pin na mapi i vidjeti "pop-up" prozor sa podacima**, kako bih **izbjegao prebacivanje između mape i tabelarnog pregleda**.
-**Poslovna vrijednost:** Povećanje efikasnosti rada kroz smanjenje broja klikova potrebnih za dobijanje informacija.
-**Prioritet:** Medium
-**Pretpostavke i otvorena pitanja:** - *Pretpostavka:* Podaci u prozorčiću se osvježavaju u realnom vremenu (ako je to moguće).
-**Veze sa drugim storyjima:** - **Zavisi od:** US-19 (Prikaz pinova).
+**Naziv storyja:** Brzi uvid u detalje sandučića (Popup)<br>
+**Opis:** Kao **korisnik**, želim **kliknuti na bilo koji pin na mapi i vidjeti "pop-up" prozor sa podacima**, kako bih **izbjegao prebacivanje između mape i tabelarnog pregleda**.<br>
+**Poslovna vrijednost:** Povećanje efikasnosti rada kroz smanjenje broja klikova potrebnih za dobijanje informacija.<br>
+**Prioritet:** Medium<br>
+**Pretpostavke i otvorena pitanja:** <br>- *Pretpostavka:* Podaci u prozorčiću se osvježavaju u realnom vremenu (ako je to moguće).<br>
+**Veze sa drugim storyjima:**<br> - **Zavisi od:** US-19 (Prikaz pinova).
 
 ---
 
 #### ID storyja: US-21
-**Naziv storyja:** Filtriranje prikaza na mapi
-**Opis:** Kao **dispečer**, želim **isključiti ili uključiti slojeve na mapi (npr. samo prazni, samo puni)**, kako bih **fokusirao pažnju na problematične tačke**.
-**Poslovna vrijednost:** Brža identifikacija prioriteta na terenu.
-**Prioritet:** Medium
-**Pretpostavke i otvorena pitanja:** - *Otvoreno pitanje:* Da li treba omogućiti čuvanje filtera (npr. "Moja zona") kao podrazumijevani prikaz za određenog dispečera?
-**Veze sa drugim storyjima:** - **Zavisi od:** US-19 i US-16 (Logika filtriranja).
+**Naziv storyja:** Filtriranje prikaza na mapi<br>
+**Opis:** Kao **dispečer**, želim **isključiti ili uključiti slojeve na mapi (npr. samo prazni, samo puni)**, kako bih **fokusirao pažnju na problematične tačke**.<br>
+**Poslovna vrijednost:** Brža identifikacija prioriteta na terenu.<br>
+**Prioritet:** Medium<br>
+**Pretpostavke i otvorena pitanja:** <br> - *Otvoreno pitanje:* Da li treba omogućiti čuvanje filtera kao podrazumijevani prikaz za određenog dispečera? <br>
+**Veze sa drugim storyjima:** <br> - **Zavisi od:** US-19 i US-16 (Logika filtriranja).
 
 ---
 ## PBI-022 Generisanje dnevne rute
@@ -391,44 +391,44 @@ Ovo je srce sistema. Automatizacija rute smanjuje pređenu kilometražu za 15-30
 ### Detaljna razrada Story-ja 
 
 #### ID storyja: US-22
-**Naziv storyja:** Automatizovani proračun optimalne putanje
-**Opis:** Kao **dispečer**, želim **klikom na dugme "Generiši" aktivirati algoritam**, koji će **na osnovu GPS koordinata i prioriteta sandučića kreirati listu obilaska**.
-**Poslovna vrijednost:** Eliminacija manuelnog planiranja i smanjenje ljudske greške.
-**Prioritet:** High
-**Pretpostavke i otvorena pitanja:** - *Pretpostavka:* Sistem ima pristup koordinatama svih sandučića koji su označeni za pražnjenje.
-- *Otvoreno pitanje:* Koji algoritam koristiti (npr. Dijkstra ili Nearest Neighbor) s obzirom na broj tačaka i performanse sistema?
-**Veze sa drugim storyjima:** - **Zavisi od:** US-14 (Koordinate) i US-15 (Prioriteti).
+**Naziv storyja:** Automatizovani proračun optimalne putanje<br>
+**Opis:** Kao **dispečer**, želim **klikom na dugme "Generiši" aktivirati algoritam**, koji će **na osnovu GPS koordinata i prioriteta sandučića kreirati listu obilaska**.<br>
+**Poslovna vrijednost:** Eliminacija manuelnog planiranja i smanjenje ljudske greške.<br>
+**Prioritet:** High<br>
+**Pretpostavke i otvorena pitanja:** <br> - *Pretpostavka:* Sistem ima pristup koordinatama svih sandučića koji su označeni za pražnjenje.<br>
+- *Otvoreno pitanje:* Koji algoritam koristiti (npr. Dijkstra ili Nearest Neighbor) s obzirom na broj tačaka i performanse sistema?<br>
+**Veze sa drugim storyjima:** <br>- **Zavisi od:** US-14 (Koordinate) i US-15 (Prioriteti).<br>
 - **Osnova za:** US-23 (Prikaz na mapi).
 
 ---
 
 #### ID storyja: US-23
-**Naziv storyja:** Vizuelni prikaz rute na mapi
-**Opis:** Kao **dispečer**, želim da se **generisana ruta prikaže kao povezana linija na interaktivnoj mapi**, kako bih **jasno vidio planirano kretanje poštara**.
-**Poslovna vrijednost:** Bolja kontrola i lakše uočavanje nelogičnosti u putanji.
-**Prioritet:** High
-**Pretpostavke i otvorena pitanja:** - *Otvoreno pitanje:* Da li ruta treba pratiti stvarne ceste (Road-snapping) ili prikazivati "zračnu liniju" između tačaka?
-**Veze sa drugim storyjima:** - **Zavisi od:** US-19 (Osnovna mapa) i US-22 (Proračun).
+**Naziv storyja:** Vizuelni prikaz rute na mapi<br>
+**Opis:** Kao **dispečer**, želim da se **generisana ruta prikaže kao povezana linija na interaktivnoj mapi**, kako bih **jasno vidio planirano kretanje poštara**. <br>
+**Poslovna vrijednost:** Bolja kontrola i lakše uočavanje nelogičnosti u putanji.<br>
+**Prioritet:** High <br>
+**Pretpostavke i otvorena pitanja:** <br>- *Otvoreno pitanje:* Da li ruta treba pratiti stvarne ceste (Road-snapping) ili prikazivati "zračnu liniju" između tačaka?<br>
+**Veze sa drugim storyjima:**<br> - **Zavisi od:** US-19 (Osnovna mapa) i US-22 (Proračun).
 
 ---
 
 #### ID storyja: US-24
-**Naziv storyja:** Ručna modifikacija rute (Drag & Drop)
-**Opis:** Kao **dispečer**, želim **promijeniti redoslijed tačaka u listi ili na mapi**, kako bih **prilagodio rutu trenutnim uslovima u saobraćaju**.
-**Poslovna vrijednost:** Fleksibilnost sistema u realnim situacijama.
-**Prioritet:** Medium
-**Pretpostavke i otvorena pitanja:** - *Pretpostavka:* Sistem automatski preračunava ukupnu dužinu rute nakon svake ručne promjene.
-**Veze sa drugim storyjima:** - **Nadovezuje se na:** US-22.
+**Naziv storyja:** Ručna modifikacija rute (Drag & Drop)<br>
+**Opis:** Kao **dispečer**, želim **promijeniti redoslijed tačaka u listi ili na mapi**, kako bih **prilagodio rutu trenutnim uslovima u saobraćaju**.<br>
+**Poslovna vrijednost:** Fleksibilnost sistema u realnim situacijama.<br>
+**Prioritet:** Medium<br>
+**Pretpostavke i otvorena pitanja:**<br> - *Pretpostavka:* Sistem automatski preračunava ukupnu dužinu rute nakon svake ručne promjene.<br>
+**Veze sa drugim storyjima:** <br>- **Nadovezuje se na:** US-22.
 
 ---
 
 #### ID storyja: US-25
-**Naziv storyja:** Dodjela rute izvršiocu
-**Opis:** Kao **dispečer**, želim **izabrati poštara iz liste dostupnih radnika i poslati mu rutu**, kako bi on **mogao započeti sa radnim zadatkom**.
-**Poslovna vrijednost:** Uspostavljanje jasne odgovornosti za izvršenje posla.
-**Prioritet:** High
-**Pretpostavke i otvorena pitanja:** - *Otvoreno pitanje:* Na koji način poštar dobija obavijest (npr. In-app notifikacija ili SMS)?
-**Veze sa drugim storyjima:** - **Zavisi od:** US-13 (Lista poštara) i US-22 (Postojanje rute).
+**Naziv storyja:** Dodjela rute izvršiocu<br>
+**Opis:** Kao **dispečer**, želim **izabrati poštara iz liste dostupnih radnika i poslati mu rutu**, kako bi on **mogao započeti sa radnim zadatkom**.<br>
+**Poslovna vrijednost:** Uspostavljanje jasne odgovornosti za izvršenje posla.<br>
+**Prioritet:** High<br>
+**Pretpostavke i otvorena pitanja:**<br> - *Otvoreno pitanje:* Na koji način poštar dobija obavijest (npr. In-app notifikacija ili SMS)?<br>
+**Veze sa drugim storyjima:** <br>- **Zavisi od:** US-13 (Lista poštara) i US-22 (Postojanje rute).
 
 ---
 
@@ -448,24 +448,24 @@ Povećava brzinu rada na terenu, posebno za nove poštare ili one koji mijenjaju
 ### Detaljna razrada Story-ja 
 
 #### ID storyja: US-26
-**Naziv storyja:** Mobilni pregled dnevnog zadatka
-**Opis:** Kao **poštar**, želim **na svom uređaju vidjeti hronološki poredane adrese sandučića**, kako bih **imao jasan uvid u obim posla za taj dan**.
-**Poslovna vrijednost:** Transparentnost rada i bolja organizacija vremena uposlenika.
-**Prioritet:** High
-**Pretpostavke i otvorena pitanja:** - *Pretpostavka:* Poštar je prijavljen na sistem i dodijeljena mu je aktivna ruta (US-25).
-- *Otvoreno pitanje:* Da li poštar treba vidjeti procjenu vremena potrebnog za završetak cijele rute?
-**Veze sa drugim storyjima:** - **Direktna zavisnost:** US-25 (Dodjela rute).
+**Naziv storyja:** Mobilni pregled dnevnog zadatka<br>
+**Opis:** Kao **poštar**, želim **na svom uređaju vidjeti hronološki poredane adrese sandučića**, kako bih **imao jasan uvid u obim posla za taj dan**.<br>
+**Poslovna vrijednost:** Transparentnost rada i bolja organizacija vremena uposlenika.<br>
+**Prioritet:** High <br>
+**Pretpostavke i otvorena pitanja:** <br> - *Pretpostavka:* Poštar je prijavljen na sistem i dodijeljena mu je aktivna ruta (US-25).<br>
+- *Otvoreno pitanje:* Da li poštar treba vidjeti procjenu vremena potrebnog za završetak cijele rute?<br>
+**Veze sa drugim storyjima:** <br> - **Direktna zavisnost:** US-25 (Dodjela rute).
 
 ---
 
 #### ID storyja: US-27
-**Naziv storyja:** Navigacija do specifičnog sandučića (OSM integracija)
-**Opis:** Kao **poštar**, želim **klikom na adresu otvoriti upute za navigaciju zasnovane na OpenStreetMap podacima**, kako bi me **sistem vodio tačno do koordinata sandučića najefikasnijom rutom**.
-**Poslovna vrijednost:** Smanjenje vremena provedenog u saobraćaju i precizno pronalaženje sandučića na nepoznatom terenu bez zavisnosti od komercijalnih provajdera mapa.
-**Prioritet:** Medium
-**Pretpostavke i otvorena pitanja:** - *Pretpostavka:* Mobilna aplikacija koristi OSM podlogu (npr. putem Leaflet ili OsmAnd integracije).
-- *Otvoreno pitanje:* Da li navigacija treba raditi u "offline" režimu u slučaju slabog signala na određenim lokacijama?
-**Veze sa drugim storyjima:** - **Zavisi od:** US-14 (GPS koordinate sandučića).
+**Naziv storyja:** Navigacija do specifičnog sandučića (OSM integracija)<br>
+**Opis:** Kao **poštar**, želim **klikom na adresu otvoriti upute za navigaciju zasnovane na OpenStreetMap podacima**, kako bi me **sistem vodio tačno do koordinata sandučića najefikasnijom rutom**.<br>
+**Poslovna vrijednost:** Smanjenje vremena provedenog u saobraćaju i precizno pronalaženje sandučića na nepoznatom terenu bez zavisnosti od komercijalnih provajdera mapa.<br>
+**Prioritet:** Medium<br>
+**Pretpostavke i otvorena pitanja:** <br>- *Pretpostavka:* Mobilna aplikacija koristi OSM podlogu. <br>
+- *Otvoreno pitanje:* Da li navigacija treba raditi u "offline" režimu u slučaju slabog signala na određenim lokacijama?<br>
+**Veze sa drugim storyjima:** <br>- **Zavisi od:** US-14 (GPS koordinate sandučića).
 
 ---
 
@@ -483,23 +483,23 @@ Zatvaranje petlje povratnih informacija. Ovo omogućava menadžmentu da prati ef
 ---
 
 #### ID storyja: US-28
-**Naziv storyja:** Potvrda izvršenja zadatka
-**Opis:** Kao **poštar**, želim **jednim klikom promijeniti status sandučića u "Završeno"**, kako bi **sistem automatski ažurirao mapu i prebacio fokus na sljedeću tačku**.
-**Poslovna vrijednost:** Real-time praćenje progresa rada.
-**Prioritet:** High
-**Pretpostavke i otvorena pitanja:** - *Pretpostavka:* Sistem bilježi tačno vrijeme (Timestamp) klika radi kasnije analize.
-- *Otvoreno pitanje:* Da li treba uvesti geofencing (da se status može promijeniti samo ako je poštar fizički blizu sandučića)?
-**Veze sa drugim storyjima:** - **Utiče na:** US-16 (Statusi sandučića).
+**Naziv storyja:** Potvrda izvršenja zadatka<br>
+**Opis:** Kao **poštar**, želim **jednim klikom promijeniti status sandučića u "Završeno"**, kako bi **sistem automatski ažurirao mapu i prebacio fokus na sljedeću tačku**.<br>
+**Poslovna vrijednost:** Real-time praćenje progresa rada.<br>
+**Prioritet:** High<br>
+**Pretpostavke i otvorena pitanja:** <br>- *Pretpostavka:* Sistem bilježi tačno vrijeme (Timestamp) klika radi kasnije analize.<br>
+- *Otvoreno pitanje:* Da li treba uvesti geofencing (da se status može promijeniti samo ako je poštar fizički blizu sandučića)?<br>
+**Veze sa drugim storyjima:**<br> - **Utiče na:** US-16 (Statusi sandučića).
 
 ---
 
 #### ID storyja: US-29
-**Naziv storyja:** Prijava incidenta na terenu
-**Opis:** Kao **poštar**, želim **poslati kratku poruku ili upozorenje dispečeru ako sandučić nije moguće isprazniti**, kako bi **problem bio evidentiran**.
-**Poslovna vrijednost:** Brže održavanje infrastrukture i smanjenje broja pritužbi građana na nefunkcionalne sandučiće.
-**Prioritet:** Low
-**Pretpostavke i otvorena pitanja:** - *Otvoreno pitanje:* Da li je u ovoj fazi potreban upload fotografije oštećenja ili je tekstualni opis dovoljan?
-**Veze sa drugim storyjima:** - **Utiče na:** US-30 (Završni izvještaj rute).
+**Naziv storyja:** Prijava incidenta na terenu<br>
+**Opis:** Kao **poštar**, želim **poslati kratku poruku ili upozorenje dispečeru ako sandučić nije moguće isprazniti**, kako bi **problem bio evidentiran**.<br>
+**Poslovna vrijednost:** Brže održavanje infrastrukture i smanjenje broja pritužbi građana na nefunkcionalne sandučiće.<br>
+**Prioritet:** Low<br>
+**Pretpostavke i otvorena pitanja:** <br>- *Otvoreno pitanje:* Da li je u ovoj fazi potreban upload fotografije oštećenja ili je tekstualni opis dovoljan?<br>
+**Veze sa drugim storyjima:**<br> - **Utiče na:** US-30 (Završni izvještaj rute).
 
 ---
 
