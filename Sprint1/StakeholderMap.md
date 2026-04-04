@@ -6,3 +6,7 @@
 | **Poštar / Terenski radnik** | Izvršava obilaske na terenu prema dodijeljenoj ruti | Ušteda vremena, logičan redoslijed obilaska i jednostavan alat za rad | Jasan responzivni mobilni prikaz ruta i prioriteta, te brza i laka promjena statusa sandučića (npr. "ispražnjen") | Srednji | Visok |
 | **Sistemski administrator** | Održava sistem i unosi/ažurira matične podatke (sandučiće, pravila) | Stabilan, siguran i pouzdan rad sistema bez tehničkih poteškoća | Jednostavan unos i izmjena lokacija, radnih pravila, tehničkih parametara i upravljanje korisnicima | Visok | Srednji |
 | **Menadžment / Nadzor** | Pregleda izvještaje i donosi operativne i strateške odluke | Smanjenje troškova, bolja iskorištenost resursa i veći kvalitet usluge | Jasna slika o statusu obilazaka, pregledni i tačni dnevni izvještaji o realizaciji i efikasnosti na terenu | Srednji | Srednji |
+| **Korisnici sandučića** | Koriste sandučiće za slanje i prijem pošte | Pravovremeno pražnjenje sandučića | Pouzdana i redovna usluga bez kašnjenja | Nizak | Nizak |
+| **Dobavljači goriva** | Osiguravaju gorivo za vozila | Stabilna potrošnja i saradnja | Predvidiva potrošnja goriva (optimizacija ruta utiče indirektno) | Nizak | Nizak |
+| **Osiguravajuće kuće (vozila)** | Osiguravaju vozila koja se koriste u radu | Smanjenje rizika i šteta | Sigurnija vožnja i manje nepotrebnih kilometara | Nizak | Nizak |
+| **IT podrška / razvojni tim** | Razvija i unapređuje sistem | Kvalitetan i održiv softver | Jasni zahtjevi, stabilna arhitektura i feedback korisnika | Visok | Visok |
