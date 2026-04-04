@@ -67,11 +67,11 @@ Osigurava da samo autentifikovani korisnici mogu manipulisati rutama i podacima 
 ### Detaljna razrada Story-a
 
 #### ID storyja: US-04
-**Naziv storyja:** Osnovna prijava na sistem
-**Opis:** Kao **registrovani korisnik**, želim **unijeti svoje pristupne podatke u login formu**, kako bih **ostvario pristup radnom okruženju**.
-**Poslovna vrijednost:** Osnovni mehanizam autentifikacije i zaštite korisničkog profila.
-**Prioritet:** High
-**Pretpostavke i otvorena pitanja:** - *Pretpostavka:* Korisnik je prethodno uspješno prošao proces registracije (PBI-011).
+**Naziv storyja:** Osnovna prijava na sistem <br>
+**Opis:** Kao **registrovani korisnik**, želim **unijeti svoje pristupne podatke u login formu**, kako bih **ostvario pristup radnom okruženju**. <br>
+**Poslovna vrijednost:** Osnovni mehanizam autentifikacije i zaštite korisničkog profila. <br>
+**Prioritet:** High <br>
+**Pretpostavke i otvorena pitanja:** - *Pretpostavka:* Korisnik je prethodno uspješno prošao proces registracije (PBI-011).<br>
 - *Otvoreno pitanje:* Da li sistem treba ograničiti broj neuspješnih pokušaja prijave prije privremenog zaključavanja računa?
 **Veze sa drugim storyjima:** - **Striktna zavisnost:** Zavisi od **US-01** (Registracija).
 - **Logički povezano:** Prethodi svim storyjima koji zahtijevaju autorizaciju.
@@ -79,21 +79,21 @@ Osigurava da samo autentifikovani korisnici mogu manipulisati rutama i podacima 
 ---
 
 #### ID storyja: US-05
-**Naziv storyja:** Rukovanje neispravnim kredencijalima
-**Opis:** Kao **korisnik**, želim **jasnu poruku o grešci u slučaju pogrešnog emaila ili lozinke**, kako bih **znao da unos nije ispravan**.
-**Poslovna vrijednost:** Poboljšanje korisničkog iskustva i smanjenje broja upita podršci zbog nejasnoća pri prijavi.
-**Prioritet:** Medium
-**Pretpostavke i otvorena pitanja:** - *Pretpostavka:* Poruka ne smije biti previše specifična radi sigurnosti (sprječavanje enumeration napada).
+**Naziv storyja:** Rukovanje neispravnim kredencijalima<br>
+**Opis:** Kao **korisnik**, želim **jasnu poruku o grešci u slučaju pogrešnog emaila ili lozinke**, kako bih **znao da unos nije ispravan**.<br>
+**Poslovna vrijednost:** Poboljšanje korisničkog iskustva i smanjenje broja upita podršci zbog nejasnoća pri prijavi.<br>
+**Prioritet:** Medium <br>
+**Pretpostavke i otvorena pitanja:** - *Pretpostavka:* Poruka ne smije biti previše specifična radi sigurnosti (sprječavanje enumeration napada).<br>
 **Veze sa drugim storyjima:** Dio je toka **US-04**.
 
 ---
 
 #### ID storyja: US-06
-**Naziv storyja:** Održavanje korisničke sesije
-**Opis:** Kao **korisnik**, želim da **sistem pamti moju prijavu dok ne zatvorim preglednik ili se odjavim**, kako bi **rad bio kontinuiran i bez prekida**.
-**Poslovna vrijednost:** Povećanje efikasnosti rada, posebno za dispečere koji sistem koriste duži vremenski period tokom dana.
-**Prioritet:** Low
-**Pretpostavke i otvorena pitanja:** - *Otvoreno pitanje:* Koliko dugo sesija treba biti aktivna u slučaju neaktivnosti korisnika?
+**Naziv storyja:** Održavanje korisničke sesije <br>
+**Opis:** Kao **korisnik**, želim da **sistem pamti moju prijavu dok ne zatvorim preglednik ili se odjavim**, kako bi **rad bio kontinuiran i bez prekida**.<br>
+**Poslovna vrijednost:** Povećanje efikasnosti rada, posebno za dispečere koji sistem koriste duži vremenski period tokom dana.<br>
+**Prioritet:** Low<br>
+**Pretpostavke i otvorena pitanja:** - *Otvoreno pitanje:* Koliko dugo sesija treba biti aktivna u slučaju neaktivnosti korisnika?<br>
 **Veze sa drugim storyjima:** Nadovezuje se na **US-04**.
 
 ---
@@ -112,14 +112,14 @@ Osigurava sigurnost korisničkih profila i sprečava neovlašteno korištenje se
 
 ### Detaljna razrada Story-ja 
 
-#### ID storyja: US-07
-**Naziv storyja:** Sigurna odjava iz sistema
-**Opis:** Kao **prijavljeni korisnik**, želim **klikom na dugme za odjavu prekinuti aktivnu sesiju**, kako bi **sistem zahtijevao ponovnu prijavu za dalji rad**.
-**Poslovna vrijednost:** Zaštita integriteta podataka i sprječavanje zloupotrebe sesije od strane trećih lica.
-**Prioritet:** Medium
-**Pretpostavke i otvorena pitanja:** - *Pretpostavka:* Korisnik se nalazi na bilo kojoj stranici unutar sistema gdje je vidljiv navigacijski meni.
-- *Otvoreno pitanje:* Da li sistem treba automatski odjaviti korisnika nakon određenog perioda neaktivnosti (npr. 30 minuta) radi dodatne sigurnosti?
-**Veze sa drugim storyjima:** - **Striktna zavisnost:** Direktno zavisi od **US-04** (Prijava korisnika) – ne može se odjaviti neko ko nije prijavljen.
+#### ID storyja: US-07<br>
+**Naziv storyja:** Sigurna odjava iz sistema<br>
+**Opis:** Kao **prijavljeni korisnik**, želim **klikom na dugme za odjavu prekinuti aktivnu sesiju**, kako bi **sistem zahtijevao ponovnu prijavu za dalji rad**.<br>
+**Poslovna vrijednost:** Zaštita integriteta podataka i sprječavanje zloupotrebe sesije od strane trećih lica. <br>
+**Prioritet:** Medium<br>
+**Pretpostavke i otvorena pitanja:** - *Pretpostavka:* Korisnik se nalazi na bilo kojoj stranici unutar sistema gdje je vidljiv navigacijski meni.<br>
+- *Otvoreno pitanje:* Da li sistem treba automatski odjaviti korisnika nakon određenog perioda neaktivnosti (npr. 30 minuta) radi dodatne sigurnosti?<br>
+**Veze sa drugim storyjima:** - **Striktna zavisnost:** Direktno zavisi od **US-04** (Prijava korisnika) – ne može se odjaviti neko ko nije prijavljen.<br>
 - **Logički slijed:** Nakon odjave, korisnik se preusmjerava na početnu stranicu ili formu za ponovnu prijavu.
 
 ---
@@ -141,34 +141,34 @@ Implementacija uloga sprječava ljudske greške i zloupotrebu sistema. Poštari 
 ### Detaljna razrada Story-ja 
 
 #### ID storyja: US-08
-**Naziv storyja:** Definisanje sistemskih uloga
-**Opis:** Kao **administrator**, želim **dodijeliti specifičnu ulogu svakom registrovanom korisniku**, kako bi **sistem mogao kontrolisati dostupne funkcionalnosti**.
+**Naziv storyja:** Definisanje sistemskih uloga<br>
+**Opis:** Kao **administrator**, želim **dodijeliti specifičnu ulogu svakom registrovanom korisniku**, kako bi **sistem mogao kontrolisati dostupne funkcionalnosti**.<br>
 **Poslovna vrijednost:** Osnovna kontrola pristupa (Access Control) koja omogućava skalabilnost tima.
-**Prioritet:** High
-**Pretpostavke i otvorena pitanja:** - *Pretpostavka:* Korisnik je već registrovan u sistemu.
+**Prioritet:** High<br>
+**Pretpostavke i otvorena pitanja:** - *Pretpostavka:* Korisnik je već registrovan u sistemu.<br>
 - *Otvoreno pitanje:* Da li jedan korisnik može imati više uloga istovremeno (npr. Dispečer koji je ujedno i Administrator)?
-**Veze sa drugim storyjima:** - **Zavisi od:** US-01 (Registracija).
+**Veze sa drugim storyjima:** - **Zavisi od:** US-01 (Registracija).<br>
 - **Osnova za:** Sve funkcionalnosti koje slijede (Dodavanje sandučića, generisanje ruta).
 
 ---
 
 #### ID storyja: US-09
-**Naziv storyja:** Personalizovani dashboard prema ulozi
-**Opis:** Kao **prijavljeni korisnik**, želim da **nakon prijave vidim meni i opcije specifične za moju ulogu (npr. poštar vidi samo 'Moja ruta')**, kako bih **brže obavljao posao bez suvišnih informacija**.
-**Poslovna vrijednost:** Povećanje efikasnosti uposlenika kroz pojednostavljen i relevantan korisnički interfejs.
-**Prioritet:** High
-**Pretpostavke i otvorena pitanja:** - *Pretpostavka:* Sistem prepoznaje ID uloge pri svakom učitavanju stranice.
-**Veze sa drugim storyjima:** - **Zavisi od:** US-04 (Prijava korisnika) i US-08 (Definisanje uloga).
+**Naziv storyja:** Personalizovani dashboard prema ulozi<br>
+**Opis:** Kao **prijavljeni korisnik**, želim da **nakon prijave vidim meni i opcije specifične za moju ulogu (npr. poštar vidi samo 'Moja ruta')**, kako bih **brže obavljao posao bez suvišnih informacija**.<br>
+**Poslovna vrijednost:** Povećanje efikasnosti uposlenika kroz pojednostavljen i relevantan korisnički interfejs.<br>
+**Prioritet:** High<br>
+**Pretpostavke i otvorena pitanja:** - *Pretpostavka:* Sistem prepoznaje ID uloge pri svakom učitavanju stranice.<br>
+**Veze sa drugim storyjima:** - **Zavisi od:** US-04 (Prijava korisnika) i US-08 (Definisanje uloga).<br>
 
 ---
 
 #### ID storyja: US-10
-**Naziv storyja:** Restrikcija neovlaštenog pristupa
-**Opis:** Kao **korisnik sa ograničenim pravima**, želim da mi **sistem onemogući direktan pristup URL-ovima koji nisu namijenjeni mojoj ulozi**, kako bi **sigurnost podataka ostala netaknuta**.
-**Poslovna vrijednost:** Sprječavanje sigurnosnih propusta (tzv. "Insecure Direct Object References").
-**Prioritet:** Medium
-**Pretpostavke i otvorena pitanja:** - *Pretpostavka:* Čak i ako korisnik zna tačan link (npr. /admin/delete), sistem mu ne smije dozvoliti izvršenje akcije.
-- *Otvoreno pitanje:* Da li sistem treba logirati svaki neuspješan pokušaj pristupa zabranjenim stranicama radi sigurnosne analize?
+**Naziv storyja:** Restrikcija neovlaštenog pristupa<br>
+**Opis:** Kao **korisnik sa ograničenim pravima**, želim da mi **sistem onemogući direktan pristup URL-ovima koji nisu namijenjeni mojoj ulozi**, kako bi **sigurnost podataka ostala netaknuta**.<br>
+**Poslovna vrijednost:** Sprječavanje sigurnosnih propusta (tzv. "Insecure Direct Object References").<br>
+**Prioritet:** Medium<br>
+**Pretpostavke i otvorena pitanja:** - *Pretpostavka:* Čak i ako korisnik zna tačan link (npr. /admin/delete), sistem mu ne smije dozvoliti izvršenje akcije.<br>
+- *Otvoreno pitanje:* Da li sistem treba logirati svaki neuspješan pokušaj pristupa zabranjenim stranicama radi sigurnosne analize?<br>
 **Veze sa drugim storyjima:** - **Zavisi od:** US-08 (Definisanje uloga).
 
 ---
@@ -188,13 +188,13 @@ Ovaj modul je ključan za operativno planiranje. Bez tačne baze poštara, dispe
 
 ### Detaljna razrada Story-ja
 
-#### ID storyja: US-11
-**Naziv storyja:** Unos novog poštara u sistem
-**Opis:** Kao **administrator**, želim **popuniti formu sa podacima o novom uposleniku**, kako bi **on postao vidljiv u listi za dodjelu dnevnih ruta**.
-**Poslovna vrijednost:** Digitalizacija evidencije terenskih radnika.
-**Prioritet:** High
-**Pretpostavke i otvorena pitanja:** - *Pretpostavka:* Administrator ima pristup panelu za upravljanje osobljem.
-- *Otvoreno pitanje:* Da li poštar automatski dobija kredencijale za login čim ga admin doda, ili se to radi u odvojenom koraku?
+#### ID storyja: US-11<br>
+**Naziv storyja:** Unos novog poštara u sistem<br>
+**Opis:** Kao **administrator**, želim **popuniti formu sa podacima o novom uposleniku**, kako bi **on postao vidljiv u listi za dodjelu dnevnih ruta**.<br>
+**Poslovna vrijednost:** Digitalizacija evidencije terenskih radnika.<br>
+**Prioritet:** High<br>
+**Pretpostavke i otvorena pitanja:** - *Pretpostavka:* Administrator ima pristup panelu za upravljanje osobljem.<br>
+- *Otvoreno pitanje:* Da li poštar automatski dobija kredencijale za login čim ga admin doda, ili se to radi u odvojenom koraku?<br>
 **Veze sa drugim storyjima:** - **Osnova za:** US-13 (Pregled liste poštara) i US-22 (Dodjela rute).
 
 ---
@@ -212,12 +212,12 @@ Omogućava brz pregled dostupnih ljudskih resursa, što direktno utiče na brzin
 ---
 
 #### ID storyja: US-13
-**Naziv storyja:** Tabelarni pregled poštara
-**Opis:** Kao **administrator ili dispečer**, želim **imati pregled svih poštara u obliku tabele sa opcijom pretrage po imenu**, kako bih **brzo pronašao određenog uposlenika**.
-**Poslovna vrijednost:** Transparentnost i lakša navigacija kroz bazu uposlenika.
-**Prioritet:** Medium
-**Pretpostavke i otvorena pitanja:** - *Pretpostavka:* Lista prikazuje samo relevantne podatke (npr. bez lozinki).
-- *Otvoreno pitanje:* Da li u listi treba biti vidljiva i zadnja poznata lokacija poštara radi bolje koordinacije?
+**Naziv storyja:** Tabelarni pregled poštara<br>
+**Opis:** Kao **administrator ili dispečer**, želim **imati pregled svih poštara u obliku tabele sa opcijom pretrage po imenu**, kako bih **brzo pronašao određenog uposlenika**.<br>
+**Poslovna vrijednost:** Transparentnost i lakša navigacija kroz bazu uposlenika.<br>
+**Prioritet:** Medium<br>
+**Pretpostavke i otvorena pitanja:** - *Pretpostavka:* Lista prikazuje samo relevantne podatke (npr. bez lozinki).<br>
+- *Otvoreno pitanje:* Da li u listi treba biti vidljiva i zadnja poznata lokacija poštara radi bolje koordinacije?<br>
 **Veze sa drugim storyjima:** - **Zavisi od:** US-11 (Unos poštara).
 
 ---
