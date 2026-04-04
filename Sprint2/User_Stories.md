@@ -519,12 +519,12 @@ Završetak rute omogućava sistemu da oslobodi poštara za nove zadatke i arhivi
 ### Detaljna razrada Story-ja
 
 #### ID storyja: US-30
-**Naziv storyja:** Finalizacija dnevnog zadatka
-**Opis:** Kao **poštar**, želim **kliknuti na dugme 'Završi rutu'**, čime se **status rute mijenja u 'Completed' i šalje notifikacija dispečeru**.
-**Poslovna vrijednost:** Trenutna informacija menadžmentu da je proces pražnjenja u tom rejonu uspješno okončan.
-**Prioritet:** High
+**Naziv storyja:** Finalizacija dnevnog zadatka  
+**Opis:** Kao **poštar**, želim **kliknuti na dugme 'Završi rutu'**, čime se **status rute mijenja u 'Completed' i šalje notifikacija dispečeru**.  
+**Poslovna vrijednost:** Trenutna informacija menadžmentu da je proces pražnjenja u tom rejonu uspješno okončan.  
+**Prioritet:** High  
 **Pretpostavke i otvorena pitanja:** - *Pretpostavka:* Sistem ne dozvoljava završetak rute ako bar jedan sandučić nije dobio status (ispražnjen ili prijavljen kvar).
-- *Otvoreno pitanje:* Da li sistem treba onemogućiti završetak rute ako poštar nije fizički blizu baze/pošte?
+- *Otvoreno pitanje:* Da li sistem treba onemogućiti završetak rute ako poštar nije fizički blizu baze/pošte?  
 **Veze sa drugim storyjima:** - **Zavisi od:** US-28 (Potvrda pražnjenja).
 
 ---
@@ -543,10 +543,10 @@ Arhiva i statistika pretvaraju sirove podatke u poslovnu inteligenciju. Analizom
 ---
 
 #### ID storyja: US-32
-**Naziv storyja:** Pregled historije kretanja na OSM mapi
-**Opis:** Kao **administrator**, želim **učitati putanju bilo koje stare rute na OpenStreetMap interfejs**, kako bih **vizuelno uporedio planiranu i stvarnu putanju poštara**.
-**Poslovna vrijednost:** Kontrola kvaliteta i optimizacija logističkih procesa.
-**Prioritet:** Low
+**Naziv storyja:** Pregled historije kretanja na OSM mapi  
+**Opis:** Kao **administrator**, želim **učitati putanju bilo koje stare rute na OpenStreetMap interfejs**, kako bih **vizuelno uporedio planiranu i stvarnu putanju poštara**.  
+**Poslovna vrijednost:** Kontrola kvaliteta i optimizacija logističkih procesa.  
+**Prioritet:** Low  
 **Pretpostavke i otvorena pitanja:** - *Pretpostavka:* Koristimo OpenStreetMap podlogu sa Leaflet bibliotekom za renderovanje historijskih linija kretanja.
-- *Otvoreno pitanje:* Koliko dugo (mjeseci/godina) sistem treba čuvati detaljne GPS tragove starih ruta prije brisanja radi uštede prostora?
+- *Otvoreno pitanje:* Koliko dugo (mjeseci/godina) sistem treba čuvati detaljne GPS tragove starih ruta prije brisanja radi uštede prostora?  
 **Veze sa drugim storyjima:** - **Zavisi od:** US-22 (Logika rute) i integracije sa OSM.
