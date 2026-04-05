@@ -2,15 +2,15 @@
 
 ---
 
-## PBI-011 Registracija korisnika
+## PBI-011 Kreiranje korisničkog računa poštara
 
 ### User Stories
-- **US-01:** Kao neregistrovani korisnik, želim kreirati korisnički račun unoseći email, lozinku i osnovne podatke, kako bih dobio pristup sistemu.
-- **US-02:** Kao administrator, želim da sistem validira snagu lozinke i ispravnost email formata, kako bi se spriječilo kreiranje nesigurnih računa.
-- **US-03:** Kao neregistrovani korisnik, želim dobiti jasnu poruku o uspješnoj registraciji ili grešci (npr. zauzet email), kako bih znao koji je sljedeći korak.
+- **US-01:** Kao administrator, želim kreirati korisnički račun za poštara unosom osnovnih podataka, emaila/korisničkog imena i inicijalne lozinke, kako bi poštar mogao pristupiti sistemu.
+- **US-02:** Kao administrator, želim da sistem validira jedinstvenost emaila/korisničkog imena i snagu inicijalne lozinke, kako bi se spriječilo kreiranje neispravnih ili nesigurnih računa.
+- **US-03:** Kao administrator, želim dobiti jasnu potvrdu o uspješnom kreiranju računa ili poruku o grešci (npr. zauzet email), kako bih mogao završiti unos i dostaviti kredencijale poštaru.
 
 ### Poslovna vrijednost
-Registracija je ulaz u sistem. Bez nje je nemoguće osigurati sigurnost podataka, pratiti koji poštar je odgovoran za koju rutu, te spriječiti neovlašteni pristup osjetljivim informacijama o lokacijama sandučića.
+Korisnički računi za poštare moraju biti kontrolisano kreirani od strane administratora kako bi pristup sistemu imali samo ovlašteni uposlenici. Time se zadržava sigurnost sistema i jasna veza između poštara, dodijeljenih ruta i aktivnosti na terenu.
 
 ### Prioritet: High
 
@@ -19,36 +19,37 @@ Registracija je ulaz u sistem. Bez nje je nemoguće osigurati sigurnost podataka
 ### Detaljna razrada Story-ja
 
 #### ID storyja: US-01
-**Naziv storyja:** Osnovna registracija korisnika  
-**Opis:** Kao **neregistrovani korisnik**, želim **unijeti svoje ime, prezime, email i lozinku u formu za registraciju**, kako bih **postao evidentiran korisnik sistema**.  
-**Poslovna vrijednost:** Osigurava bazu korisnika neophodnu za dalju dodjelu uloga i zadataka.  
+**Naziv storyja:** Administratorsko kreiranje korisničkog računa poštara  
+**Opis:** Kao **administrator**, želim **unijeti osnovne podatke poštara, email/korisničko ime i inicijalnu lozinku**, kako bih **kreirao korisnički račun koji poštaru omogućava pristup sistemu**.  
+**Poslovna vrijednost:** Osigurava da korisničke račune može otvoriti samo ovlaštena osoba, čime se smanjuje rizik od neovlaštene registracije.  
 **Prioritet:** High  
 **Pretpostavke i otvorena pitanja:**
-- *Pretpostavka:* Korisnik ima pristup internetu i važeću email adresu.
-- *Otvoreno pitanje:* Da li sistem treba automatski dodijeliti rolu "Gost" dok administrator ne odobri višu rolu?  
-**Veze sa drugim storyjima:** Direktna zavisnost od US-02.
+- *Pretpostavka:* Administrator ima pristup modulu za upravljanje korisnicima i dodavanje novih poštara.
+- *Otvoreno pitanje:* Da li se kao primarni identifikator za prijavu koristi email adresa ili posebno korisničko ime?  
+**Veze sa drugim storyjima:** Direktna zavisnost od US-02 i US-03.
 
 ---
 
 #### ID storyja: US-02
-**Naziv storyja:** Validacija unosa pri registraciji  
-**Opis:** Kao **administrator**, želim da **sistem automatski provjerava kompleksnost lozinke i validnost emaila**, kako bi se **smanjio rizik od hakerskih napada i grešaka u bazi**.  
-**Poslovna vrijednost:** Povećanje sigurnosti sistema i integriteta podataka od samog početka.  
+**Naziv storyja:** Validacija unosa pri kreiranju računa  
+**Opis:** Kao **administrator**, želim da **sistem automatski provjerava jedinstvenost emaila/korisničkog imena i kompleksnost inicijalne lozinke**, kako bi se **smanjio rizik od grešaka i sigurnosnih propusta pri otvaranju računa**.  
+**Poslovna vrijednost:** Povećanje sigurnosti sistema i integriteta podataka od samog početka korištenja.  
 **Prioritet:** High  
 **Pretpostavke i otvorena pitanja:**
 - *Pretpostavka:* Definisan je standard snage lozinke (npr. min. 8 karaktera, broj, veliko slovo).
-- *Otvoreno pitanje:* Treba li sistem ograničiti registraciju samo na određene domene (npr. @posta.ba)?
+- *Otvoreno pitanje:* Da li inicijalna lozinka treba biti ručno unesena od strane administratora ili automatski generisana od sistema?
 **Veze sa drugim storyjima:** Dio je procesa US-01.
 
 ---
 
 #### ID storyja: US-03
-**Naziv storyja:** Feedback o statusu registracije  
-**Opis:** Kao **neregistrovani korisnik**, želim **primiti vizuelnu potvrdu o uspjehu ili opisnu poruku o grešci**, kako bih **imao informaciju da li je moj račun uspješno kreiran**.  
-**Poslovna vrijednost:** Poboljšanje korisničkog iskustva i smanjenje broja duplih pokušaja registracije.  
+**Naziv storyja:** Feedback o statusu kreiranja računa  
+**Opis:** Kao **administrator**, želim **primiti vizuelnu potvrdu o uspjehu ili opisnu poruku o grešci**, kako bih **imao informaciju da li je korisnički račun uspješno kreiran i spreman za dodjelu poštaru**.  
+**Poslovna vrijednost:** Poboljšanje administratorskog iskustva i smanjenje broja duplih ili neuspjelih pokušaja kreiranja računa.  
 **Prioritet:** Medium  
 **Pretpostavke i otvorena pitanja:**
 - *Pretpostavka:* Postoje predefinisane poruke za različite tipove grešaka (npr. "Email već postoji").  
+- *Otvoreno pitanje:* Na koji način administrator uručuje inicijalne kredencijale poštaru (npr. usmeno, printano ili kroz interni kanal)?
 **Veze sa drugim storyjima:** Uspješan ishod ovog story-ja je preduslov za **US-04** (Prijava korisnika).
 
 ---
@@ -56,12 +57,12 @@ Registracija je ulaz u sistem. Bez nje je nemoguće osigurati sigurnost podataka
 ## PBI-012 Prijava korisnika
 
 ### User Stories
-- **US-04:** Kao registrovani korisnik, želim se prijaviti na sistem koristeći svoj email i lozinku, kako bih pristupio funkcionalnostima aplikacije.
-- **US-05:** Kao korisnik, želim da me sistem obavijesti ako unesem pogrešne kredencijale, kako bih znao da trebam ponoviti unos ili resetovati lozinku.
-- **US-06:** Kao korisnik, želim ostati prijavljen u sistemu tokom trajanja sesije, kako ne bih morao ponavljati prijavu pri svakom osvježavanju stranice.
+- **US-04:** Kao registrovani korisnik, želim se prijaviti na sistem koristeći kredencijale koje mi je dodijelio administrator, kako bih pristupio funkcionalnostima aplikacije.
+- **US-05:** Kao korisnik, želim da me sistem obavijesti ako unesem pogrešne kredencijale, kako bih znao da trebam ponoviti unos ili resetovati inicijalnu lozinku.
+- **US-06:** Kao poštar koji se prvi put prijavljuje, želim biti obavezan promijeniti inicijalnu lozinku prije nastavka rada, kako bih zaštitio svoj korisnički račun.
 
 ### Poslovna vrijednost
-Osigurava da samo autentifikovani korisnici mogu manipulisati rutama i podacima o sandučićima. Ovo direktno štiti integritet poštanskih operacija i sprječava neovlaštene izmjene statusa na terenu.
+Prijava osigurava da samo autentifikovani korisnici mogu manipulisati rutama i podacima o sandučićima. Obavezna promjena inicijalne lozinke pri prvoj prijavi dodatno štiti korisničke račune i smanjuje rizik od neovlaštenog pristupa nakon dodjele kredencijala.
 
 ### Prioritet: High
 
@@ -75,10 +76,10 @@ Osigurava da samo autentifikovani korisnici mogu manipulisati rutama i podacima 
 **Poslovna vrijednost:** Osnovni mehanizam autentifikacije i zaštite korisničkog profila.  
 **Prioritet:** High  
 **Pretpostavke i otvorena pitanja:**
-- *Pretpostavka:* Korisnik je prethodno uspješno prošao proces registracije (PBI-011).
+- *Pretpostavka:* Korisnik je prethodno dobio kredencijale od administratora kroz PBI-011.
 - *Otvoreno pitanje:* Da li sistem treba ograničiti broj neuspješnih pokušaja prijave prije privremenog zaključavanja računa?
 **Veze sa drugim storyjima:**
-- **Striktna zavisnost:** Zavisi od **US-01** (Registracija).
+- **Striktna zavisnost:** Zavisi od **US-01** (Kreiranje korisničkog računa poštara).
 - **Logički povezano:** Prethodi svim storyjima koji zahtijevaju autorizaciju.
 
 ---
@@ -95,13 +96,14 @@ Osigurava da samo autentifikovani korisnici mogu manipulisati rutama i podacima 
 ---
 
 #### ID storyja: US-06
-**Naziv storyja:** Održavanje korisničke sesije  
-**Opis:** Kao **korisnik**, želim da **sistem pamti moju prijavu dok ne zatvorim preglednik ili se odjavim**, kako bi **rad bio kontinuiran i bez prekida**.
-**Poslovna vrijednost:** Povećanje efikasnosti rada, posebno za dispečere koji sistem koriste duži vremenski period tokom dana.
-**Prioritet:** Low
+**Naziv storyja:** Obavezna promjena lozinke pri prvoj prijavi  
+**Opis:** Kao **poštar koji se prvi put prijavljuje**, želim da me **sistem odmah nakon uspješne autentifikacije preusmjeri na promjenu inicijalne lozinke**, kako bi **moj račun bio zaštićen prije daljnjeg korištenja sistema**.
+**Poslovna vrijednost:** Smanjuje rizik da inicijalna lozinka ostane poznata drugim osobama i povećava sigurnost pristupa sistemu.
+**Prioritet:** High
 **Pretpostavke i otvorena pitanja:**
-- *Otvoreno pitanje:* Koliko dugo sesija treba biti aktivna u slučaju neaktivnosti korisnika?
-**Veze sa drugim storyjima:** Nadovezuje se na **US-04**.
+- *Pretpostavka:* Sistem može prepoznati da li korisnik koristi privremenu/inicijalnu lozinku.
+- *Otvoreno pitanje:* Da li nakon prve promjene lozinke korisnik odmah ulazi u sistem ili se mora ponovo prijaviti?
+**Veze sa drugim storyjima:** Nadovezuje se na **US-04** i zavisi od **US-02**.
 
 ---
 
@@ -151,14 +153,14 @@ Implementacija uloga sprječava ljudske greške i zloupotrebu sistema. Poštari 
 
 #### ID storyja: US-08
 **Naziv storyja:** Definisanje sistemskih uloga
-**Opis:** Kao **administrator**, želim **dodijeliti specifičnu ulogu svakom registrovanom korisniku**, kako bi **sistem mogao kontrolisati dostupne funkcionalnosti**.
+**Opis:** Kao **administrator**, želim **dodijeliti specifičnu ulogu svakom korisničkom računu**, kako bi **sistem mogao kontrolisati dostupne funkcionalnosti**.
 **Poslovna vrijednost:** Osnovna kontrola pristupa (Access Control) koja omogućava skalabilnost tima.
 **Prioritet:** High
 **Pretpostavke i otvorena pitanja:**
-- *Pretpostavka:* Korisnik je već registrovan u sistemu.
+- *Pretpostavka:* Korisnički račun je već kreiran u sistemu.
 - *Otvoreno pitanje:* Da li jedan korisnik može imati više uloga istovremeno (npr. dispečer koji je ujedno i administrator)?
 **Veze sa drugim storyjima:**
-- **Zavisi od:** US-01 (Registracija).
+- **Zavisi od:** US-01 (Kreiranje korisničkog računa poštara).
 - **Osnova za:** Sve funkcionalnosti koje slijede (dodavanje sandučića, generisanje ruta).
 
 ---
@@ -210,9 +212,9 @@ Ovaj modul je ključan za operativno planiranje. Bez tačne baze poštara, dispe
 **Prioritet:** High
 **Pretpostavke i otvorena pitanja:**
 - *Pretpostavka:* Administrator ima pristup panelu za upravljanje osobljem.
-- *Otvoreno pitanje:* Da li poštar automatski dobija kredencijale za login čim ga admin doda, ili se to radi u odvojenom koraku?
+- *Pretpostavka:* Kreiranje login naloga i dodjela početnih kredencijala pokriveni su kroz PBI-011.
 **Veze sa drugim storyjima:**
-- **Osnova za:** US-13 (Pregled liste poštara) i US-25 (Dodjela rute poštaru).
+- **Osnova za:** US-13 (Pregled liste poštara) i US-23 (Dodjela rute poštaru).
 
 ---
 
