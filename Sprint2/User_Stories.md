@@ -199,6 +199,17 @@ Ovaj modul je ključan za operativno planiranje. Bez tačne baze poštara, dispe
 
 ---
 
+#### ID storyja: US-12<br>
+**Naziv storyja:** Validacija duplog ID broja<br>
+**Opis:** Kao **administrator**, želim **da sistem spriječi unos novog poštara ukoliko se njegov ID broj već nalazi u bazi**, kako bi se **izbjegli dupli unosi i konfuzija pri dodjeli ruta**.<br>
+**Poslovna vrijednost:** Održavanje integriteta baze podataka i sprečavanje operativnih grešaka prilikom vođenja evidencije.<br>
+**Prioritet:** High<br>
+**Pretpostavke i otvorena pitanja:** <br>- *Pretpostavka:* ID broj radnika je striktno jedinstven identifikator na nivou cijelog sistema.<br>
+- *Otvoreno pitanje:* Da li sistem, u slučaju unosa duplog ID-a, treba odmah ponuditi link za pregled profila postojećeg poštara sa tim ID brojem?<br>
+**Veze sa drugim storyjima:** <br>- **Zavisi od:** US-11 (Unos novog poštara u sistem).
+
+---
+
 ## PBI-016 Pregled liste poštara
 
 ### User Stories
@@ -257,32 +268,10 @@ Precizna evidencija sandučića je temelj optimizacije. Unos GPS koordinata elim
 **Veze sa drugim storyjima:**<br> - **Zavisi od:** US-14 (Postojanje lokacije).
 
 ---
-
-## PBI-018 Pregled i pretraga sandučića
-
-### User Stories
-- **US-16:** Kao dispečer, želim vidjeti listu svih sandučića sa njihovim statusom (npr. pun/ispražnjen), kako bih imao kontrolu nad stanjem na terenu.
-
-### Poslovna vrijednost
-Vizuelni pregled svih tačaka u sistemu omogućava dispečeru da brzo uoči anomalije (npr. sandučić koji se predugo ne prazni).
-
-### Prioritet: Medium
-
----
-
-#### ID storyja: US-16
-**Naziv storyja:** Pregled liste sandučića sa filterima<br>
-**Opis:** Kao **dispečer**, želim **filtrirati sandučiće po naseljima ili po statusu zadnjeg pražnjenja**, kako bih **izdvojio samo one kritične za rad**. <br>
-**Poslovna vrijednost:** Brža navigacija i bolja organizacija resursa. <br>
-**Prioritet:** Medium <br>
-**Pretpostavke i otvorena pitanja:** <br> - *Otvoreno pitanje:* Da li treba omogućiti izvoz ove liste u PDF format za potrebe arhive? <br>
-**Veze sa drugim storyjima:** <br>- **Zavisi od:** US-14 (Dodavanje sandučića).
-
----
-## PBI-019 Izmjena podataka o sandučiću
+## PBI-018 Izmjena podataka o sandučiću
 
 ### User Stories
-- **US-17:** Kao administrator, želim izmijeniti koordinate ili adresu postojećeg sandučića, kako bih osigurao da baza podataka odgovara stvarnom stanju na terenu nakon pomjeranja sandučića.
+- **US-16:** Kao administrator, želim izmijeniti koordinate ili adresu postojećeg sandučića, kako bih osigurao da baza podataka odgovara stvarnom stanju na terenu nakon pomjeranja sandučića.
 
 ### Poslovna vrijednost
 Održavanje tačnosti baze podataka. Pogrešne koordinate dovode do gubitka vremena poštara na terenu i neispravnog izračunavanja rute.
@@ -293,13 +282,35 @@ Održavanje tačnosti baze podataka. Pogrešne koordinate dovode do gubitka vrem
 
 ### Detaljna razrada Story-ja 
 
-#### ID storyja: US-17
+#### ID storyja: US-16
 **Naziv storyja:** Ažuriranje informacija o lokaciji<br>
 **Opis:** Kao **administrator**, želim **otvoriti formu za uređivanje postojećeg sandučića i spasiti nove podatke**, kako bi **promjene bile odmah vidljive svim korisnicima sistema**.<br>
 **Poslovna vrijednost:** Fleksibilnost sistema u slučaju urbanističkih promjena ili tehničkih grešaka pri prvom unosu.<br>
 **Prioritet:** Medium<br>
 **Pretpostavke i otvorena pitanja:** <br>- *Pretpostavka:* Sandučić već postoji u bazi podataka.<br>
 - *Otvoreno pitanje:* Da li sistem treba čuvati historiju promjena (ko je i kada izmijenio lokaciju) radi interne kontrole?<br>
+**Veze sa drugim storyjima:** <br>- **Zavisi od:** US-14 (Dodavanje sandučića).
+
+---
+
+## PBI-019 Pregled sandučića na listi
+
+### User Stories
+- **US-17:** Kao dispečer, želim vidjeti listu svih sandučića sa njihovim statusom (npr. pun/ispražnjen), kako bih imao kontrolu nad stanjem na terenu.
+
+### Poslovna vrijednost
+Vizuelni pregled svih tačaka u sistemu omogućava dispečeru da brzo uoči anomalije (npr. sandučić koji se predugo ne prazni).
+
+### Prioritet: Medium
+
+---
+
+#### ID storyja: US-17
+**Naziv storyja:** Pregled liste sandučića sa filterima<br>
+**Opis:** Kao **dispečer**, želim **filtrirati sandučiće po naseljima ili po statusu zadnjeg pražnjenja**, kako bih **izdvojio samo one kritične za rad**. <br>
+**Poslovna vrijednost:** Brža navigacija i bolja organizacija resursa. <br>
+**Prioritet:** Medium <br>
+**Pretpostavke i otvorena pitanja:** <br> - *Otvoreno pitanje:* Da li treba omogućiti izvoz ove liste u PDF format za potrebe arhive? <br>
 **Veze sa drugim storyjima:** <br>- **Zavisi od:** US-14 (Dodavanje sandučića).
 
 ---
@@ -325,52 +336,6 @@ Spriječavanje slanja poštara na lokacije koje više ne postoje, čime se direk
 - *Otvoreno pitanje:* Da li je bolje koristiti "Soft Delete" (samo sakriti sandučić) umjesto trajnog brisanja iz baze podataka zbog arhive raniijh izvještaja?<br>
 **Veze sa drugim storyjima:**<br> - **Zavisi od:** US-14 (Dodavanje sandučića).<br>
 - **Utiče na:** US-22 (Generisanje dnevne rute).
-
----
-## PBI-021 Pregled mape sa svim sandučićima
-
-### User Stories
-- **US-19:** Kao dispečer, želim vidjeti sve registrovane sandučiće kao pinove na mapi, kako bih imao vizuelni pregled njihove prostorne raspoređenosti u gradu.
-- **US-20:** Kao korisnik, želim klikom na pin sandučića na mapi vidjeti njegove detaljne informacije (adresa, status popunjenosti, zadnje pražnjenje), kako bih brzo dobio uvid u stanje te lokacije bez pretraživanja tabele.
-- **US-21:** Kao dispečer, želim filtrirati prikaz na mapi prema statusu (npr. prikaži samo one koji zahtijevaju pražnjenje), kako bih vizuelno identifikovao kritične zone u gradu.
-
-### Poslovna vrijednost
-Mapa je ključni alat za donošenje odluka. Umjesto listanja stotina redova u tabeli, dispečer može u sekundi prepoznati skupine sandučića koji su blizu jedan drugom, što mu pomaže u logističkom planiranju čak i prije pokretanja automatskog algoritma.
-
-### Prioritet: High
-
----
-
-### Detaljna razrada Story-ja 
-
-#### ID storyja: US-19
-**Naziv storyja:** Vizuelni prikaz lokacija na mapi<br>
-**Opis:** Kao **dispečer**, želim **otvoriti mapu grada na kojoj su označeni svi aktivni sandučići**, kako bih **imao globalni pregled poštanske mreže**.<br>
-**Poslovna vrijednost:** Olakšava prostornu orijentaciju i planiranje ljudskih resursa.<br>
-**Prioritet:** High <br>
-**Pretpostavke i otvorena pitanja:**<br> - *Pretpostavka:* Sistem koristi eksterni API za renderovanje mape.<br>
-- *Otvoreno pitanje:* Da li mapa treba imati različite ikone (boje pinova) zavisno od prioriteta sandučića?<br>
-**Veze sa drugim storyjima:**<br> - **Zavisi od:** US-14 (GPS koordinate sandučića).
-
----
-
-#### ID storyja: US-20
-**Naziv storyja:** Brzi uvid u detalje sandučića (Popup)<br>
-**Opis:** Kao **korisnik**, želim **kliknuti na bilo koji pin na mapi i vidjeti "pop-up" prozor sa podacima**, kako bih **izbjegao prebacivanje između mape i tabelarnog pregleda**.<br>
-**Poslovna vrijednost:** Povećanje efikasnosti rada kroz smanjenje broja klikova potrebnih za dobijanje informacija.<br>
-**Prioritet:** Medium<br>
-**Pretpostavke i otvorena pitanja:** <br>- *Pretpostavka:* Podaci u prozorčiću se osvježavaju u realnom vremenu (ako je to moguće).<br>
-**Veze sa drugim storyjima:**<br> - **Zavisi od:** US-19 (Prikaz pinova).
-
----
-
-#### ID storyja: US-21
-**Naziv storyja:** Filtriranje prikaza na mapi<br>
-**Opis:** Kao **dispečer**, želim **isključiti ili uključiti slojeve na mapi (npr. samo prazni, samo puni)**, kako bih **fokusirao pažnju na problematične tačke**.<br>
-**Poslovna vrijednost:** Brža identifikacija prioriteta na terenu.<br>
-**Prioritet:** Medium<br>
-**Pretpostavke i otvorena pitanja:** <br> - *Otvoreno pitanje:* Da li treba omogućiti čuvanje filtera kao podrazumijevani prikaz za određenog dispečera? <br>
-**Veze sa drugim storyjima:** <br> - **Zavisi od:** US-19 i US-16 (Logika filtriranja).
 
 ---
 ## PBI-022 Generisanje dnevne rute
@@ -489,7 +454,7 @@ Zatvaranje petlje povratnih informacija. Ovo omogućava menadžmentu da prati ef
 **Prioritet:** High<br>
 **Pretpostavke i otvorena pitanja:** <br>- *Pretpostavka:* Sistem bilježi tačno vrijeme (Timestamp) klika radi kasnije analize.<br>
 - *Otvoreno pitanje:* Da li treba uvesti geofencing (da se status može promijeniti samo ako je poštar fizički blizu sandučića)?<br>
-**Veze sa drugim storyjima:**<br> - **Utiče na:** US-16 (Statusi sandučića).
+**Veze sa drugim storyjima:**<br> - **Utiče na:** US-17 (Statusi sandučića).
 
 ---
 
