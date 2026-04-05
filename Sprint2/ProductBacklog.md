@@ -17,11 +17,11 @@
 | PBI-033 | Izraditi Domain Model i/ili Use Case Model | Dokumentovati model domene i/ili ključne use-case scenarije na osnovu prethodno razrađenih zahtjeva i korisničkih uloga. | documentation | High | 4h | To Do | Sprint 3 |  |
 | PBI-034 | Definisati Architecture Overview | Pripremiti početni pregled arhitekture sistema, glavnih komponenti, njihovih odgovornosti i osnovnog toka podataka. | documentation | High | 3h 30min | To Do | Sprint 3 | Osnovni arhitektonski pravac |
 | PBI-035 | Definisati Test Strategy | Odrediti ciljeve testiranja, nivoe testiranja, vezu sa acceptance kriterijima i način evidentiranja rezultata testiranja. | documentation | High | 3h | To Do | Sprint 3 |  |
-| PBI-011 | Registracija korisnika | Omogućiti kreiranje korisničkog računa za korisnike koji trebaju pristup sistemu. | feature | High | 6h | To Do | MVP | Osnovna autentikacija |
-| PBI-012 | Prijava korisnika | Omogućiti korisniku prijavu u sistem putem emaila/korisničkog imena i lozinke. | feature | High | 5h | To Do | MVP |  |
+| PBI-011 | Kreiranje korisničkog računa poštara | Omogućiti administratoru da kreira korisnički račun za poštara i dodijeli mu početne kredencijale za pristup sistemu. | feature | High | 6h | To Do | MVP | Administratorsko kreiranje naloga |
+| PBI-012 | Prijava korisnika | Omogućiti korisniku prijavu u sistem putem emaila/korisničkog imena i lozinke, uz obaveznu promjenu inicijalne lozinke pri prvoj prijavi. | feature | High | 5h | To Do | MVP | Prva prijava mijenja lozinku |
 | PBI-013 | Odjava korisnika | Omogućiti sigurno odjavljivanje iz sistema. | feature | Medium | 1h 30min | To Do | MVP |  |
 | PBI-014 | Uloge i pristup po ulozi | Ograničiti pristup funkcionalnostima na osnovu uloge: administrator, dispečer, poštar. | feature | High | 5h 30min | To Do | MVP |  |
-| PBI-015 | Dodavanje poštara | Omogućiti administratoru unos novog poštara u sistem. | feature | High | 3h | To Do | MVP |  |
+| PBI-015 | Dodavanje poštara | Omogućiti administratoru unos i evidenciju osnovnih podataka o novom poštaru u sistemu. | feature | High | 3h | To Do | MVP | Operativni podaci o poštaru |
 | PBI-016 | Pregled liste poštara | Omogućiti pregled svih poštara sa osnovnim podacima i statusom aktivnosti. | feature | Medium | 2h 30min | To Do | MVP |  |
 | PBI-017 | Dodavanje poštanskog sandučića | Omogućiti unos novog sandučića sa lokacijom, tipom i osnovnim podacima. | feature | High | 4h | To Do | MVP |  |
 | PBI-018 | Izmjena podataka o sandučiću | Omogućiti administratoru izmjenu lokacije, tipa, prioriteta i drugih podataka o sandučiću. | feature | Medium | 4h | To Do | MVP |  |
@@ -38,5 +38,3 @@
 | PBI-030 | Osnovni dnevni izvještaj | Omogućiti generisanje osnovnog dnevnog izvještaja o realizovanim i nerealizovanim obilascima. | feature | Low | 4h | To Do | MVP |  |
 
 > **Napomena:** Od sprinta 5 nadalje, evidencija implementacijskog dijela Product Backloga vodit će se i kroz [JIRA](https://si-grupa-11.atlassian.net/jira/software/projects/SG1/boards/1/backlog). Product Backlog će se redovno ažurirati i u ovom `.md` dokumentu i na JIRA stranici, kako bi sve stavke ostale usklađene i pregledne.
-
-
