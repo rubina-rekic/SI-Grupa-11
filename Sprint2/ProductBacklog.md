@@ -13,9 +13,7 @@
 | PBI-007 | Definisati acceptance criteria | Napisati mjerljive i provjerljive acceptance kriterije za prioritetne storyje. | documentation | High | 4h | To Do | Sprint 2 |  |
 | PBI-008 | Uraditi prioritizaciju backloga | Razvrstati stavke po poslovnoj vrijednosti, zavisnostima i značaju za MVP. | research | High | 2h | To Do | Sprint 2 |  |
 | PBI-009 | Definisati početne NFR zahtjeve | Identifikovati početne nefunkcionalne zahtjeve poput sigurnosti, upotrebljivosti i pouzdanosti. | documentation | Medium | 3h | To Do | Sprint 2 |  |
-| PBI-010 | Evidentirati otvorena pitanja za PO | Popisati nejasnoće i pretpostavke koje treba potvrditi sa Product Ownerom prije implementacije. | research | Medium | 1h 30min | To Do | Sprint 2 |  |
 | PBI-031 | Izraditi početni Risk Register | Identifikovati glavne projektne, tehničke i operativne rizike sistema, procijeniti njihov uticaj i vjerovatnoću, te definisati početne mjere mitigacije. | documentation | High | 3h 30min | To Do | Sprint 3 |  |
-| PBI-032 | Analizirati domenu sistema | Prepoznati glavne entitete, njihove atribute, odnose i osnovna poslovna pravila koja oblikuju rad sistema. | research | High | 3h | To Do | Sprint 3 |  |
 | PBI-033 | Izraditi Domain Model i/ili Use Case Model | Dokumentovati model domene i/ili ključne use-case scenarije na osnovu prethodno razrađenih zahtjeva i korisničkih uloga. | documentation | High | 4h | To Do | Sprint 3 |  |
 | PBI-034 | Definisati Architecture Overview | Pripremiti početni pregled arhitekture sistema, glavnih komponenti, njihovih odgovornosti i osnovnog toka podataka. | documentation | High | 3h 30min | To Do | Sprint 3 | Osnovni arhitektonski pravac |
 | PBI-035 | Definisati Test Strategy | Odrediti ciljeve testiranja, nivoe testiranja, vezu sa acceptance kriterijima i način evidentiranja rezultata testiranja. | documentation | High | 3h | To Do | Sprint 3 |  |
@@ -29,7 +27,6 @@
 | PBI-018 | Izmjena podataka o sandučiću | Omogućiti administratoru izmjenu lokacije, tipa, prioriteta i drugih podataka o sandučiću. | feature | Medium | 4h | To Do | MVP |  |
 | PBI-019 | Pregled sandučića na listi | Omogućiti pregled svih evidentiranih sandučića kroz jednostavnu tabelu/listu. | feature | Medium | 3h | To Do | MVP |  |
 | PBI-020 | Definisanje prioriteta sandučića | Omogućiti postavljanje ili izmjenu prioriteta za pražnjenje/punjenje sandučića. | feature | High | 3h 30min | To Do | MVP |  |
-| PBI-021 | Evidencija radnih pravila sandučića | Omogućiti čuvanje pravila kao što su radni dani, vremenska ograničenja ili specifične napomene. | feature | Low | 4h 30min | To Do | MVP |  |
 | PBI-022 | Generisanje dnevne rute | Omogućiti dispečeru automatsko generisanje dnevne rute za odabranog poštara. | feature | High | 8h | To Do | MVP | Osnovna optimizacija |
 | PBI-023 | Dodjela rute poštaru | Omogućiti dispečeru da dodijeli generisanu rutu konkretnom poštaru. | feature | High | 3h | To Do | MVP |  |
 | PBI-024 | Pregled detalja rute | Omogućiti pregled redoslijeda obilaska, uključenih sandučića i osnovnih detalja rute. | feature | Medium | 3h 30min | To Do | MVP |  |
