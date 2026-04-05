@@ -21,7 +21,7 @@
 | PBI-012 | Prijava korisnika | Omogućiti korisniku prijavu u sistem putem emaila/korisničkog imena i lozinke. | feature | High | 5h | To Do | MVP |  |
 | PBI-013 | Odjava korisnika | Omogućiti sigurno odjavljivanje iz sistema. | feature | Medium | 1h 30min | To Do | MVP |  |
 | PBI-014 | Uloge i pristup po ulozi | Ograničiti pristup funkcionalnostima na osnovu uloge: administrator, dispečer, poštar. | feature | High | 5h 30min | To Do | MVP |  |
-| PBI-015 | Dodavanje poštara | Omogućiti administratoru unos novog poštara u sistem. | feature | Medium | 3h | To Do | MVP |  |
+| PBI-015 | Dodavanje poštara | Omogućiti administratoru unos novog poštara u sistem. | feature | High | 3h | To Do | MVP |  |
 | PBI-016 | Pregled liste poštara | Omogućiti pregled svih poštara sa osnovnim podacima i statusom aktivnosti. | feature | Medium | 2h 30min | To Do | MVP |  |
 | PBI-017 | Dodavanje poštanskog sandučića | Omogućiti unos novog sandučića sa lokacijom, tipom i osnovnim podacima. | feature | High | 4h | To Do | MVP |  |
 | PBI-018 | Izmjena podataka o sandučiću | Omogućiti administratoru izmjenu lokacije, tipa, prioriteta i drugih podataka o sandučiću. | feature | Medium | 4h | To Do | MVP |  |
