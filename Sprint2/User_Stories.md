@@ -28,6 +28,13 @@ Korisnički računi za poštare moraju biti kontrolisano kreirani od strane admi
 - *Otvoreno pitanje:* Da li se kao primarni identifikator za prijavu koristi email adresa ili posebno korisničko ime?  
 **Veze sa drugim storyjima:** Direktna zavisnost od US-02 i US-03.
 
+### Acceptance criteria
+
+- **Kada** administrator unese sve unosne podatke (email/username i lozinka), **ako** klikne na dugme za kreiranje računa, **tada** sistem mora kreirati korisnički račun.
+- **Sistem mora** sačuvati podatke u bazi.
+- **Sistem ne smije** dozvoliti kreiranje računa ako nedostaju obavezna polja.
+- **Korisnik treba** dobiti potvrdu o uspješnom kreiranju.
+
 ---
 
 #### ID storyja: US-02
@@ -39,6 +46,14 @@ Korisnički računi za poštare moraju biti kontrolisano kreirani od strane admi
 - *Pretpostavka:* Definisan je standard snage lozinke (npr. min. 8 karaktera, broj, veliko slovo).
 - *Otvoreno pitanje:* Da li inicijalna lozinka treba biti ručno unesena od strane administratora ili automatski generisana od sistema?
 **Veze sa drugim storyjima:** Dio je procesa US-01.
+
+
+### Acceptance criteria
+
+- **Kada** administrator unese već postojeći email/username, **ako** pokuša kreirati račun, **tada** sistem mora odbiti unos i prikazati poruku o grešci.
+- **Sistem mora** provjeravati jedinstvenost emaila/username-a.
+- **Kada** lozinka ne zadovoljava sigurnosne kriterije, **ako** administrator pokuša sačuvati podatke, **tada** sistem mora odbiti unos.
+- **Sistem ne smije** dozvoliti slabu lozinku.
 
 ---
 
@@ -52,6 +67,12 @@ Korisnički računi za poštare moraju biti kontrolisano kreirani od strane admi
 - *Otvoreno pitanje:* Na koji način administrator uručuje inicijalne kredencijale poštaru (npr. usmeno, printano ili kroz interni kanal)?
 **Veze sa drugim storyjima:** Uspješan ishod ovog story-ja je preduslov za **US-04** (Prijava korisnika).
 
+### Acceptance criteria
+
+- **Kada** administrator potvrdi kreiranje, **ako** je račun uspješno kreiran, **tada** sistem mora prikazati potvrdu.
+- **Kada** dođe do greške prilikom obrade, **ako** sistem ne može izvršiti akciju, **tada** mora prikazati odgovarajuću poruku.
+- **Sistem ne smije** ostaviti korisnika bez feedbacka.
+
 ---
 
 ## PBI-012 Prijava korisnika
@@ -63,6 +84,7 @@ Korisnički računi za poštare moraju biti kontrolisano kreirani od strane admi
 
 ### Poslovna vrijednost
 Prijava osigurava da samo autentifikovani korisnici mogu manipulisati rutama i podacima o sandučićima. Obavezna promjena inicijalne lozinke pri prvoj prijavi dodatno štiti korisničke račune i smanjuje rizik od neovlaštenog pristupa nakon dodjele kredencijala.
+
 
 ### Prioritet: High
 
@@ -82,6 +104,12 @@ Prijava osigurava da samo autentifikovani korisnici mogu manipulisati rutama i p
 - **Striktna zavisnost:** Zavisi od **US-01** (Kreiranje korisničkog računa poštara).
 - **Logički povezano:** Prethodi svim storyjima koji zahtijevaju autorizaciju.
 
+### Acceptance criteria
+
+- **Kada** korisnik unese ispravne kredencijale, **ako** klikne na prijavu, **tada** sistem mora omogućiti pristup.
+- **Sistem mora** preusmjeriti korisnika na dashboard.
+- **Sistem ne smije** dozvoliti prijavu bez unosa podataka.
+
 ---
 
 #### ID storyja: US-05
@@ -92,6 +120,11 @@ Prijava osigurava da samo autentifikovani korisnici mogu manipulisati rutama i p
 **Pretpostavke i otvorena pitanja:**
 - *Pretpostavka:* Poruka ne smije biti previše specifična radi sigurnosti (sprječavanje enumeration napada).
 **Veze sa drugim storyjima:** Dio je toka **US-04**.
+
+### Acceptance criteria
+ 
+**Kada** korisnik unese pogrešne kredencijale, **ako** klikne na prijavu, **tada** sistem mora prikazati poruku o grešci.
+- **Sistem ne smije** dozvoliti prijavu sa praznim poljima.
 
 ---
 
@@ -104,6 +137,11 @@ Prijava osigurava da samo autentifikovani korisnici mogu manipulisati rutama i p
 - *Pretpostavka:* Sistem može prepoznati da li korisnik koristi privremenu/inicijalnu lozinku.
 - *Otvoreno pitanje:* Da li nakon prve promjene lozinke korisnik odmah ulazi u sistem ili se mora ponovo prijaviti?
 **Veze sa drugim storyjima:** Nadovezuje se na **US-04** i zavisi od **US-02**.
+
+### Acceptance criteria
+
+- **Kada** se korisnik prvi put prijavi, **ako** unese inicijalnu lozinku, **tada** sistem mora zahtijevati promjenu lozinke.
+- **Sistem ne smije** dozvoliti nastavak rada bez promjene lozinke.
 
 ---
 
@@ -132,6 +170,12 @@ Osigurava sigurnost korisničkih profila i sprečava neovlašteno korištenje se
 **Veze sa drugim storyjima:**
 - **Striktna zavisnost:** Direktno zavisi od **US-04** (Prijava korisnika) – ne može se odjaviti neko ko nije prijavljen.
 - **Logički slijed:** Nakon odjave, korisnik se preusmjerava na početnu stranicu ili formu za ponovnu prijavu.
+
+### Acceptance criteria
+
+- **Kada** korisnik klikne na odjavu, **ako** potvrdi akciju, **tada** sistem mora prekinuti sesiju.
+- **Sistem mora** preusmjeriti korisnika na login stranicu.
+- **Sistem ne smije** dozvoliti pristup aplikaciji bez ponovne prijave.
 
 ---
 
@@ -163,6 +207,13 @@ Implementacija uloga sprječava ljudske greške i zloupotrebu sistema. Poštari 
 - **Zavisi od:** US-01 (Kreiranje korisničkog računa poštara).
 - **Osnova za:** Sve funkcionalnosti koje slijede (dodavanje sandučića, generisanje ruta).
 
+### Acceptance criteria
+
+- **Kada** administrator odabere nivo pristupa, **ako** dodijeli ulogu korisniku, **tada** sistem mora sačuvati ulogu.
+- **Sistem mora** omogućiti različite nivoe pristupa.
+- **Sistem ne smije** dozvoliti neautorizovan pristup funkcijama drugih uloga.
+
+
 ---
 
 #### ID storyja: US-09
@@ -174,6 +225,12 @@ Implementacija uloga sprječava ljudske greške i zloupotrebu sistema. Poštari 
 - *Pretpostavka:* Sistem prepoznaje ID uloge pri svakom učitavanju stranice.
 **Veze sa drugim storyjima:**
 - **Zavisi od:** US-04 (Prijava korisnika) i US-08 (Definisanje uloga).
+
+### Acceptance criteria
+
+- **Kada** se korisnik prijavi, **ako** sistem prepozna ulogu, **tada** sistem mora prikazati odgovarajući dashboard.
+- **Sistem mora** omogućiti prikaz funkcionalnosti isključivo po ulozi.
+- **Korisnik treba** vidjeti samo relevantne opcije.
 
 ---
 
@@ -187,6 +244,13 @@ Implementacija uloga sprječava ljudske greške i zloupotrebu sistema. Poštari 
 - *Otvoreno pitanje:* Da li sistem treba logirati svaki neuspješan pokušaj pristupa zabranjenim stranicama radi sigurnosne analize?
 **Veze sa drugim storyjima:**
 - **Zavisi od:** US-08 (Definisanje uloga).
+
+### Acceptance criteria
+
+- **Kada** korisnik pokuša pristupiti zabranjenoj stranici, **ako** sistem detektuje nedostatak dozvole, **tada** sistem mora odbiti pristup.
+- **Sistem mora** prikazati poruku o zabrani.
+- **Sistem ne smije** dozvoliti izvršenje akcije na neovlaštenoj stranici.
+
 
 ---
 
@@ -216,6 +280,12 @@ Ovaj modul je ključan za operativno planiranje. Bez tačne baze poštara, dispe
 **Veze sa drugim storyjima:**
 - **Osnova za:** US-13 (Pregled liste poštara) i US-23 (Dodjela rute poštaru).
 
+### Acceptance criteria
+
+- **Kada** administrator unese lične podatke, **ako** klikne na dugme za spasavanje, **tada** sistem mora sačuvati poštara.
+- **Sistem mora** omogućiti unos svih polja (ime, prezime, telefon, ID).
+- **Sistem ne smije** dozvoliti prazna polja pri registraciji poštara.
+
 ---
 
 #### ID storyja: US-12
@@ -228,6 +298,13 @@ Ovaj modul je ključan za operativno planiranje. Bez tačne baze poštara, dispe
 - *Otvoreno pitanje:* Da li sistem, u slučaju unosa duplog ID-a, treba odmah ponuditi link za pregled profila postojećeg poštara sa tim ID brojem?
 **Veze sa drugim storyjima:**
 - **Zavisi od:** US-11 (Unos novog poštara u sistem).
+
+### Acceptance criteria
+
+- **Kada** administrator unese ID, **ako** ID već postoji u bazi, **tada** sistem mora odbiti unos.
+- **Sistem mora** provjeravati jedinstvenost ID-a.
+- **Korisnik treba** dobiti poruku o grešci koja objašnjava da je ID zauzet.
+
 
 ---
 
@@ -253,6 +330,12 @@ Omogućava brz pregled dostupnih ljudskih resursa, što direktno utiče na brzin
 - *Otvoreno pitanje:* Da li u listi treba biti vidljiva i zadnja poznata lokacija poštara radi bolje koordinacije?
 **Veze sa drugim storyjima:**
 - **Zavisi od:** US-11 (Unos poštara).
+
+### Acceptance criteria
+
+- **Kada** korisnik otvori listu poštara, **ako** sistem učita podatke, **tada** sistem mora prikazati sve poštare.
+- **Sistem mora** omogućiti pregled osnovnih podataka (ime, prezime, kontakt telefon i status poštara).
+- **Korisnik treba** vidjeti status poštara (dostupan ili zauzet).
 
 ---
 
@@ -282,6 +365,12 @@ Precizna evidencija sandučića je temelj optimizacije. Unos GPS koordinata elim
 **Veze sa drugim storyjima:**
 - **Osnova za:** US-22 (Generisanje dnevne rute).
 
+### Acceptance criteria
+
+- **Kada** administrator unese geografsku lokaciju, **ako** se unesu koordinate, **tada** sistem mora sačuvati lokaciju sandučića.
+- **Sistem mora** omogućiti unos GPS podataka.
+- **Sistem ne smije** dozvoliti unos nevalidnih koordinata.
+
 ---
 
 #### ID storyja: US-15
@@ -294,6 +383,12 @@ Precizna evidencija sandučića je temelj optimizacije. Unos GPS koordinata elim
 - *Otvoreno pitanje:* Koji skup osnovnih podataka je obavezan pored adrese i koordinata?
 **Veze sa drugim storyjima:**
 - **Nadovezuje se na:** US-14.
+
+### Acceptance criteria
+
+- **Kada** administrator popunjava formu, **ako** se odabere tip sandučića, **tada** sistem mora sačuvati podatak o tipu.
+- **Sistem mora** omogućiti izbor tipa iz predefinisanih opcija.
+- **Sistem ne smije** dozvoliti nepostojeći tip.
 
 ---
 
@@ -323,6 +418,12 @@ Održavanje tačnosti baze podataka. Pogrešne ili zastarjele informacije dovode
 - **Zavisi od:** US-14 i US-15.
 - **Povezano sa:** US-18 (Definisanje prioriteta sandučića).
 
+### Acceptance criteria
+
+- **Kada** administrator otvori formu za uređivanje, **ako** se izmjene podaci, **tada** sistem mora sačuvati promjene.
+- **Sistem mora** omogućiti uređivanje svih podataka o sandučiću.
+- **Korisnik treba** vidjeti ažurirane informacije odmah nakon spasavanja.
+
 ---
 
 ## PBI-019 Pregled sandučića na listi
@@ -347,6 +448,12 @@ Vizuelni pregled svih tačaka u sistemu omogućava brz uvid u evidenciju sanduč
 - *Otvoreno pitanje:* Da li u ovoj fazi treba omogućiti i pretragu ili filtriranje po tipu/naselju?
 **Veze sa drugim storyjima:**
 - **Zavisi od:** US-14 i US-15.
+
+### Acceptance criteria
+
+- **Kada** se otvori lista sandučića, **ako** sistem dohvati podatke, **tada** sistem mora prikazati sandučiće.
+- **Sistem mora** prikazati adresu, tip i prioritet sandučića.
+- **Korisnik treba** vidjeti listu svih evidentiranih sandučića u bazi.
 
 ---
 
@@ -373,6 +480,12 @@ Prioriteti omogućavaju da sistem i dispečer razlikuju kritične od manje kriti
 **Veze sa drugim storyjima:**
 - **Zavisi od:** US-14 i US-15.
 - **Utiče na:** US-22 (Generisanje dnevne rute).
+
+### Acceptance criteria
+
+- **Kada** administrator pristupi opcijama sandučića, **ako** se odabere prioritet, **tada** sistem mora sačuvati tu vrijednost.
+- **Sistem mora** omogućiti izbor prioriteta (npr. Visok, Srednji, Nizak).
+- **Korisnik treba** vidjeti trenutni prioritet na listi i u detaljima.
 
 ---
 
@@ -402,6 +515,12 @@ Ovo je srce sistema. Automatizacija rute smanjuje manuelni rad dispečera, šted
 - **Zavisi od:** US-14 i US-18.
 - **Osnova za:** US-23, US-24 i US-25.
 
+### Acceptance criteria
+
+- **Kada** dispečer odabere parametre, **ako** se pokrene generisanje, **tada** sistem mora kreirati rutu.
+- **Sistem mora** uzeti u obzir koordinate i prioritete pri računanju redoslijeda.
+- **Kada** ne postoje sandučići u sistemu, **ako** se pokuša kreiranje, **tada** sistem ne smije generisati rutu.
+
 ---
 
 ## PBI-023 Dodjela rute poštaru
@@ -426,6 +545,12 @@ Uspostavlja jasnu odgovornost za izvršenje rute i omogućava da poštar na vrij
 - *Otvoreno pitanje:* Na koji način poštar dobija obavijest o dodijeljenoj ruti?
 **Veze sa drugim storyjima:**
 - **Zavisi od:** US-13 (Pregled liste poštara) i US-22 (Generisanje dnevne rute).
+
+### Acceptance criteria
+
+- **Kada** je ruta spremna, **ako** se ruta dodijeli odabranom radniku, **tada** sistem mora povezati poštara i rutu.
+- **Sistem mora** omogućiti izbor poštara sa liste dostupnih radnika.
+- **Korisnik treba** dobiti potvrdu o uspješno izvršenoj dodjeli.
 
 ---
 
@@ -452,6 +577,12 @@ Omogućava provjeru kvaliteta prijedloga rute prije nego što ruta bude poslana 
 **Veze sa drugim storyjima:**
 - **Zavisi od:** US-22 (Generisanje dnevne rute).
 
+### Acceptance criteria
+
+- **Kada** se u pregledu odabere ruta, **ako** se otvori ruta, **tada** sistem mora prikazati detalje.
+- **Sistem mora** prikazati redoslijed obilaska i listu uključenih sandučića.
+- **Korisnik treba** vidjeti osnovne informacije o ruti (dužina, broj tačaka) prije dodjele.
+
 ---
 
 ## PBI-025 Ručna izmjena redoslijeda obilaska
@@ -476,6 +607,12 @@ Daje dispečeru neophodnu fleksibilnost u situacijama kada automatski prijedlog 
 - *Otvoreno pitanje:* Da li sistem treba automatski preračunavati procijenjenu dužinu ili trajanje rute nakon ručne promjene?
 **Veze sa drugim storyjima:**
 - **Zavisi od:** US-22 i US-23.
+
+### Acceptance criteria
+
+- **Kada** dispečer mijenja raspored, **ako** se promijeni redoslijed tačaka, **tada** sistem mora sačuvati izmjene.
+- **Sistem mora** omogućiti ručnu izmjenu redoslijeda tačaka unutar rute (npr. drag & drop).
+- **Kada** dispečer sačuva izmjene, **ako** potvrdi akciju, **tada** sistem mora prikazati novi redoslijed obilaska.
 
 ---
 
@@ -504,6 +641,12 @@ Povećava brzinu rada na terenu i eliminiše potrebu za papirnim spiskovima ili 
 **Veze sa drugim storyjima:**
 - **Direktna zavisnost:** US-25 (Dodjela rute poštaru).
 
+### Acceptance criteria
+
+- **Kada** se poštar prijavi, **ako** se otvori mobilna aplikacija, **tada** sistem mora prikazati aktivnu rutu.
+- **Sistem mora** biti responzivan (prilagođen ekranu telefona).
+- **Korisnik treba** vidjeti sve tačke obilaska na mapi ili listi.
+
 ---
 
 ## PBI-027 Ažuriranje statusa sandučića
@@ -529,6 +672,12 @@ Omogućava zatvaranje petlje povratnih informacija između poštara i dispečera
 **Veze sa drugim storyjima:**
 - **Zavisi od:** US-26.
 - **Utiče na:** US-29 i US-30.
+
+### Acceptance criteria
+
+- **Kada** poštar dođe do lokacije, **ako** se promijeni status sandučića (npr. u "Ispražnjeno"), **tada** sistem mora sačuvati promjenu.
+- **Sistem mora** omogućiti promjenu statusa jednim klikom.
+- **Korisnik treba** vidjeti ažuriran status na svom interfejsu.
 
 ---
 
@@ -556,6 +705,12 @@ Omogućava da sistem zabilježi operativne izuzetke i da dispečer ima tačnu sl
 - **Zavisi od:** US-26.
 - **Povezano sa:** US-28 i US-30.
 
+### Acceptance criteria
+
+- **Kada** poštar ne može pristupiti tački, **ako** se označi lokacija kao nedostupna, **tada** sistem mora evidentirati problem.
+- **Sistem mora** omogućiti unos napomene (razlog nedostupnosti).
+- **Korisnik treba** vidjeti status "Nedostupno" u svojoj listi zadataka.
+
 ---
 
 ## PBI-029 Praćenje statusa rute od strane dispečera
@@ -580,6 +735,12 @@ Dispečer dobija operativni pregled nad izvršenjem rute i može pravovremeno re
 - *Otvoreno pitanje:* Da li je u MVP-u dovoljan tabelarni pregled ili je potreban i vizuelni prikaz na mapi?
 **Veze sa drugim storyjima:**
 - **Zavisi od:** US-28 i US-29.
+
+### Acceptance criteria
+
+- **Kada** dispečer prati rad na terenu, **ako** se učita progres, **tada** sistem mora prikazati statuse u realnom vremenu.
+- **Sistem mora** omogućiti vizuelni pregled progresa rute.
+- **Korisnik treba** vidjeti tačno koji su sandučići obrađeni, preskočeni ili problematični.
 
 ---
 
@@ -606,3 +767,8 @@ Izvještaj daje pregled realizacije rada i predstavlja osnovu za internu analizu
 **Veze sa drugim storyjima:**
 - **Zavisi od:** US-28, US-29 i US-30.
 
+### Acceptance criteria
+
+- **Kada** se odabere opcija za izvještavanje, **ako** se generiše izvještaj za odabrani datum, **tada** sistem mora prikazati rezultate.
+- **Sistem mora** prikazati broj realizovanih i nerealizovanih obilazaka.
+- **Korisnik treba** dobiti sažetak sa osnovnim statistikama za odabrani dan.
