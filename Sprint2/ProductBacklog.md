@@ -2,7 +2,6 @@
 
 **Projekat:** Sistem za optimizaciju ruta punjenja i pražnjenja poštanskih sandučića  
 
-> **Napomena o organizaciji sprinteva:** Stavke koje su u tabeli trenutno grupisane pod "Sprint 6 - 10" predstavljaju funkcionalnosti iz faze implementacije. Njihova detaljnija razrada po pojedinačnim sprintovima biće naknadno definisana i ažurirana kako se budemo približavali implementacijskom dijelu projekta.
 
 | ID | Naziv stavke | Kratak opis | Tip stavke | Prioritet | Procjena napora | Status | Veza sa sprintom / planom | Napomena |
 |---|---|---|---|---|---|---|---|---|
