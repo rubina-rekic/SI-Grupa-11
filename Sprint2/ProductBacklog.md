@@ -49,14 +49,11 @@
 | PBI-050 | Prošireno operativno izvještavanje | Omogućiti generisanje izvještaja po poštaru, periodu i tipu sandučića, ne samo dnevni pregled. | feature | Medium | 4h | To Do | Sprint 10 | Nadogradnja PBI-030 |
 | PBI-051 | Pretraga i filtriranje sandučića | Omogućiti pretragu i filtriranje liste sandučića po lokaciji, tipu, prioritetu i statusu. | feature | Medium | 3h 30min | To Do | Sprint 10 | Upotrebljivost sistema |
 | PBI-052 | Stabilizacija sistema i regresijsko testiranje | Provesti regresijsko testiranje svih ključnih funkcionalnosti i otkloniti pronađene greške. | technical | High | 8h | To Do | Sprint 11 |  |
-
 | PBI-053 | Finalni inkrement i "bug fixing" | Provesti završne korekcije koda, UI detalja i rubnih scenarija na osnovu feedbacka iz Sprinta 11. | technical | High | 6h | To Do | Sprint 12 | Finalni kandidat za demonstraciju |
 | PBI-054 | Release Notes | Pripremiti Release Notes koji opisuju šta sistem radi, koje su poznate limitacije i šta je isporučeno u finalnoj verziji. | documentation | High | 2h | To Do | Sprint 12 | |
-
 | PBI-055 | Korisnička dokumentacija | Pripremiti korisničku dokumentaciju s opisom sistema, korisničkih uloga i osnovnog načina korištenja. | documentation | High | 4h | To Do | Sprint 12 |  |
 | PBI-056 | Tehnička dokumentacija | Pripremiti tehničku dokumentaciju s pregledom arhitekture, glavnih komponenti, logike sistema i napomenama za pokretanje. | documentation | High | 4h | To Do | Sprint 12 |  |
 | PBI-057 | Ažuriranje svih logova i artefakata | Osigurati da su Product Backlog, Decision Log, AI Usage Log i svi ostali obavezni artefakti potpuni i ažurni za finalnu predaju. | documentation | High | 2h | To Do | Sprint 12 | Kompletnost predaje |
-
 | PBI-058 | Individualna refleksija | Svaki član tima priprema individualnu refleksiju o doprinosu, naučenim lekcijama, izazovima i razlici između faza rada. | documentation | High | 2h | To Do | Sprint 13 | |
 | PBI-059 | Peer evaluation | Svaki član tima ispunjava peer evaluation obrazac za ostale članove tima. | documentation | High | 1h | To Do | Sprint 13 |  |
 | PBI-060 | Završni refleksivni izvještaj tima | Tim zajedno priprema izvještaj koji sumira razvoj projekta, ključne odluke, izazove i naučene lekcije  | documentation | High | 3h | To Do | Sprint 13 | Obavezan deliverable |
