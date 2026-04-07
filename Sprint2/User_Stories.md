@@ -2,23 +2,26 @@
 
 ---
 
-## PBI-011 Kreiranje korisničkog računa poštara
+## Sprint 5 (PBI-011, PBI-012, PBI-013, PBI-014) 
+**Cilj:** Omogućiti kreiranje profila i osigurati zaštitu podataka.
 
-### User Stories
+### PBI-011 Kreiranje korisničkog računa poštara
+
+#### User Stories
 - **US-01:** Kao administrator, želim kreirati korisnički račun za poštara unosom osnovnih podataka, emaila/korisničkog imena i inicijalne lozinke, kako bi poštar mogao pristupiti sistemu.
 - **US-02:** Kao administrator, želim da sistem validira jedinstvenost emaila/korisničkog imena i snagu inicijalne lozinke, kako bi se spriječilo kreiranje neispravnih ili nesigurnih računa.
 - **US-03:** Kao administrator, želim dobiti jasnu potvrdu o uspješnom kreiranju računa ili poruku o grešci (npr. zauzet email), kako bih mogao završiti unos i dostaviti kredencijale poštaru.
 
-### Poslovna vrijednost
+#### Poslovna vrijednost
 Korisnički računi za poštare moraju biti kontrolisano kreirani od strane administratora kako bi pristup sistemu imali samo ovlašteni uposlenici. Time se zadržava sigurnost sistema i jasna veza između poštara, dodijeljenih ruta i aktivnosti na terenu.
 
-### Prioritet: High
+#### Prioritet: High
 
 ---
 
-### Detaljna razrada Story-ja
+#### Detaljna razrada Story-ja
 
-#### ID storyja: US-01
+##### ID storyja: US-01
 **Naziv storyja:** Administratorsko kreiranje korisničkog računa poštara  
 **Opis:** Kao **administrator**, želim **unijeti osnovne podatke poštara, email/korisničko ime i inicijalnu lozinku**, kako bih **kreirao korisnički račun koji poštaru omogućava pristup sistemu**.  
 **Poslovna vrijednost:** Osigurava da korisničke račune može otvoriti samo ovlaštena osoba, čime se smanjuje rizik od neovlaštene registracije.  
@@ -28,7 +31,7 @@ Korisnički računi za poštare moraju biti kontrolisano kreirani od strane admi
 - *Otvoreno pitanje:* Da li se kao primarni identifikator za prijavu koristi email adresa ili posebno korisničko ime?  
 **Veze sa drugim storyjima:** Direktna zavisnost od US-02 i US-03.
 
-### Acceptance criteria
+#### Acceptance criteria
 
 - **Kada** administrator unese sve unosne podatke (email/username i lozinka), **ako** klikne na dugme za kreiranje računa, **tada** sistem mora kreirati korisnički račun.
 - **Sistem mora** sačuvati podatke u bazi.
@@ -37,7 +40,7 @@ Korisnički računi za poštare moraju biti kontrolisano kreirani od strane admi
 
 ---
 
-#### ID storyja: US-02
+##### ID storyja: US-02
 **Naziv storyja:** Validacija unosa pri kreiranju računa  
 **Opis:** Kao **administrator**, želim da **sistem automatski provjerava jedinstvenost emaila/korisničkog imena i kompleksnost inicijalne lozinke**, kako bi se **smanjio rizik od grešaka i sigurnosnih propusta pri otvaranju računa**.  
 **Poslovna vrijednost:** Povećanje sigurnosti sistema i integriteta podataka od samog početka korištenja.  
@@ -48,7 +51,7 @@ Korisnički računi za poštare moraju biti kontrolisano kreirani od strane admi
 **Veze sa drugim storyjima:** Dio je procesa US-01.
 
 
-### Acceptance criteria
+#### Acceptance criteria
 
 - **Kada** administrator unese već postojeći email/username, **ako** pokuša kreirati račun, **tada** sistem mora odbiti unos i prikazati poruku o grešci.
 - **Sistem mora** provjeravati jedinstvenost emaila/username-a.
@@ -57,7 +60,7 @@ Korisnički računi za poštare moraju biti kontrolisano kreirani od strane admi
 
 ---
 
-#### ID storyja: US-03
+##### ID storyja: US-03
 **Naziv storyja:** Feedback o statusu kreiranja računa  
 **Opis:** Kao **administrator**, želim **primiti vizuelnu potvrdu o uspjehu ili opisnu poruku o grešci**, kako bih **imao informaciju da li je korisnički račun uspješno kreiran i spreman za dodjelu poštaru**.  
 **Poslovna vrijednost:** Poboljšanje administratorskog iskustva i smanjenje broja duplih ili neuspjelih pokušaja kreiranja računa.  
@@ -67,7 +70,7 @@ Korisnički računi za poštare moraju biti kontrolisano kreirani od strane admi
 - *Otvoreno pitanje:* Na koji način administrator uručuje inicijalne kredencijale poštaru (npr. usmeno, printano ili kroz interni kanal)?
 **Veze sa drugim storyjima:** Uspješan ishod ovog story-ja je preduslov za **US-04** (Prijava korisnika).
 
-### Acceptance criteria
+#### Acceptance criteria
 
 - **Kada** administrator potvrdi kreiranje, **ako** je račun uspješno kreiran, **tada** sistem mora prikazati potvrdu.
 - **Kada** dođe do greške prilikom obrade, **ako** sistem ne može izvršiti akciju, **tada** mora prikazati odgovarajuću poruku.
@@ -75,24 +78,24 @@ Korisnički računi za poštare moraju biti kontrolisano kreirani od strane admi
 
 ---
 
-## PBI-012 Prijava korisnika
+### PBI-012 Prijava korisnika
 
-### User Stories
+#### User Stories
 - **US-04:** Kao registrovani korisnik, želim se prijaviti na sistem koristeći kredencijale koje mi je dodijelio administrator, kako bih pristupio funkcionalnostima aplikacije.
 - **US-05:** Kao korisnik, želim da me sistem obavijesti ako unesem pogrešne kredencijale, kako bih znao da trebam ponoviti unos ili resetovati inicijalnu lozinku.
 - **US-06:** Kao poštar koji se prvi put prijavljuje, želim biti obavezan promijeniti inicijalnu lozinku prije nastavka rada, kako bih zaštitio svoj korisnički račun.
 
-### Poslovna vrijednost
+#### Poslovna vrijednost
 Prijava osigurava da samo autentifikovani korisnici mogu manipulisati rutama i podacima o sandučićima. Obavezna promjena inicijalne lozinke pri prvoj prijavi dodatno štiti korisničke račune i smanjuje rizik od neovlaštenog pristupa nakon dodjele kredencijala.
 
 
-### Prioritet: High
+#### Prioritet: High
 
 ---
 
-### Detaljna razrada Story-a
+#### Detaljna razrada Story-a
 
-#### ID storyja: US-04
+##### ID storyja: US-04
 **Naziv storyja:** Osnovna prijava na sistem  
 **Opis:** Kao **registrovani korisnik**, želim **unijeti svoje pristupne podatke u login formu**, kako bih **ostvario pristup radnom okruženju**.  
 **Poslovna vrijednost:** Osnovni mehanizam autentifikacije i zaštite korisničkog profila.  
@@ -104,7 +107,7 @@ Prijava osigurava da samo autentifikovani korisnici mogu manipulisati rutama i p
 - **Striktna zavisnost:** Zavisi od **US-01** (Kreiranje korisničkog računa poštara).
 - **Logički povezano:** Prethodi svim storyjima koji zahtijevaju autorizaciju.
 
-### Acceptance criteria
+#### Acceptance criteria
 
 - **Kada** korisnik unese ispravne kredencijale, **ako** klikne na prijavu, **tada** sistem mora omogućiti pristup.
 - **Sistem mora** preusmjeriti korisnika na dashboard.
@@ -112,66 +115,66 @@ Prijava osigurava da samo autentifikovani korisnici mogu manipulisati rutama i p
 
 ---
 
-#### ID storyja: US-05
-**Naziv storyja:** Rukovanje neispravnim kredencijalima
-**Opis:** Kao **korisnik**, želim **jasnu poruku o grešci u slučaju pogrešnog emaila ili lozinke**, kako bih **znao da unos nije ispravan**.
-**Poslovna vrijednost:** Poboljšanje korisničkog iskustva i smanjenje broja upita podršci zbog nejasnoća pri prijavi.
-**Prioritet:** Medium  
-**Pretpostavke i otvorena pitanja:**
-- *Pretpostavka:* Poruka ne smije biti previše specifična radi sigurnosti (sprječavanje enumeration napada).
+##### ID storyja: US-05
+**Naziv storyja:** Rukovanje neispravnim kredencijalima<br>
+**Opis:** Kao **korisnik**, želim **jasnu poruku o grešci u slučaju pogrešnog emaila ili lozinke**, kako bih **znao da unos nije ispravan**. <br>
+**Poslovna vrijednost:** Poboljšanje korisničkog iskustva i smanjenje broja upita podršci zbog nejasnoća pri prijavi. <br>
+**Prioritet:** Medium  <br>
+**Pretpostavke i otvorena pitanja:**<br>
+- *Pretpostavka:* Poruka ne smije biti previše specifična radi sigurnosti (sprječavanje enumeration napada).<br>
 **Veze sa drugim storyjima:** Dio je toka **US-04**.
 
-### Acceptance criteria
+#### Acceptance criteria
  
 **Kada** korisnik unese pogrešne kredencijale, **ako** klikne na prijavu, **tada** sistem mora prikazati poruku o grešci.
 - **Sistem ne smije** dozvoliti prijavu sa praznim poljima.
 
 ---
 
-#### ID storyja: US-06
-**Naziv storyja:** Obavezna promjena lozinke pri prvoj prijavi  
-**Opis:** Kao **poštar koji se prvi put prijavljuje**, želim da me **sistem odmah nakon uspješne autentifikacije preusmjeri na promjenu inicijalne lozinke**, kako bi **moj račun bio zaštićen prije daljnjeg korištenja sistema**.
-**Poslovna vrijednost:** Smanjuje rizik da inicijalna lozinka ostane poznata drugim osobama i povećava sigurnost pristupa sistemu.
-**Prioritet:** High
-**Pretpostavke i otvorena pitanja:**
-- *Pretpostavka:* Sistem može prepoznati da li korisnik koristi privremenu/inicijalnu lozinku.
-- *Otvoreno pitanje:* Da li nakon prve promjene lozinke korisnik odmah ulazi u sistem ili se mora ponovo prijaviti?
+##### ID storyja: US-06
+**Naziv storyja:** Obavezna promjena lozinke pri prvoj prijavi  <br>
+**Opis:** Kao **poštar koji se prvi put prijavljuje**, želim da me **sistem odmah nakon uspješne autentifikacije preusmjeri na promjenu inicijalne lozinke**, kako bi **moj račun bio zaštićen prije daljnjeg korištenja sistema**. <br>
+**Poslovna vrijednost:** Smanjuje rizik da inicijalna lozinka ostane poznata drugim osobama i povećava sigurnost pristupa sistemu.<br>
+**Prioritet:** High <br>
+**Pretpostavke i otvorena pitanja:**<br>
+- *Pretpostavka:* Sistem može prepoznati da li korisnik koristi privremenu/inicijalnu lozinku.<br>
+- *Otvoreno pitanje:* Da li nakon prve promjene lozinke korisnik odmah ulazi u sistem ili se mora ponovo prijaviti?<br>
 **Veze sa drugim storyjima:** Nadovezuje se na **US-04** i zavisi od **US-02**.
 
-### Acceptance criteria
+#### Acceptance criteria
 
 - **Kada** se korisnik prvi put prijavi, **ako** unese inicijalnu lozinku, **tada** sistem mora zahtijevati promjenu lozinke.
 - **Sistem ne smije** dozvoliti nastavak rada bez promjene lozinke.
 
 ---
 
-## PBI-013 Odjava korisnika
+### PBI-013 Odjava korisnika
 
-### User Stories
+#### User Stories
 - **US-07:** Kao prijavljeni korisnik, želim se moći odjaviti iz sistema u bilo kojem trenutku, kako bih osigurao da niko drugi ne može pristupiti mojim podacima nakon završetka rada.
 
-### Poslovna vrijednost
+#### Poslovna vrijednost
 Osigurava sigurnost korisničkih profila i sprečava neovlašteno korištenje sesije. Ovo je kritično u radnim okruženjima gdje više uposlenika može koristiti isti uređaj.
 
-### Prioritet: Medium
+#### Prioritet: Medium
 
 ---
 
-### Detaljna razrada Story-ja 
+#### Detaljna razrada Story-ja 
 
-#### ID storyja: US-07
-**Naziv storyja:** Sigurna odjava iz sistema
-**Opis:** Kao **prijavljeni korisnik**, želim **klikom na dugme za odjavu prekinuti aktivnu sesiju**, kako bi **sistem zahtijevao ponovnu prijavu za dalji rad**.
-**Poslovna vrijednost:** Zaštita integriteta podataka i sprječavanje zloupotrebe sesije od strane trećih lica.
-**Prioritet:** Medium
-**Pretpostavke i otvorena pitanja:**
-- *Pretpostavka:* Korisnik se nalazi na bilo kojoj stranici unutar sistema gdje je vidljiv navigacijski meni.
-- *Otvoreno pitanje:* Da li sistem treba automatski odjaviti korisnika nakon određenog perioda neaktivnosti (npr. 30 minuta) radi dodatne sigurnosti?
-**Veze sa drugim storyjima:**
-- **Striktna zavisnost:** Direktno zavisi od **US-04** (Prijava korisnika) – ne može se odjaviti neko ko nije prijavljen.
+##### ID storyja: US-07
+**Naziv storyja:** Sigurna odjava iz sistema<br>
+**Opis:** Kao **prijavljeni korisnik**, želim **klikom na dugme za odjavu prekinuti aktivnu sesiju**, kako bi **sistem zahtijevao ponovnu prijavu za dalji rad**.<br>
+**Poslovna vrijednost:** Zaštita integriteta podataka i sprječavanje zloupotrebe sesije od strane trećih lica.<br>
+**Prioritet:** Medium<br>
+**Pretpostavke i otvorena pitanja:**<br>
+- *Pretpostavka:* Korisnik se nalazi na bilo kojoj stranici unutar sistema gdje je vidljiv navigacijski meni.<br>
+- *Otvoreno pitanje:* Da li sistem treba automatski odjaviti korisnika nakon određenog perioda neaktivnosti (npr. 30 minuta) radi dodatne sigurnosti?<br>
+**Veze sa drugim storyjima:**<br>
+- **Striktna zavisnost:** Direktno zavisi od **US-04** (Prijava korisnika) – ne može se odjaviti neko ko nije prijavljen.<br>
 - **Logički slijed:** Nakon odjave, korisnik se preusmjerava na početnu stranicu ili formu za ponovnu prijavu.
 
-### Acceptance criteria
+#### Acceptance criteria
 
 - **Kada** korisnik klikne na odjavu, **ako** potvrdi akciju, **tada** sistem mora prekinuti sesiju.
 - **Sistem mora** preusmjeriti korisnika na login stranicu.
@@ -179,27 +182,27 @@ Osigurava sigurnost korisničkih profila i sprečava neovlašteno korištenje se
 
 ---
 
-## PBI-014 Uloge i pristup po ulozi
+### PBI-014 Uloge i pristup po ulozi
 
-### User Stories
+#### User Stories
 - **US-08:** Kao administrator, želim definisati različite nivoe pristupa (Administrator, Dispečer, Poštar), kako bih osigurao da svaki korisnik vidi samo relevantne podatke.
 - **US-09:** Kao prijavljeni korisnik, želim da me sistem preusmjeri na radnu površinu (dashboard) prilagođenu mojoj ulozi, kako bih odmah mogao započeti sa svojim specifičnim zadacima.
 - **US-10:** Kao korisnik sa ograničenim pravima, želim dobiti poruku o zabrani pristupa ako pokušam otvoriti stranicu za koju nemam ovlaštenje, kako bi se spriječila neovlaštena manipulacija podacima.
 
-### Poslovna vrijednost
+#### Poslovna vrijednost
 Implementacija uloga sprječava ljudske greške i zloupotrebu sistema. Poštari na terenu trebaju jednostavan interfejs za rad, dok dispečeri trebaju kompleksne alate za planiranje. Razgraničenje pristupa štiti bazu podataka od neovlaštenih izmjena.
 
-### Prioritet: High
+#### Prioritet: High
 
 ---
 
-### Detaljna razrada Story-ja 
+#### Detaljna razrada Story-ja 
 
-#### ID storyja: US-08
-**Naziv storyja:** Definisanje sistemskih uloga
-**Opis:** Kao **administrator**, želim **dodijeliti specifičnu ulogu svakom korisničkom računu**, kako bi **sistem mogao kontrolisati dostupne funkcionalnosti**.
-**Poslovna vrijednost:** Osnovna kontrola pristupa (Access Control) koja omogućava skalabilnost tima.
-**Prioritet:** High
+##### ID storyja: US-08
+**Naziv storyja:** Definisanje sistemskih uloga<br>
+**Opis:** Kao **administrator**, želim **dodijeliti specifičnu ulogu svakom korisničkom računu**, kako bi **sistem mogao kontrolisati dostupne funkcionalnosti**.<br>
+**Poslovna vrijednost:** Osnovna kontrola pristupa (Access Control) koja omogućava skalabilnost tima.<br>
+**Prioritet:** High<br>
 **Pretpostavke i otvorena pitanja:**
 - *Pretpostavka:* Korisnički račun je već kreiran u sistemu.
 - *Otvoreno pitanje:* Da li jedan korisnik može imati više uloga istovremeno (npr. dispečer koji je ujedno i administrator)?
@@ -207,7 +210,7 @@ Implementacija uloga sprječava ljudske greške i zloupotrebu sistema. Poštari 
 - **Zavisi od:** US-01 (Kreiranje korisničkog računa poštara).
 - **Osnova za:** Sve funkcionalnosti koje slijede (dodavanje sandučića, generisanje ruta).
 
-### Acceptance criteria
+#### Acceptance criteria
 
 - **Kada** administrator odabere nivo pristupa, **ako** dodijeli ulogu korisniku, **tada** sistem mora sačuvati ulogu.
 - **Sistem mora** omogućiti različite nivoe pristupa.
@@ -216,17 +219,17 @@ Implementacija uloga sprječava ljudske greške i zloupotrebu sistema. Poštari 
 
 ---
 
-#### ID storyja: US-09
-**Naziv storyja:** Personalizovani dashboard prema ulozi
-**Opis:** Kao **prijavljeni korisnik**, želim da **nakon prijave vidim meni i opcije specifične za moju ulogu (npr. poštar vidi samo „Moja ruta“)**, kako bih **brže obavljao posao bez suvišnih informacija**.
-**Poslovna vrijednost:** Povećanje efikasnosti uposlenika kroz pojednostavljen i relevantan korisnički interfejs.
-**Prioritet:** High
-**Pretpostavke i otvorena pitanja:**
+##### ID storyja: US-09
+**Naziv storyja:** Personalizovani dashboard prema ulozi<br>
+**Opis:** Kao **prijavljeni korisnik**, želim da **nakon prijave vidim meni i opcije specifične za moju ulogu**, kako bih **brže obavljao posao bez suvišnih informacija**.<br>
+**Poslovna vrijednost:** Povećanje efikasnosti uposlenika kroz pojednostavljen i relevantan korisnički interfejs.<br>
+**Prioritet:** High<br>
+**Pretpostavke i otvorena pitanja:**<br>
 - *Pretpostavka:* Sistem prepoznaje ID uloge pri svakom učitavanju stranice.
 **Veze sa drugim storyjima:**
 - **Zavisi od:** US-04 (Prijava korisnika) i US-08 (Definisanje uloga).
 
-### Acceptance criteria
+#### Acceptance criteria
 
 - **Kada** se korisnik prijavi, **ako** sistem prepozna ulogu, **tada** sistem mora prikazati odgovarajući dashboard.
 - **Sistem mora** omogućiti prikaz funkcionalnosti isključivo po ulozi.
@@ -234,18 +237,18 @@ Implementacija uloga sprječava ljudske greške i zloupotrebu sistema. Poštari 
 
 ---
 
-#### ID storyja: US-10
-**Naziv storyja:** Restrikcija neovlaštenog pristupa
-**Opis:** Kao **korisnik sa ograničenim pravima**, želim da mi **sistem onemogući direktan pristup URL-ovima koji nisu namijenjeni mojoj ulozi**, kako bi **sigurnost podataka ostala netaknuta**.
-**Poslovna vrijednost:** Sprječavanje sigurnosnih propusta (tzv. „Insecure Direct Object References“).
-**Prioritet:** Medium
-**Pretpostavke i otvorena pitanja:**
+##### ID storyja: US-10
+**Naziv storyja:** Restrikcija neovlaštenog pristupa<br>
+**Opis:** Kao **korisnik sa ograničenim pravima**, želim da mi **sistem onemogući direktan pristup URL-ovima koji nisu namijenjeni mojoj ulozi**, kako bi **sigurnost podataka ostala netaknuta**.<br>
+**Poslovna vrijednost:** Sprječavanje sigurnosnih propusta (tzv. „Insecure Direct Object References“).<br>
+**Prioritet:** Medium<br>
+**Pretpostavke i otvorena pitanja:**<br>
 - *Pretpostavka:* Čak i ako korisnik zna tačan link (npr. `/admin/delete`), sistem mu ne smije dozvoliti izvršenje akcije.
 - *Otvoreno pitanje:* Da li sistem treba logirati svaki neuspješan pokušaj pristupa zabranjenim stranicama radi sigurnosne analize?
 **Veze sa drugim storyjima:**
 - **Zavisi od:** US-08 (Definisanje uloga).
 
-### Acceptance criteria
+#### Acceptance criteria
 
 - **Kada** korisnik pokuša pristupiti zabranjenoj stranici, **ako** sistem detektuje nedostatak dozvole, **tada** sistem mora odbiti pristup.
 - **Sistem mora** prikazati poruku o zabrani.
@@ -253,34 +256,36 @@ Implementacija uloga sprječava ljudske greške i zloupotrebu sistema. Poštari 
 
 
 ---
+## Sprint 6 (PBI-015, PBI-016, PBI-017, PBI-018, PBI-019)
+**Cilj:** Napuniti bazu podacima s kojima će sistem raditi i omogućiti osnovne operacije nad tim podacima.
 
-## PBI-015 Dodavanje poštara
+### PBI-015 Dodavanje poštara
 
-### User Stories
+#### User Stories
 - **US-11:** Kao administrator, želim unijeti podatke o novom poštaru (ime, prezime, kontakt telefon, ID broj), kako bih ga uključio u bazu aktivnih uposlenika na terenu.
 - **US-12:** Kao administrator, želim da sistem provjeri da li poštar sa istim ID brojem već postoji, kako bi se izbjegli dupli unosi i konfuzija pri dodjeli ruta.
 
-### Poslovna vrijednost
+#### Poslovna vrijednost
 Ovaj modul je ključan za operativno planiranje. Bez tačne baze poštara, dispečer ne može vršiti dodjelu ruta, a sistem ne može pratiti ko je odgovoran za koji sandučić.
 
-### Prioritet: High
+#### Prioritet: High
 
 ---
 
-### Detaljna razrada Story-ja
+#### Detaljna razrada Story-ja
 
-#### ID storyja: US-11
-**Naziv storyja:** Unos novog poštara u sistem
-**Opis:** Kao **administrator**, želim **popuniti formu sa podacima o novom uposleniku**, kako bi **on postao vidljiv u listi za dodjelu dnevnih ruta**.
-**Poslovna vrijednost:** Digitalizacija evidencije terenskih radnika.
-**Prioritet:** High
+##### ID storyja: US-11
+**Naziv storyja:** Unos novog poštara u sistem<br>
+**Opis:** Kao **administrator**, želim **popuniti formu sa podacima o novom uposleniku**, kako bi **on postao vidljiv u listi za dodjelu dnevnih ruta**.<br>
+**Poslovna vrijednost:** Digitalizacija evidencije terenskih radnika.<br>
+**Prioritet:** High<br>
 **Pretpostavke i otvorena pitanja:**
 - *Pretpostavka:* Administrator ima pristup panelu za upravljanje osobljem.
 - *Pretpostavka:* Kreiranje login naloga i dodjela početnih kredencijala pokriveni su kroz PBI-011.
 **Veze sa drugim storyjima:**
 - **Osnova za:** US-13 (Pregled liste poštara) i US-23 (Dodjela rute poštaru).
 
-### Acceptance criteria
+#### Acceptance criteria
 
 - **Kada** administrator unese lične podatke, **ako** klikne na dugme za spasavanje, **tada** sistem mora sačuvati poštara.
 - **Sistem mora** omogućiti unos svih polja (ime, prezime, telefon, ID).
@@ -288,18 +293,18 @@ Ovaj modul je ključan za operativno planiranje. Bez tačne baze poštara, dispe
 
 ---
 
-#### ID storyja: US-12
-**Naziv storyja:** Validacija duplog ID broja
-**Opis:** Kao **administrator**, želim **da sistem spriječi unos novog poštara ukoliko se njegov ID broj već nalazi u bazi**, kako bi se **izbjegli dupli unosi i konfuzija pri dodjeli ruta**.
-**Poslovna vrijednost:** Održavanje integriteta baze podataka i sprečavanje operativnih grešaka prilikom vođenja evidencije.
-**Prioritet:** High
+##### ID storyja: US-12
+**Naziv storyja:** Validacija duplog ID broja<br>
+**Opis:** Kao **administrator**, želim **da sistem spriječi unos novog poštara ukoliko se njegov ID broj već nalazi u bazi**, kako bi se **izbjegli dupli unosi i konfuzija pri dodjeli ruta**.<br>
+**Poslovna vrijednost:** Održavanje integriteta baze podataka i sprečavanje operativnih grešaka prilikom vođenja evidencije.<br>
+**Prioritet:** High<br>
 **Pretpostavke i otvorena pitanja:**
 - *Pretpostavka:* ID broj radnika je striktno jedinstven identifikator na nivou cijelog sistema.
 - *Otvoreno pitanje:* Da li sistem, u slučaju unosa duplog ID-a, treba odmah ponuditi link za pregled profila postojećeg poštara sa tim ID brojem?
 **Veze sa drugim storyjima:**
 - **Zavisi od:** US-11 (Unos novog poštara u sistem).
 
-### Acceptance criteria
+#### Acceptance criteria
 
 - **Kada** administrator unese ID, **ako** ID već postoji u bazi, **tada** sistem mora odbiti unos.
 - **Sistem mora** provjeravati jedinstvenost ID-a.
@@ -308,30 +313,30 @@ Ovaj modul je ključan za operativno planiranje. Bez tačne baze poštara, dispe
 
 ---
 
-## PBI-016 Pregled liste poštara
+### PBI-016 Pregled liste poštara
 
-### User Stories
+#### User Stories
 - **US-13:** Kao administrator ili dispečer, želim vidjeti listu svih registrovanih poštara sa njihovim trenutnim statusom, kako bih znao koga mogu zadužiti za nove zadatke.
 
-### Poslovna vrijednost
+#### Poslovna vrijednost
 Omogućava brz pregled dostupnih ljudskih resursa, što direktno utiče na brzinu reagovanja dispečera pri planiranju vanrednih ili redovnih pražnjenja sandučića.
 
-### Prioritet: Medium
+#### Prioritet: Medium
 
 ---
 
-#### ID storyja: US-13
-**Naziv storyja:** Tabelarni pregled poštara
-**Opis:** Kao **administrator ili dispečer**, želim **imati pregled svih poštara u obliku tabele sa osnovnim podacima i statusom aktivnosti**, kako bih **brzo pronašao određenog uposlenika i procijenio njegovu raspoloživost**.
-**Poslovna vrijednost:** Transparentnost i lakša navigacija kroz bazu uposlenika.
-**Prioritet:** Medium
+##### ID storyja: US-13
+**Naziv storyja:** Tabelarni pregled poštara<br>
+**Opis:** Kao **administrator ili dispečer**, želim **imati pregled svih poštara u obliku tabele sa osnovnim podacima i statusom aktivnosti**, kako bih **brzo pronašao određenog uposlenika i procijenio njegovu raspoloživost**.<br>
+**Poslovna vrijednost:** Transparentnost i lakša navigacija kroz bazu uposlenika.<br>
+**Prioritet:** Medium<br>
 **Pretpostavke i otvorena pitanja:**
 - *Pretpostavka:* Lista prikazuje samo relevantne podatke (npr. bez lozinki).
 - *Otvoreno pitanje:* Da li u listi treba biti vidljiva i zadnja poznata lokacija poštara radi bolje koordinacije?
 **Veze sa drugim storyjima:**
 - **Zavisi od:** US-11 (Unos poštara).
 
-### Acceptance criteria
+#### Acceptance criteria
 
 - **Kada** korisnik otvori listu poštara, **ako** sistem učita podatke, **tada** sistem mora prikazati sve poštare.
 - **Sistem mora** omogućiti pregled osnovnih podataka (ime, prezime, kontakt telefon i status poštara).
@@ -339,33 +344,33 @@ Omogućava brz pregled dostupnih ljudskih resursa, što direktno utiče na brzin
 
 ---
 
-## PBI-017 Dodavanje poštanskog sandučića
+### PBI-017 Dodavanje poštanskog sandučića
 
-### User Stories
+#### User Stories
 - **US-14:** Kao administrator ili dispečer, želim dodati novi poštanski sandučić u sistem unoseći njegovu adresu i precizne GPS koordinate, kako bi on bio vidljiv u evidenciji i mogao biti korišten za planiranje ruta.
 - **US-15:** Kao administrator ili dispečer, želim pri unosu definisati tip sandučića i osnovne podatke o njemu, kako bi zapis bio potpun i spreman za dalju obradu u sistemu.
 
-### Poslovna vrijednost
+#### Poslovna vrijednost
 Precizna evidencija sandučića je temelj optimizacije. Unos GPS koordinata eliminiše nagađanje na terenu, dok evidentiranje tipa i osnovnih podataka omogućava kvalitetnije planiranje obilazaka.
 
-### Prioritet: High
+#### Prioritet: High
 
 ---
 
-### Detaljna razrada Story-ja 
+#### Detaljna razrada Story-ja 
 
-#### ID storyja: US-14
-**Naziv storyja:** Unos lokacije sandučića putem koordinata
-**Opis:** Kao **administrator ili dispečer**, želim **unijeti adresu, geografsku širinu (Latitude) i dužinu (Longitude) za svaki sandučić**, kako bi **sistem mogao evidentirati lokaciju i koristiti je pri generisanju ruta**.
-**Poslovna vrijednost:** Omogućava matematičku preciznost pri generisanju dnevnih ruta i smanjuje potrošnju vremena na terenu.
-**Prioritet:** High
+##### ID storyja: US-14
+**Naziv storyja:** Unos lokacije sandučića putem koordinata<br>
+**Opis:** Kao **administrator ili dispečer**, želim **unijeti adresu, geografsku širinu (Latitude) i dužinu (Longitude) za svaki sandučić**, kako bi **sistem mogao evidentirati lokaciju i koristiti je pri generisanju ruta**.<br>
+**Poslovna vrijednost:** Omogućava matematičku preciznost pri generisanju dnevnih ruta i smanjuje potrošnju vremena na terenu.<br>
+**Prioritet:** High<br>
 **Pretpostavke i otvorena pitanja:**
 - *Pretpostavka:* Korisnik ima pristup Google Maps ili sličnom servisu za očitavanje koordinata.
 - *Otvoreno pitanje:* Da li sistem treba omogućiti „pinovanje“ lokacije direktno na mapi unutar aplikacije umjesto ručnog kucanja brojeva?
 **Veze sa drugim storyjima:**
 - **Osnova za:** US-22 (Generisanje dnevne rute).
 
-### Acceptance criteria
+#### Acceptance criteria
 
 - **Kada** administrator unese geografsku lokaciju, **ako** se unesu koordinate, **tada** sistem mora sačuvati lokaciju sandučića.
 - **Sistem mora** omogućiti unos GPS podataka.
@@ -373,18 +378,18 @@ Precizna evidencija sandučića je temelj optimizacije. Unos GPS koordinata elim
 
 ---
 
-#### ID storyja: US-15
-**Naziv storyja:** Unos tipa i osnovnih podataka sandučića
-**Opis:** Kao **administrator ili dispečer**, želim **prilikom kreiranja sandučića definisati njegov tip i osnovne podatke**, kako bi **zapis bio kompletan i spreman za dalje upravljanje**.
-**Poslovna vrijednost:** Omogućava konzistentnu evidenciju sandučića i lakše upravljanje njihovim karakteristikama.
-**Prioritet:** Medium
+##### ID storyja: US-15
+**Naziv storyja:** Unos tipa i osnovnih podataka sandučića<br>
+**Opis:** Kao **administrator ili dispečer**, želim **prilikom kreiranja sandučića definisati njegov tip i osnovne podatke**, kako bi **zapis bio kompletan i spreman za dalje upravljanje**.<br>
+**Poslovna vrijednost:** Omogućava konzistentnu evidenciju sandučića i lakše upravljanje njihovim karakteristikama.<br>
+**Prioritet:** Medium<br>
 **Pretpostavke i otvorena pitanja:**
 - *Pretpostavka:* Postoji unaprijed definisan skup tipova sandučića.
 - *Otvoreno pitanje:* Koji skup osnovnih podataka je obavezan pored adrese i koordinata?
 **Veze sa drugim storyjima:**
 - **Nadovezuje se na:** US-14.
 
-### Acceptance criteria
+#### Acceptance criteria
 
 - **Kada** administrator popunjava formu, **ako** se odabere tip sandučića, **tada** sistem mora sačuvati podatak o tipu.
 - **Sistem mora** omogućiti izbor tipa iz predefinisanih opcija.
@@ -392,25 +397,25 @@ Precizna evidencija sandučića je temelj optimizacije. Unos GPS koordinata elim
 
 ---
 
-## PBI-018 Izmjena podataka o sandučiću
+### PBI-018 Izmjena podataka o sandučiću
 
-### User Stories
+#### User Stories
 - **US-16:** Kao administrator, želim izmijeniti lokaciju, tip, prioritet i druge podatke postojećeg sandučića, kako bih osigurao da baza podataka odgovara stvarnom stanju na terenu.
 
-### Poslovna vrijednost
+#### Poslovna vrijednost
 Održavanje tačnosti baze podataka. Pogrešne ili zastarjele informacije dovode do gubitka vremena poštara na terenu i neispravnog planiranja rute.
 
-### Prioritet: Medium
+#### Prioritet: Medium
 
 ---
 
-### Detaljna razrada Story-ja 
+#### Detaljna razrada Story-ja 
 
-#### ID storyja: US-16
-**Naziv storyja:** Ažuriranje podataka o sandučiću
-**Opis:** Kao **administrator**, želim **otvoriti formu za uređivanje postojećeg sandučića i spasiti izmjene nad lokacijom, tipom, prioritetom i drugim podacima**, kako bi **promjene bile odmah vidljive svim korisnicima sistema**.
-**Poslovna vrijednost:** Fleksibilnost sistema u slučaju urbanističkih promjena ili tehničkih grešaka pri prvom unosu.
-**Prioritet:** Medium
+##### ID storyja: US-16
+**Naziv storyja:** Ažuriranje podataka o sandučiću<br>
+**Opis:** Kao **administrator**, želim **otvoriti formu za uređivanje postojećeg sandučića i spasiti izmjene nad lokacijom, tipom, prioritetom i drugim podacima**, kako bi **promjene bile odmah vidljive svim korisnicima sistema**.<br>
+**Poslovna vrijednost:** Fleksibilnost sistema u slučaju urbanističkih promjena ili tehničkih grešaka pri prvom unosu.<br>
+**Prioritet:** Medium<br>
 **Pretpostavke i otvorena pitanja:**
 - *Pretpostavka:* Sandučić već postoji u bazi podataka.
 - *Otvoreno pitanje:* Da li sistem treba čuvati historiju promjena (ko je i kada izmijenio podatke) radi interne kontrole?
@@ -418,7 +423,7 @@ Održavanje tačnosti baze podataka. Pogrešne ili zastarjele informacije dovode
 - **Zavisi od:** US-14 i US-15.
 - **Povezano sa:** US-18 (Definisanje prioriteta sandučića).
 
-### Acceptance criteria
+#### Acceptance criteria
 
 - **Kada** administrator otvori formu za uređivanje, **ako** se izmjene podaci, **tada** sistem mora sačuvati promjene.
 - **Sistem mora** omogućiti uređivanje svih podataka o sandučiću.
@@ -426,30 +431,30 @@ Održavanje tačnosti baze podataka. Pogrešne ili zastarjele informacije dovode
 
 ---
 
-## PBI-019 Pregled sandučića na listi
+### PBI-019 Pregled sandučića na listi
 
-### User Stories
+#### User Stories
 - **US-17:** Kao administrator ili dispečer, želim vidjeti listu svih evidentiranih sandučića kroz jednostavnu tabelu ili listu, kako bih imao pregled nad stanjem i raspoloživim tačkama za planiranje.
 
-### Poslovna vrijednost
+#### Poslovna vrijednost
 Vizuelni pregled svih tačaka u sistemu omogućava brz uvid u evidenciju sandučića i olakšava operativni rad pri planiranju i kontroli.
 
-### Prioritet: Medium
+#### Prioritet: Medium
 
 ---
 
-#### ID storyja: US-17
-**Naziv storyja:** Pregled liste sandučića
-**Opis:** Kao **administrator ili dispečer**, želim **pregledati sve evidentirane sandučiće kroz jednostavnu tabelu ili listu sa osnovnim podacima**, kako bih **brzo pronašao traženi sandučić i provjerio njegove informacije**.
-**Poslovna vrijednost:** Brža navigacija i bolja organizacija resursa.
-**Prioritet:** Medium
+##### ID storyja: US-17
+**Naziv storyja:** Pregled liste sandučića<br>
+**Opis:** Kao **administrator ili dispečer**, želim **pregledati sve evidentirane sandučiće kroz jednostavnu tabelu ili listu sa osnovnim podacima**, kako bih **brzo pronašao traženi sandučić i provjerio njegove informacije**.<br>
+**Poslovna vrijednost:** Brža navigacija i bolja organizacija resursa.<br>
+**Prioritet:** Medium<br>
 **Pretpostavke i otvorena pitanja:**
 - *Pretpostavka:* Lista prikazuje osnovne podatke potrebne za rad (npr. lokaciju, tip i status/prioritet gdje je primjenjivo).
 - *Otvoreno pitanje:* Da li u ovoj fazi treba omogućiti i pretragu ili filtriranje po tipu/naselju?
 **Veze sa drugim storyjima:**
 - **Zavisi od:** US-14 i US-15.
 
-### Acceptance criteria
+#### Acceptance criteria
 
 - **Kada** se otvori lista sandučića, **ako** sistem dohvati podatke, **tada** sistem mora prikazati sandučiće.
 - **Sistem mora** prikazati adresu, tip i prioritet sandučića.
@@ -457,23 +462,27 @@ Vizuelni pregled svih tačaka u sistemu omogućava brz uvid u evidenciju sanduč
 
 ---
 
-## PBI-020 Definisanje prioriteta sandučića
+## Sprint 7 (PBI-020, PBI-021) 
+**Cilj:** Definisati logičke parametre sistema kroz određivanje važnosti sandučića i njihovih vremenskih ograničenja.
 
-### User Stories
+
+### PBI-020 Definisanje prioriteta sandučića
+
+#### User Stories
 - **US-18:** Kao administrator, želim postaviti ili izmijeniti prioritet za pražnjenje/punjenje sandučića, kako bi sistem znao koje lokacije imaju veći operativni značaj.
 
-### Poslovna vrijednost
+#### Poslovna vrijednost
 Prioriteti omogućavaju da sistem i dispečer razlikuju kritične od manje kritičnih lokacija, što direktno utiče na kvalitet planiranja i redoslijed obilaska.
 
-### Prioritet: High
+#### Prioritet: High
 
 ---
 
-#### ID storyja: US-18
-**Naziv storyja:** Postavljanje prioriteta sandučića
-**Opis:** Kao **administrator**, želim **dodijeliti ili izmijeniti nivo prioriteta za pojedini sandučić**, kako bi **sistem mogao uzeti u obzir njegov značaj pri planiranju pražnjenja i punjenja**.
-**Poslovna vrijednost:** Diferencijacija usluge prema važnosti lokacije i bolja podrška algoritmu za planiranje.
-**Prioritet:** High
+##### ID storyja: US-18
+**Naziv storyja:** Postavljanje prioriteta sandučića <br>
+**Opis:** Kao **administrator**, želim **dodijeliti ili izmijeniti nivo prioriteta za pojedini sandučić**, kako bi **sistem mogao uzeti u obzir njegov značaj pri planiranju pražnjenja i punjenja**.<br>
+**Poslovna vrijednost:** Diferencijacija usluge prema važnosti lokacije i bolja podrška algoritmu za planiranje.<br>
+**Prioritet:** High<br>
 **Pretpostavke i otvorena pitanja:**
 - *Pretpostavka:* Postoji jasan skup vrijednosti prioriteta (npr. nizak, srednji, visok).
 - *Otvoreno pitanje:* Da li se prioritet treba mijenjati isključivo ručno ili može biti i automatski predložen na osnovu pravila sistema?
@@ -481,33 +490,85 @@ Prioriteti omogućavaju da sistem i dispečer razlikuju kritične od manje kriti
 - **Zavisi od:** US-14 i US-15.
 - **Utiče na:** US-22 (Generisanje dnevne rute).
 
-### Acceptance criteria
+#### Acceptance criteria
 
 - **Kada** administrator pristupi opcijama sandučića, **ako** se odabere prioritet, **tada** sistem mora sačuvati tu vrijednost.
 - **Sistem mora** omogućiti izbor prioriteta (npr. Visok, Srednji, Nizak).
 - **Korisnik treba** vidjeti trenutni prioritet na listi i u detaljima.
 
 ---
+### PBI-021 Evidencija radnih pravila sandučića
 
-## PBI-022 Generisanje dnevne rute
+#### User Stories
+- **US-32:** Kao administrator ili dispečer, želim definisati vremenske okvire  unutar kojih je sandučić dostupan za pražnjenje, kako bi algoritam planirao rute u skladu sa radnim vremenom.
+- **US-33:** Kao administrator ili dispečer, želim odrediti specifične radne dane za svaki sandučić, kako bi se izbjeglo planiranje obilazaka u danima kada sandučić nije dostupan.
 
-### User Stories
-- **US-22:** Kao dispečer, želim pokrenuti algoritam za automatsko generisanje dnevne rute za odabranog poštara, kako bih dobio prijedlog obilaska zasnovan na lokacijama i prioritetima sandučića.
+#### Poslovna vrijednost
+Uvođenje radnih pravila osigurava da generisane rute budu operativno izvodljive u stvarnim uslovima. Time se eliminišu situacije u kojima poštar dolazi do zaključanog objekta, čime se direktno štedi vrijeme, smanjuju troškovi goriva i povećava ukupna efikasnost logističke mreže.
 
-### Poslovna vrijednost
-Ovo je srce sistema. Automatizacija rute smanjuje manuelni rad dispečera, štedi vrijeme i osigurava da ključne lokacije ne budu zaboravljene.
-
-### Prioritet: High 
+#### Prioritet: High
 
 ---
 
-### Detaljna razrada Story-ja 
+#### Detaljna razrada Story-ja
 
-#### ID storyja: US-22
-**Naziv storyja:** Automatizovani proračun dnevne rute
-**Opis:** Kao **dispečer**, želim **klikom na dugme "Generiši" aktivirati algoritam**, koji će **na osnovu GPS koordinata i prioriteta sandučića kreirati prijedlog dnevne rute za odabranog poštara**.
-**Poslovna vrijednost:** Eliminacija manuelnog planiranja i smanjenje ljudske greške.
-**Prioritet:** High
+##### ID storyja: US-32
+**Naziv storyja:** Definisanje vremenskih okvira dostupnosti sandučića <br>
+**Opis:** Kao **administrator**, želim **unijeti vrijeme početka i kraja dostupnosti za svaki sandučić**, kako bi **sistem mogao izračunati optimalno vrijeme dolaska poštara**. <br>
+**Poslovna vrijednost:** Osigurava da poštar stigne na lokaciju isključivo tokom njenog radnog vremena. <br>
+**Prioritet:** High <br>
+**Pretpostavke i otvorena pitanja:**
+- *Pretpostavka:* Vrijeme se unosi u formatu HH:mm (24h format).
+- *Otvoreno pitanje:* Da li sistem treba dozvoliti unos više različitih termina unutar jednog dana?
+**Veze sa drugim storyjima:**
+- **Utiče na:** US-19 i US-20 (Algoritam za generisanje ruta).
+
+**Acceptance criteria:**
+- **Kada** administrator otvori formu za uređivanje sandučića, **tada** moraju postojati polja za unos "Vrijeme od" i "Vrijeme do".
+- **Sistem mora** validirati da je "Vrijeme do" hronološki nakon "Vremena od".
+- **Sistem ne smije** dozvoliti čuvanje praznih polja ako su pravila aktivirana.
+
+---
+
+##### ID storyja: US-33
+**Naziv storyja:** Definisanje radnih dana sandučića <br>
+**Opis:** Kao **administrator**, želim **označiti dane u sedmici kada je sandučić dostupan**, kako bi **sistem isključio te lokacije iz ruta tokom neradnih dana**. <br>
+**Poslovna vrijednost:** Sprečava greške u planiranju obilazaka vikendom ili specifičnim danima kada sandučići nisu u funkciji. <br>
+**Prioritet:** High <br>
+**Pretpostavke i otvorena pitanja:**
+- *Pretpostavka:* Defaultna postavka za nove sandučiće je radna sedmica (Pon-Pet).
+**Veze sa drugim storyjima:**
+- **Zavisi od:** US-15 (Pregled liste sandučića).
+
+**Acceptance criteria:**
+- **Sistem mora** omogućiti odabir dana (ponedjeljak - nedjelja) putem checkbox kontrola.
+- **Kada** algoritam generiše rutu za određeni datum, **tada** u nju smije uključiti samo sandučiće kojima je taj dan označen kao radni.
+
+
+
+---
+## Sprint 8 (PBI-022, PBI-023, PBI-024, PBI-025)
+**Cilj:** Implementirati algoritam za optimizaciju koji na osnovu unesenih parametara generiše najefikasnije rute.
+
+### PBI-022 Generisanje dnevne rute
+
+#### User Stories
+- **US-22:** Kao dispečer, želim pokrenuti algoritam za automatsko generisanje dnevne rute za odabranog poštara, kako bih dobio prijedlog obilaska zasnovan na lokacijama i prioritetima sandučića.
+
+#### Poslovna vrijednost
+Ovo je srce sistema. Automatizacija rute smanjuje manuelni rad dispečera, štedi vrijeme i osigurava da ključne lokacije ne budu zaboravljene.
+
+#### Prioritet: High 
+
+---
+
+#### Detaljna razrada Story-ja 
+
+##### ID storyja: US-22 
+**Naziv storyja:** Automatizovani proračun dnevne rute<br>
+**Opis:** Kao **dispečer**, želim **klikom na dugme "Generiši" aktivirati algoritam**, koji će **na osnovu GPS koordinata i prioriteta sandučića kreirati prijedlog dnevne rute za odabranog poštara**.<br>
+**Poslovna vrijednost:** Eliminacija manuelnog planiranja i smanjenje ljudske greške.<br>
+**Prioritet:** High<br>
 **Pretpostavke i otvorena pitanja:**
 - *Pretpostavka:* Sistem ima pristup koordinatama i prioritetima svih relevantnih sandučića.
 - *Otvoreno pitanje:* Koji algoritam koristiti u MVP-u s obzirom na broj tačaka i performanse sistema?
@@ -515,7 +576,7 @@ Ovo je srce sistema. Automatizacija rute smanjuje manuelni rad dispečera, šted
 - **Zavisi od:** US-14 i US-18.
 - **Osnova za:** US-23, US-24 i US-25.
 
-### Acceptance criteria
+#### Acceptance criteria
 
 - **Kada** dispečer odabere parametre, **ako** se pokrene generisanje, **tada** sistem mora kreirati rutu.
 - **Sistem mora** uzeti u obzir koordinate i prioritete pri računanju redoslijeda.
@@ -523,30 +584,30 @@ Ovo je srce sistema. Automatizacija rute smanjuje manuelni rad dispečera, šted
 
 ---
 
-## PBI-023 Dodjela rute poštaru
+### PBI-023 Dodjela rute poštaru
 
-### User Stories
+#### User Stories
 - **US-25:** Kao dispečer, želim dodijeliti generisanu rutu konkretnom poštaru, kako bi on dobio svoj dnevni zadatak za izvršenje.
 
-### Poslovna vrijednost
+#### Poslovna vrijednost
 Uspostavlja jasnu odgovornost za izvršenje rute i omogućava da poštar na vrijeme dobije plan rada.
 
-### Prioritet: High
+#### Prioritet: High
 
 ---
 
-#### ID storyja: US-25
-**Naziv storyja:** Dodjela rute poštaru
-**Opis:** Kao **dispečer**, želim **izabrati poštara iz liste dostupnih radnika i dodijeliti mu generisanu rutu**, kako bi **on mogao započeti sa radnim zadatkom**.
-**Poslovna vrijednost:** Uspostavljanje jasne odgovornosti za izvršenje posla.
-**Prioritet:** High
+##### ID storyja: US-25
+**Naziv storyja:** Dodjela rute poštaru<br>
+**Opis:** Kao **dispečer**, želim **izabrati poštara iz liste dostupnih radnika i dodijeliti mu generisanu rutu**, kako bi **on mogao započeti sa radnim zadatkom**.<br>
+**Poslovna vrijednost:** Uspostavljanje jasne odgovornosti za izvršenje posla.<br>
+**Prioritet:** High<br>
 **Pretpostavke i otvorena pitanja:**
 - *Pretpostavka:* Ruta je prethodno generisana i spremna za dodjelu.
 - *Otvoreno pitanje:* Na koji način poštar dobija obavijest o dodijeljenoj ruti?
 **Veze sa drugim storyjima:**
 - **Zavisi od:** US-13 (Pregled liste poštara) i US-22 (Generisanje dnevne rute).
 
-### Acceptance criteria
+#### Acceptance criteria
 
 - **Kada** je ruta spremna, **ako** se ruta dodijeli odabranom radniku, **tada** sistem mora povezati poštara i rutu.
 - **Sistem mora** omogućiti izbor poštara sa liste dostupnih radnika.
@@ -554,30 +615,30 @@ Uspostavlja jasnu odgovornost za izvršenje rute i omogućava da poštar na vrij
 
 ---
 
-## PBI-024 Pregled detalja rute
+### PBI-024 Pregled detalja rute
 
-### User Stories
+#### User Stories
 - **US-23:** Kao dispečer, želim pregledati detalje generisane rute, uključujući redoslijed obilaska, uključene sandučiće i osnovne informacije o ruti, kako bih mogao provjeriti njenu logičnost prije dodjele.
 
-### Poslovna vrijednost
+#### Poslovna vrijednost
 Omogućava provjeru kvaliteta prijedloga rute prije nego što ruta bude poslana poštaru na izvršenje.
 
-### Prioritet: Medium
+#### Prioritet: Medium
 
 ---
 
-#### ID storyja: US-23
-**Naziv storyja:** Pregled detalja generisane rute
-**Opis:** Kao **dispečer**, želim **vidjeti redoslijed obilaska, uključene sandučiće i osnovne detalje rute**, kako bih **mogao provjeriti da li prijedlog odgovara stvarnoj operativnoj potrebi**.
-**Poslovna vrijednost:** Bolja kontrola i lakše uočavanje nelogičnosti u predloženoj ruti.
-**Prioritet:** Medium
+##### ID storyja: US-23
+**Naziv storyja:** Pregled detalja generisane rute<br>
+**Opis:** Kao **dispečer**, želim **vidjeti redoslijed obilaska, uključene sandučiće i osnovne detalje rute**, kako bih **mogao provjeriti da li prijedlog odgovara stvarnoj operativnoj potrebi**.<br>
+**Poslovna vrijednost:** Bolja kontrola i lakše uočavanje nelogičnosti u predloženoj ruti.<br>
+**Prioritet:** Medium<br>
 **Pretpostavke i otvorena pitanja:**
 - *Pretpostavka:* Sistem može prikazati rutu kroz listu i/ili mapu kao dodatni prikaz detalja.
 - *Otvoreno pitanje:* Koji skup osnovnih detalja rute mora biti prikazan u MVP verziji?
 **Veze sa drugim storyjima:**
 - **Zavisi od:** US-22 (Generisanje dnevne rute).
 
-### Acceptance criteria
+#### Acceptance criteria
 
 - **Kada** se u pregledu odabere ruta, **ako** se otvori ruta, **tada** sistem mora prikazati detalje.
 - **Sistem mora** prikazati redoslijed obilaska i listu uključenih sandučića.
@@ -585,63 +646,65 @@ Omogućava provjeru kvaliteta prijedloga rute prije nego što ruta bude poslana 
 
 ---
 
-## PBI-025 Ručna izmjena redoslijeda obilaska
+### PBI-025 Ručna izmjena redoslijeda obilaska
 
-### User Stories
+#### User Stories
 - **US-24:** Kao dispečer, želim imati mogućnost ručne izmjene redoslijeda obilaska unutar generisane rute, kako bih uvažio nepredviđene okolnosti na terenu.
 
-### Poslovna vrijednost
+#### Poslovna vrijednost
 Daje dispečeru neophodnu fleksibilnost u situacijama kada automatski prijedlog ne odražava u potpunosti stvarne uslove rada.
 
-### Prioritet: Medium
+#### Prioritet: Medium
 
 ---
 
-#### ID storyja: US-24
-**Naziv storyja:** Ručna izmjena redoslijeda obilaska
-**Opis:** Kao **dispečer**, želim **promijeniti redoslijed tačaka unutar generisane rute**, kako bih **prilagodio plan trenutnim operativnim okolnostima**.
-**Poslovna vrijednost:** Fleksibilnost sistema u realnim situacijama.
-**Prioritet:** Medium
+##### ID storyja: US-24
+**Naziv storyja:** Ručna izmjena redoslijeda obilaska <br>
+**Opis:** Kao **dispečer**, želim **promijeniti redoslijed tačaka unutar generisane rute**, kako bih **prilagodio plan trenutnim operativnim okolnostima**. <br>
+**Poslovna vrijednost:** Fleksibilnost sistema u realnim situacijama. <br>
+**Prioritet:** Medium <br>
 **Pretpostavke i otvorena pitanja:**
 - *Pretpostavka:* Sistem nakon izmjene čuva novi redoslijed obilaska.
 - *Otvoreno pitanje:* Da li sistem treba automatski preračunavati procijenjenu dužinu ili trajanje rute nakon ručne promjene?
 **Veze sa drugim storyjima:**
 - **Zavisi od:** US-22 i US-23.
 
-### Acceptance criteria
+#### Acceptance criteria
 
 - **Kada** dispečer mijenja raspored, **ako** se promijeni redoslijed tačaka, **tada** sistem mora sačuvati izmjene.
 - **Sistem mora** omogućiti ručnu izmjenu redoslijeda tačaka unutar rute (npr. drag & drop).
 - **Kada** dispečer sačuva izmjene, **ako** potvrdi akciju, **tada** sistem mora prikazati novi redoslijed obilaska.
 
 ---
+## Sprint 9 (PBI-026, PBI-027, PBI-028, PBI-029, PBI-030)
+**Cilj:** Omogućiti poštarima digitalni pristup dodijeljenim rutama putem mobilnog interfejsa, bilježenje statusa sandučića u realnom vremenu.
 
-## PBI-026 Mobilni prikaz dodijeljene rute
+### PBI-026 Mobilni prikaz dodijeljene rute
 
-### User Stories
+#### User Stories
 - **US-26:** Kao poštar, želim vidjeti svoju dodijeljenu rutu preko responzivnog web interfejsa, kako bih na mobilnom uređaju imao jasan pregled dnevnog zadatka.
 
-### Poslovna vrijednost
+#### Poslovna vrijednost
 Povećava brzinu rada na terenu i eliminiše potrebu za papirnim spiskovima ili dodatnim neformalnim kanalima komunikacije.
 
-### Prioritet: High
+#### Prioritet: High
 
 ---
 
-### Detaljna razrada Story-ja 
+#### Detaljna razrada Story-ja 
 
-#### ID storyja: US-26
-**Naziv storyja:** Mobilni pregled dodijeljene rute
-**Opis:** Kao **poštar**, želim **na svom uređaju vidjeti dodijeljenu rutu, redoslijed obilaska i osnovne informacije o tačkama**, kako bih **imao jasan uvid u obim posla za taj dan**.
-**Poslovna vrijednost:** Transparentnost rada i bolja organizacija vremena uposlenika.
-**Prioritet:** High
-**Pretpostavke i otvorena pitanja:**
+##### ID storyja: US-26
+**Naziv storyja:** Mobilni pregled dodijeljene rute <br>
+**Opis:** Kao **poštar**, želim **na svom uređaju vidjeti dodijeljenu rutu, redoslijed obilaska i osnovne informacije o tačkama**, kako bih **imao jasan uvid u obim posla za taj dan**. <br>
+**Poslovna vrijednost:** Transparentnost rada i bolja organizacija vremena uposlenika. <br>
+**Prioritet:** High <br>
+**Pretpostavke i otvorena pitanja:** <br>
 - *Pretpostavka:* Poštar je prijavljen na sistem i dodijeljena mu je aktivna ruta (US-25).
-- *Otvoreno pitanje:* Da li poštar treba vidjeti i procjenu vremena potrebnog za završetak cijele rute?
-**Veze sa drugim storyjima:**
+- *Otvoreno pitanje:* Da li poštar treba vidjeti i procjenu vremena potrebnog za završetak cijele rute?<br>
+**Veze sa drugim storyjima:**<br>
 - **Direktna zavisnost:** US-25 (Dodjela rute poštaru).
 
-### Acceptance criteria
+#### Acceptance criteria
 
 - **Kada** se poštar prijavi, **ako** se otvori mobilna aplikacija, **tada** sistem mora prikazati aktivnu rutu.
 - **Sistem mora** biti responzivan (prilagođen ekranu telefona).
@@ -649,31 +712,31 @@ Povećava brzinu rada na terenu i eliminiše potrebu za papirnim spiskovima ili 
 
 ---
 
-## PBI-027 Ažuriranje statusa sandučića
+### PBI-027 Ažuriranje statusa sandučića
 
-### User Stories
+#### User Stories
 - **US-28:** Kao poštar, želim promijeniti status sandučića tokom obilaska, kako bi dispečer imao informaciju o progresu rute u realnom vremenu.
 
-### Poslovna vrijednost
+#### Poslovna vrijednost
 Omogućava zatvaranje petlje povratnih informacija između poštara i dispečera i daje uvid u napredak rada na terenu.
 
-### Prioritet: High
+#### Prioritet: High
 
 ---
 
-#### ID storyja: US-28
-**Naziv storyja:** Ažuriranje statusa sandučića tokom obilaska
-**Opis:** Kao **poštar**, želim **jednim klikom promijeniti status sandučića tokom obilaska**, kako bi **sistem evidentirao napredak i prikazao ažurno stanje rute dispečeru**.
-**Poslovna vrijednost:** Real-time praćenje progresa rada.
-**Prioritet:** High
+##### ID storyja: US-28
+**Naziv storyja:** Ažuriranje statusa sandučića tokom obilaska <br>
+**Opis:** Kao **poštar**, želim **jednim klikom promijeniti status sandučića tokom obilaska**, kako bi **sistem evidentirao napredak i prikazao ažurno stanje rute dispečeru**. <br>
+**Poslovna vrijednost:** Real-time praćenje progresa rada. <br>
+**Prioritet:** High <br>
 **Pretpostavke i otvorena pitanja:**
 - *Pretpostavka:* Sistem bilježi tačno vrijeme promjene statusa radi kasnije analize.
 - *Otvoreno pitanje:* Koji minimalni skup statusa mora postojati u MVP-u?
-**Veze sa drugim storyjima:**
+**Veze sa drugim storyjima:**<br>
 - **Zavisi od:** US-26.
 - **Utiče na:** US-29 i US-30.
 
-### Acceptance criteria
+#### Acceptance criteria
 
 - **Kada** poštar dođe do lokacije, **ako** se promijeni status sandučića (npr. u "Ispražnjeno"), **tada** sistem mora sačuvati promjenu.
 - **Sistem mora** omogućiti promjenu statusa jednim klikom.
@@ -681,31 +744,31 @@ Omogućava zatvaranje petlje povratnih informacija između poštara i dispečera
 
 ---
 
-## PBI-028 Označavanje nedostupne lokacije
+### PBI-028 Označavanje nedostupne lokacije
 
-### User Stories
+#### User Stories
 - **US-29:** Kao poštar, želim evidentirati da određena lokacija nije bila dostupna tokom obilaska, kako bi problem bio zabilježen i vidljiv dispečeru.
 
-### Poslovna vrijednost
+#### Poslovna vrijednost
 Omogućava da sistem zabilježi operativne izuzetke i da dispečer ima tačnu sliku o tome zašto pojedina tačka nije obrađena.
 
-### Prioritet: Low
+#### Prioritet: Low
 
 ---
 
-#### ID storyja: US-29
-**Naziv storyja:** Evidentiranje nedostupne lokacije
-**Opis:** Kao **poštar**, želim **označiti lokaciju kao nedostupnu i po potrebi ostaviti kratku napomenu**, kako bi **problem bio evidentiran i mogao se uzeti u obzir u daljem radu**.
-**Poslovna vrijednost:** Brže reagovanje na probleme na terenu i kvalitetnija evidencija izuzetaka.
-**Prioritet:** Low
+##### ID storyja: US-29
+**Naziv storyja:** Evidentiranje nedostupne lokacije <br>
+**Opis:** Kao **poštar**, želim **označiti lokaciju kao nedostupnu i po potrebi ostaviti kratku napomenu**, kako bi **problem bio evidentiran i mogao se uzeti u obzir u daljem radu**.<br>
+**Poslovna vrijednost:** Brže reagovanje na probleme na terenu i kvalitetnija evidencija izuzetaka.<br>
+**Prioritet:** Low <br>
 **Pretpostavke i otvorena pitanja:**
 - *Pretpostavka:* Nedostupna lokacija predstavlja poseban status ili razlog unutar sistema.
-- *Otvoreno pitanje:* Da li je u MVP-u dovoljan tekstualni opis ili je potrebna i fotografija?
-**Veze sa drugim storyjima:**
-- **Zavisi od:** US-26.
+- *Otvoreno pitanje:* Da li je u MVP-u dovoljan tekstualni opis ili je potrebna i fotografija?<br>
+**Veze sa drugim storyjima:**<br>
+- **Zavisi od:** US-26.<br>
 - **Povezano sa:** US-28 i US-30.
 
-### Acceptance criteria
+#### Acceptance criteria
 
 - **Kada** poštar ne može pristupiti tački, **ako** se označi lokacija kao nedostupna, **tada** sistem mora evidentirati problem.
 - **Sistem mora** omogućiti unos napomene (razlog nedostupnosti).
@@ -713,30 +776,30 @@ Omogućava da sistem zabilježi operativne izuzetke i da dispečer ima tačnu sl
 
 ---
 
-## PBI-029 Praćenje statusa rute od strane dispečera
+### PBI-029 Praćenje statusa rute od strane dispečera
 
-### User Stories
+#### User Stories
 - **US-30:** Kao dispečer, želim imati uvid u to koji su sandučići obrađeni, preskočeni ili problematični, kako bih mogao pratiti status izvršenja dodijeljene rute.
 
-### Poslovna vrijednost
+#### Poslovna vrijednost
 Dispečer dobija operativni pregled nad izvršenjem rute i može pravovremeno reagovati kada dođe do odstupanja ili problema na terenu.
 
-### Prioritet: High
+#### Prioritet: High
 
 ---
 
-#### ID storyja: US-30
-**Naziv storyja:** Operativni pregled statusa rute
-**Opis:** Kao **dispečer**, želim **vidjeti status obrađenih, preskočenih ili problematičnih sandučića unutar rute**, kako bih **mogao pratiti realizaciju i reagovati na probleme**.
-**Poslovna vrijednost:** Bolja kontrola izvršenja dnevnih zadataka i pravovremeno donošenje operativnih odluka.
-**Prioritet:** High
+##### ID storyja: US-30
+**Naziv storyja:** Operativni pregled statusa rute<br>
+**Opis:** Kao **dispečer**, želim **vidjeti status obrađenih, preskočenih ili problematičnih sandučića unutar rute**, kako bih **mogao pratiti realizaciju i reagovati na probleme**.<br>
+**Poslovna vrijednost:** Bolja kontrola izvršenja dnevnih zadataka i pravovremeno donošenje operativnih odluka. <br>
+**Prioritet:** High <br>
 **Pretpostavke i otvorena pitanja:**
 - *Pretpostavka:* Statusi se osvježavaju na osnovu akcija koje poštar radi na terenu.
-- *Otvoreno pitanje:* Da li je u MVP-u dovoljan tabelarni pregled ili je potreban i vizuelni prikaz na mapi?
-**Veze sa drugim storyjima:**
+- *Otvoreno pitanje:* Da li je u MVP-u dovoljan tabelarni pregled ili je potreban i vizuelni prikaz na mapi? <br>
+**Veze sa drugim storyjima:** <br>
 - **Zavisi od:** US-28 i US-29.
 
-### Acceptance criteria
+#### Acceptance criteria
 
 - **Kada** dispečer prati rad na terenu, **ako** se učita progres, **tada** sistem mora prikazati statuse u realnom vremenu.
 - **Sistem mora** omogućiti vizuelni pregled progresa rute.
@@ -744,31 +807,174 @@ Dispečer dobija operativni pregled nad izvršenjem rute i može pravovremeno re
 
 ---
 
-## PBI-030 Osnovni dnevni izvještaj
+### PBI-030 Osnovni dnevni izvještaj
 
-### User Stories
+#### User Stories
 - **US-31:** Kao administrator ili dispečer, želim generisati osnovni dnevni izvještaj o realizovanim i nerealizovanim obilascima, kako bih imao sažet pregled učinka za dati dan.
 
-### Poslovna vrijednost
+#### Poslovna vrijednost
 Izvještaj daje pregled realizacije rada i predstavlja osnovu za internu analizu, evidenciju i kasnije unapređenje operativnih procesa.
 
-### Prioritet: Low
+#### Prioritet: Low
 
 ---
 
-#### ID storyja: US-31
-**Naziv storyja:** Generisanje osnovnog dnevnog izvještaja
-**Opis:** Kao **administrator ili dispečer**, želim **dobiti osnovni dnevni izvještaj o realizovanim i nerealizovanim obilascima**, kako bih **imao sažet pregled izvršenja rada za određeni dan**.
-**Poslovna vrijednost:** Omogućava osnovno operativno izvještavanje i pregled učinka.
-**Prioritet:** Low
+##### ID storyja: US-31
+**Naziv storyja:** Generisanje osnovnog dnevnog izvještaja <br>
+**Opis:** Kao **administrator ili dispečer**, želim **dobiti osnovni dnevni izvještaj o realizovanim i nerealizovanim obilascima**, kako bih **imao sažet pregled izvršenja rada za određeni dan**. <br>
+**Poslovna vrijednost:** Omogućava osnovno operativno izvještavanje i pregled učinka. <br>
+**Prioritet:** Low <br>
 **Pretpostavke i otvorena pitanja:**
-- *Pretpostavka:* Sistem već raspolaže podacima o statusima obilazaka i sandučića za posmatrani dan.
-- *Otvoreno pitanje:* Koji minimum informacija treba ući u MVP izvještaj (broj završenih, broj nedostupnih, broj nezavršenih lokacija i sl.)?
-**Veze sa drugim storyjima:**
+- *Pretpostavka:* Sistem već raspolaže podacima o statusima obilazaka i sandučića za posmatrani dan. <br>
+- *Otvoreno pitanje:* Koji minimum informacija treba ući u MVP izvještaj (broj završenih, broj nedostupnih, broj nezavršenih lokacija i sl.)? <br>
+**Veze sa drugim storyjima:** <br>
 - **Zavisi od:** US-28, US-29 i US-30.
 
-### Acceptance criteria
+#### Acceptance criteria
 
 - **Kada** se odabere opcija za izvještavanje, **ako** se generiše izvještaj za odabrani datum, **tada** sistem mora prikazati rezultate.
 - **Sistem mora** prikazati broj realizovanih i nerealizovanih obilazaka.
 - **Korisnik treba** dobiti sažetak sa osnovnim statistikama za odabrani dan.
+
+---
+## Sprint 10 (PBI-049, PBI-050, PBI-051)
+**Cilj:** Uvođenje arhive za retrospektivnu analizu ruta, izvještavanje o učinku po različitim parametrima, te pretragu i filtriranje.
+
+### PBI-049 Historija obilazaka i arhiva ruta
+
+#### User Stories
+- **US-34:** Kao administrator ili dispečer, želim imati pristup arhivi svih realizovanih ruta, kako bih mogao pratiti radni učinak u prošlosti i vršiti retrospektivnu analizu.
+- **US-35:** Kao administrator, želim vidjeti detaljne informacije o svakoj ruti iz arhive (tačno vrijeme pražnjenja svakog sandučića), kako bih mogao izvršiti reviziju u slučaju reklamacija ili provjere efikasnosti.
+
+#### Poslovna vrijednost
+Arhiviranje osigurava potpunu transparentnost operacija na terenu. Omogućava dispečerima da opravdaju resurse, analiziraju istorijske podatke za buduće planiranje i pruža neoboriv dokaz o izvršenim aktivnostima (audit trail), što je ključno za rješavanje eventualnih sporova ili žalbi građana.
+
+#### Prioritet: Medium
+
+---
+
+#### Detaljna razrada Story-ja
+
+##### ID storyja: US-34
+**Naziv storyja:** Pregled arhive realizovanih ruta <br>
+**Opis:** Kao **dispečer**, želim **vidjeti listu svih ruta koje su završene u prošlosti**, kako bih **imao uvid u istoriju aktivnosti**. <br>
+**Poslovna vrijednost:** Centralizovan uvid u istorijske podatke bez miješanja sa trenutno aktivnim rutama. <br>
+**Prioritet:** Medium <br>
+**Pretpostavke i otvorena pitanja:**
+- *Pretpostavka:* Ruta se automatski arhivira onog trenutka kada poštar na mobilnoj aplikaciji označi "Završi rutu".
+- *Otvoreno pitanje:* Da li arhivirane rute treba omogućiti za ponovno pokretanje u slučaju greške?
+**Veze sa drugim storyjima:**
+- **Zavisi od:** US-28 (Završetak rute).
+- **Utiče na:** US-36 (Izvještaji o učinku).
+
+#### Acceptance criteria
+- **Kada** korisnik otvori modul "Arhiva", **tada** se prikazuje lista ruta sa podacima: Datum, Poštar, Ukupno sandučića, Status (Završeno/Prekinuto).
+- **Sistem mora** omogućiti filtriranje liste po periodu (od-do) i po imenu poštara.
+
+---
+
+##### ID storyja: US-35
+**Naziv storyja:** Detaljni uvid u arhiviranu rutu <br>
+**Opis:** Kao **administrator**, želim **kliknuti na rutu iz arhive i vidjeti status svakog pojedinačnog sandučića**, kako bih **znao koji su sandučići ispražnjeni, a koji preskočeni**. <br>
+**Poslovna vrijednost:** Detaljna kontrola kvaliteta obavljenog posla na nivou pojedinačne lokacije. <br>
+**Prioritet:** Medium <br>
+**Pretpostavke i otvorena pitanja:**
+- *Pretpostavka:* Timestamp se generiše na strani servera u trenutku kada poštar potvrdi aktivnost.
+**Veze sa drugim storyjima:**
+- **Zavisi od:** US-34 (Pregled liste arhive).
+
+#### Acceptance criteria
+- **Sistem mora** prikazati listu svih sandučića unutar odabrane rute sa njihovim statusima u tom trenutku.
+- **Sistem treba** prikazati timestamp (vrijeme) kada je poštar potvrdio aktivnost na svakoj lokaciji.
+
+---
+
+### PBI-050 Prošireno operativno izvještavanje
+
+#### User Stories
+- **US-36:** Kao dispečer, želim generisati sumarne izvještaje o realizaciji po poštaru za proizvoljan period, kako bih analizirao individualnu efikasnost i produktivnost tima.
+- **US-37:** Kao administrator, želim vidjeti izvještaj o uspješnosti pražnjenja prema tipu sandučića, kako bih identifikovao kritične kategorije koje se najčešće ne isprazne.
+
+#### Poslovna vrijednost
+Prošireni izvještaji transformišu sirove podatke u korisne poslovne informacije, omogućavajući menadžmentu da donosi odluke zasnovane na realnim podacima (Data-driven decisions). Ovo pomaže u boljoj raspodjeli ljudskih resursa i identifikaciji tehničkih problema na specifičnim tipovima lokacija.
+
+#### Prioritet: Medium
+
+---
+
+#### Detaljna razrada Story-ja
+
+##### ID storyja: US-36
+**Naziv storyja:** Izvještaj o učinku poštara <br>
+**Opis:** Kao **dispečer**, želim **dobiti sumarni prikaz broja planiranih naspram realizovanih obilazaka**, kako bih **izvršio evaluaciju rada uposlenika**.<br>
+**Poslovna vrijednost:** Transparentno praćenje KPI-jeva (Key Performance Indicators) za svakog poštara.<br>
+**Prioritet:** Medium<br>
+**Pretpostavke i otvorena pitanja:**
+- *Pretpostavka:* Sistem koristi podatke iz baze arhiviranih ruta (PBI-049).
+- *Otvoreno pitanje:* Da li izvještaj treba uključivati i vizuelne grafikone ili samo tabelarni prikaz?
+**Veze sa drugim storyjima:**
+- **Zavisi od:** US-34 (Arhiva ruta).
+
+#### Acceptance criteria:
+- **Sistem mora** izračunati procenat uspješnosti (Realizovano / Planirano * 100).
+- **Izvještaj mora** biti prikazan u tabelarnoj formi unutar aplikacije sa opcijom filtriranja po datumu.
+
+---
+
+##### ID storyja: US-37
+**Naziv storyja:** Analiza realizacije po tipu sandučića <br>
+**Opis:** Kao **administrator**, želim **vidjeti statistiku pražnjenja grupisanu po kategorijama sandučića**, kako bih **otkrio sistemske probleme na terenu**.<br>
+**Poslovna vrijednost:** Optimizacija opreme i resursa na osnovu učestalosti problema na određenim tipovima lokacija.<br>
+**Prioritet:** Medium<br>
+**Veze sa drugim storyjima:**
+- **Zavisi od:** US-15 (Podaci o sandučićima).
+
+#### Acceptance criteria:
+- **Kada** korisnik generiše izvještaj, **tada** sistem mora prikazati podatke o broju sandučića koji nisu ispražnjeni, sortirane po tipu (npr. Zidni, Stojeći).
+
+---
+
+### PBI-051 Pretraga i filtriranje sandučića
+
+#### User Stories
+- **US-38:** Kao administrator ili dispečer, želim pretraživati bazu sandučića po adresi ili ID-u, kako bih brzo pronašao specifičnu lokaciju.
+- **US-39:** Kao administrator, želim filtrirati sandučiće prema statusu ili prioritetu, kako bih lakše upravljao održavanjem mreže.
+
+#### Poslovna vrijednost
+Brza pretraga i filtriranje štede vrijeme administratorima pri radu sa velikim brojem podataka. Ovo smanjuje operativne zastoje pri ručnom traženju lokacija i minimizira mogućnost greške pri odabiru sandučića za izmjene ili dodjelu ruti.
+
+#### Prioritet: Medium
+
+---
+
+#### Detaljna razrada Story-ja
+
+##### ID storyja: US-38
+**Naziv storyja:** Brza pretraga sandučića <br>
+**Opis:** Kao **administrator**, želim **unijeti dio adrese ili ID u polje za pretragu**, kako bi se **lista trenutno suzila na tražene objekte**.<br>
+**Poslovna vrijednost:** Brži pristup informacijama i efikasnije upravljanje bazom podataka.<br>
+**Prioritet:** Medium<br>
+**Pretpostavke i otvorena pitanja:**
+- *Pretpostavka:* Pretraga se vrši nad postojećom listom sandučića u bazi.
+**Veze sa drugim storyjima:**
+- **Zavisi od:** US-15 (Prikaz liste sandučića).
+
+#### Acceptance criteria
+- **Sistem mora** početi filtrirati listu čim korisnik unese minimalno tri karaktera.
+- **Pretraga mora** obuhvatiti polja: ID sandučića i Adresa.
+
+---
+
+##### ID storyja: US-39
+**Naziv storyja:** Filtriranje po atributima <br>
+**Opis:** Kao **administrator**, želim **izabrati jedan ili više filtera (npr. Status: Neaktivan)**, kako bih **izdvojio specifičnu grupu lokacija**.<br>
+**Poslovna vrijednost:** Omogućava ciljano upravljanje grupama sandučića (npr. pregled svih oštećenih ili neaktivnih lokacija).<br>
+**Prioritet:** Medium<br>
+**Pretpostavke i otvorena pitanja:**
+- *Otvoreno pitanje:* Da li se filteri trebaju resetovati nakon napuštanja stranice?
+**Veze sa drugim storyjima:**
+- **Proširuje:** US-15 (Interfejs za upravljanje sandučićima).
+
+#### Acceptance criteria
+- **Sistem mora** omogućiti filtriranje po: Tipu sandučića, Statusu (aktivan/neaktivan) i Prioritetu.
+- **Kada** se filteri primijene, **tada** sistem mora ažurirati prikaz bez ponovnog učitavanja cijele stranice (gdje je to tehnički moguće).
