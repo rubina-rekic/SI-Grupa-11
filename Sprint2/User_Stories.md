@@ -33,10 +33,12 @@ Korisnički računi za poštare moraju biti kontrolisano kreirani od strane admi
 
 #### Acceptance criteria
 
-- **Kada** administrator unese sve unosne podatke (email/username i lozinka), **ako** klikne na dugme za kreiranje računa, **tada** sistem mora kreirati korisnički račun.
-- **Sistem mora** sačuvati podatke u bazi.
-- **Sistem ne smije** dozvoliti kreiranje računa ako nedostaju obavezna polja.
-- **Korisnik treba** dobiti potvrdu o uspješnom kreiranju.
+- Kada administrator otvori formu za kreiranje računa, ako klikne na dugme "Kreiraj" bez unesenih podataka, tada sistem mora označiti polja Ime, Prezime, Email i Lozinka crvenom bojom i ispisati poruku "Ovo polje je obavezno" ispod svakog.
+- Sistem mora automatski validirati format emaila (mora sadržavati @ i domenu) prije slanja podataka na server.
+- Kada administrator unese ispravne podatke i klikne "Kreiraj", tada sistem mora kreirati novi zapis u tabeli Korisnici sa ulogom (role) postavljenom isključivo na "Poštar".
+- Sistem ne smije u bazu spasiti lozinku u čitljivom formatu; lozinka mora biti hashirana prije spašavanja radi sigurnosti.
+- Kada je račun uspješno kreiran, tada korisnik (administrator) treba dobiti zelenu obavijest u gornjem desnom uglu sa tekstom: "Račun za [Ime Prezime] je uspješno kreiran", a polja na formi se moraju isprazniti.
+- Sistem mora automatski poslati sistemski email na adresu novog poštara sa linkom za prvu prijavu (poveznica sa US-06).
 
 ---
 
@@ -53,10 +55,15 @@ Korisnički računi za poštare moraju biti kontrolisano kreirani od strane admi
 
 #### Acceptance criteria
 
-- **Kada** administrator unese već postojeći email/username, **ako** pokuša kreirati račun, **tada** sistem mora odbiti unos i prikazati poruku o grešci.
-- **Sistem mora** provjeravati jedinstvenost emaila/username-a.
-- **Kada** lozinka ne zadovoljava sigurnosne kriterije, **ako** administrator pokuša sačuvati podatke, **tada** sistem mora odbiti unos.
-- **Sistem ne smije** dozvoliti slabu lozinku.
+- Kada administrator unese email koji već postoji u bazi podataka, ako pokuša spasiti račun, tada sistem mora spriječiti slanje forme i prikazati poruku: "Korisnik sa ovim emailom već postoji".
+- Sistem mora provjeravati jedinstvenost emaila u realnom vremenu (asinhrono) ili najkasnije u trenutku klika na dugme "Kreiraj", prije nego što podaci budu procesuirani.
+- Kada administrator unosi lozinku, tada sistem mora dinamički prikazivati indikator jačine lozinke koji postaje "Zelen" samo ako su ispunjeni sljedeći uslovi:
+    - Minimalno 8 karaktera.
+    - Barem jedno veliko slovo.
+    - Barem jedan broj.
+    - Barem jedan specijalni znak (npr. !, @, #, $).
+- Sistem ne smije dozvoliti klik na dugme "Kreiraj" sve dok lozinka ne ispuni gore navedene kriterije (dugme treba biti sivo/onemogućeno).
+- Kada administrator unese korisničko ime koje sadrži nedozvoljene karaktere (npr. razmake ili simbole poput / \ |), ako pokuša spasiti podatke, tada sistem mora izbaciti grešku: "Korisničko ime smije sadržavati samo slova, brojeve i donju crtu (_)".
 
 ---
 
@@ -72,9 +79,11 @@ Korisnički računi za poštare moraju biti kontrolisano kreirani od strane admi
 
 #### Acceptance criteria
 
-- **Kada** administrator potvrdi kreiranje, **ako** je račun uspješno kreiran, **tada** sistem mora prikazati potvrdu.
-- **Kada** dođe do greške prilikom obrade, **ako** sistem ne može izvršiti akciju, **tada** mora prikazati odgovarajuću poruku.
-- **Sistem ne smije** ostaviti korisnika bez feedbacka.
+- Kada administrator klikne na dugme "Kreiraj", ako je server uspješno obradio zahtjev, tada sistem mora prikazati zeleni "Success" modal ili toast obavijest sa tekstom: "Račun za [Ime Prezime] je uspješno kreiran. Podaci su poslani na email korisnika."
+- Kada dođe do prekida internet konekcije ili pada servera (greška 500), ako administrator pokuša spasiti podatke, tada sistem mora prikazati crvenu poruku upozorenja: "Sistem trenutno nije dostupan. Molimo pokušajte kasnije ili kontaktirajte IT podršku."
+- Sistem mora onemogućiti dugme "Kreiraj" odmah nakon prvog klika, kako bi se spriječilo višestruko slanje istog zahtjeva dok traje obrada.
+- Kada dođe do greške, sistem ne smije obrisati unesene podatke iz polja forme, kako bi administrator mogao ispraviti grešku (npr. promijeniti email) bez ponovnog kucanja svega.
+- Korisnik treba imati mogućnost da zatvori poruku o uspjehu klikom na "X" ili na dugme "U redu", što ga automatski vraća na listu svih poštara (US-13).
 
 ---
 
@@ -109,9 +118,14 @@ Prijava osigurava da samo autentifikovani korisnici mogu manipulisati rutama i p
 
 #### Acceptance criteria
 
-- **Kada** korisnik unese ispravne kredencijale, **ako** klikne na prijavu, **tada** sistem mora omogućiti pristup.
-- **Sistem mora** preusmjeriti korisnika na dashboard.
-- **Sistem ne smije** dozvoliti prijavu bez unosa podataka.
+- Kada korisnik unese ispravan email i lozinku, ako klikne na dugme "Prijava", tada sistem mora generisati aktivnu sesiju i preusmjeriti korisnika na Dashboard u roku od 2 sekunde.
+- Sistem ne smije dozvoliti klik na dugme "Prijava" ako su polja email ili lozinka prazna (dugme treba biti vizuelno onemogućeno).
+- Kada korisnik unese nepostojeći email ili pogrešnu lozinku, ako pokuša prijavu, tada sistem mora prikazati generičku poruku o grešci: "Neispravni kredencijali. Pokušajte ponovo."
+  
+   *Napomena za developera:* Ne govoriti tačno šta je pogrešno (email ili lozinka) radi zaštite od hakerskih napada.
+
+- Sistem mora zapamtiti sesiju korisnika tako da osvježavanje stranice ne izbacuje korisnika iz sistema, sve dok ne klikne na "Odjava" (US-07).
+- Kada korisnik unese pogrešnu lozinku 5 puta zaredom, tada sistem mora privremeno zaključati račun na 15 minuta i prikazati toast obavijest: "Račun je privremeno zaključan zbog previše neuspješnih pokušaja."
 
 ---
 
@@ -126,8 +140,11 @@ Prijava osigurava da samo autentifikovani korisnici mogu manipulisati rutama i p
 
 #### Acceptance criteria
  
-**Kada** korisnik unese pogrešne kredencijale, **ako** klikne na prijavu, **tada** sistem mora prikazati poruku o grešci.
-- **Sistem ne smije** dozvoliti prijavu sa praznim poljima.
+- Kada korisnik unese ispravan email, ali pogrešnu lozinku, ako klikne na prijavu, tada sistem mora obrisati sadržaj polja za lozinku i prikazati crvenu poruku ispod forme: "Neispravni kredencijali. Molimo pokušajte ponovo."
+- Sistem ne smije dozvoliti slanje zahtjeva na server ako su polja prazna; umjesto toga, polja moraju dobiti crveni okvir čim korisnik klikne na "Prijava".
+- Kada korisnik unese email u neispravnom formatu (npr. nedostaje mu "@"), ako pokuša prijavu, tada korisnik treba dobiti toast obavijest ili natpis: "Unesite ispravnu email adresu".
+- Sistem mora onemogućiti dugme "Prijava" na 3 sekunde nakon svakog neuspješnog pokušaja, kako bi se spriječilo "brzinsko" pogađanje lozinke.
+- Kada korisnik unese kredencijale računa koji je deaktiviran od strane administratora, ako pokuša prijavu, tada mora dobiti poruku: "Vaš račun je deaktiviran. Kontaktirajte administratora."
 
 ---
 
@@ -143,8 +160,15 @@ Prijava osigurava da samo autentifikovani korisnici mogu manipulisati rutama i p
 
 #### Acceptance criteria
 
-- **Kada** se korisnik prvi put prijavi, **ako** unese inicijalnu lozinku, **tada** sistem mora zahtijevati promjenu lozinke.
-- **Sistem ne smije** dozvoliti nastavak rada bez promjene lozinke.
+- Kada se korisnik (poštar) prvi put prijavi sa inicijalnim kredencijalima, ako je prijava uspješna, tada sistem ne smije otvoriti Dashboard, već mora automatski prikazati ekran "Promjena lozinke".
+- Sistem mora onemogućiti navigaciju na bilo koju drugu stranicu (putem menija ili direktnog URL-a) sve dok se proces promjene lozinke uspješno ne završi.
+- Kada korisnik unese novu lozinku, ako je ona identična inicijalnoj lozinki koju je dobio od administratora, tada sistem mora odbiti spašavanje i prikazati poruku: "Nova lozinka ne smije biti ista kao privremena."
+- Sistem mora primijeniti ista pravila jačine lozinke kao u US-02 (min. 8 karaktera, broj, simbol).
+- Kada korisnik uspješno unese i potvrdi novu lozinku, ako klikne na "Spasi", tada sistem mora:
+   - Ažurirati lozinku u bazi (hashiranu).
+   - Prikazati zelenu toast obavijest: "Lozinka uspješno promijenjena. Dobrodošli!".
+   - Preusmjeriti korisnika na Dashboard.
+- Sistem ne smije dozvoliti da polje "Nova lozinka" i "Potvrdi lozinku" ostanu prazni prilikom klika na dugme.
 
 ---
 
@@ -176,9 +200,11 @@ Osigurava sigurnost korisničkih profila i sprečava neovlašteno korištenje se
 
 #### Acceptance criteria
 
-- **Kada** korisnik klikne na odjavu, **ako** potvrdi akciju, **tada** sistem mora prekinuti sesiju.
-- **Sistem mora** preusmjeriti korisnika na login stranicu.
-- **Sistem ne smije** dozvoliti pristup aplikaciji bez ponovne prijave.
+- Kada korisnik klikne na dugme "Odjava" u navigacionom meniju, ako potvrdi akciju (opcionalno), tada sistem mora momentalno uništiti aktivnu sesiju na serveru i preusmjeriti korisnika na početni ekran za prijavu.
+- Sistem mora prikazati toast obavijest nakon preusmjeravanja sa tekstom: "Uspješno ste se odjavili iz sistema."
+- Sistem ne smije dozvoliti korisniku da se vrati na Dashboard ili bilo koju internu stranicu klikom na dugme "Back" u browseru nakon odjave; sistem ga u tom slučaju mora ponovo vratiti na Login.
+- Kada je korisnik odjavljen, ako pokuša ručno unijeti URL neke interne stranice (npr. /dashboard ili /postari), tada sistem mora automatski odbiti pristup i preusmjeriti ga na prijavu uz poruku: "Pristup odbijen. Molimo prijavite se."
+- Sistem mora osigurati da se pri odjavi obrišu svi lokalno sačuvani podaci o sesiji (npr. cookies ili local storage) kako bi se spriječilo neovlašteno korištenje istog računara.
 
 ---
 
@@ -212,9 +238,12 @@ Implementacija uloga sprječava ljudske greške i zloupotrebu sistema. Poštari 
 
 #### Acceptance criteria
 
-- **Kada** administrator odabere nivo pristupa, **ako** dodijeli ulogu korisniku, **tada** sistem mora sačuvati ulogu.
-- **Sistem mora** omogućiti različite nivoe pristupa.
-- **Sistem ne smije** dozvoliti neautorizovan pristup funkcijama drugih uloga.
+- Kada administrator otvori formu za kreiranje ili uređivanje korisnika, ako klikne na polje "Uloga", tada sistem mora ponuditi striktan izbor između dvije opcije: Administrator i Poštar.
+- Sistem mora onemogućiti spašavanje računa ako uloga nije odabrana, uz prikaz crvene poruke: "Uloga je obavezno polje".
+- Kada je korisniku dodijeljena uloga "Poštar", ako se on prijavi na sistem, tada mu sistem mora sakriti sve administrativne funkcionalnosti (npr. meni za upravljanje korisnicima, dugmad za brisanje sandučića, postavke sistema).
+- Sistem ne smije dozvoliti korisniku sa ulogom "Poštar" pristup URL-ovima namijenjenim administratorima (npr. /admin/settings); ako korisnik to pokuša, sistem ga mora preusmjeriti na njegov dashboard uz toast obavijest: "Nemate ovlaštenje za ovu akciju".
+- Sistem mora u bazi podataka uz svaki korisnički račun sačuvati ID uloge (Role ID) koji je povezan sa tabelom privilegija, osiguravajući da se prava pristupa provjeravaju pri svakom zahtjevu na server (API level validation).
+- Kada administrator promijeni ulogu korisniku, tada ta promjena mora stupiti na snagu odmah (pri sljedećem osvježavanju stranice ili navigaciji korisnika).
 
 
 ---
@@ -231,9 +260,12 @@ Implementacija uloga sprječava ljudske greške i zloupotrebu sistema. Poštari 
 
 #### Acceptance criteria
 
-- **Kada** se korisnik prijavi, **ako** sistem prepozna ulogu, **tada** sistem mora prikazati odgovarajući dashboard.
-- **Sistem mora** omogućiti prikaz funkcionalnosti isključivo po ulozi.
-- **Korisnik treba** vidjeti samo relevantne opcije.
+- Kada se korisnik prijavi sa ulogom "Administrator", ako je preusmjeren na dashboard, tada sistem u bočnom meniju (sidebar) mora prikazati opcije: Upravljanje korisnicima, Pregled sandučića, Statistika sistema i Postavke.
+- Kada se korisnik prijavi sa ulogom "Poštar", ako je preusmjeren na dashboard, tada sistem u meniju smije prikazati isključivo: Moja današnja ruta, Mapa sandučića i Prijava problema na terenu.
+- Sistem mora na vrhu dashboarda ispisati personalizovanu poruku dobrodošlice koja sadrži ime korisnika i naziv njegove uloge (npr. "Dobrodošli, [Ime], (Poštar)").
+- Sistem ne smije iscrtati administrativne grafikone ili brojače (npr. "Ukupan broj poštara") ako je prijavljeni korisnik u ulozi Poštara.
+- Kada administrator klikne na opciju "Upravljanje korisnicima", tada mu sistem mora omogućiti pristup svim CRUD operacijama (US-01, US-11), dok ta opcija za poštara mora biti potpuno nevidljiva.
+- Sistem mora provjeravati autorizaciju pri svakom učitavanju komponente; ako korisnik bez uloge pokuša pristupiti dashboardu, sistem ga mora vratiti na login ekran uz toast obavijest: "Sesija istekla ili nemate pristup".
 
 ---
 
@@ -250,9 +282,11 @@ Implementacija uloga sprječava ljudske greške i zloupotrebu sistema. Poštari 
 
 #### Acceptance criteria
 
-- **Kada** korisnik pokuša pristupiti zabranjenoj stranici, **ako** sistem detektuje nedostatak dozvole, **tada** sistem mora odbiti pristup.
-- **Sistem mora** prikazati poruku o zabrani.
-- **Sistem ne smije** dozvoliti izvršenje akcije na neovlaštenoj stranici.
+- Kada korisnik sa ulogom "Poštar" pokuša ručno unijeti URL u browser koji pripada administratorskom modulu (npr. /admin/postari, /admin/settings ili /admin/delete-box/1), tada sistem mora spriječiti učitavanje stranice i automatski ga preusmjeriti na njegov Dashboard.
+- Sistem mora u trenutku preusmjeravanja prikazati crvenu toast obavijest sa tekstom: "Pristup odbijen: Nemate potrebne privilegije za pregled ove stranice."
+- Sistem ne smije izvršiti bilo koju pozadinsku (API) akciju ako token/sesija korisnika ne sadrži ulogu "Administrator", čak i ako je zahtjev poslan direktno preko alata kao što je Postman.
+- Kada dođe do pokušaja neovlaštenog pristupa, sistem mora u bazi podataka (Security Log) zabilježiti: ID korisnika, pokušani URL, tačno vrijeme i IP adresu radi sigurnosne analize.
+- Sistem mora sakriti sve linkove u navigaciji koji vode ka administratorskim stranicama za svakog korisnika koji nema "Administrator" ulogu, tako da korisnik nema vizuelni put do zabranjenih stranica.
 
 
 ---
@@ -287,9 +321,12 @@ Ovaj modul je ključan za operativno planiranje. Bez tačne baze poštara, dispe
 
 #### Acceptance criteria
 
-- **Kada** administrator unese lične podatke, **ako** klikne na dugme za spasavanje, **tada** sistem mora sačuvati poštara.
-- **Sistem mora** omogućiti unos svih polja (ime, prezime, telefon, ID).
-- **Sistem ne smije** dozvoliti prazna polja pri registraciji poštara.
+- Kada administrator otvori formu za unos, tada sistem mora prikazati sljedeća polja: Ime (text), Prezime (text), Broj telefona (numeric/format), Interni ID poštara (numeric) i Status (dropdown: Aktivan/Neaktivan).
+- Kada administrator pokuša spasiti podatke, ako je bilo koje od polja (Ime, Prezime, Telefon, ID) prazno, tada sistem mora spriječiti spašavanje i označiti prazna polja crvenom bojom uz poruku "Polje je obavezno".
+- Sistem mora validirati polje "Broj telefona" tako da prihvata isključivo cifre i znak "+", te odbiti unos slova.
+- Sistem ne smije dozvoliti unos već postojećeg "Internog ID-a poštara" (dupli ID u bazi) – u tom slučaju mora iskočiti toast obavijest: "Greška: Poštar sa ovim ID brojem već postoji!".
+- Kada administrator klikne na dugme "Spasi", ako su svi podaci validni, tada se podaci upisuju u bazu, polja na formi se čiste, a sistem prikazuje zelenu toast obavijest: "Poštar uspješno dodan u evidenciju".
+- Kada je poštar spašen, tada on mora postati momentalno pretraživ u listi (US-13) i dostupan za dodjelu ruta (US-23).
 
 ---
 
@@ -306,10 +343,11 @@ Ovaj modul je ključan za operativno planiranje. Bez tačne baze poštara, dispe
 
 #### Acceptance criteria
 
-- **Kada** administrator unese ID, **ako** ID već postoji u bazi, **tada** sistem mora odbiti unos.
-- **Sistem mora** provjeravati jedinstvenost ID-a.
-- **Korisnik treba** dobiti poruku o grešci koja objašnjava da je ID zauzet.
-
+- Kada administrator unese vrijednost u polje "Interni ID poštara", ako taj ID već postoji u bazi podataka kod drugog korisnika, tada sistem mora momentalno prikazati crvenu poruku ispod polja: "Ovaj ID je već dodijeljen poštaru [Ime i Prezime]".
+- Sistem mora onemogućiti dugme "Spasi" sve dok se ne unese jedinstveni ID broj koji ne postoji u bazi.
+- Kada sistem detektuje dupli ID, tada korisnik (administrator) treba dobiti opciju unutar poruke o grešci (link ili dugme) koji vodi na profil poštara koji već koristi taj ID.
+- Sistem ne smije dozvoliti slanje forme (submit) čak i ako se zaobiđe frontend validacija; serverska strana mora vratiti grešku (Conflict) ako se pokuša spasiti dupli ID.
+- Kada administrator promijeni ID u jedinstvenu vrijednost, tada poruka o grešci mora nestati, a polje se mora vratiti u neutralno/validno stanje.
 
 ---
 
@@ -338,10 +376,15 @@ Omogućava brz pregled dostupnih ljudskih resursa, što direktno utiče na brzin
 
 #### Acceptance criteria
 
-- **Kada** korisnik otvori listu poštara, **ako** sistem učita podatke, **tada** sistem mora prikazati sve poštare.
-- **Sistem mora** omogućiti pregled osnovnih podataka (ime, prezime, kontakt telefon i status poštara).
-- **Korisnik treba** vidjeti status poštara (dostupan ili zauzet).
-
+- Kada administrator ili dispečer otvori stranicu "Lista poštara", ako u bazi postoje podaci, tada sistem mora prikazati tabelu sa kolonama: ID, Ime i prezime, Kontakt telefon, Status (Dostupan/Zauzet) i Zadnja aktivnost (Vrijeme).
+- Sistem mora implementirati straničenje tako da se inicijalno prikazuje 20 poštara po stranici, uz "Lazy loading" ili klasičnu navigaciju (1, 2, 3...) na dnu tabele.
+- Kada korisnik pređe kursorom preko statusa "Zauzet", tada sistem mora u malom oblačiću prikazati ID rute na kojoj se poštar trenutno nalazi.
+- Sistem mora omogućiti vizuelnu indikaciju statusa:
+  - Dostupan: Zeleni krug (poštar je spreman za novu rutu).
+  - Zauzet: Narandžasti krug (poštar trenutno obilazi sandučiće).
+  - Neaktivan: Crveni krug (račun je deaktiviran).
+- Kada administrator klikne na kolonu "Status", tada sistem mora grupisati sve dostupne poštare na vrh liste.
+- Korisnik treba imati dugme "Osvježi" koje ažurira statuse poštara u realnom vremenu bez ponovnog učitavanja cijele stranice.
 ---
 
 ### PBI-017 Dodavanje poštanskog sandučića
@@ -372,9 +415,14 @@ Precizna evidencija sandučića je temelj optimizacije. Unos GPS koordinata elim
 
 #### Acceptance criteria
 
-- **Kada** administrator unese geografsku lokaciju, **ako** se unesu koordinate, **tada** sistem mora sačuvati lokaciju sandučića.
-- **Sistem mora** omogućiti unos GPS podataka.
-- **Sistem ne smije** dozvoliti unos nevalidnih koordinata.
+- Kada administrator otvori formu za dodavanje sandučića, tada sistem mora prikazati polja: Adresa (text), Latitude (decimal) i Longitude (decimal).
+- Sistem mora validirati unos geografskih koordinata prema standardima:
+    - Latitude mora biti broj u rasponu od $-90$ do $90$.
+    - Longitude mora biti broj u rasponu od $-180$ do $180$.
+- Sistem ne smije dozvoliti spašavanje ako su polja prazna ili sadrže tekst (osim decimalne tačke), uz prikaz poruke: "Unesite ispravan format koordinata (npr. 43.8563)".
+- Kada administrator unese koordinate, tada sistem mora (ispod ili pored polja) prikazati mini-mapu sa pinom na toj lokaciji radi vizuelne potvrde adrese.
+- Sistem mora omogućiti dugme "Odaberi na mapi" koje otvara interaktivnu mapu; kada korisnik klikne na bilo koju tačku na mapi, tada sistem mora automatski popuniti polja Latitude i Longitude tim koordinatama.
+- Sistem mora podržavati preciznost od najmanje 6 decimalnih mjesta kako bi se osigurala tačnost lokacije u krugu od nekoliko metara.
 
 ---
 
@@ -391,10 +439,15 @@ Precizna evidencija sandučića je temelj optimizacije. Unos GPS koordinata elim
 
 #### Acceptance criteria
 
-- **Kada** administrator popunjava formu, **ako** se odabere tip sandučića, **tada** sistem mora sačuvati podatak o tipu.
-- **Sistem mora** omogućiti izbor tipa iz predefinisanih opcija.
-- **Sistem ne smije** dozvoliti nepostojeći tip.
-
+- Kada administrator otvori formu za novi sandučić, tada sistem mora ponuditi padajući meni (dropdown) "Tip sandučića" sa sljedećim opcijama: Zidni (mali), Samostojeći (veliki), Unutrašnji (stambene zgrade) i Specijalni (prioritetni).
+- Sistem mora pored adrese i koordinata (iz US-18) zahtijevati unos sljedećih obaveznih polja:
+  - Serijski broj (jedinstveni identifikator na poleđini sandučića).
+  - Kapacitet (približan broj pisama koji može primiti).
+  - Godina instalacije (za potrebe održavanja).
+- Kada administrator pokuša spasiti sandučić bez odabira tipa, tada sistem mora odbiti unos i prikazati poruku: "Odabir tipa sandučića je obavezan".
+- Sistem ne smije dozvoliti ručni unos teksta u polje "Tip sandučića" (mora se izabrati isključivo ponuđena opcija) kako bi se izbjegle greške u kucanju.
+- Kada je tip sandučića odabran, tada sistem na mapi (US-18) mora automatski promijeniti ikonu pina u boju specifičnu za taj tip (npr. Plava za standardni, Crvena za prioritetni).
+- Sistem mora provjeriti jedinstvenost "Serijskog broja"; ako broj već postoji u bazi, prikazati toast obavijest: "Sandučić sa ovim serijskim brojem je već registrovan".
 ---
 
 ### PBI-018 Izmjena podataka o sandučiću
@@ -425,9 +478,14 @@ Održavanje tačnosti baze podataka. Pogrešne ili zastarjele informacije dovode
 
 #### Acceptance criteria
 
-- **Kada** administrator otvori formu za uređivanje, **ako** se izmjene podaci, **tada** sistem mora sačuvati promjene.
-- **Sistem mora** omogućiti uređivanje svih podataka o sandučiću.
-- **Korisnik treba** vidjeti ažurirane informacije odmah nakon spasavanja.
+- Kada administrator klikne na opciju "Uredi" pored sandučića u listi, tada sistem mora otvoriti formu unaprijed popunjenu trenutnim podacima iz baze (Adresa, Koordinate, Tip, Prioritet).
+- Sistem mora primijeniti iste validacijske protokole kao pri kreiranju (US-15, US-18):
+  - Koordinate moraju biti u ispravnom rasponu.
+  - Obavezna polja ne smiju biti ispražnjena.
+- Kada administrator klikne na "Spasi izmjene", ako podaci nisu promijenjeni, tada sistem ne treba slati zahtjev na server, već samo zatvoriti formu.
+- Sistem mora u posebnoj tabeli (Audit Log) sačuvati historiju promjena koja sadrži: ID administratora, tačno vrijeme izmjene, stare vrijednosti i nove vrijednosti polja.
+- Kada se spašavanje završi, tada sistem mora prikazati zelenu toast obavijest: "Podaci o sandučiću [Serijski broj] su uspješno ažurirani".
+- Sistem mora osigurati da se promjena lokacije sandučića (koordinata) momentalno reflektuje na svim mapama koje koriste poštari u realnom vremenu.
 
 ---
 
@@ -456,9 +514,15 @@ Vizuelni pregled svih tačaka u sistemu omogućava brz uvid u evidenciju sanduč
 
 #### Acceptance criteria
 
-- **Kada** se otvori lista sandučića, **ako** sistem dohvati podatke, **tada** sistem mora prikazati sandučiće.
-- **Sistem mora** prikazati adresu, tip i prioritet sandučića.
-- **Korisnik treba** vidjeti listu svih evidentiranih sandučića u bazi.
+- Kada administrator ili dispečer otvori stranicu "Lista sandučića", tada sistem mora prikazati tabelu sa kolonama: Serijski broj, Adresa, Tip, Prioritet (npr. Visok/Srednji/Nizak) i Status (Prazan/Pun).
+- Sistem mora implementirati straničenje od 25 sandučića po stranici kako bi se osigurala brzina učitavanja stranice.
+- Sistem mora omogućiti filtere iznad tabele koji omogućavaju filtriranje liste prema:
+  - Tipu sandučića (Zidni, Samostojeći, itd.).
+  - Prioritetu (Visok, Srednji, Nizak).
+  - Naselju/Ulici (pretraga po tekstu u polju "Adresa").
+- Sistem mora omogućiti sortiranje liste klikom na zaglavlje kolone "Prioritet", tako da se najhitniji sandučići prikažu prvi.
+- Kada korisnik klikne na adresu sandučića u tabeli, tada sistem mora otvoriti mini-prozor ili modal sa prikazom te lokacije na mapi (poveznica sa US-18).
+- Kada u bazi nema evidentiranih sandučića, tada sistem umjesto prazne tabele mora prikazati poruku: "Baza sandučića je prazna. Kliknite na 'Dodaj novi' za početak."
 
 ---
 
@@ -492,9 +556,15 @@ Prioriteti omogućavaju da sistem i dispečer razlikuju kritične od manje kriti
 
 #### Acceptance criteria
 
-- **Kada** administrator pristupi opcijama sandučića, **ako** se odabere prioritet, **tada** sistem mora sačuvati tu vrijednost.
-- **Sistem mora** omogućiti izbor prioriteta (npr. Visok, Srednji, Nizak).
-- **Korisnik treba** vidjeti trenutni prioritet na listi i u detaljima.
+- Kada administrator otvori formu za sandučić (unos ili uređivanje), tada sistem mora ponuditi padajući meni "Prioritet" sa tri fiksne opcije: Visok (High), Srednji (Medium) i Nizak (Low).
+- Sistem mora vizuelno označiti nivoe prioriteta u svim tabelama i mapama koristeći kodiranje bojama:
+  - Visok: Crveni indikator (Mora se isprazniti svakodnevno).
+  - Srednji: Žuti/Narandžasti indikator (Pražnjenje svaka 2-3 dana).
+  - Nizak: Zeleni indikator (Pražnjenje po potrebi ili jednom sedmično).
+- Sistem mora omogućiti "Automatski prioritet"; ako je ova opcija uključena, tada sistem automatski postavlja prioritet na "Visok" za sve sandučiće tipa "Specijalni/Prioritetni" (iz US-15) ili one locirane u zoni centra grada.
+- Kada administrator ručno promijeni prioritet, tada sistem mora tražiti kratko obrazloženje (npr. "Povećan volumen pošte zbog praznika"), koje se čuva u bazi.
+- Sistem ne smije dozvoliti da sandučić ostane bez dodijeljenog prioriteta; inicijalna vrijednost pri kreiranju mora biti "Srednji".
+- Kada se prioritet promijeni, tada se ta promjena mora odmah odraziti na listu prioriteta za generisanje rute u US-22 (sandučići sa Visokim prioritetom se automatski pomjeraju na vrh liste za obilazak).
 
 ---
 ### PBI-021 Evidencija radnih pravila sandučića
@@ -524,9 +594,13 @@ Uvođenje radnih pravila osigurava da generisane rute budu operativno izvodljive
 - **Utiče na:** US-19 i US-20 (Algoritam za generisanje ruta).
 
 **Acceptance criteria:**
-- **Kada** administrator otvori formu za uređivanje sandučića, **tada** moraju postojati polja za unos "Vrijeme od" i "Vrijeme do".
-- **Sistem mora** validirati da je "Vrijeme do" hronološki nakon "Vremena od".
-- **Sistem ne smije** dozvoliti čuvanje praznih polja ako su pravila aktivirana.
+- Kada administrator otvori formu za sandučić, tada sistem mora prikazati sekciju "Dostupnost" sa poljima: Početak (Time picker) i Kraj (Time picker) u 24-satnom formatu (npr. 08:00 - 16:00).
+- Sistem mora onemogućiti spašavanje ako je "Vrijeme do" ranije ili jednako "Vremenu od" (npr. od 12:00 do 10:00), uz prikaz poruke: "Krajnje vrijeme mora biti nakon početnog".
+- Sistem mora omogućiti unos do dva odvojena termina dnevno (npr. za objekte koji imaju pauzu, tipa 08:00-12:00 i 14:00-18:00).
+- Kada se unose dva termina, sistem mora validirati da se oni ne preklapaju (npr. termin 1: 08:00-12:00, termin 2: 11:00-14:00 mora biti odbijen).
+- Sistem mora imati predefinisano polje "24/7 dostupnost" (checkbox); ako je označeno, tada polja za vrijeme postaju neaktivna, a sistem tretira sandučić kao stalno dostupan.
+- Kada algoritam za rute (US-20) izračuna da poštar stiže izvan definisanog okvira, tada sistem mora označiti tu tačku na ruti crvenom bojom i prikazati upozorenje administratoru prije finalnog slanja rute poštaru.
+- Sistem ne smije dozvoliti unos nepostojećeg vremena (npr. 25:61).
 
 ---
 
@@ -541,8 +615,12 @@ Uvođenje radnih pravila osigurava da generisane rute budu operativno izvodljive
 - **Zavisi od:** US-15 (Pregled liste sandučića).
 
 **Acceptance criteria:**
-- **Sistem mora** omogućiti odabir dana (ponedjeljak - nedjelja) putem checkbox kontrola.
-- **Kada** algoritam generiše rutu za određeni datum, **tada** u nju smije uključiti samo sandučiće kojima je taj dan označen kao radni.
+- Kada administrator otvori formu za sandučić, tada sistem mora prikazati sekciju "Radni dani" sa sedam checkbox kontrola (Ponedjeljak – Nedjelja).
+- Sistem mora pri kreiranju novog sandučića automatski označiti dane od Ponedjeljka do Petka, dok Subota i Nedjelja moraju biti inicijalno odznačeni.
+- Sistem ne smije dozvoliti spašavanje sandučića ako nijedan dan nije označen; u tom slučaju mora prikazati poruku: "Sandučić mora imati barem jedan definisan radni dan".
+- Kada administrator označi ili odznači dan, tada sistem mora momentalno ažurirati bazu podataka tako da se promjena uzme u obzir pri sljedećem generisanju rute (US-20).
+- Sistem mora omogućiti opciju "Označi sve / Odznači sve" radi bržeg unosa podataka za sandučiće koji su dostupni 24/7.
+- Kada algoritam (US-20) generiše rutu za npr. Subotu, ako sandučić nema označenu subotu kao radni dan, tada taj sandučić mora biti potpuno izostavljen sa mape obilaska, bez obzira na njegov prioritet.
 
 
 
@@ -578,10 +656,13 @@ Ovo je srce sistema. Automatizacija rute smanjuje manuelni rad dispečera, šted
 
 #### Acceptance criteria
 
-- **Kada** dispečer odabere parametre, **ako** se pokrene generisanje, **tada** sistem mora kreirati rutu.
-- **Sistem mora** uzeti u obzir koordinate i prioritete pri računanju redoslijeda.
-- **Kada** ne postoje sandučići u sistemu, **ako** se pokuša kreiranje, **tada** sistem ne smije generisati rutu.
-
+- Kada dispečer klikne na dugme Generiši, tada sistem mora u obzir uzeti isključivo sandučiće koji su: Aktivni (US-13), imaju označen današnji radni dan (US-33) i čiji se vremenski okvir dostupnosti (US-32) podudara sa planiranim vremenom obilaska.
+- Sistem mora primijeniti prioritetno ponderisanje tako da sandučići sa statusom Visok prioritet (US-18) imaju prednost u redoslijedu obilaska u odnosu na one sa nižim prioritetom.
+- Kada se proces proračuna završi, tada sistem mora prikazati vizuelni prijedlog rute na interaktivnoj mapi (povezana linija između pinova) i hronološku listu adresa sa procijenjenim vremenom dolaska za svaku tačku.
+- Sistem mora izvršiti proračun unutar maksimalno 5 sekundi za rute do 50 tačaka; u suprotnom, mora prikazati indikator učitavanja (loader).
+- Kada algoritam izračuna da ukupno trajanje rute premašuje 8 sati rada, tada sistem mora prikazati narandžastu toast obavijest: Upozorenje: Ruta premašuje standardno radno vrijeme.
+- Sistem mora za MVP verziju koristiti algoritam zasnovan na Euklidskoj udaljenosti $$d = \sqrt{(x_2-x_1)^2 + (y_2-y_1)^2}$$ kako bi osigurali brzinu proračuna.
+- Kada u sistemu nema dostupnih sandučića za odabrane parametre, tada sistem mora onemogućiti dugme Generiši i prikazati poruku: Nema dostupnih lokacija za generisanje rute.
 ---
 
 ### PBI-023 Dodjela rute poštaru
@@ -609,9 +690,13 @@ Uspostavlja jasnu odgovornost za izvršenje rute i omogućava da poštar na vrij
 
 #### Acceptance criteria
 
-- **Kada** je ruta spremna, **ako** se ruta dodijeli odabranom radniku, **tada** sistem mora povezati poštara i rutu.
-- **Sistem mora** omogućiti izbor poštara sa liste dostupnih radnika.
-- **Korisnik treba** dobiti potvrdu o uspješno izvršenoj dodjeli.
+- Kada je ruta generisana, sistem mora prikazati padajući meni sa listom svih poštara koji imaju status Dostupan (US-13).
+- Kada dispečer odabere poštara i klikne na dugme Potvrdi dodjelu, sistem mora u bazi podataka povezati ID poštara sa ID-om rute i promijeniti status poštara u Zauzet.
+- Sistem mora u trenutku dodjele poslati push obavijest ili internu poruku na korisnički račun poštara sa tekstom: Nova ruta vam je dodijeljena. Kliknite za pregled.
+- Sistem mora onemogućiti dodjelu iste rute više puta ili dodjelu rute poštaru koji već ima aktivan zadatak.
+- Kada se proces završi, sistem mora prikazati zelenu toast obavijest: Ruta je uspješno dodijeljena poštaru [Ime i prezime].
+- Sistem mora automatski osvježiti tabelarni pregled poštara (US-13) kako bi status novozauzetog radnika odmah bio vidljiv dispečeru.
+- Kada dispečer pokuša dodijeliti rutu bez odabranog poštara, sistem mora prikazati poruku upozorenja: Molimo odaberite poštara sa liste prije potvrde.
 
 ---
 
@@ -640,9 +725,13 @@ Omogućava provjeru kvaliteta prijedloga rute prije nego što ruta bude poslana 
 
 #### Acceptance criteria
 
-- **Kada** se u pregledu odabere ruta, **ako** se otvori ruta, **tada** sistem mora prikazati detalje.
-- **Sistem mora** prikazati redoslijed obilaska i listu uključenih sandučića.
-- **Korisnik treba** vidjeti osnovne informacije o ruti (dužina, broj tačaka) prije dodjele.
+- Kada dispečer klikne na generisanu rutu, sistem mora prikazati detaljan hronološki spisak svih sandučića uključenih u taj obilazak prema redoslijedu koji je odredio algoritam.
+- Sistem mora za svaki sandučić u listi prikazati osnovne identifikatore: redni broj u ruti, adresu lokacije i serijski broj sandučića.
+- Sistem mora u zaglavlju detalja rute prikazati sumarne podatke: ukupan broj tačaka koje treba obići, procijenjenu ukupnu kilometražu i očekivano trajanje obilaska u satima i minutama.
+- Sistem mora omogućiti interaktivni pregled rute na mapi gdje su tačke obilaska numerisane (1, 2, 3...) kako bi dispečer vizuelno potvrdio logiku kretanja.
+- Kada korisnik klikne na pojedinačni sandučić unutar liste detalja, sistem mora automatski centrirati mapu na tu lokaciju i prikazati dodatne informacije poput prioriteta i radnog vremena sandučića.
+- Sistem mora sadržavati opciju Nazad koja omogućava dispečeru povratak na listu svih generisanih ruta bez gubitka trenutnih podataka proračuna.
+- Kada ruta sadrži više od 20 tačaka, sistem mora omogućiti pregled liste kroz skrolovanje uz fiksirano zaglavlje sa ukupnim statistikama rute.
 
 ---
 
@@ -671,9 +760,13 @@ Daje dispečeru neophodnu fleksibilnost u situacijama kada automatski prijedlog 
 
 #### Acceptance criteria
 
-- **Kada** dispečer mijenja raspored, **ako** se promijeni redoslijed tačaka, **tada** sistem mora sačuvati izmjene.
-- **Sistem mora** omogućiti ručnu izmjenu redoslijeda tačaka unutar rute (npr. drag & drop).
-- **Kada** dispečer sačuva izmjene, **ako** potvrdi akciju, **tada** sistem mora prikazati novi redoslijed obilaska.
+- Kada dispečer otvori detalje rute (US-23), sistem mora omogućiti interaktivnu promjenu redoslijeda tačaka koristeći drag and drop metodu unutar hronološke liste sandučića.
+- Sistem mora dinamički ažurirati numeraciju tačaka na listi i na mapi odmah nakon svake pojedinačne promjene pozicije sandučića u nizu.
+- Sistem mora nakon svake ručne izmjene automatski ponovo izračunati i prikazati ažurirane vrijednosti za ukupnu kilometražu i očekivano trajanje rute (ETA).
+- Kada dispečer završi sa pomjeranjem tačaka, sistem mora zahtijevati klik na dugme Sačuvaj promjene kako bi novi redoslijed postao trajan u bazi podataka.
+- Sistem mora prikazati potvrdu u obliku zelene toast obavijesti: Redoslijed rute je uspješno promijenjen, nakon što se izmjene uspješno zapišu u bazu.
+- Kada dispečer pokuša napustiti stranicu bez spašavanja napravljenih izmjena, sistem mora prikazati upozoravajući modal sa pitanjem: "Imate nesačuvane promjene. Želite li ih sačuvati prije odlaska?"
+- Sistem ne smije dozvoliti brisanje tačaka iz rute unutar ove funkcionalnosti, već isključivo promjenu njihovog međusobnog redoslijeda.
 
 ---
 ## Sprint 9 (PBI-026, PBI-027, PBI-028, PBI-029, PBI-030)
@@ -706,9 +799,14 @@ Povećava brzinu rada na terenu i eliminiše potrebu za papirnim spiskovima ili 
 
 #### Acceptance criteria
 
-- **Kada** se poštar prijavi, **ako** se otvori mobilna aplikacija, **tada** sistem mora prikazati aktivnu rutu.
-- **Sistem mora** biti responzivan (prilagođen ekranu telefona).
-- **Korisnik treba** vidjeti sve tačke obilaska na mapi ili listi.
+- Kada se poštar prijavi na mobilnu aplikaciju, sistem mora automatski učitati i prikazati aktivnu rutu dodijeljenu tom korisniku na početnom ekranu.
+- Sistem mora prikazati listu svih sandučića za taj dan poredanih po hronološkom redoslijedu obilaska sa adresom i trenutnom udaljenošću od lokacije poštara.
+- Sistem mora u vrhu ekrana prikazati sumarne podatke za poštara: ukupan broj sandučića, preostali broj sandučića za obilazak i procijenjeno vrijeme potrebno za završetak cijele rute.
+- Sistem mora omogućiti prebacivanje između tabelarnog prikaza liste i prikaza rute na mapi, pri čemu se prikaz na mapi mora prilagođavati trenutnoj GPS lokaciji poštara.
+- Kada poštar klikne na pojedinačnu tačku u listi, sistem mora prikazati detalje sandučića uključujući serijski broj, tip sandučića i polje za bilješke dispečera ako postoji.
+- Sistem mora biti u potpunosti responzivan i optimizovan za rad na mobilnim uređajima, sa dugmadi koja su dovoljno velika za laganu navigaciju prstom.
+- Kada poštar nema dodijeljenu aktivnu rutu, sistem mora na početnom ekranu prikazati poruku: Trenutno nemate dodijeljenih ruta za danas.
+- Sistem mora omogućiti navigaciju do prve ili sljedeće tačke u ruti otvaranjem eksterne mape na uređaju (npr. Google Maps) klikom na adresu sandučića.
 
 ---
 
@@ -738,9 +836,14 @@ Omogućava zatvaranje petlje povratnih informacija između poštara i dispečera
 
 #### Acceptance criteria
 
-- **Kada** poštar dođe do lokacije, **ako** se promijeni status sandučića (npr. u "Ispražnjeno"), **tada** sistem mora sačuvati promjenu.
-- **Sistem mora** omogućiti promjenu statusa jednim klikom.
-- **Korisnik treba** vidjeti ažuriran status na svom interfejsu.
+- Kada poštar odabere sandučić na mobilnom uređaju, sistem mora prikazati jasno vidljivo dugme za promjenu statusa (npr. Potvrdi pražnjenje).
+- Sistem mora u MVP verziji podržavati minimalno tri statusa: Na čekanju (inicijalno stanje), Završeno (uspješno ispražnjeno) i Problem (nemogućnost pristupa ili kvar).
+- Kada poštar klikne na dugme za promjenu statusa u Završeno, sistem mora automatski zabilježiti tačno vrijeme (timestamp) i GPS koordinate poštara u trenutku klika radi potvrde lokacije.
+- Sistem mora odmah po promjeni statusa vizuelno izmijeniti prikaz te tačke u listi i na mapi (npr. promjena boje pina iz plave u zelenu) kako bi poštar vidio napredak.
+- Kada se odabere status Problem, sistem mora otvoriti obavezno polje za kratak unos teksta ili odabir tipa problema (npr. Oštećena brava, Blokiran prilaz) prije čuvanja promjene.
+- Sistem mora u realnom vremenu sinhronizovati ove promjene sa dispečerskom konzolom (US-29) kako bi dispečer imao uvid u progres rute bez osvježavanja stranice.
+- Kada je status sandučića postavljen na Završeno, sistem mora onemogućiti ponovnu promjenu statusa za taj sandučić unutar iste radne smjene, osim ako administrator ne odobri resetovanje.
+- Sistem mora omogućiti rad u offline režimu; ako poštar nema internet konekciju, status se čuva lokalno na uređaju i automatski šalje na server čim se veza uspostavi.
 
 ---
 
@@ -770,9 +873,15 @@ Omogućava da sistem zabilježi operativne izuzetke i da dispečer ima tačnu sl
 
 #### Acceptance criteria
 
-- **Kada** poštar ne može pristupiti tački, **ako** se označi lokacija kao nedostupna, **tada** sistem mora evidentirati problem.
-- **Sistem mora** omogućiti unos napomene (razlog nedostupnosti).
-- **Korisnik treba** vidjeti status "Nedostupno" u svojoj listi zadataka.
+- Kada poštar unutar mobilne aplikacije označi status sandučića kao Nedostupno, sistem mora obavezno prikazati polje za unos tekstualne napomene.
+- Sistem mora onemogućiti spašavanje statusa Nedostupno ukoliko polje Napomena ostane prazno, uz prikaz upozorenja: Molimo unesite razlog nedostupnosti lokacije.
+- Sistem u MVP verziji mora podržavati tekstualni opis od minimalno 10 karaktera, dok će se opcija dodavanja fotografije ostaviti za kasniju nadogradnju sistema.
+- Kada se potvrdi unos, sistem mora automatski dodijeliti oznaku Nedostupno tom sandučiću u listi zadataka poštara i promijeniti boju indikatora u crvenu.
+- Sistem mora zabilježiti GPS lokaciju poštara u trenutku slanja prijave o nedostupnosti kako bi dispečer mogao potvrditi da se radnik zaista nalazi u blizini sandučića.
+- Kada se status Nedostupno sačuva, sistem mora automatski poslati hitnu obavijest (alert) u dispečerski centar sa informacijama o sandučiću i razlogu problema.
+- Sistem mora omogućiti poštaru da nastavi sa sljedećom tačkom u ruti bez blokiranja aplikacije nakon evidentiranja nedostupnosti.
+- Kada dispečer pregleda rutu, sistem mu mora omogućiti direktan klik na napomenu poštara kako bi mogao odmah procijeniti da li je potrebna intervencija ili promjena prioriteta za naredni dan.
+
 
 ---
 
@@ -801,9 +910,14 @@ Dispečer dobija operativni pregled nad izvršenjem rute i može pravovremeno re
 
 #### Acceptance criteria
 
-- **Kada** dispečer prati rad na terenu, **ako** se učita progres, **tada** sistem mora prikazati statuse u realnom vremenu.
-- **Sistem mora** omogućiti vizuelni pregled progresa rute.
-- **Korisnik treba** vidjeti tačno koji su sandučići obrađeni, preskočeni ili problematični.
+- Kada dispečer otvori stranicu Operativni pregled, sistem mora prikazati listu svih aktivnih ruta sa imenom poštara i procentualnim indikatorom progresa (npr. 45% završeno).
+- Sistem mora za svaku pojedinačnu rutu prikazati sumarnu statistiku: ukupan broj sandučića, broj uspješno ispražnjenih, broj nedostupnih i broj onih koji su još na čekanju.
+- Sistem u MVP verziji mora ponuditi oba prikaza: tabelarni spisak sa statusima i interaktivnu mapu na kojoj se boja pinova mijenja u realnom vremenu (npr. zelena za završeno, crvena za nedostupno, plava za čekanje).
+- Kada dispečer klikne na sandučić sa statusom Nedostupno, sistem mora u sklopu pregleda odmah prikazati napomenu koju je poštar unio na terenu (US-29).
+- Sistem mora osigurati automatsko osvježavanje podataka na dispečerskoj konzoli (npr. svakih 60 sekundi) bez potrebe za ručnim ponovnim učitavanjem cijele stranice.
+- Kada je ruta u potpunosti završena (svi sandučići imaju status Završeno ili Nedostupno), sistem mora označiti rutu statusom Arhivirana i zabilježiti ukupno vrijeme trajanja obilaska.
+- Sistem mora omogućiti dispečeru filtriranje pregleda prema statusu (npr. prikaži samo rute koje imaju barem jednu problematičnu lokaciju) radi brže reakcije na terenu.
+
 
 ---
 
@@ -832,9 +946,11 @@ Izvještaj daje pregled realizacije rada i predstavlja osnovu za internu analizu
 
 #### Acceptance criteria
 
-- **Kada** se odabere opcija za izvještavanje, **ako** se generiše izvještaj za odabrani datum, **tada** sistem mora prikazati rezultate.
-- **Sistem mora** prikazati broj realizovanih i nerealizovanih obilazaka.
-- **Korisnik treba** dobiti sažetak sa osnovnim statistikama za odabrani dan.
+- Kada administrator odabere datum, sistem mora generisati pregled koji sadrži ukupne brojke za taj dan: broj planiranih, broj ispražnjenih i broj neuspješnih obilazaka.
+- Sistem mora izlistati sve napomene o nedostupnim lokacijama grupisanu po poštarima radi lakše analize prepreka na terenu.
+- Korisnik mora imati opciju da jednim klikom preuzme (download) ovaj izvještaj u PDF formatu.
+- Sistem mora sadržavati i podatak o prosječnom vremenu zadržavanja poštara po jednom sandučiću za taj dan.
+- Ukoliko za odabrani datum nema podataka, sistem mora prikazati poruku: Za traženi datum nisu pronađene zabilježene aktivnosti.
 
 ---
 ## Sprint 10 (PBI-049, PBI-050, PBI-051)
@@ -868,8 +984,13 @@ Arhiviranje osigurava potpunu transparentnost operacija na terenu. Omogućava di
 - **Utiče na:** US-36 (Izvještaji o učinku).
 
 #### Acceptance criteria
-- **Kada** korisnik otvori modul "Arhiva", **tada** se prikazuje lista ruta sa podacima: Datum, Poštar, Ukupno sandučića, Status (Završeno/Prekinuto).
-- **Sistem mora** omogućiti filtriranje liste po periodu (od-do) i po imenu poštara.
+
+- Kada korisnik pristupi modulu Arhiva, sistem mora učitati listu svih ruta koje su dobile status Završeno ili Prekinuto, poredanih od najnovijih prema starijima.
+- Sistem mora za svaku arhiviranu rutu u tabelarnom prikazu prikazati kolone: datum kreiranja, ime i prezime poštara, ukupan broj planiranih tačaka i finalni status rute.
+- Sistem mora omogućiti brzo filtriranje arhive korištenjem kalendara (odabir perioda od-do) i padajućeg menija za izbor određenog poštara.
+- Kada dispečer klikne na bilo koju rutu u arhivi, sistem mora otvoriti detaljan pregled te rute koji je identičan operativnom pregledu, ali u modu samo za čitanje.
+- Sistem ne smije dozvoliti ponovno pokretanje arhivirane rute; u slučaju greške, administrator može samo dodati internu napomenu na arhiviranu stavku.
+- Sistem mora omogućiti pretragu arhive putem polja za unos teksta koje pretražuje bazu po imenu poštara ili ID broju rute.
 
 ---
 
@@ -884,8 +1005,14 @@ Arhiviranje osigurava potpunu transparentnost operacija na terenu. Omogućava di
 - **Zavisi od:** US-34 (Pregled liste arhive).
 
 #### Acceptance criteria
-- **Sistem mora** prikazati listu svih sandučića unutar odabrane rute sa njihovim statusima u tom trenutku.
-- **Sistem treba** prikazati timestamp (vrijeme) kada je poštar potvrdio aktivnost na svakoj lokaciji.
+
+- Kada administrator odabere specifičnu rutu iz arhive, sistem mora prikazati kompletan spisak sandučića onim redoslijedom kojim su bili planirani za obilazak.
+- Sistem mora pored svakog sandučića jasno prikazati njegov finalni status: Ispražnjeno, Nedostupno ili Nije posjećeno.
+- Za svaki sandučić koji je obrađen na terenu, sistem mora prikazati tačno vrijeme potvrde aktivnosti (timestamp) u formatu HH:mm:ss.
+- Kada je sandučić bio označen kao Nedostupno, sistem mora u detaljnom prikazu arhive prikazati i tekstualno obrazloženje koje je poštar unio u trenutku prijave problema.
+- Sistem mora prikazati mapu sa ucrtanom putanjom i pinovima sandučića čije se boje razlikuju na osnovu statusa koji su dobili tokom tog specifičnog obilaska.
+- Sistem mora omogućiti administratoru da izveze (export) ovaj detaljni prikaz u Excel formatu radi dalje analize učinka po lokacijama.
+- Kada administrator pregleda arhiviranu rutu, sistem mora onemogućiti bilo kakve izmjene statusa ili vremena, osiguravajući integritet istorijskih podataka.
 
 ---
 
@@ -916,9 +1043,15 @@ Prošireni izvještaji transformišu sirove podatke u korisne poslovne informaci
 - **Zavisi od:** US-34 (Arhiva ruta).
 
 #### Acceptance criteria:
-- **Sistem mora** izračunati procenat uspješnosti (Realizovano / Planirano * 100).
-- **Izvještaj mora** biti prikazan u tabelarnoj formi unutar aplikacije sa opcijom filtriranja po datumu.
 
+- Kada dispečer otvori modul za izvještaje o učinku, sistem mora prikazati tabelu sa kolonama: ime poštara, ukupan broj dodijeljenih sandučića, broj uspješno ispražnjenih lokacija i broj nerealizovanih lokacija.
+- Sistem mora automatski izračunati procenat uspješnosti za svakog poštara koristeći formulu (Ispražnjeno / Planirano) * 100 i prikazati tu vrijednost u posebnoj koloni.
+- Sistem mora omogućiti filtriranje podataka prema specifičnom vremenskom periodu (npr. sedmični ili mjesečni izvještaj) kako bi se pratio učinak kroz vrijeme.
+- Sistem u MVP verziji mora prikazati tabelarni izvještaj, ali i jednostavan stubni grafikon koji vizuelno poredi učinak različitih poštara radi lakše evaluacije.
+- Sistem mora omogućiti sortiranje tabele prema procentu uspješnosti, od najvećeg ka najmanjem, kako bi se odmah identifikovali najefikasniji radnici.
+- Kada korisnik klikne na ime poštara u izvještaju, sistem mora otvoriti dodatni detaljni prikaz sa listom svih ruta tog radnika koje su ušle u trenutni obračun.
+- Sistem mora omogućiti izvoz sumarnog izvještaja o učinku u CSV formatu za potrebe daljeg procesiranja u ljudskim resursima.
+- Kada u odabranom periodu nema završenih ruta za određenog poštara, sistem ga ne smije uključiti u obračun prosječne uspješnosti tima.
 ---
 
 ##### ID storyja: US-37
@@ -930,7 +1063,15 @@ Prošireni izvještaji transformišu sirove podatke u korisne poslovne informaci
 - **Zavisi od:** US-15 (Podaci o sandučićima).
 
 #### Acceptance criteria:
-- **Kada** korisnik generiše izvještaj, **tada** sistem mora prikazati podatke o broju sandučića koji nisu ispražnjeni, sortirane po tipu (npr. Zidni, Stojeći).
+
+- Kada administrator pokrene analizu realizacije, sistem mora prikazati zbirni tabelarni izvještaj gdje su podaci grupisani prema tipu sandučića (npr. Zidni, Samostojeći, Ugradbeni).
+- Sistem mora za svaki tip sandučića prikazati ukupan broj planiranih pražnjenja, broj uspješno realizovanih i broj prijavljenih problema u odabranom periodu.
+- Sistem mora automatski izračunati stopu kvarova ili nedostupnosti za svaki tip sandučića kako bi se identifikovalo da li je neki specifičan model skloniji problemima na terenu.
+- Kada se u izvještaju klikne na određeni tip sandučića, sistem mora izlistati sve povezane napomene poštara (US-29) koje se odnose isključivo na taj model opreme.
+- Sistem mora omogućiti filtriranje izvještaja po gradskim zonama kako bi se utvrdilo da li tip sandučića utiče na realizaciju samo u određenim okruženjima (npr. uska grla u starom gradu).
+- Korisnik mora imati mogućnost da rezultate analize prikaže u obliku kružnog dijagrama (pie chart) koji pokazuje udio pojedinačnih tipova sandučića u ukupnom broju neuspješnih obilazaka.
+- Sistem mora omogućiti upoređivanje realizacije između dva različita tipa sandučića za isti vremenski period radi donošenja odluka o nabavci nove opreme.
+- Izvještaj mora sadržavati opciju za izvoz podataka u Excel formatu, uključujući sve pojedinačne lokacije koje su ušle u statistiku za odabrani tip sandučića.
 
 ---
 
@@ -960,9 +1101,15 @@ Brza pretraga i filtriranje štede vrijeme administratorima pri radu sa velikim 
 - **Zavisi od:** US-15 (Prikaz liste sandučića).
 
 #### Acceptance criteria
-- **Sistem mora** početi filtrirati listu čim korisnik unese minimalno tri karaktera.
-- **Pretraga mora** obuhvatiti polja: ID sandučića i Adresa.
 
+- Kada administrator unese najmanje tri karaktera u polje za pretragu, sistem mora automatski osvježiti listu i prikazati samo one sandučiće koji sadrže taj niz u ID-u ili adresi.
+- Sistem mora osigurati da pretraga bude neosjetljiva na velika i mala slova (case-insensitive) kako bi se olakšao unos podataka.
+- Pretraga mora funkcionisati u realnom vremenu bez potrebe da korisnik pritisne tipku Enter ili dugme za potvrdu.
+- Kada se polje za pretragu isprazni (obriše se sav tekst), sistem mora trenutno vratiti prikaz kompletne liste svih sandučića bez kašnjenja.
+- Sistem mora podržavati pretragu po parcijalnim vrijednostima, što znači da unos dijela naziva ulice mora vratiti sve sandučiće koji se nalaze u toj ulici.
+- Kada pretraga ne vrati nijedan rezultat, sistem mora unutar tabele prikazati jasnu informaciju: "Nema pronađenih sandučića za uneseni pojam."
+- Brzina filtriranja liste ne smije prelaziti jednu sekundu za baze do 1000 sandučića kako bi se osiguralo glatko korisničko iskustvo.
+- Sistem mora zadržati funkcionalnost straničenja čak i nad filtriranim rezultatima ukoliko broj pronađenih objekata prelazi standardni broj stavki po stranici.
 ---
 
 ##### ID storyja: US-39
@@ -976,5 +1123,12 @@ Brza pretraga i filtriranje štede vrijeme administratorima pri radu sa velikim 
 - **Proširuje:** US-15 (Interfejs za upravljanje sandučićima).
 
 #### Acceptance criteria
-- **Sistem mora** omogućiti filtriranje po: Tipu sandučića, Statusu (aktivan/neaktivan) i Prioritetu.
-- **Kada** se filteri primijene, **tada** sistem mora ažurirati prikaz bez ponovnog učitavanja cijele stranice (gdje je to tehnički moguće).
+
+- Kada administrator otvori interfejs za upravljanje, sistem mora prikazati dostupne filtere za Tip sandučića, Status i Prioritet u formi padajućih menija ili grupisanih polja za odabir.
+- Sistem mora omogućiti kombinovanje više različitih filtera istovremeno (npr. prikaži sve sandučiće koji su Neaktivni i imaju Visok prioritet).
+- Kada korisnik odabere ili promijeni vrijednost filtera, sistem mora trenutno ažurirati prikazanu tabelu koristeći asinhrono učitavanje podataka bez osvježavanja cijelog prozora preglednika.
+- Sistem mora sadržavati jasno vidljivo dugme Resetuj filtere koje jednim klikom vraća sve parametre na početne vrijednosti i prikazuje kompletnu listu sandučića.
+- Sistem mora automatski resetovati sve filtere nakon što korisnik napusti stranicu ili se odjavi, kako bi se spriječila zabuna pri sljedećem pristupu podacima.
+- Pored svakog aktivnog filtera sistem treba prikazati mali indikator (npr. ikonu x) koji omogućava uklanjanje samo tog specifičnog kriterija bez uticaja na ostale izabrane filtere.
+- Sistem mora ispravno uskladiti funkciju filtriranja sa funkcijom brze pretrage (US-38), tako da rezultati pretrage budu ograničeni isključivo na skup podataka koji zadovoljava aktivne filtere.
+- Kada primijenjeni filteri ne daju nijedan rezultat, sistem mora unutar prostora za tabelu prikazati poruku: "Nema sandučića koji odgovaraju odabranim kriterijima filtriranja."
