@@ -115,16 +115,16 @@
 **Glavni tok:**
 1. Poštar se prijavljuje na sistem. Sistem prepoznaje dodijeljenu aktivnu rutu i prikazuje je u responzivnom sučelju prilagođenom mobilnim uređajima.
 2. Poštar pregledava redoslijed obilaska i osnovne informacije o svakoj tački (adresa, tip sandučića).
-3. Po dolasku na lokaciju, poštar odabire sandučić s liste i jednim klikom mijenja njegov status (npr. „Ispražnjeno", „Punjenje završeno").
+3. Po dolasku na lokaciju, poštar odabire sandučić s liste i jednim klikom mijenja njegov status (npr. 'Ispražnjeno').
 4. Sistem bilježi promjenu statusa s vremenskom oznakom i odmah ažurira prikaz za poštara.
-5. Ako je lokacija nedostupna, poštar odabire opciju „Nedostupna lokacija", po potrebi unosi kratku napomenu s razlogom i potvrđuje unos.
-6. Sistem evidentira status „Nedostupno" i ažurira prikaz.
+5. Ako je lokacija nedostupna, poštar odabire opciju 'Nedostupna lokacija', po potrebi unosi kratku napomenu s razlogom i potvrđuje unos.
+6. Sistem evidentira status 'Nedostupno' i ažurira prikaz.
 7. Dispečer u realnom vremenu prati napredak rute kroz tabelarni ili vizuelni prikaz: koje su tačke obrađene, preskočene ili označene kao nedostupne.
 
 **Alternativni tokovi:**
 - *A1 – Poštar nema dodijeljenu rutu:* Sistem prikazuje informativnu poruku da za taj dan nema dodjeljene rute.
-- *A2 – Poštar ne unosi napomenu uz nedostupnu lokaciju:* Napomena nije obavezna. Sistem evidentira status „Nedostupno" i bez tekstualnog opisa.
-- *A3 – Poštar još nije počeo s obilaskom:* Sve tačke imaju status „Neobrađeno". Dispečer vidi rutu bez bilješki o napretku.
+- *A2 – Poštar ne unosi napomenu uz nedostupnu lokaciju:* Napomena nije obavezna. Sistem evidentira status 'Nedostupno' i bez tekstualnog opisa.
+- *A3 – Poštar još nije počeo s obilaskom:* Sve tačke imaju status 'Neobrađeno'. Dispečer vidi rutu bez bilješki o napretku.
 
 **Ishod:** Sve akcije poštara na terenu su evidentirane u sistemu s vremenskim oznakama. Dispečer ima ažurnu sliku izvršenja rute, a sistem raspolaže svim podacima potrebnim za generisanje izvještaja.
 
