@@ -3,28 +3,29 @@
 
 ## Kratak opis arhitektonskog pristupa
 
-Sistem se implementira kao višeslojna (N-Tier) monolitna web aplikacija s jasno razdvojenim klijentskim i serverskim dijelom - klijent-server arhitektura.
+Sistem se implementira kao monolitna web aplikacija u okviru klijent-server arhitekture, pri čemu je backend organizovan prema troslojnoj arhitekturi: **API**, **BLL** i **DAL**.
 
-Frontend je React SPA koji komunicira s backendom isključivo putem REST API-ja. Backend je ASP.NET Core Web API koji sadrži cjelokupnu poslovnu logiku: upravljanje korisnicima, rutama, sandučićima i optimizacijski algoritam. Podaci se čuvaju u PostgreSQL bazi podataka, a pristup je posredovan kroz Entity Framework Core ORM.
+Frontend je React SPA koji komunicira s backendom isključivo putem REST API-ja. Backend je ASP.NET Core aplikacija u kojoj **API sloj** izlaže HTTP endpointe, **BLL (Business Logic Layer)** sadrži poslovna pravila i optimizacijsku logiku, dok **DAL (Data Access Layer)** upravlja pristupom podacima preko Entity Framework Core ORM-a. Podaci se čuvaju u PostgreSQL bazi podataka.
 
-Monolitna arhitektura odabrana je zbog veličine tima, vremenskog okvira od jednog semestra i potrebe za brzim iteracijama. Mikroservisi su razmatrani, ali odbačeni - overhead u DevOps-u i mrežnom sloju nije opravdan za ovaj opseg projekta.
+Monolitna arhitektura odabrana je zbog veličine tima, vremenskog okvira od jednog semestra i potrebe za brzim iteracijama. Troslojna organizacija backenda uvodi jasnu separaciju odgovornosti i olakšava održavanje, testiranje i daljnje proširenje sistema.
 
 | **Arhitekturni stil** | **Primarni stack** | **Deployment model** |
 |---|---|---|
-| Monolitna, klijent-server, N-Tier | React SPA + ASP.NET Core Web API + PostgreSQL | Single-instance server (cloud hosted), responsive web klijent |
+| Monolitna, klijent-server; backend organizovan po troslojnoj arhitekturi (API/BLL/DAL) | React SPA + ASP.NET Core Web API + PostgreSQL | Single-instance server (cloud hosted), responsive web klijent |
 
 ---
 
 ## Glavne komponente sistema
 
-Sistem se sastoji od šest komponenti organizovanih u tri logička sloja.
+Sistem se sastoji od klijentskog dijela i backenda organizovanog kroz tri jasno odvojena sloja: API, BLL i DAL.
 
 | **Komponenta** | **Tehnologija** | **Odgovornost** | **Status** |
 |---|---|---|---|
 | **Presentation Layer (Frontend)** | React SPA | Administratorski panel, dispečerski dashboard, mobilni prikaz za poštara. Komunicira isključivo putem REST API-ja. | Arhitekturno stabilno |
-| **Application Layer (Backend)** | ASP.NET Core Web API | Centralna tačka poslovne logike: upravljanje korisnicima, rutama, sandučićima. Izlaže REST endpointe koje konzumira frontend. | U razvoju |
-| **Optimizacijski modul** | C# servis (interni) | Generiše optimalnu dnevnu rutu na osnovu lokacija, prioriteta i radnih pravila sandučića (nearest-neighbor heuristika u MVP-u). | U razvoju |
-| **Data Access Layer** | Entity Framework Core | ORM sloj koji enkapsulira sve upite prema bazi. Definira entitetske modele i migracije. | U razvoju |
+| **API Layer** | ASP.NET Core Web API | Ulazna tačka sistema. Prima HTTP zahtjeve, vrši autentifikaciju/autorizaciju, validaciju zahtjeva i izlaže REST endpointe koje konzumira frontend. | U razvoju |
+| **Business Logic Layer (BLL)** | C# servisni sloj / class library | Sadrži poslovnu logiku sistema: upravljanje korisnicima, rutama, sandučićima, pravilima rada i orkestraciju use-caseova. | U razvoju |
+| **Optimizacijski modul** | C# servis (interni, dio BLL-a) | Generiše optimalnu dnevnu rutu na osnovu lokacija, prioriteta i radnih pravila sandučića (nearest-neighbor heuristika u MVP-u). | U razvoju |
+| **Data Access Layer (DAL)** | Entity Framework Core | Enkapsulira sve upite prema bazi, definiše entitetske modele, repozitorije i migracije. | U razvoju |
 | **Baza podataka** | PostgreSQL | Relacijska baza: korisnici, sandučići, rute, statusi obilazaka, historija. Jedini izvor istine za sve podatke sistema. | U razvoju |
 | **Autentifikacijski podsistem** | JWT + ASP.NET Identity | Prijava korisnika, hashiranje lozinki (bcrypt), generisanje JWT tokena, RBAC (tri uloge: Admin, Dispečer, Poštar). | Kritična — zahtijeva posebnu pažnju |
 | **Map library (frontend)** | OpenStreetMap tile server + map biblioteka (konkretan izbor — npr. Leaflet — donosi se u Sprintu 4 i evidentira u Decision Logu, PBI-040) | Prikaz sandučića i ruta na mapi, interaktivno odabiranje koordinata pri unosu sandučića (US-14). Integracija izvedena tako da je tile provajder zamjenjiv bez promjene aplikacijske logike. | U razvoju — zavisi od OSM-a kao eksternog servisa (vidi R-008) |
@@ -45,14 +46,23 @@ JWT token se čuva u memoriji sesije (ne u localStorage) kako bi se smanjio rizi
 
 U produkcijskom okruženju razmatra se korištenje HttpOnly cookies za pohranu tokena, uz dodatnu CSRF zaštitu, čime bi se postigla bolja ravnoteža između sigurnosti i korisničkog iskustva.
 
-### Application Layer - ASP.NET Core Web API
+### API Layer - ASP.NET Core Web API
 
-Backend je organizovan u četiri interna sloja:
+API sloj predstavlja ulaznu tačku u sistem i zadužen je za komunikaciju s frontendom.
 
-- **Controllers:** HTTP endpointi i validacija zahtjeva. Bez poslovne logike.
-- **Services:** Sva poslovna logika - upravljanje rutama, provjere validnosti operacija, pozivanje optimizacijskog modula.
-- **Repositories:** Enkapsulacija EF Core upita. Services ne komuniciraju direktno s DbContext-om.
-- **Domain Models:** C# klase koje reprezentuju entitete domene - Korisnik, Sandučić, Ruta, StavkaRute, DnevniIzvjestaj.
+- **Controllers / Endpoints:** primaju HTTP zahtjeve i vraćaju odgovore prema klijentu.
+- **Autentifikacija i autorizacija:** JWT validacija, kontrola pristupa po ulogama i zaštita endpointa.
+- **Validacija zahtjeva i DTO modeli:** provjera ulaznih podataka prije prosljeđivanja poslovnoj logici.
+- **Delegiranje ka BLL-u:** API sloj ne sadrži poslovna pravila, nego poziva odgovarajuće servise iz BLL-a.
+
+### Business Logic Layer (BLL)
+
+BLL predstavlja centralni sloj sistema i sadrži svu poslovnu logiku.
+
+- **Services / Use-case logika:** upravljanje korisnicima, sandučićima, rutama i izvještajima.
+- **Poslovna pravila:** provjere validnosti operacija, statusne tranzicije, pravila dodjele ruta i obrade izuzetaka.
+- **Orkestracija procesa:** koordinacija između API sloja, optimizacijskog modula i DAL-a.
+- **Domain modeli i interfejsi:** C# klase i apstrakcije koje reprezentuju entitete domene - Korisnik, Sandučić, Ruta, StavkaRute, DnevniIzvjestaj.
 
 ### Optimizacijski modul
 
@@ -62,9 +72,11 @@ MVP implementacija koristi nearest-neighbor heuristiku: polazi od depoa, iterati
 
 Modul je izolovan kao zasebni C# servis (`IRouteOptimizationService`) s jasno definisanim interfejsom. Buduća zamjena algoritma ne zahtijeva izmjene u ostatku sistema.
 
-### Data Access Layer - Entity Framework Core
+### Data Access Layer (DAL) - Entity Framework Core
 
-EF Core mapira C# entitete na PostgreSQL tablice putem Code-First pristupa - shema baze se derivira iz C# klasa kroz migracije.
+DAL je zadužen za pristup i perzistenciju podataka. EF Core mapira C# entitete na PostgreSQL tablice putem Code-First pristupa - shema baze se derivira iz C# klasa kroz migracije.
+
+Unutar DAL-a nalaze se `DbContext`, repozitoriji i konfiguracija mapiranja, dok BLL koristi DAL preko jasno definisanih interfejsa i ne komunicira direktno s bazom.
 
 Ključne tablice:
 
@@ -93,37 +105,43 @@ Pri prvoj prijavi, ako je postavljen `isForcePasswordChange` flag, API vraća HT
 
 ## Tok podataka i interakcija između komponenti
 
-Sva komunikacija prolazi kroz REST API kao jedinu ulaznu tačku u backend. Frontend nikad ne komunicira direktno s bazom.
+Sva komunikacija prolazi kroz REST API kao jedinu ulaznu tačku u backend. Frontend nikad ne komunicira direktno s bazom. Tipičan tok zahtjeva je:
+
+**Frontend -> API Layer -> BLL -> DAL -> PostgreSQL**
+
+Odgovor se vraća obrnutim smjerom, pri čemu svaki sloj zadržava svoju odgovornost i ne preskače naredni sloj.
 
 ### Tok autentifikacije
 
 | **Korak** | **Akter** | **Akcija** | **Rezultat** |
 |---|---|---|---|
 | **1** | Korisnik | POST /api/auth/login { identifier, password } (konkretan identifikator — email ili username — utvrđuje se kroz OQ-001) | HTTP 200 + JWT token (+ `requiresPasswordChange` flag pri prvoj prijavi) |
-| **2** | Auth Controller | Validira kredencijale putem ASP.NET Identity | Provjera hash lozinke |
-| **3** | JWT Service | Generiše JWT s role claim-om i expiry-jem | Token potpisan tajnim ključem |
+| **2** | API Layer (Auth Controller) | Prima zahtjev, validira ulazne podatke i prosljeđuje ga BLL-u | Zahtjev pripremljen za obradu |
+| **3** | BLL (Auth Service) | Validira kredencijale putem ASP.NET Identity i generiše JWT s role claim-om i expiry-jem | Provjera hash lozinke + potpisan token |
 | **4** | Frontend | Pohranjuje JWT u memoriju sesije, dekodira ulogu | Prikazuje UI prema ulozi |
-| **5** | Svaki naredni zahtjev | Šalje Authorization: Bearer \<token\> | Middleware validira token |
+| **5** | Svaki naredni zahtjev | Šalje Authorization: Bearer \<token\> | API middleware validira token |
 
 ### Tok generisanja rute
 
 | **Korak** | **Akter** | **Akcija** | **Rezultat** |
 |---|---|---|---|
 | **1** | Dispečer | POST /api/routes/generate { date, filters } | Pokretanje generisanja (bez dodjele poštara) |
-| **2** | RouteService | Dohvata aktivne sandučiće s prioritetima iz repozitorija | Lista sandučića s koordinatama |
-| **3** | RouteOptimizationService | Primjenjuje nearest-neighbor algoritam nad GPS koordinatama (Haversine udaljenost) uz poštivanje prioriteta i radnih pravila | Uređena lista redoslijeda |
-| **4** | RouteService | Kreira Route i RouteItem zapise u bazi sa statusom `Planirana` | HTTP 201 + routeId |
-| **5** | Dispečer | Pregleda prijedlog, po potrebi ručno mijenja redoslijed (PUT /api/routes/{id}/reorder) | Ažuriran redoslijed stavki |
-| **6** | Dispečer | PUT /api/routes/{id}/assign { postmanId } | Ruta dodijeljena poštaru (status ostaje `Planirana` do početka obilaska) |
-| **7** | Poštar | GET /api/routes/my-today | Preuzima dnevnu rutu |
+| **2** | API Layer | Prima zahtjev i delegira obradu BLL-u | Pokrenut use-case generisanja rute |
+| **3** | BLL (RouteService) | Dohvata aktivne sandučiće s prioritetima iz DAL-a | Lista sandučića s koordinatama |
+| **4** | BLL (RouteOptimizationService) | Primjenjuje nearest-neighbor algoritam nad GPS koordinatama (Haversine udaljenost) uz poštivanje prioriteta i radnih pravila | Uređena lista redoslijeda |
+| **5** | BLL + DAL | Kreira Route i RouteItem zapise u bazi sa statusom `Planirana` | HTTP 201 + routeId |
+| **6** | Dispečer | Pregleda prijedlog, po potrebi ručno mijenja redoslijed (PUT /api/routes/{id}/reorder) | Ažuriran redoslijed stavki |
+| **7** | Dispečer | PUT /api/routes/{id}/assign { postmanId } | Ruta dodijeljena poštaru (status ostaje `Planirana` do početka obilaska) |
+| **8** | Poštar | GET /api/routes/my-today | Preuzima dnevnu rutu |
 
 ### Tok ažuriranja statusa na terenu
 
 Svaki PUT zahtjev za ažuriranje statusa sandučića (PBI-027):
 
 - Šalje se s JWT tokenom koji identificira poštara.
-- Backend validira da sandučić pripada dodijelenoj ruti tog poštara.
-- RouteItem zapis se ažurira s novim statusom i serverskim timestampom.
+- API sloj validira autentifikaciju i prosljeđuje zahtjev BLL-u.
+- BLL provjerava da sandučić pripada dodijeljenoj ruti tog poštara.
+- DAL ažurira `RouteItem` zapis s novim statusom i serverskim timestampom.
 - Dispečerski dashboard osvježava prikaz putem periodičnog pollinga (OQ-006).
 
 ---
@@ -134,7 +152,7 @@ Svaki PUT zahtjev za ažuriranje statusa sandučića (PBI-027):
 |---|---|---|---|
 | **AD-001** | **Monolitna arhitektura umjesto mikroservisa** | Tim od 7 članova, rok od jednog semestra. Mikroservisi donose DevOps overhead koji nije opravdan u ovom kontekstu. | Sav kod u jednom deploymentu - vertikalno skaliranje kao jedina opcija. |
 | **AD-002** | **React SPA umjesto server-side renderinga** | Tri korisničke uloge s bitno različitim UI potrebama. SPA omogućava jasnu separaciju frontend/backend odgovornosti i bolji UX bez page-reload-a. | SEO nije podržan - nije relevantno za interni operativni alat. |
-| **AD-003** | **ASP.NET Core kao backend framework** | Tim ima iskustvo s C# ekosistemom. ASP.NET Core nativno podržava JWT, Identity, EF Core i Swagger, što smanjuje količinu repetitivnog koda. | Nešto veća potrošnja memorije u odnosu na Node.js. |
+| **AD-003** | **ASP.NET Core kao backend framework uz troslojnu organizaciju API/BLL/DAL** | Tim ima iskustvo s C# ekosistemom. ASP.NET Core nativno podržava JWT, Identity, EF Core i Swagger, dok podjela na API, BLL i DAL uvodi jasnu separaciju odgovornosti. | Nešto veća potrošnja memorije u odnosu na Node.js i dodatna potreba za disciplinom u odvajanju odgovornosti između slojeva. |
 | **AD-004** | **PostgreSQL kao RDBMS** | Pouzdana podrška za geografske podatke i mogućnost PostGIS integracije. ACID garancije su kritične za integritet podataka o rutama. | Potreban hosted servis (npr. Supabase) za cloud deployment. |
 | **AD-005** | **JWT tokeni za autentifikaciju** | Stateless pristup koji ne zahtijeva server-side session store. Pogodan za mobilni kontekst poštara i potencijalno horizontalno skaliranje. | Revokacija tokena nije trivijalna - rješava se kratkim expiry-jem i refresh token mehanizmom. |
 | **AD-006** | **RBAC s tri uloge (Admin / Dispečer / Poštar)** | User stories definišu tri jasno odvojena konteksta s različitim privilegijama. Uloge su međusobno isključive. | Potreba za detaljnijim permisijama unutar uloge ostaje otvoreno pitanje (OQ-004). |
@@ -156,8 +174,8 @@ Svaki PUT zahtjev za ažuriranje statusa sandučića (PBI-027):
 ### Inherentna ograničenja monolitne arhitekture
 
 - **Nedjeljivost deployanja:** Svaka izmjena zahtijeva redeploy cijele aplikacije.
-- **Tehnološka homogenost:** Sve komponente moraju koristiti isti jezik (C#) i runtime. Npr. implementacija optimizacijskog modula u Python-u nije moguća bez external service komunikacije.
-- **Testna izolacija:** Integration testovi mogu postati kompleksni jer komponente dijele isti process i DbContext instancu.
+- **Tehnološka homogenost:** Sve backend komponente unutar API/BLL/DAL slojeva moraju koristiti isti jezik (C#) i runtime. Npr. implementacija optimizacijskog modula u Python-u nije moguća bez external service komunikacije.
+- **Testna izolacija:** Integration testovi mogu postati kompleksni jer komponente dijele isti process, iako su logički odvojene na API, BLL i DAL.
 
 ---
 
