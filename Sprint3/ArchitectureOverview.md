@@ -11,7 +11,7 @@ Monolitna arhitektura odabrana je zbog veličine tima, vremenskog okvira od jedn
 
 | **Arhitekturni stil** | **Primarni stack** | **Deployment model** |
 |---|---|---|
-| Monolitna, klijent-server, N-Tier | React (SPA) + ASP.NET Core Web API + PostgreSQL | Single-instance server (cloud hosted), responsive web klijent |
+| Monolitna, klijent-server, N-Tier | React SPA + ASP.NET Core Web API + PostgreSQL | Single-instance server (cloud hosted), responsive web klijent |
 
 ---
 
@@ -21,12 +21,13 @@ Sistem se sastoji od šest komponenti organizovanih u tri logička sloja.
 
 | **Komponenta** | **Tehnologija** | **Odgovornost** | **Status** |
 |---|---|---|---|
-| **Presentation Layer (Frontend)** | React + Vite SPA | Administratorski panel, dispečerski dashboard, mobilni prikaz za poštara. Komunicira isključivo putem REST API-ja. | Arhitekturno stabilno |
+| **Presentation Layer (Frontend)** | React SPA | Administratorski panel, dispečerski dashboard, mobilni prikaz za poštara. Komunicira isključivo putem REST API-ja. | Arhitekturno stabilno |
 | **Application Layer (Backend)** | ASP.NET Core Web API | Centralna tačka poslovne logike: upravljanje korisnicima, rutama, sandučićima. Izlaže REST endpointe koje konzumira frontend. | U razvoju |
 | **Optimizacijski modul** | C# servis (interni) | Generiše optimalnu dnevnu rutu na osnovu lokacija, prioriteta i radnih pravila sandučića (nearest-neighbor heuristika u MVP-u). | U razvoju |
 | **Data Access Layer** | Entity Framework Core | ORM sloj koji enkapsulira sve upite prema bazi. Definira entitetske modele i migracije. | U razvoju |
 | **Baza podataka** | PostgreSQL | Relacijska baza: korisnici, sandučići, rute, statusi obilazaka, historija. Jedini izvor istine za sve podatke sistema. | U razvoju |
 | **Autentifikacijski podsistem** | JWT + ASP.NET Identity | Prijava korisnika, hashiranje lozinki (bcrypt), generisanje JWT tokena, RBAC (tri uloge: Admin, Dispečer, Poštar). | Kritična — zahtijeva posebnu pažnju |
+| **Map library (frontend)** | OpenStreetMap tile server + map biblioteka (konkretan izbor — npr. Leaflet — donosi se u Sprintu 4 i evidentira u Decision Logu, PBI-040) | Prikaz sandučića i ruta na mapi, interaktivno odabiranje koordinata pri unosu sandučića (US-14). Integracija izvedena tako da je tile provajder zamjenjiv bez promjene aplikacijske logike. | U razvoju — zavisi od OSM-a kao eksternog servisa (vidi R-008) |
 
 ---
 
@@ -51,7 +52,7 @@ Backend je organizovan u četiri interna sloja:
 - **Controllers:** HTTP endpointi i validacija zahtjeva. Bez poslovne logike.
 - **Services:** Sva poslovna logika - upravljanje rutama, provjere validnosti operacija, pozivanje optimizacijskog modula.
 - **Repositories:** Enkapsulacija EF Core upita. Services ne komuniciraju direktno s DbContext-om.
-- **Domain Models:** C# klase koje reprezentuju entitete domene - Korisnik, Sandučić, Ruta, ObilazakSandučića.
+- **Domain Models:** C# klase koje reprezentuju entitete domene - Korisnik, Sandučić, Ruta, StavkaRute, DnevniIzvjestaj.
 
 ### Optimizacijski modul
 
@@ -67,10 +68,11 @@ EF Core mapira C# entitete na PostgreSQL tablice putem Code-First pristupa - she
 
 Ključne tablice:
 
-- **Users:** ID, ime, prezime, email, hash lozinke, uloga, status aktivnosti, datum kreiranja.
-- **Postboxes:** ID, adresa, geografske koordinate (latitude/longitude), tip, prioritet, radna pravila, status.
-- **Routes:** ID, datum, ID dispečera, ID poštara, status (generisana / dodijeljena / realizirana / arhivirana).
-- **RouteStops:** ID, FK ruta, FK sandučić, planiran redoslijed, stvarni status (ispražnjen / napunjen / nedostupan / preskočen), timestamp, napomena.
+- **Users:** ID, ime, prezime, email, username, telefon, hash lozinke, uloga, status aktivnosti, flag prve prijave (`isForcePasswordChange`), datum kreiranja, vrijeme zadnje prijave.
+- **Postboxes:** ID, adresa, geografske koordinate (latitude/longitude), tip, prioritet, kapacitet, radna pravila (radni dani, vremenski okvir dostupnosti), status objekta.
+- **Routes:** ID, datum, ID dispečera, ID poštara, FK dnevnog izvještaja, status (Planirana / Aktivna / Završena / Prekinuta), razlog prekida, ukupna procijenjena distanca.
+- **RouteItems:** ID, FK ruta, FK sandučić, planiran redoslijed, status obilaska (`Planirano` / `Realizovano` / `Preskočeno` / `Nedostupno`), tip realizacije (`Ispražnjen` / `Napunjen`, popunjeno samo kada je status `Realizovano`), timestamp potvrde, koordinate poštara u momentu potvrde (geo-validacija), napomena.
+- **DailyReports:** ID, FK korisnika koji je pregledao izvještaj, datum, agregirani statistički podaci, procenat uspješnosti, lista incidenata.
 - **AuditLog:** evidencija ključnih promjena podataka.
 
 ### Baza podataka - PostgreSQL
@@ -85,7 +87,7 @@ ASP.NET Identity upravlja kreiranjem korisnika i hashiranjem lozinki (bcrypt). P
 
 JWT payload sadrži korisnički ID, ulogu i expiry timestamp. Backend middleware validira token na svakom zaštićenom endpointu, a uloga iz tokena koristi se za RBAC provjere.
 
-Pri prvoj prijavi, ako je postavljen `isForcePasswordChange` flag, API vraća HTTP 403 s opisnim kodom koji frontend tretira kao redirect na ekran za promjenu lozinke.
+Pri prvoj prijavi, ako je postavljen `isForcePasswordChange` flag, API vraća HTTP 200 sa izdatim tokenom i posebnim poljem u response-u (npr. `requiresPasswordChange: true`) koje frontend tretira kao obaveznu navigaciju na ekran za promjenu lozinke prije pristupa Dashboard-u (US-06).
 
 ---
 
@@ -97,7 +99,7 @@ Sva komunikacija prolazi kroz REST API kao jedinu ulaznu tačku u backend. Front
 
 | **Korak** | **Akter** | **Akcija** | **Rezultat** |
 |---|---|---|---|
-| **1** | Korisnik | POST /api/auth/login { email, password } | HTTP 200 + JWT token |
+| **1** | Korisnik | POST /api/auth/login { identifier, password } (konkretan identifikator — email ili username — utvrđuje se kroz OQ-001) | HTTP 200 + JWT token (+ `requiresPasswordChange` flag pri prvoj prijavi) |
 | **2** | Auth Controller | Validira kredencijale putem ASP.NET Identity | Provjera hash lozinke |
 | **3** | JWT Service | Generiše JWT s role claim-om i expiry-jem | Token potpisan tajnim ključem |
 | **4** | Frontend | Pohranjuje JWT u memoriju sesije, dekodira ulogu | Prikazuje UI prema ulozi |
@@ -107,12 +109,13 @@ Sva komunikacija prolazi kroz REST API kao jedinu ulaznu tačku u backend. Front
 
 | **Korak** | **Akter** | **Akcija** | **Rezultat** |
 |---|---|---|---|
-| **1** | Dispečer | POST /api/routes/generate { postmanId, date, filters } | Pokretanje generisanja |
+| **1** | Dispečer | POST /api/routes/generate { date, filters } | Pokretanje generisanja (bez dodjele poštara) |
 | **2** | RouteService | Dohvata aktivne sandučiće s prioritetima iz repozitorija | Lista sandučića s koordinatama |
-| **3** | RouteOptimizationService | Primjenjuje nearest-neighbor algoritam | Uređena lista redoslijeda |
-| **4** | RouteService | Kreira Route i RouteStop zapise u bazi | HTTP 201 + routeId |
-| **5** | Dispečer | PUT /api/routes/{id}/assign { postmanId } | Ruta dodijeljena poštaru |
-| **6** | Poštar | GET /api/routes/my-today | Preuzima dnevnu rutu |
+| **3** | RouteOptimizationService | Primjenjuje nearest-neighbor algoritam nad GPS koordinatama (Haversine udaljenost) uz poštivanje prioriteta i radnih pravila | Uređena lista redoslijeda |
+| **4** | RouteService | Kreira Route i RouteItem zapise u bazi sa statusom `Planirana` | HTTP 201 + routeId |
+| **5** | Dispečer | Pregleda prijedlog, po potrebi ručno mijenja redoslijed (PUT /api/routes/{id}/reorder) | Ažuriran redoslijed stavki |
+| **6** | Dispečer | PUT /api/routes/{id}/assign { postmanId } | Ruta dodijeljena poštaru (status ostaje `Planirana` do početka obilaska) |
+| **7** | Poštar | GET /api/routes/my-today | Preuzima dnevnu rutu |
 
 ### Tok ažuriranja statusa na terenu
 
@@ -120,7 +123,7 @@ Svaki PUT zahtjev za ažuriranje statusa sandučića (PBI-027):
 
 - Šalje se s JWT tokenom koji identificira poštara.
 - Backend validira da sandučić pripada dodijelenoj ruti tog poštara.
-- RouteStop zapis se ažurira s novim statusom i serverskim timestampom.
+- RouteItem zapis se ažurira s novim statusom i serverskim timestampom.
 - Dispečerski dashboard osvježava prikaz putem periodičnog pollinga (OQ-006).
 
 ---

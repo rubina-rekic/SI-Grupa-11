@@ -34,38 +34,38 @@
 
 ### UC-02: Upravljanje poštarima i poštanskim sandučićima
 
-**Akter:** Administrator (primarni), Dispečer (pregled i upravljanje sandučićima)  
-**Kratak opis:** Administrator i dispečer evidentiraju, pregledaju i ažuriraju podatke o poštarima i poštanskim sandučićima, uključujući njihove lokacije, tipove, prioritete i radna pravila, čime se uspostavlja temeljna baza podataka potrebna za planiranje ruta.
+**Akter:** Administrator (primarni). Dispečer ima read-only pristup listi sandučića kroz modul planiranja ruta (UC-03).  
+**Kratak opis:** Administrator evidentira, pregleda i ažurira podatke o poštarima i poštanskim sandučićima, uključujući njihove lokacije, tipove, prioritete i radna pravila, čime se uspostavlja temeljna baza podataka potrebna za planiranje ruta.
 
 **Preduslovi:**
-- Korisnik (Administrator ili Dispečer) je prijavljen na sistem s odgovarajućim pravima.
+- Administrator je prijavljen na sistem s odgovarajućim pravima.
 
 **Glavni tok:**
-1. Korisnik pristupa modulu za upravljanje poštarima ili sandučićima.
-2. Korisnik bira akciju: dodavanje novog zapisa, izmjena postojećeg ili pregled liste.
+1. Administrator pristupa modulu za upravljanje poštarima ili sandučićima.
+2. Administrator bira akciju: dodavanje novog zapisa, izmjena postojećeg ili pregled liste.
 
    **Tok 2a – Dodavanje novog poštara:**
-   - Korisnik popunjava formu s podacima poštara (ime, prezime, kontakt telefon, ID broj).
+   - Administrator popunjava formu s podacima poštara (ime, prezime, kontakt telefon, ID broj).
    - Sistem provjerava jedinstvenost ID broja i sprema zapis.
 
    **Tok 2b – Dodavanje novog sandučića:**
-   - Korisnik unosi adresu, GPS koordinate (Latitude i Longitude) te odabire tip sandučića iz predefinisane liste.
-   - Korisnik postavlja nivo prioriteta sandučića (Visok, Srednji, Nizak).
-   - Korisnik definiše radna pravila: vremenski okvir dostupnosti (od–do) i radne dane u sedmici.
+   - Administrator unosi adresu, GPS koordinate (Latitude i Longitude) te odabire tip sandučića iz predefinisane liste.
+   - Administrator postavlja nivo prioriteta sandučića (Visok, Srednji, Nizak).
+   - Administrator definiše radna pravila: vremenski okvir dostupnosti (od–do) i radne dane u sedmici.
    - Sistem validira unesene podatke i sprema zapis.
 
    **Tok 2c – Izmjena postojećeg sandučića:**
-   - Korisnik pronalazi sandučić u listi, otvara formu za uređivanje, mijenja željene podatke i sprema izmjene.
-   - Sistem odmah prikazuje ažurirane informacije svim korisnicima.
+   - Administrator pronalazi sandučić u listi, otvara formu za uređivanje, mijenja željene podatke i sprema izmjene.
+   - Sistem odmah prikazuje ažurirane informacije svim korisnicima s pravom pristupa.
 
    **Tok 2d – Pregled liste:**
    - Sistem prikazuje tabelarni prikaz svih poštara ili sandučića s osnovnim podacima (ime/adresa, tip, prioritet, status).
-   - Korisnik može pretražiti listu po ID-u ili adresi (minimalno 3 karaktera) ili primijeniti filtere po tipu, statusu i prioritetu. Sistem ažurira prikaz u realnom vremenu.
+   - Administrator može pretražiti listu po ID-u ili adresi (minimalno 3 karaktera) ili primijeniti filtere po tipu, statusu i prioritetu. Sistem ažurira prikaz u realnom vremenu.
 
 3. Sistem prikazuje potvrdu o uspješno izvršenoj akciji.
 
 **Alternativni tokovi:**
-- *A1 – ID broj poštara već postoji:* U toku 2a sistem odbija unos i prikazuje poruku o grešci. Korisnik provjerava i ispravlja podatak.
+- *A1 – ID broj poštara već postoji:* U toku 2a sistem odbija unos i prikazuje poruku o grešci. Administrator provjerava i ispravlja podatak.
 - *A2 – Nevalidne GPS koordinate:* U toku 2b sistem odbija unos i prikazuje uputu o ispravnom formatu.
 - *A3 – Nelogičan vremenski raspon radnih pravila:* Sistem utvrđuje da je „Vrijeme do" uneseno prije „Vremena od" te odbija unos i prikazuje poruku o grešci.
 - *A4 – Nedostaju obavezna polja:* Sistem blokira potvrdu unosa dok sva obavezna polja nisu ispunjena.
@@ -115,7 +115,7 @@
 **Glavni tok:**
 1. Poštar se prijavljuje na sistem. Sistem prepoznaje dodijeljenu aktivnu rutu i prikazuje je u responzivnom sučelju prilagođenom mobilnim uređajima.
 2. Poštar pregledava redoslijed obilaska i osnovne informacije o svakoj tački (adresa, tip sandučića).
-3. Po dolasku na lokaciju, poštar odabire sandučić s liste i jednim klikom mijenja njegov status (npr. 'Ispražnjeno').
+3. Po dolasku na lokaciju, poštar odabire sandučić s liste i jednim klikom evidentira ishod (status `Realizovano` uz tip realizacije `Ispražnjen` ili `Napunjen`).
 4. Sistem bilježi promjenu statusa s vremenskom oznakom i odmah ažurira prikaz za poštara.
 5. Ako je lokacija nedostupna, poštar odabire opciju 'Nedostupna lokacija', po potrebi unosi kratku napomenu s razlogom i potvrđuje unos.
 6. Sistem evidentira status 'Nedostupno' i ažurira prikaz.
@@ -124,7 +124,7 @@
 **Alternativni tokovi:**
 - *A1 – Poštar nema dodijeljenu rutu:* Sistem prikazuje informativnu poruku da za taj dan nema dodjeljene rute.
 - *A2 – Poštar ne unosi napomenu uz nedostupnu lokaciju:* Napomena nije obavezna. Sistem evidentira status 'Nedostupno' i bez tekstualnog opisa.
-- *A3 – Poštar još nije počeo s obilaskom:* Sve tačke imaju status 'Neobrađeno'. Dispečer vidi rutu bez bilješki o napretku.
+- *A3 – Poštar još nije počeo s obilaskom:* Sve tačke imaju status 'Planirano'. Dispečer vidi rutu bez bilješki o napretku.
 
 **Ishod:** Sve akcije poštara na terenu su evidentirane u sistemu s vremenskim oznakama. Dispečer ima ažurnu sliku izvršenja rute, a sistem raspolaže svim podacima potrebnim za generisanje izvještaja.
 
@@ -137,7 +137,7 @@
 
 **Preduslovi:**
 - Korisnik (Administrator ili Dispečer) je prijavljen na sistem s odgovarajućim pravima.
-- U sistemu postoje evidentiani podaci o obilascima.
+- U sistemu postoje evidentirani podaci o obilascima.
 
 **Glavni tok:**
 1. Korisnik pristupa modulu za izvještavanje ili arhivu ruta.
@@ -153,7 +153,7 @@
 
    **Tok 1c – Pregled arhive realizovanih ruta:**
    - Korisnik odabire modul 'Arhiva'.
-   - Sistem prikazuje listu svih završenih ruta s podacima: datum, ime poštara, ukupan broj sandučića i status rute (Završeno/Prekinuto).
+   - Sistem prikazuje listu svih završenih ruta s podacima: datum, ime poštara, ukupan broj sandučića i status rute (Završena/Prekinuta).
    - Korisnik može filtrirati listu po periodu ili imenu poštara.
    - Korisnik odabire konkretnu rutu za detaljan pregled. Sistem prikazuje listu svih sandučića unutar te rute s njihovim statusima i vremenskim oznakama akcija.
 

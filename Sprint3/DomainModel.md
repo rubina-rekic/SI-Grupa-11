@@ -36,13 +36,14 @@ On bilježi realizaciju svakog pojedinačnog zadatka na terenu.
     - POŠTAR (Izvršava rad na terenu)
 * **Zastavica prve prijave:** *[Boolean]* Ako je 'True', sistem zahtijeva promjenu lozinke pri prvom ulasku.
 * **ZadnjaPrijava:** *[Timestamp]* Vrijeme posljednjeg uspješnog pristupa sistemu.
-* **Status računa:** *[Enum]* Stanje računa ('Aktivan','Neaktivan' 'Deaktiviran').
+* **Status računa:** *[Enum]* Stanje računa ('Aktivan', 'Neaktivan', 'Deaktiviran').
 
 ### Poštanski sandučić (Mailbox)
 
 * **SandučićID:** Jedinstveni identifikator koji se koristi za pretragu.
 * **Adresa:** Tekstualni opis lokacije sandučića.
 * **Geolokacija:** Sastoji se od dva atributa: 'Latitude' i 'Longitude' (Decimalni brojevi).
+* **Tip sandučića:** *[Enum]* Vrsta sandučića iz predefinisane liste (npr. 'Standardni', 'Uslužni', 'Poslovni') — utiče na način obrade i prikaz u sučelju.
 * **Prioritet:** *[Enum]* Određuje hitnost obilaska: 'Visok', 'Srednji', 'Nizak'.
 * **Kapacitet:** Numerička vrijednost zapremine sandučića (bitno za optimizaciju punjenja).
 * **Status objekta:** *[Enum]* Stanje na terenu: 'Aktivan', 'Neaktivan', 'Oštećen'.
@@ -66,6 +67,7 @@ On bilježi realizaciju svakog pojedinačnog zadatka na terenu.
 * **SandučićID:** Strani ključ koji identifikuje sandučić koji treba obići.
 * **Redoslijed:** Redni broj stajališta u ruti (npr. 1, 2, 3...).
 * **Status obilaska:** *[Enum]* Ishod zadatka: `Planirano`, `Realizovano`, `Preskočeno`, `Nedostupno`.
+* **Tip realizacije:** *[Enum, opcionalno]* Detalj akcije kada je status `Realizovano`: `Ispražnjen` ili `Napunjen`. Polje je `null` za ostale statuse.
 * **Vrijeme potvrde:** Timestamp (Datum i vrijeme) kada je poštar kliknuo na potvrdu u aplikaciji.
 * **Geo-validacija:** Koordinate poštara u momentu potvrde (koristi se za US-13: provjera blizine sandučiću).
 * **Napomena:** Tekstualni opis (npr. "Sandučić blokiran parkiranim vozilom").
@@ -117,7 +119,7 @@ U ovom dijelu definisani su odnosi između ključnih objekata sistema, koji osig
 - Korisničke račune za poštare može kreirati isključivo administrator.
 - Email / korisničko ime mora biti jedinstveno u cijelom sistemu.
 - Inicijalna lozinka mora zadovoljiti minimalne sigurnosne kriterije (min. 8 karaktera, kombinacija slova i brojeva).
-- Poštar koji se prijavljuje prvi put mora promijeniti inicijalnu lozinku prije nego što dobije pristup bilo kojoj drugoj funkcionalnosti.
+- Svaki korisnik (Administrator, Dispečer, Poštar) koji se prijavljuje prvi put inicijalnom lozinkom mora je promijeniti prije nego što dobije pristup bilo kojoj drugoj funkcionalnosti.
 - Svaki korisnik ima tačno jednu ulogu koja ne može biti prazna.
 
 ### Upravljanje sandučićima
@@ -134,7 +136,7 @@ U ovom dijelu definisani su odnosi između ključnih objekata sistema, koji osig
 - Isti sandučić se ne smije pojaviti dva puta unutar iste rute.
 
 ### Realizacija obilaska
-- Poštar može evidentirati samo jednu od sljedećih aktivnosti po sandučiću: ispražnjen, napunjen, nedostupna lokacija, preskočeno.
+- Poštar može evidentirati samo jedan od sljedećih ishoda po stavci rute: `Realizovano` (uz obavezan tip realizacije — `Ispražnjen` ili `Napunjen`), `Nedostupno` ili `Preskočeno`.
 - Timestamp potvrde generira sistem na strani servera, a ne klijentska aplikacija.
 - Nedostupna lokacija mora biti evidentirana s napomenom kako bi dispečer mogao reagovati.
 
