@@ -1,169 +1,295 @@
-## Use Case Model
+# Use Case Model
 
 ---
 
-### UC-01: Upravljanje korisnicima i pristupom
+### UC-01: Kreiranje korisničkog računa 
+* **Akter:** Administrator
+* **Naziv use casea:** Kreiranje korisničkog računa
+* **Kratak opis:** Administrator kreira profil za novog uposlenika unosom osnovnih podataka i dodjelom uloge.
+* **Preduslovi:**<br> 1. Administrator je uspješno autentifikovan na sistemu.<br>
+    2. Administrator posjeduje privilegije za upravljanje korisnicima.<br>
+    3. Sistem ima aktivnu vezu sa bazom podataka.
+* **Glavni tok:**
+  1. Administrator odabire opciju za kreiranje novog korisničkog računa.
+  2. Sistem prikazuje formu za unos podataka (ime, prezime, email, inicijalna lozinka).
+  3. Administrator popunjava sva obavezna polja.
+  4. Administrator bira ulogu iz padajućeg menija (Dispečer ili Poštar).
+  5. Administrator potvrđuje unos podataka klikom na dugme "Spremi".
+  6. Sistem validira jedinstvenost emaila i snagu unesene lozinke.
+  7. Sistem trajno pohranjuje podatke o novom korisniku u bazu podataka.
+  8. Sistem prikazuje vizuelnu potvrdu o uspješno kreiranom računu.
+* **Alternativni tokovi:**
+    * **A1 – Email već postoji:** Sistem utvrđuje da je email zauzet, odbija unos i traži od administratora novi email.
+    * **A2 – Lozinka preslaba:** Sistem detektuje da lozinka ne ispunjava sigurnosne kriterije i traži ponovni unos.
+* **Ishod:** Novi korisnički račun je pohranjen u bazi podataka sa statusom "aktivan".
+  
+### UC-02: Prijava na sistem 
+* **Akter:** Korisnik (Poštar, Dispečer, Administrator)
+* **Naziv use casea:** Prijava na sistem
+* **Kratak opis:** Korisnik pristupa sistemu koristeći svoje kredencijale uz provjeru identiteta.
+* **Preduslovi:** <br> 1. Korisnik posjeduje kreiran račun u sistemu.<br>
+    2. Korisnički račun je u statusu "aktivan".<br>
+    3. Uređaj sa kojeg se pristupa ima stabilnu internet konekciju. <br>
+* **Glavni tok:**
+     1. Korisnik pristupa stranici za prijavu.
+     2. Korisnik unosi svoj email i lozinku.
+     3. Korisnik potvrđuje unos klikom na dugme "Prijava".
+     4. Sistem šalje upit bazi podataka radi provjere kredencijala.
+     5. Sistem potvrđuje identitet korisnika i provjerava nivo pristupa (Role-based access).
+     6. Sistem dozvoljava pristup i preusmjerava korisnika na početnu stranicu (dashboard) specifičnu za njegovu ulogu.
+* **Alternativni tokovi:**
+    * **A1 – Pogrešni kredencijali:** Sistem prikazuje poruku o neispravnim podacima.
+    * **A2 – Zaključavanje računa:** Nakon 5 neuspješnih pokušaja, sistem privremeno blokira prijavu.
+* **Ishod:** Korisnik je uspješno autentifikovan i usmjeren na odgovarajući interfejs.
 
-**Akter:** Administrator  
-**Kratak opis:** Administrator kreira korisničke račune za poštare i dispečere, dodjeljuje im odgovarajuće uloge te time kontroliše koje funkcionalnosti su dostupne svakom korisniku unutar sistema.
+### UC-03: Obavezna promjena inicijalne lozinke
+* **Akter:** Korisnik
+* **Naziv use casea:** Obavezna promjena lozinke pri prvoj prijavi
+* **Kratak opis:** Korisnik koji se prvi put prijavljuje mora zamijeniti privremenu lozinku personalizovanom.
+* **Preduslovi:** <br>1. Za korisnika je prethodno kreiran račun od strane administratora i dodjeljena mu je uloga u sistemu.<br>
+  2. Korisnik se prijavljuje sa inicijalnom lozinkom koju je generisao administrator.
+* **Glavni tok:**
+     1. Sistem detektuje da korisnik pristupa prvi put sa inicijalnom lozinkom.
+     2. Sistem automatski blokira pristup dashboardu i prikazuje formu za promjenu lozinke.
+     3. Korisnik unosi novu lozinku u predviđeno polje.
+     4. Korisnik ponavlja novu lozinku radi potvrde.
+     5. Korisnik potvrđuje promjenu klikom na "Ažuriraj lozinku".
+     6. Sistem validira novu lozinku i ažurira zapis u bazi podataka.
+     7. Sistem prikazuje poruku o uspješnoj promjeni i preusmjerava korisnika na dashboard.
+* **Alternativni tokovi:**
+    * **A1 – Nova lozinka ista kao inicijalna:** Sistem javlja da lozinka mora biti nova i drugačija.
+    * **A2 – Lozinke se ne podudaraju:** Korisnik unese različite lozinke u polja; sistem traži ponovni unos oba polja.
+    * **A3 – Napuštanje procesa:** Korisnik pokuša izaći bez promjene; sistem ga automatski odjavljuje.
+* **Ishod:** Korisnički račun je osiguran personalizovanom lozinkom.
 
-**Preduslovi:**
-- Administrator je prijavljen na sistem.
-- Administrator ima pristup modulu za upravljanje korisnicima.
+### UC-04: Odjava sa sistema
+* **Akter:** Korisnik
+* **Naziv use casea:** Odjava sa sistema
+* **Kratak opis:** Siguran prekid aktivne sesije korisnika.
+* **Preduslovi:** <br> 1.Korisnik je trenutno prijavljen na sistem.
+* **Glavni tok:**
+     1. Korisnik odabire opciju "Odjava" u navigacionom meniju.
+     2. Sistem prikazuje prozor za potvrdu odjave.
+     3. Korisnik potvrđuje da želi prekinuti sesiju.
+     4. Sistem uništava aktivnu sesiju i briše lokalne tokene.
+     5. Sistem preusmjerava korisnika na ekran za prijavu.
+* **Alternativni tokovi:**
+    * **A1 – Istek sesije (Timeout):** Korisnik je neaktivan duže od 30 minuta; sistem automatski izvršava odjavu.
+    * **A2 – Brzo zatvaranje tab-a:** Korisnik zatvori browser; sistem čisti sesiju pri sljedećoj provjeri servera.
+* **Ishod:** Pristup sistemu je prekinut, a podaci korisnika su sigurno odjavljeni.
 
-**Glavni tok:**
-1. Administrator odabire opciju za kreiranje novog korisničkog računa.
-2. Sistem prikazuje formu za unos podataka (ime, prezime, email/korisničko ime, inicijalna lozinka).
-3. Administrator popunjava sva obavezna polja i odabire ulogu novog korisnika (Dispečer ili Poštar).
-4. Administrator potvrđuje kreiranje.
-5. Sistem validira jedinstvenost emaila/korisničkog imena i snagu lozinke.
-6. Sistem kreira korisnički račun s dodijeljenom ulogom i sprema podatke u bazu.
-7. Sistem prikazuje potvrdu o uspješnom kreiranju računa.
-8. Nakon prijave u sistem, svaki korisnik dobija dashboard i skup funkcionalnosti koji odgovaraju isključivo njegovoj ulozi.
+### UC-05: Autorizacija i kontrola pristupa
+* **Akter:** Korisnik
+* **Naziv use casea:** Prikaz interfejsa na osnovu uloge
+* **Kratak opis:** Sistem kontroliše vidljivost modula na osnovu uloge korisnika (Poštar ili Dispečer).
+* **Preduslovi:** <br> 1. Korisnik se uspješno prijavio.
+* **Glavni tok:**
+     1. Sistem učitava ulogu korisnika iz baze podataka tokom procesa prijave.
+     2. Sistem provjerava definisane permisije za tu ulogu.
+     3. Sistem sakriva module kojima korisnik ne smije pristupiti.
+     4. Sistem prikazuje korisniku samo one elemente navigacije koji su mu dozvoljeni.
+     5. Korisnik počinje rad u svom personalizovanom okruženju.
+* **Alternativni tokovi:**
+    * **A1 – Pokušaj neovlaštenog pristupa putanji:** Korisnik pokuša manualno unijeti URL drugog modula; sistem prikazuje stranicu "Pristup odbijen".
+    * **A2 – Promjena uloge u toku rada:** Administrator promijeni ulogu korisniku; sistem pri sljedećoj akciji osvježava permisije.
+* **Ishod:** Osigurana je kontrola pristupa i spriječena zloupotreba funkcija sistema.
 
-**Alternativni tokovi:**
-- *A1 – Email/korisničko ime već postoji:* U koraku 5 sistem utvrđuje da je unijeti identifikator već zauzet. Sistem odbija unos i prikazuje opisnu poruku o grešci. Administrator ispravlja podatak i ponavlja korak 4.
-- *A2 – Lozinka ne zadovoljava sigurnosne kriterije:* U koraku 5 sistem utvrđuje da lozinka ne ispunjava definirane zahtjeve. Sistem odbija unos i prikazuje poruku s opisom zahtjeva. Administrator unosi ispravnu lozinku.
-- *A3 – Nedostaju obavezna polja:* U koraku 4 administrator nije popunio sva obavezna polja. Sistem ne dozvoljava slanje forme i označava polja koja nedostaju.
-- *A4 – Korisnik s ograničenim pravima pokušava pristupiti zabranjenoj stranici:* Sistem odbija pristup i prikazuje poruku o zabrani. Akcija nije izvršena.
-- *A5 – Prva prijava korisnika s inicijalnom lozinkom:* Sistem prepoznaje inicijalnu lozinku i preusmjerava korisnika na obaveznu promjenu lozinke. Korisnik pristupa dashboardu tek nakon što postavi novu lozinku.
+### UC-06: Ažuriranje profila poštara
+* **Akter:** Administrator
+* **Naziv use casea:** Ažuriranje podataka o poštaru
+* **Kratak opis:** Izmjena postojećih informacija o poštaru u sistemu.
+* **Preduslovi:** <br> 1.Poštar je već evidentiran u bazi podataka.
+* **Glavni tok:**
+     1. Administrator otvara listu svih poštara.
+     2. Administrator bira opciju "Uredi" pored imena poštara.
+     3. Sistem otvara formu sa trenutnim podacima.
+     4. Administrator vrši izmjene (npr. kontakt telefon ili prezime).
+     5. Administrator potvrđuje izmjene klikom na "Sačuvaj".
+     6. Sistem ažurira bazu i prikazuje potvrdu o uspješnoj izmjeni.
+* **Alternativni tokovi:**
+    * **A1 – Email zauzet:** Administrator pokuša dodijeliti email koji već koristi drugi korisnik; sistem javlja grešku.
+    * **A2 – Brisanje obaveznih polja:** Administrator obriše ime i pokuša spasiti; sistem onemogućava akciju.
+    * **A3 – Odustajanje:** Administrator bira "Otkaži"; sistem se vraća na listu bez spašavanja izmjena.
+* **Ishod:** Podaci o poštaru su ažurni i tačni u svim dijelovima sistema.
 
-**Ishod:** Korisnički račun je kreiran s dodijeljenom ulogom. Sistem primjenjuje odgovarajuća prava pristupa, a svaki korisnik vidi isključivo funkcionalnosti relevantne za svoju ulogu.
+### UC-07: Evidencija novog poštanskog sandučića
+* **Akter:** Administrator / Dispečer
+* **Naziv use casea:** Evidencija novog poštanskog sandučića
+* **Kratak opis:** Unos nove lokacije sandučića u sistem uz GPS koordinate i validaciju lokacije.
+* **Preduslovi:** <br> 1. Korisnik ima pristup modulu za upravljanje resursima.<br>
+    2. Sistem je povezan sa OpenStreetMap radi verifikacije.<br>
+    3. Baza podataka je dostupna za upis novih zapisa.
+* **Glavni tok:**
+     1. Korisnik odabire opciju "Dodaj novi sandučić".
+     2. Sistem prikazuje formu za unos (Adresa, GPS koordinate, Tip sandučića, Prioritet).
+     3. Korisnik unosi GPS koordinate ili bira lokaciju direktno na mapi.
+     4. Sistem vrši automatsko popunjavanje adrese na osnovu koordinata (Reverse Geocoding).
+     5. Korisnik bira tip (npr. Standardni/Ekspresni) i postavlja početni prioritet.
+     6. Korisnik potvrđuje unos klikom na dugme "Dodaj".
+     7. Sistem validira podatke i trajno pohranjuje sandučić.
+* **Alternativni tokovi:**
+    * **A1 – Nevalidne koordinate:** Korisnik unese koordinate van definisane radne zone; sistem javlja grešku.
+    * **A2 – Duplikat na lokaciji:** Sistem detektuje da na toj tački već postoji sandučić; sistem nudi opciju spajanja ili odbijanja unosa.
+* **Ishod:** Novi resurs je registrovan i spreman za proces planiranja ruta.
 
----
+### UC-08: Podešavanje tehničkih parametara sandučića
+* **Akter:** Dispečer
+* **Naziv use casea:** Podešavanje kapaciteta i prioriteta
+* **Kratak opis:** Definisanje tehničkih specifikacija sandučića koje direktno utiču na algoritam za optimizaciju rute.
+* **Preduslovi:** <br> 1. Korisnik je prijavljen sa ulogom "Dispečer". <br> 2. Specifični sandučić je prethodno evidentiran u bazi podataka (UC-07). <br> 3. Sistem ima pristup modulu za upravljanje resursima.
+* **Glavni tok:**
+     1. Dispečer otvara listu sandučića kroz kontrolni panel. 
+     2. Dispečer pronalazi i odabire specifični sandučić za uređivanje parametara.
+     3. Sistem prikazuje trenutne vrijednosti kapaciteta, tipa i prioriteta.
+     4. Dispečer unosi vrijednost maksimalnog kapaciteta (npr. broj pisama ili zapremina).
+     5. Dispečer postavlja nivo prioriteta (npr. Nizak, Srednji, Visok) na osnovu učestalosti punjenja (US-32).
+     6. Dispečer definiše tip sandučića (npr. gradski, prigradski) što utiče na težinski koeficijent u algoritmu.
+     7. Dispečer potvrđuje izmjene klikom na dugme "Sačuvaj izmjene".
+     8. Sistem validira unesene numeričke vrijednosti i ažurira bazu podataka.
+* **Alternativni tokovi:**
+    * **A1 – Unos nevalidnog kapaciteta:** Dispečer unese vrijednost 0 ili negativan broj; sistem onemogućava spašavanje i označava polje crvenom bojom uz poruku "Kapacitet mora biti pozitivan broj".
+    * **A2 – Konflikt prioriteta:** Dispečer pokuša postaviti "Visok" prioritet na sandučić koji je označen kao "Neaktivan"; sistem šalje upozorenje da status mora biti usklađen sa prioritetom.
+    * **A3 – Odustajanje od izmjena:** Dispečer zatvara formu bez spašavanja; sistem zadržava stare parametre i vraća korisnika na listu.
+* **Ishod:** Tehnički parametri su ažurirani i biće korišteni pri sljedećem pokretanju algoritma za optimizaciju rute (UC-11).
 
-### UC-02: Upravljanje poštarima i poštanskim sandučićima
+### UC-09: Napredno filtriranje sandučića
+* **Akter:** Administrator / Dispečer
+* **Naziv use casea:** Napredno filtriranje resursa
+* **Kratak opis:** Filtriranje liste sandučića prema tipu, statusu ili prioritetu radi bržeg pronalaženja specifičnih resursa.
+* **Preduslovi:** <br> 1. Korisnik je uspješno autentifikovan na sistemu. <br> 2. Otvoren je modul za upravljanje resursima sa učitanom listom sandučića. <br> 3. Sistem ima aktivnu vezu sa bazom podataka.
+* **Glavni tok:**
+     1. Korisnik otvara panel za filtriranje iznad liste resursa.
+     2. Korisnik bira jedan ili više filtera iz padajućih menija (npr. Tip: Ekspresni, Status: Neaktivan, Prioritet: Visok).
+     3. Sistem detektuje promjenu odabranih parametara u realnom vremenu.
+     4. Sistem vrši asinhroni upit prema bazi podataka (bez osvježavanja cijele stranice).
+     5. Sistem ažurira tabelarni prikaz prikazujući samo sandučiće koji zadovoljavaju SVE odabrane kriterije.
+     6. Korisnik pregleda filtrirani podskup podataka.
+* **Alternativni tokovi:**
+    * **A1 – Nema rezultata:** Odabrani filteri ne odgovaraju nijednom sandučiću; sistem prikazuje poruku "Nema rezultata za odabrane kriterije" unutar tabele.
+    * **A2 – Resetovanje filtera:** Korisnik klikne na dugme "Resetuj"; sistem trenutno briše sve parametre i vraća puni prikaz liste.
+    * **A3 – Uklanjanje pojedinačnog filtera:** Korisnik klikne na ikonu "x" pored određenog filtera; sistem trenutno osvježava listu prema preostalim kriterijima.
+* **Ishod:** Korisniku je olakšan rad sa velikim brojem podataka kroz fokusiran i brz prikaz relevantnih informacija.
 
-**Akter:** Administrator (primarni). Dispečer ima read-only pristup listi sandučića kroz modul planiranja ruta (UC-03).  
-**Kratak opis:** Administrator evidentira, pregleda i ažurira podatke o poštarima i poštanskim sandučićima, uključujući njihove lokacije, tipove, prioritete i radna pravila, čime se uspostavlja temeljna baza podataka potrebna za planiranje ruta.
+### UC-10: Brza pretraga resursa
+* **Akter:** Administrator / Dispečer
+* **Naziv use casea:** Brza pretraga po ključnoj riječi
+* **Kratak opis:** Pronalaženje sandučića ili poštara brzim unosom teksta.
+* **Preduslovi:**  <br> 1. Korisnik se nalazi na modulu sa listom podataka.<br>
+2. Korisnik ima rolu administrator ili dispečer.<br>
+* **Glavni tok:**
+     1. Korisnik pozicionira kursor u polje "Pretraga".
+     2. Korisnik unosi pojam (npr. dio adrese).
+     3. Sistem dok korisnik kuca filtrira prikazane rezultate.
+     4. Sistem ističe traženi pojam u listi.
+     5. Korisnik pronalazi traženi resurs.
+* **Alternativni tokovi:**
+    * **A1 – Specijalni karakteri:** Korisnik unosi simbole; sistem ih tretira kao običan tekst.
+    * **A2 – Nema podudaranja:** Korisnik unese pojam koji ne postoji; sistem prikazuje informaciju da nema rezultata.
+* **Ishod:** Ubrzan je proces pronalaženja specifičnih informacija unutar sistema.
 
-**Preduslovi:**
-- Administrator je prijavljen na sistem s odgovarajućim pravima.
+### UC-11: Generisanje optimalne rute
+* **Akter:** Dispečer 
+* **Naziv use casea:** Automatska optimizacija ruta
+* **Kratak opis:** Sistem izračunava najbrži put za pražnjenje/punjenje sandučića koristeći matematički algoritam i kartografske podatke.
+* **Preduslovi:** <br> 1. Korisnik je autentifikovan sa ulogom "Dispečer". <br>
+    2. U sistemu su definisani aktivni sandučići sa validnim GPS koordinatama.<br>
+    3. Definisana je polazna tačka (npr. centralna poslovnica/depo) od koje ruta počinje.<br>
+    4. Sistem ima stabilnu vezu sa vanjskim servisom za navigaciju.
+* **Glavni tok:**
+     1. Dispečer odabire opciju "Generiši rutu".
+     2. Sistem filtrira sandučiće koji su označeni za pražnjenje/punjenje i uzima u obzir njihove prioritete (US-32, US-33).
+     3. Sistem pokreće algoritam za optimizaciju .
+     4. Sistem koristi **OpenStreetMap** podlogu za iscrtavanje najkraćeg putnog pravca.
+     5. Sistem prikazuje detaljnu procjenu trajanja rute i ukupne kilometraže.
+     6. Dispečer vrši finalnu provjeru generisanog plana.
+* **Alternativni tokovi:**
+    * **A1 – Nema sandučića za obradu:** Sistem obavještava korisnika da trenutno nema sandučića koji zahtijevaju intervenciju.
+    * **A2 – Servis za mape nedostupan:** Sistem javlja grešku pri povezivanju sa OSM servisom i onemogućava iscrtavanje rute.
+    * **A3 – Nemoguće pronaći put:** Sistem detektuje da su neke lokacije nedostupne (npr. na ostrvu bez puta); sistem označava sporne lokacije i nudi parcijalnu rutu.
+* **Ishod:** Kreiran je matematički optimalan plan kretanja koji je spreman za dodjelu poštaru.
+  
+### UC-12: Ručna modifikacija i potvrda rute
+* **Akter:** Dispečer
+* **Naziv use casea:** Ručna modifikacija rute
+* **Kratak opis:** Dispečer vrši korekcije na ruti koju je sistem predložio prije finalizacije.
+* **Preduslovi:** <br> 1. Sistem je generisao prijedlog rute.
+* **Glavni tok:**
+     1. Dispečer pregleda generisanu rutu na mapi.
+     2. Dispečer klikom na tačku uklanja sandučić iz rute.
+     3. Dispečer prevlačenjem tačaka mijenja redoslijed posjeta.
+     4. Sistem trenutno ažurira ukupne parametre rute (vrijeme/put).
+     5. Dispečer potvrđuje finalni plan rute.
+* **Alternativni tokovi:**
+    * **A1 – Poništavanje izmjena:** Dispečer bira opciju "Vrati na predloženo"; sistem briše sve ručne korekcije.
+    * **A2 – Ruta bez tačaka:** Dispečer ukloni sve sandučiće; sistem onemogućava potvrdu prazne rute.
+* **Ishod:** Ruta je spremna za dodjelu izvršiocu.
 
-**Glavni tok:**
-1. Administrator pristupa modulu za upravljanje poštarima ili sandučićima.
-2. Administrator bira akciju: dodavanje novog zapisa, izmjena postojećeg ili pregled liste.
+### UC-13: Dodjela radnog naloga
+* **Akter:** Dispečer
+* **Naziv use casea:** Dodjela rute poštaru
+* **Kratak opis:** Slanje instrukcija za vožnju na mobilni terminal konkretnog poštara.
+* **Preduslovi:** <br> 1.Ruta je potvrđena i postoji barem jedan slobodan poštar.
+* **Glavni tok:**
+     1. Dispečer bira finaliziranu rutu.
+     2. Dispečer odabire slobodnog poštara sa ponuđene liste.
+     3. Dispečer potvrđuje dodjelu.
+     4. Sistem šalje digitalni nalog na mobilnu aplikaciju poštara.
+     5. Sistem mijenja status rute u "Dodijeljena".
+* **Alternativni tokovi:**
+    * **A1 – Poštar je Offline:** Sistem upozorava da poštar nije povezan, ali dozvoljava slanje naloga.
+    * **A2 – Otkazivanje dodjele:** Dispečer zatvara prozor; ruta ostaje u statusu "Čeka na dodjelu".
+* **Ishod:** Poštar je obaviješten o svom radnom zadatku.
 
-   **Tok 2a – Dodavanje novog poštara:**
-   - Administrator popunjava formu s podacima poštara (ime, prezime, kontakt telefon, ID broj).
-   - Sistem provjerava jedinstvenost ID broja i sprema zapis.
+### UC-14: Monitoring realizacije u realnom vremenu
+* **Akter:** Dispečer
+* **Naziv use casea:** Praćenje statusa na terenu
+* **Kratak opis:** Vizuelni uvid u napredak poštara na mapi tokom radnog vremena.
+* **Preduslovi:** <br> 1. Postoje aktivne rute koje se trenutno izvršavaju.<br>
+    2. Sistem ima stabilnu vezu sa **OpenStreetMap** API-jem.
+* **Glavni tok:**
+     1. Dispečer otvara ekran za monitoring.
+     2. Sistem učitava GPS pozicije svih poštara na terenu.
+     3. Sistem prikazuje ikonice poštara koje se kreću po mapi.
+     4. Sistem mijenja boje sandučića na mapi (npr. Zelena - ispražnjeno).
+     5. Podaci se automatski osvježavaju svake minute.
+* **Alternativni tokovi:**
+    * **A1 – Gubitak signala:** Sistem prikazuje zadnju poznatu poziciju uz upozorenje.
+    * **A2 – Zastoj na ruti:** Poštar se ne pomjera duže od 15 minuta; sistem vizuelno ističe tu rutu.
+* **Ishod:** Dispečer ima kompletnu kontrolu nad operacijama na terenu.
 
-   **Tok 2b – Dodavanje novog sandučića:**
-   - Administrator unosi adresu, GPS koordinate (Latitude i Longitude) te odabire tip sandučića iz predefinisane liste.
-   - Administrator postavlja nivo prioriteta sandučića (Visok, Srednji, Nizak).
-   - Administrator definiše radna pravila: vremenski okvir dostupnosti (od–do) i radne dane u sedmici.
-   - Sistem validira unesene podatke i sprema zapis.
+### UC-15: Upravljanje evidencijom i profilima poštara
+* **Akter:** Administrator
+* **Kratak opis:** Unos i ažuriranje specifičnih operativnih podataka poštara koji nisu dio osnovnog login naloga (US-11, US-12).
+* **Preduslovi:** 1. Administrator je prijavljen.<br>
+    2. Postoji kreiran osnovni korisnički nalog za poštara (UC-01).
+* **Glavni tok:**
+     1. Administrator otvara modul "Evidencija zaposlenih".
+     2. Sistem prikazuje listu svih poštara.
+     3. Administrator odabire opciju "Uredi profil" za određenog poštara.
+     4. Administrator unosi dodatne informacije: Interni ID broj, kontakt telefon i radnu zonu.
+     5. Administrator potvrđuje promjene.
+     6. Sistem validira da li je Interni ID jedinstven.
+     7. Sistem ažurira bazu podataka.
+* **Alternativni tokovi:**
+    * **A1 – Neispravan format ID-a:** Sistem javlja da ID mora biti numerička vrijednost.
+* **Ishod:** Podaci o poštaru su kompletirani i spremni za proces dodjele ruta.
 
-   **Tok 2c – Izmjena postojećeg sandučića:**
-   - Administrator pronalazi sandučić u listi, otvara formu za uređivanje, mijenja željene podatke i sprema izmjene.
-   - Sistem odmah prikazuje ažurirane informacije svim korisnicima s pravom pristupa.
-
-   **Tok 2d – Pregled liste:**
-   - Sistem prikazuje tabelarni prikaz svih poštara ili sandučića s osnovnim podacima (ime/adresa, tip, prioritet, status).
-   - Administrator može pretražiti listu po ID-u ili adresi (minimalno 3 karaktera) ili primijeniti filtere po tipu, statusu i prioritetu. Sistem ažurira prikaz u realnom vremenu.
-
-3. Sistem prikazuje potvrdu o uspješno izvršenoj akciji.
-
-**Alternativni tokovi:**
-- *A1 – ID broj poštara već postoji:* U toku 2a sistem odbija unos i prikazuje poruku o grešci. Administrator provjerava i ispravlja podatak.
-- *A2 – Nevalidne GPS koordinate:* U toku 2b sistem odbija unos i prikazuje uputu o ispravnom formatu.
-- *A3 – Nelogičan vremenski raspon radnih pravila:* Sistem utvrđuje da je „Vrijeme do" uneseno prije „Vremena od" te odbija unos i prikazuje poruku o grešci.
-- *A4 – Nedostaju obavezna polja:* Sistem blokira potvrdu unosa dok sva obavezna polja nisu ispunjena.
-- *A5 – Pretraga ili filtriranje ne daje rezultate:* Sistem prikazuje praznu listu s informativnom porukom.
-
-**Ishod:** Baza podataka poštara i sandučića je kompletna i ažurna. Svaki sandučić ima evidentiranu lokaciju, tip, prioritet i radna pravila, što predstavlja neophodan ulaz za algoritam optimizacije ruta.
-
----
-
-### UC-03: Generisanje i upravljanje rutama
-
-**Akter:** Dispečer  
-**Kratak opis:** Dispečer pokreće algoritam za automatsko generisanje optimizirane dnevne rute, pregledava i po potrebi ručno prilagođava predloženi redoslijed obilaska, te dodjeljuje finalnu rutu konkretnom poštaru.
-
-**Preduslovi:**
-- Dispečer je prijavljen na sistem.
-- U sistemu postoje evidentirani sandučići s unesenim GPS koordinatama, prioritetima i radnim pravilima.
-- U sistemu postoji barem jedan aktivni poštar.
-
-**Glavni tok:**
-1. Dispečer pristupa modulu za planiranje ruta i odabire datum generisanja.
-2. Dispečer pokreće algoritam optimizacije klikom na dugme 'Generiši'.
-3. Sistem izvršava algoritam uzimajući u obzir GPS koordinate, prioritete sandučića te radna pravila (dostupnost po danima i vremenskim okvirima) za odabrani datum.
-4. Sistem kreira prijedlog optimizirane rute i prikazuje je dispečeru: redoslijed obilaska, lista uključenih sandučića, ukupan broj tačaka i procijenjena dužina rute.
-5. Dispečer pregledava prijedlog i po potrebi ručno mijenja redoslijed tačaka unutar rute.
-6. Dispečer odabire poštara s liste dostupnih radnika i dodjeljuje mu rutu.
-7. Sistem uspostavlja vezu između poštara i rute te prikazuje potvrdu o uspješnoj dodjeli.
-
-**Alternativni tokovi:**
-- *A1 – Nema dostupnih sandučića za odabrani datum:* U koraku 3 sistem utvrđuje da nema sandučića koji zadovoljavaju kriterije za zadani datum. Sistem ne generiše rutu i prikazuje informativnu poruku.
-- *A2 – Dispečer odustaje od ručne izmjene:* Dispečer poništava promjene. Sistem vraća prethodni automatski prijedlog redoslijeda.
-- *A3 – Nema dostupnih poštara:* U koraku 6 lista poštara je prazna. Dispečer ne može izvršiti dodjelu dok se poštar ne doda u sistem.
-
-**Ishod:** Optimizirana ruta je dodijeljena poštaru i odmah dostupna u njegovom mobilnom sučelju. Dispečer ima dokumentovan plan obilaska za taj dan.
-
----
-
-### UC-04: Evidencija obilaska na terenu
-
-**Akter:** Poštar (primarni), Dispečer (pratilac)  
-**Kratak opis:** Poštar putem mobilnog sučelja pregledava dodijeljenu rutu i u realnom vremenu evidentira status svakog sandučića tokom obilaska, a dispečer prati napredak i reaguje na eventualne probleme.
-
-**Preduslovi:**
-- Poštar je prijavljen na sistem s mobilnog uređaja.
-- Dispečer je poštaru dodijelio aktivnu rutu.
-
-**Glavni tok:**
-1. Poštar se prijavljuje na sistem. Sistem prepoznaje dodijeljenu aktivnu rutu i prikazuje je u responzivnom sučelju prilagođenom mobilnim uređajima.
-2. Poštar pregledava redoslijed obilaska i osnovne informacije o svakoj tački (adresa, tip sandučića).
-3. Po dolasku na lokaciju, poštar odabire sandučić s liste i jednim klikom evidentira ishod (status `Realizovano` uz tip realizacije `Ispražnjen` ili `Napunjen`).
-4. Sistem bilježi promjenu statusa s vremenskom oznakom i odmah ažurira prikaz za poštara.
-5. Ako je lokacija nedostupna, poštar odabire opciju 'Nedostupna lokacija', po potrebi unosi kratku napomenu s razlogom i potvrđuje unos.
-6. Sistem evidentira status 'Nedostupno' i ažurira prikaz.
-7. Dispečer u realnom vremenu prati napredak rute kroz tabelarni ili vizuelni prikaz: koje su tačke obrađene, preskočene ili označene kao nedostupne.
-
-**Alternativni tokovi:**
-- *A1 – Poštar nema dodijeljenu rutu:* Sistem prikazuje informativnu poruku da za taj dan nema dodjeljene rute.
-- *A2 – Poštar ne unosi napomenu uz nedostupnu lokaciju:* Napomena nije obavezna. Sistem evidentira status 'Nedostupno' i bez tekstualnog opisa.
-- *A3 – Poštar još nije počeo s obilaskom:* Sve tačke imaju status 'Planirano'. Dispečer vidi rutu bez bilješki o napretku.
-
-**Ishod:** Sve akcije poštara na terenu su evidentirane u sistemu s vremenskim oznakama. Dispečer ima ažurnu sliku izvršenja rute, a sistem raspolaže svim podacima potrebnim za generisanje izvještaja.
-
----
-
-### UC-05: Operativno izvještavanje i historija ruta
-
-**Akter:** Administrator, Dispečer  
-**Kratak opis:** Ovlašteni korisnik generiše dnevne i periodične izvještaje o realizaciji obilazaka te pristupa arhivi svih završenih ruta radi retrospektivne analize i kontrole kvaliteta.
-
-**Preduslovi:**
-- Korisnik (Administrator ili Dispečer) je prijavljen na sistem s odgovarajućim pravima.
-- U sistemu postoje evidentirani podaci o obilascima.
-
-**Glavni tok:**
-1. Korisnik pristupa modulu za izvještavanje ili arhivu ruta.
-
-   **Tok 1a – Osnovni dnevni izvještaj:**
-   - Korisnik odabire datum i pokreće generisanje.
-   - Sistem dohvaća podatke i prikazuje sažetak: broj realizovanih, nerealizovanih i nedostupnih tačaka za odabrani dan.
-
-   **Tok 1b – Prošireno operativno izvještavanje:**
-   - Korisnik odabire tip izvještaja (učinak poštara za period ili analiza po tipu sandučića).
-   - Korisnik definiše parametre (period, ime poštara i sl.).
-   - Sistem izračunava agregirane pokazatelje (npr. procenat uspješnosti: Realizovano / Planirano × 100) i prikazuje rezultate u tabelarnoj formi s opcijom filtriranja po datumu.
-
-   **Tok 1c – Pregled arhive realizovanih ruta:**
-   - Korisnik odabire modul 'Arhiva'.
-   - Sistem prikazuje listu svih završenih ruta s podacima: datum, ime poštara, ukupan broj sandučića i status rute (Završena/Prekinuta).
-   - Korisnik može filtrirati listu po periodu ili imenu poštara.
-   - Korisnik odabire konkretnu rutu za detaljan pregled. Sistem prikazuje listu svih sandučića unutar te rute s njihovim statusima i vremenskim oznakama akcija.
-
-2. Sistem prikazuje tražene podatke.
-
-**Alternativni tokovi:**
-- *A1 – Nema podataka za odabrani datum ili parametre:* Sistem prikazuje informativnu poruku da za odabrane kriterije ne postoje evidentirani podaci.
-- *A2 – Primjena filtera u arhivi ne daje rezultate:* Sistem prikazuje praznu listu s informativnom porukom.
-
-**Ishod:** Korisnik dobija sažetak ili detaljan analitički pregled operativnog učinka koji podržava donošenje odluka zasnovanih na podacima te omogućava retrospektivnu kontrolu i rješavanje eventualnih sporova.
+### UC-16: Operativno izvještavanje i historija ruta
+* **Akter:** Administrator, Dispečer
+* **Naziv use casea:** Generisanje izvještaja i pregled arhive
+* **Kratak opis:** Korisnik generiše izvještaje o realizaciji obilazaka i pristupa arhivi završenih ruta radi analize učinka i kontrole kvaliteta.
+* **Preduslovi:** <br> 1. Korisnik je prijavljen s ulogom Administrator ili Dispečer. <br> 2. U bazi podataka postoje evidentirani podaci o završenim ili prekinutim rutama. <br> 3. Sistem ima pristup modulu za analitiku.
+* **Glavni tok:**
+     1. Korisnik pristupa modulu za izvještavanje ili arhivu ruta.
+     2. **Opcija A (Dnevni izvještaj):** Korisnik bira datum; sistem prikazuje sažetak realizovanih i nerealizovanih tačaka.
+     3. **Opcija B (Operativni izvještaj):** Korisnik definiše period i parametre (npr. učinak poštara); sistem računa procenat uspješnosti (Realizovano/Planirano × 100).
+     4. **Opcija C (Arhiva):** Korisnik bira listu završenih ruta; sistem prikazuje detalje (datum, poštar, status).
+     5. Korisnik po potrebi filtrira rezultate po imenu poštara ili vremenskom periodu.
+     6. Sistem prikazuje finalni tabelarni pregled podataka.
+* **Alternativni tokovi:**
+    * **A1 – Nema podataka:** Za odabrani datum ili parametre ne postoje zapisi; sistem prikazuje poruku "Nema evidentiranih podataka za traženi period".
+    * **A2 – Nevalidan period:** Korisnik odabere krajnji datum koji je raniji od početnog; sistem javlja grešku u unosu.
+* **Ishod:** Korisnik dobija analitički pregled operativnog učinka koji podržava donošenje odluka zasnovanih na podacima.
 
 ---
 
