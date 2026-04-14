@@ -274,7 +274,55 @@
     * **A1 – Neispravan format ID-a:** Sistem javlja da ID mora biti numerička vrijednost.
 * **Ishod:** Podaci o poštaru su kompletirani i spremni za proces dodjele ruta.
 
-### UC-16: Operativno izvještavanje i historija ruta
+### UC-17: Upravljanje statusom sandučića na terenu
+* **Akter:** Poštar
+* **Naziv use casea:** Promjena statusa sandučića (Punjenje/Pražnjenje)
+* **Kratak opis:** Poštar putem mobilne aplikacije evidentira završetak rada na pojedinačnom sandučiću uz GPS validaciju.
+* **Preduslovi:** <br> 1. Poštar je prijavljen na mobilnu aplikaciju. <br> 2. Poštaru je dodijeljena aktivna ruta (UC-13). <br> 3. Uređaj ima aktivne lokacijske usluge (GPS).
+* **Glavni tok:**
+     1. Poštar na mapi ili listi unutar aplikacije bira sandučić na kojem se trenutno nalazi.
+     2. Poštar odabire opciju "Završi pražnjenje/punjenje".
+     3. Sistem provjerava GPS lokaciju poštara kako bi potvrdio prisutnost na lokaciji sandučića.
+     4. Poštar potvrđuje akciju u aplikaciji.
+     5. Sistem šalje podatak serveru i mijenja status sandučića u bazi podataka u "Obrađeno".
+     6. Sistem vizuelno označava sandučić na korisničkom interfejsu aplikacije kao završen.
+* **Alternativni tokovi:**
+    * **A1 – Predaleko od lokacije:** Sistem detektuje da je poštar udaljen više od 50m od koordinata sandučića; sistem šalje upozorenje i traži dodatnu potvrdu ili razlog odstupanja.
+    * **A2 – Gubitak konekcije:** Sistem pohranjuje promjenu statusa lokalno na uređaju i vrši sinhronizaciju čim internet veza postane dostupna.
+* **Ishod:** Podatak o obavljenom radu je evidentiran i trenutno vidljiv dispečeru u monitoringu (veza sa US-33).
+
+### UC-18: Evidentiranje nepredviđenih prepreka na ruti
+* **Akter:** Poštar
+* **Naziv use casea:** Prijava problema na lokaciji
+* **Kratak opis:** Poštar prijavljuje nemogućnost pristupa sandučiću ili tehnički kvar uočen na terenu.
+* **Preduslovi:** <br> 1. Poštar ima aktivnu dodijeljenu rutu. <br> 2. Postoji fizička ili tehnička prepreka koja onemogućava rad na specifičnoj tački.
+* **Glavni tok:**
+     1. Poštar unutar radnog naloga bira opciju "Prijavi problem" za određeni sandučić.
+     2. Poštar bira tip prepreke iz ponuđenog menija (npr. Kvar brave, Nepristupačan prilaz, Oštećenje sandučića).
+     3. Poštar dodaje kratak tekstualni opis ili fotografiju prepreke.
+     4. Poštar potvrđuje slanje prijave.
+     5. Sistem šalje notifikaciju dispečeru u realnom vremenu i označava tačku na mapi posebnom ikonom.
+     6. Sistem nudi poštaru automatsku navigaciju do sljedeće tačke na ruti.
+* **Alternativni tokovi:**
+    * **A1 – Odustajanje od prijave:** Poštar zatvara formu prije slanja; sistem ne mijenja status sandučića i vraća na pregled rute.
+* **Ishod:** Dispečer je obaviješten o problemu, a podaci su sačuvani za planiranje budućih intervencija održavanja.
+
+### UC-19: Upravljanje postavkama algoritma optimizacije
+* **Akter:** Administrator
+* **Naziv use casea:** Konfiguracija parametara optimizacije
+* **Kratak opis:** Administrator podešava globalne faktore i koeficijente koje algoritam koristi za generisanje najbržih ruta.
+* **Preduslovi:** <br> 1. Korisnik je prijavljen s administratorskim pravima. <br> 2. Pristup modulu "Sistemske postavke".
+* **Glavni tok:**
+     1. Administrator otvara modul za konfiguraciju algoritma.
+     2. Administrator podešava prioritet.
+     3. Administrator postavlja ograničenja kao što su maksimalno vrijeme trajanja rute ili maksimalan broj sandučića po poštaru.
+     4. Administrator sprema nove postavke.
+     5. Sistem validira logičku ispravnost parametara i primjenjuje ih na svako sljedeće pokretanje algoritma (UC-11).
+* **Alternativni tokovi:**
+    * **A1 – Nelogični parametri:** Administrator unese vrijednosti koje bi mogle dovesti do greške u proračunu; sistem nudi opciju "Vrati na podrazumijevane postavke".
+* **Ishod:** Algoritam je prilagođen trenutnim operativnim potrebama (veza sa US-32).
+
+### UC-20: Operativno izvještavanje i historija ruta
 * **Akter:** Administrator, Dispečer
 * **Naziv use casea:** Generisanje izvještaja i pregled arhive
 * **Kratak opis:** Korisnik generiše izvještaje o realizaciji obilazaka i pristupa arhivi završenih ruta radi analize učinka i kontrole kvaliteta.
