@@ -1,5 +1,4 @@
 # Test Strategija
-## Sistem za optimizaciju ruta punjenja i pražnjenja poštanskih sandučića
 
 ---
 
