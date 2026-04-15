@@ -36,7 +36,9 @@ On bilježi realizaciju svakog pojedinačnog zadatka na terenu.
     - POŠTAR (Izvršava rad na terenu)
 * **Zastavica prve prijave:** *[Boolean]* Ako je 'True', sistem zahtijeva promjenu lozinke pri prvom ulasku.
 * **ZadnjaPrijava:** *[Timestamp]* Vrijeme posljednjeg uspješnog pristupa sistemu.
-* **Status računa:** *[Enum]* Stanje računa ('Aktivan', 'Neaktivan', 'Deaktiviran').
+* **Status računa:** *[Enum]* Stanje računa ('Aktivan', 'Neaktivan', 'Deaktiviran', 'Zaključan').
+* **Brojač neuspjelih prijava:** *[Integer]* Broj uzastopnih neuspjelih pokušaja prijave; resetuje se nakon uspješne prijave.
+* **Vrijeme zaključavanja:** *[Timestamp, opcionalno]* Trenutak do kojeg je račun automatski zaključan nakon prekoračenja dozvoljenog broja neuspjelih pokušaja (mehanizam ASP.NET Identity lockout-a).
 
 ### Poštanski sandučić (Mailbox)
 
@@ -120,6 +122,7 @@ U ovom dijelu definisani su odnosi između ključnih objekata sistema, koji osig
 - Email / korisničko ime mora biti jedinstveno u cijelom sistemu.
 - Inicijalna lozinka mora zadovoljiti minimalne sigurnosne kriterije (min. 8 karaktera, kombinacija slova i brojeva).
 - Svaki korisnik (Administrator, Dispečer, Poštar) koji se prijavljuje prvi put inicijalnom lozinkom mora je promijeniti prije nego što dobije pristup bilo kojoj drugoj funkcionalnosti.
+- Nakon 5 uzastopnih neuspjelih pokušaja prijave sistem automatski zaključava račun (status `Zaključan`) na definisani vremenski period; uspješna prijava resetuje brojač.
 - Svaki korisnik ima tačno jednu ulogu koja ne može biti prazna.
 
 ### Upravljanje sandučićima

@@ -299,7 +299,7 @@
 * **Glavni tok:**
      1. Poštar unutar radnog naloga bira opciju "Prijavi problem" za određeni sandučić.
      2. Poštar bira tip prepreke iz ponuđenog menija (npr. Kvar brave, Nepristupačan prilaz, Oštećenje sandučića).
-     3. Poštar dodaje kratak tekstualni opis ili fotografiju prepreke.
+     3. Poštar unosi obavezni kratak tekstualni opis prepreke i po potrebi prilaže fotografiju.
      4. Poštar potvrđuje slanje prijave.
      5. Sistem šalje notifikaciju dispečeru u realnom vremenu i označava tačku na mapi posebnom ikonom.
      6. Sistem nudi poštaru automatsku navigaciju do sljedeće tačke na ruti.
