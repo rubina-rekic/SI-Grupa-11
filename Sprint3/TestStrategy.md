@@ -266,9 +266,11 @@ Po završetku svake faze testiranja generiše se kratak Test Report koji sadrži
 
 | ID | Opis rizika | Vjerovatnoća | Uticaj | Strategija mitigacije |
 |---|---|---|---|---|
-| R01 | Neispravna implementacija RBAC-a — korisnik s ulogom Poštar može pristupiti administrativnim endpointima ili URL-ovima | Srednja | Visok | Testirati svaki zaštićeni API endpoint direktnim HTTP zahtjevima za svaku ulogu (TC-13, TC-14); uključiti provjeru Security Loga |
-| R02 | Optimizacijski algoritam ne uvažava prioritete sandučića ili radna pravila — ruta sadrži sandučiće koji nisu dostupni za taj dan | Srednja | Visok | Pokriti unit testovima sve kombinacije prioriteta i radnih dana; sistemski test s rubnim slučajevima (TC-22, TC-23) |
-| R03 | Periodična sinhronizacija između poštara i dispečera ne funkcioniše — dispečer vidi zastarjele statuse | Srednja | Visok | Integracioni test s istovremenim sesijama poštara i dispečera; potvrditi automatsko osvježavanje unutar intervala pollinga (≤ 30s) (TC-33) |
-| R04 | Sesija korisnika ostaje aktivna nakon odjave — moguć neovlašten pristup na dijeljenim uređajima | Niska | Visok | Testirati invalidaciju sesije na serveru i blokadu zaštićenih ruta nakon odjave (TC-10, TC-11) |
-| R05 | Mobilni prikaz za poštara nije upotrebljiv na manjim ekranima — terenska operativnost sistema kompromitovana | Visoka | Srednji | UI testiranje na minimalnoj širini ekrana od 360px (NFR-08) za sve ključne akcije poštara: pregled rute, promjena statusa, unos napomene (TC-31) |
-| R06 | Generisanje rute za veći broj sandučića premašuje vremenski prag definisan u NFR-12 — dispečer ne može efikasno raditi | Niska | Srednji | Sistemski performansni test s 50 sandučića (cilj: ≤ 10s); pratiti API response time u integracionim testovima (TC-24) |
+| R007 | Tehnička kompleksnost responzivnog mobilnog interfejsa za poštare — terenska operativnost sistema kompromitovana | Visoka | Srednji | UI testiranje na minimalnoj širini ekrana od 360px (NFR-08) za sve ključne akcije poštara: pregled rute, promjena statusa, unos napomene (TC-31) |
+| R013 | Performanse sistema degradiraju s povećanjem broja sandučića i korisnika | Niska | Srednji | Sistemski performansni test s 50 sandučića (cilj: ≤ 10s); pratiti API response time u integracionim testovima (TC-24) |
+| R010 | Sigurnosni propusti u implementaciji autentifikacije i autorizacije | Srednja | Visok | Testirati svaki zaštićeni API endpoint direktnim HTTP zahtjevima za svaku ulogu (TC-13, TC-14); uključiti provjeru Security Loga |
+| R031 | Optimizacijski algoritam ne uvažava prioritete sandučića ili radna pravila — ruta sadrži sandučiće koji nisu dostupni za taj dan | Srednja | Visok | Pokriti unit testovima sve kombinacije prioriteta i radnih dana; sistemski test s rubnim slučajevima (TC-22, TC-23) |
+| R032 | Periodična sinhronizacija između poštara i dispečera ne funkcioniše — dispečer vidi zastarjele statuse | Srednja | Visok | Integracioni test s istovremenim sesijama poštara i dispečera; potvrditi automatsko osvježavanje unutar intervala pollinga (≤ 30s) (TC-33) |
+| R026 | Nemogućnost revokacije JWT tokena kompromitira sigurnost sesije | Niska | Visok | Testirati invalidaciju sesije na serveru i blokadu zaštićenih ruta nakon odjave (TC-10, TC-11) |
+
+
