@@ -3,7 +3,7 @@
 
 ## Kratak opis arhitektonskog pristupa
 
-Sistem se implementira kao monolitna web aplikacija u okviru klijent-server arhitekture, pri čemu je backend organizovan prema troslojnoj arhitekturi: **API**, **BLL** i **DAL**.
+Sistem se implementira kao monolitna web aplikacija, pri čemu je backend organizovan prema troslojnoj arhitekturi: **API**, **BLL** i **DAL**.
 
 Frontend je React SPA koji komunicira s backendom isključivo putem REST API-ja. Backend je ASP.NET Core aplikacija u kojoj **API sloj** izlaže HTTP endpointe, **BLL (Business Logic Layer)** sadrži poslovna pravila i optimizacijsku logiku, dok **DAL (Data Access Layer)** upravlja pristupom podacima preko Entity Framework Core ORM-a. Podaci se čuvaju u PostgreSQL bazi podataka.
 
@@ -11,7 +11,7 @@ Monolitna arhitektura odabrana je zbog veličine tima, vremenskog okvira od jedn
 
 | **Arhitekturni stil** | **Primarni stack** | **Deployment model** |
 |---|---|---|
-| Monolitna, klijent-server; backend organizovan po troslojnoj arhitekturi (API/BLL/DAL) | React SPA + ASP.NET Core Web API + PostgreSQL | Single-instance server (cloud hosted), responsive web klijent |
+| Monolitna, backend organizovan po troslojnoj arhitekturi (API/BLL/DAL) | React SPA + ASP.NET Core Web API + PostgreSQL | Single-instance server (cloud hosted), responsive web klijent |
 
 ---
 

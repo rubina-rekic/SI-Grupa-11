@@ -32,7 +32,7 @@
     3. Uređaj sa kojeg se pristupa ima stabilnu internet konekciju. <br>
 * **Glavni tok:**
      1. Korisnik pristupa stranici za prijavu.
-     2. Korisnik unosi svoj email i lozinku.
+     2. Korisnik unosi svoj identifikator (email ili korisničko ime — vidjeti OQ-001) i lozinku.
      3. Korisnik potvrđuje unos klikom na dugme "Prijava".
      4. Sistem šalje upit bazi podataka radi provjere kredencijala.
      5. Sistem potvrđuje identitet korisnika i provjerava nivo pristupa (Role-based access).
@@ -81,7 +81,7 @@
 ### UC-05: Autorizacija i kontrola pristupa
 * **Akter:** Korisnik
 * **Naziv use casea:** Prikaz interfejsa na osnovu uloge
-* **Kratak opis:** Sistem kontroliše vidljivost modula na osnovu uloge korisnika (Poštar ili Dispečer).
+* **Kratak opis:** Sistem kontroliše vidljivost modula na osnovu uloge korisnika (Administrator, Dispečer ili Poštar).
 * **Preduslovi:** <br> 1. Korisnik se uspješno prijavio.
 * **Glavni tok:**
      1. Sistem učitava ulogu korisnika iz baze podataka tokom procesa prijave.
@@ -113,19 +113,19 @@
 * **Ishod:** Podaci o poštaru su ažurni i tačni u svim dijelovima sistema.
 
 ### UC-07: Evidencija novog poštanskog sandučića
-* **Akter:** Administrator / Dispečer
+* **Akter:** Administrator (Dispečer ima isključivo read-only pristup kroz UC-09/UC-10 i modul planiranja ruta)
 * **Naziv use casea:** Evidencija novog poštanskog sandučića
 * **Kratak opis:** Unos nove lokacije sandučića u sistem uz GPS koordinate i validaciju lokacije.
-* **Preduslovi:** <br> 1. Korisnik ima pristup modulu za upravljanje resursima.<br>
+* **Preduslovi:** <br> 1. Administrator ima pristup modulu za upravljanje resursima.<br>
     2. Sistem je povezan sa OpenStreetMap radi verifikacije.<br>
     3. Baza podataka je dostupna za upis novih zapisa.
 * **Glavni tok:**
-     1. Korisnik odabire opciju "Dodaj novi sandučić".
+     1. Administrator odabire opciju "Dodaj novi sandučić".
      2. Sistem prikazuje formu za unos (Adresa, GPS koordinate, Tip sandučića, Prioritet).
-     3. Korisnik unosi GPS koordinate ili bira lokaciju direktno na mapi.
+     3. Administrator unosi GPS koordinate ili bira lokaciju direktno na mapi.
      4. Sistem vrši automatsko popunjavanje adrese na osnovu koordinata (Reverse Geocoding).
-     5. Korisnik bira tip (npr. Standardni/Ekspresni) i postavlja početni prioritet.
-     6. Korisnik potvrđuje unos klikom na dugme "Dodaj".
+     5. Administrator bira tip iz predefinisane liste (npr. Standardni, Uslužni, Poslovni) i postavlja početni prioritet (Visok/Srednji/Nizak).
+     6. Administrator potvrđuje unos klikom na dugme "Dodaj".
      7. Sistem validira podatke i trajno pohranjuje sandučić.
 * **Alternativni tokovi:**
     * **A1 – Nevalidne koordinate:** Korisnik unese koordinate van definisane radne zone; sistem javlja grešku.
@@ -133,23 +133,23 @@
 * **Ishod:** Novi resurs je registrovan i spreman za proces planiranja ruta.
 
 ### UC-08: Podešavanje tehničkih parametara sandučića
-* **Akter:** Dispečer
+* **Akter:** Administrator
 * **Naziv use casea:** Podešavanje kapaciteta i prioriteta
 * **Kratak opis:** Definisanje tehničkih specifikacija sandučića koje direktno utiču na algoritam za optimizaciju rute.
-* **Preduslovi:** <br> 1. Korisnik je prijavljen sa ulogom "Dispečer". <br> 2. Specifični sandučić je prethodno evidentiran u bazi podataka (UC-07). <br> 3. Sistem ima pristup modulu za upravljanje resursima.
+* **Preduslovi:** <br> 1. Korisnik je prijavljen sa ulogom "Administrator". <br> 2. Specifični sandučić je prethodno evidentiran u bazi podataka (UC-07). <br> 3. Sistem ima pristup modulu za upravljanje resursima.
 * **Glavni tok:**
-     1. Dispečer otvara listu sandučića kroz kontrolni panel. 
-     2. Dispečer pronalazi i odabire specifični sandučić za uređivanje parametara.
+     1. Administrator otvara listu sandučića kroz kontrolni panel. 
+     2. Administrator pronalazi i odabire specifični sandučić za uređivanje parametara.
      3. Sistem prikazuje trenutne vrijednosti kapaciteta, tipa i prioriteta.
-     4. Dispečer unosi vrijednost maksimalnog kapaciteta (npr. broj pisama ili zapremina).
-     5. Dispečer postavlja nivo prioriteta (npr. Nizak, Srednji, Visok) na osnovu učestalosti punjenja (US-32).
-     6. Dispečer definiše tip sandučića (npr. gradski, prigradski) što utiče na težinski koeficijent u algoritmu.
-     7. Dispečer potvrđuje izmjene klikom na dugme "Sačuvaj izmjene".
+     4. Administrator unosi vrijednost maksimalnog kapaciteta (npr. broj pisama ili zapremina).
+     5. Administrator postavlja nivo prioriteta (Nizak, Srednji, Visok) na osnovu operativnih potreba i prioriteta obilaska (US-32).
+     6. Administrator definiše tip sandučića iz predefinisane liste (Standardni, Uslužni, Poslovni) što utiče na težinski koeficijent u algoritmu.
+     7. Administrator potvrđuje izmjene klikom na dugme "Sačuvaj izmjene".
      8. Sistem validira unesene numeričke vrijednosti i ažurira bazu podataka.
 * **Alternativni tokovi:**
-    * **A1 – Unos nevalidnog kapaciteta:** Dispečer unese vrijednost 0 ili negativan broj; sistem onemogućava spašavanje i označava polje crvenom bojom uz poruku "Kapacitet mora biti pozitivan broj".
-    * **A2 – Konflikt prioriteta:** Dispečer pokuša postaviti "Visok" prioritet na sandučić koji je označen kao "Neaktivan"; sistem šalje upozorenje da status mora biti usklađen sa prioritetom.
-    * **A3 – Odustajanje od izmjena:** Dispečer zatvara formu bez spašavanja; sistem zadržava stare parametre i vraća korisnika na listu.
+    * **A1 – Unos nevalidnog kapaciteta:** Administrator unese vrijednost 0 ili negativan broj; sistem onemogućava spašavanje i označava polje crvenom bojom uz poruku "Kapacitet mora biti pozitivan broj".
+    * **A2 – Konflikt prioriteta:** Administrator pokuša postaviti "Visok" prioritet na sandučić koji je označen kao "Neaktivan"; sistem šalje upozorenje da status mora biti usklađen sa prioritetom.
+    * **A3 – Odustajanje od izmjena:** Administrator zatvara formu bez spašavanja; sistem zadržava stare parametre i vraća korisnika na listu.
 * **Ishod:** Tehnički parametri su ažurirani i biće korišteni pri sljedećem pokretanju algoritma za optimizaciju rute (UC-11).
 
 ### UC-09: Napredno filtriranje sandučića
@@ -198,8 +198,8 @@
 * **Glavni tok:**
      1. Dispečer odabire opciju "Generiši rutu".
      2. Sistem filtrira sandučiće koji su označeni za pražnjenje/punjenje i uzima u obzir njihove prioritete (US-32, US-33).
-     3. Sistem pokreće algoritam za optimizaciju .
-     4. Sistem koristi **OpenStreetMap** podlogu za iscrtavanje najkraćeg putnog pravca.
+     3. Sistem pokreće algoritam za optimizaciju (nearest-neighbor heuristika nad GPS koordinatama, vidjeti Architecture AR-002).
+     4. Sistem koristi **OpenStreetMap** podlogu za iscrtavanje aproksimativno optimalnog redoslijeda obilaska.
      5. Sistem prikazuje detaljnu procjenu trajanja rute i ukupne kilometraže.
      6. Dispečer vrši finalnu provjeru generisanog plana.
 * **Alternativni tokovi:**
@@ -233,29 +233,29 @@
      1. Dispečer bira finaliziranu rutu.
      2. Dispečer odabire slobodnog poštara sa ponuđene liste.
      3. Dispečer potvrđuje dodjelu.
-     4. Sistem šalje digitalni nalog na mobilnu aplikaciju poštara.
-     5. Sistem mijenja status rute u "Dodijeljena".
+     4. Sistem uspostavlja vezu ruta–poštar; poštar će pri sljedećoj prijavi dohvatiti rutu (GET /api/routes/my-today).
+     5. Status rute ostaje `Planirana` do momenta kada poštar započne obilazak (tada prelazi u `Aktivna`).
 * **Alternativni tokovi:**
-    * **A1 – Poštar je Offline:** Sistem upozorava da poštar nije povezan, ali dozvoljava slanje naloga.
-    * **A2 – Otkazivanje dodjele:** Dispečer zatvara prozor; ruta ostaje u statusu "Čeka na dodjelu".
+    * **A1 – Poštar nema aktivnu sesiju:** Sistem upozorava dispečera da poštar trenutno nije prijavljen, ali dozvoljava dodjelu — ruta će biti dostavljena pri sljedećoj prijavi.
+    * **A2 – Otkazivanje dodjele:** Dispečer zatvara prozor; ruta ostaje nedodjeljena (status `Planirana`, bez PoštarID-a).
 * **Ishod:** Poštar je obaviješten o svom radnom zadatku.
 
-### UC-14: Monitoring realizacije u realnom vremenu
+### UC-14: Monitoring realizacije
 * **Akter:** Dispečer
-* **Naziv use casea:** Praćenje statusa na terenu
-* **Kratak opis:** Vizuelni uvid u napredak poštara na mapi tokom radnog vremena.
+* **Naziv use casea:** Praćenje realizacije ruta na terenu
+* **Kratak opis:** Vizuelni uvid u napredak obilaska kroz statuse stavki rute (RouteItem) tokom radnog vremena.
 * **Preduslovi:** <br> 1. Postoje aktivne rute koje se trenutno izvršavaju.<br>
     2. Sistem ima stabilnu vezu sa **OpenStreetMap** API-jem.
 * **Glavni tok:**
      1. Dispečer otvara ekran za monitoring.
-     2. Sistem učitava GPS pozicije svih poštara na terenu.
-     3. Sistem prikazuje ikonice poštara koje se kreću po mapi.
-     4. Sistem mijenja boje sandučića na mapi (npr. Zelena - ispražnjeno).
-     5. Podaci se automatski osvježavaju svake minute.
+     2. Sistem učitava aktivne rute i statuse svih stavki rute (RouteItem) sa pripadajućim sandučićima.
+     3. Sistem prikazuje sandučiće na mapi obojene prema statusu obilaska (`Planirano`, `Realizovano`, `Preskočeno`, `Nedostupno`) i pozicije koje su poštari potvrdili (polje Geo-validacija iz posljednje realizovane stavke).
+     4. Sistem vizuelno razlikuje tipove realizacije (`Ispražnjen` / `Napunjen`) na ikonama završenih tačaka.
+     5. Podaci se periodično osvježavaju putem HTTP pollinga u intervalu 15–30 sekundi (vidjeti Architecture, Polling vs. WebSocket).
 * **Alternativni tokovi:**
-    * **A1 – Gubitak signala:** Sistem prikazuje zadnju poznatu poziciju uz upozorenje.
-    * **A2 – Zastoj na ruti:** Poštar se ne pomjera duže od 15 minuta; sistem vizuelno ističe tu rutu.
-* **Ishod:** Dispečer ima kompletnu kontrolu nad operacijama na terenu.
+    * **A1 – Prekid konekcije na backend:** Sistem prikazuje posljednje poznato stanje sa timestampom i informativnom porukom o prekidu.
+    * **A2 – Dugotrajno bez napretka:** Ako u periodu dužem od 15 minuta nema nove potvrde stavke na aktivnoj ruti, sistem vizuelno ističe rutu kao potencijalno zastojnu.
+* **Ishod:** Dispečer ima ažuran pregled napretka realizacije svih aktivnih ruta.
 
 ### UC-15: Upravljanje evidencijom i profilima poštara
 * **Akter:** Administrator
@@ -266,7 +266,7 @@
      1. Administrator otvara modul "Evidencija zaposlenih".
      2. Sistem prikazuje listu svih poštara.
      3. Administrator odabire opciju "Uredi profil" za određenog poštara.
-     4. Administrator unosi dodatne informacije: Interni ID broj, kontakt telefon i radnu zonu.
+     4. Administrator unosi dodatne informacije: Interni ID broj i kontakt telefon.
      5. Administrator potvrđuje promjene.
      6. Sistem validira da li je Interni ID jedinstven.
      7. Sistem ažurira bazu podataka.
@@ -274,22 +274,24 @@
     * **A1 – Neispravan format ID-a:** Sistem javlja da ID mora biti numerička vrijednost.
 * **Ishod:** Podaci o poštaru su kompletirani i spremni za proces dodjele ruta.
 
-### UC-17: Upravljanje statusom sandučića na terenu
+### UC-17: Upravljanje statusom stavke rute na terenu
 * **Akter:** Poštar
-* **Naziv use casea:** Promjena statusa sandučića (Punjenje/Pražnjenje)
-* **Kratak opis:** Poštar putem mobilne aplikacije evidentira završetak rada na pojedinačnom sandučiću uz GPS validaciju.
+* **Naziv use casea:** Potvrda realizacije stavke rute (Pražnjenje/Punjenje) / Preskakanje stavke
+* **Kratak opis:** Poštar putem mobilne aplikacije evidentira ishod rada na pojedinačnoj stavci rute (RouteItem) uz GPS validaciju. Alternativne ishode (`Nedostupno` zbog prepreke) pokriva UC-18.
 * **Preduslovi:** <br> 1. Poštar je prijavljen na mobilnu aplikaciju. <br> 2. Poštaru je dodijeljena aktivna ruta (UC-13). <br> 3. Uređaj ima aktivne lokacijske usluge (GPS).
 * **Glavni tok:**
-     1. Poštar na mapi ili listi unutar aplikacije bira sandučić na kojem se trenutno nalazi.
-     2. Poštar odabire opciju "Završi pražnjenje/punjenje".
-     3. Sistem provjerava GPS lokaciju poštara kako bi potvrdio prisutnost na lokaciji sandučića.
+     1. Poštar na mapi ili listi unutar aplikacije bira stavku rute (sandučić) na kojoj se trenutno nalazi.
+     2. Poštar odabire opciju "Potvrdi realizaciju" i bira tip realizacije (`Ispražnjen` ili `Napunjen`).
+     3. Sistem provjerava GPS lokaciju poštara kako bi potvrdio prisutnost na lokaciji sandučića (geo-validacija).
      4. Poštar potvrđuje akciju u aplikaciji.
-     5. Sistem šalje podatak serveru i mijenja status sandučića u bazi podataka u "Obrađeno".
-     6. Sistem vizuelno označava sandučić na korisničkom interfejsu aplikacije kao završen.
+     5. Sistem šalje podatak serveru, postavlja status stavke rute (RouteItem) na `Realizovano` uz odabrani tip realizacije (`Ispražnjen` / `Napunjen`) i bilježi serverski timestamp potvrde.
+     6. Sistem vizuelno označava stavku na korisničkom interfejsu aplikacije kao realizovanu.
 * **Alternativni tokovi:**
     * **A1 – Predaleko od lokacije:** Sistem detektuje da je poštar udaljen više od 50m od koordinata sandučića; sistem šalje upozorenje i traži dodatnu potvrdu ili razlog odstupanja.
     * **A2 – Gubitak konekcije:** Sistem pohranjuje promjenu statusa lokalno na uređaju i vrši sinhronizaciju čim internet veza postane dostupna.
-* **Ishod:** Podatak o obavljenom radu je evidentiran i trenutno vidljiv dispečeru u monitoringu (veza sa US-33).
+    * **A3 – Preskakanje stavke:** Poštar bira opciju "Preskoči"; sistem postavlja status stavke rute na `Preskočeno` uz obaveznu napomenu s razlogom.
+    * **A4 – Nedostupna lokacija (prepreka):** Poštar umjesto potvrde prijavljuje problem — tok prelazi u UC-18, gdje sistem postavlja status stavke rute na `Nedostupno` uz obaveznu napomenu.
+* **Ishod:** Ishod stavke rute je evidentiran u skladu s formalnim enumom (`Realizovano` / `Preskočeno` / `Nedostupno`) i vidljiv dispečeru u monitoringu (veza sa US-33).
 
 ### UC-18: Evidentiranje nepredviđenih prepreka na ruti
 * **Akter:** Poštar
@@ -301,7 +303,7 @@
      2. Poštar bira tip prepreke iz ponuđenog menija (npr. Kvar brave, Nepristupačan prilaz, Oštećenje sandučića).
      3. Poštar unosi obavezni kratak tekstualni opis prepreke i po potrebi prilaže fotografiju.
      4. Poštar potvrđuje slanje prijave.
-     5. Sistem šalje notifikaciju dispečeru u realnom vremenu i označava tačku na mapi posebnom ikonom.
+     5. Sistem postavlja status stavke rute (RouteItem) na `Nedostupno`, bilježi napomenu s razlogom i serverski timestamp, te obavještava dispečera (vidljivo u UC-14 monitoringu uz kašnjenje polling intervala 15–30s).
      6. Sistem nudi poštaru automatsku navigaciju do sljedeće tačke na ruti.
 * **Alternativni tokovi:**
     * **A1 – Odustajanje od prijave:** Poštar zatvara formu prije slanja; sistem ne mijenja status sandučića i vraća na pregled rute.
