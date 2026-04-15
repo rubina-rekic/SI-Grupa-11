@@ -226,3 +226,49 @@ Prioritet regresionog testiranja po modulu:
 | **PBI-030 / US-31** | Dnevni izvještaj sadrži tačne agregatne podatke za odabrani datum | TC-38 | **Preduslovi:** Za odabrani datum postoje završene rute. **Koraci:** Odabrati datum i generisati izvještaj. **Očekivani rezultat:** Izvještaj prikazuje ukupan broj planiranih, ispražnjenih i neuspješnih obilazaka; izlistane su napomene o nedostupnim lokacijama grupirane po poštarima. |
 | **PBI-030 / US-31** | Preuzimanje izvještaja u PDF formatu funkcioniše jednim klikom | TC-39 | **Preduslovi:** Izvještaj za odabrani datum generisan i prikazan. **Koraci:** Kliknuti dugme za preuzimanje. **Očekivani rezultat:** PDF fajl s izvještajem se preuzima na uređaj. |
 | **PBI-030 / US-31** | Izvještaj za datum bez aktivnosti prikazuje informativnu poruku | TC-40 | **Preduslovi:** Za odabrani datum nisu evidentirani nikakvi obilasci. **Koraci:** Odabrati datum bez aktivnosti i pokrenuti generisanje. **Očekivani rezultat:** Poruka "Za traženi datum nisu pronađene zabilježene aktivnosti."; dugme za preuzimanje onemogućeno. |
+
+# Način evidentiranja rezultata testiranja
+
+## Dokumentacija test slučajeva
+
+Za svaki test slučaj (TC) evidentiiraju se sljedeće informacije:
+
+- Identifikator test slučaja (TC-[redni broj])
+- Veza sa PBI-jem i acceptance kriterijem koji pokriva
+- Preduslovi, koraci izvršavanja i očekivani rezultat
+- Stvarni rezultat nakon izvršavanja
+- Status: **Passed / Failed / Blocked / Skipped**
+- Prioritet: **Critical / High / Medium / Low**
+
+## Evidencija defekta
+
+Svaki pronađeni defekt evidentira se s minimalnim skupom informacija potrebnih za reprodukciju i rješavanje:
+
+- Jedinstveni ID defekta (DEF-[redni broj])
+- Kratak naziv i opis problema
+- Koraci za reprodukciju i razlika između očekivanog i stvarnog ponašanja
+- Severity: **Critical / Major / Minor**
+- Status: **New / In Progress / Fixed / Verified / Closed**
+- Veza s test slučajem i PBI-jem; screenshot ili log prilog gdje je primjenljivo
+
+## Test izvještaj
+
+Po završetku svake faze testiranja generiše se kratak Test Report koji sadrži:
+
+- Sažetak: ukupan broj TC-ova i raspodjela po statusu (Passed / Failed / Blocked / Skipped)
+- Listu otvorenih defekta s Severity klasifikacijom
+- Postotak pokrivenih acceptance kriterija
+- Preporuku: **Go / No-Go** za nastavak prema sljedećoj fazi ili puštanje u produkciju
+
+---
+
+# Glavni rizici kvaliteta
+
+| ID | Opis rizika | Vjerovatnoća | Uticaj | Strategija mitigacije |
+|---|---|---|---|---|
+| R01 | Neispravna implementacija RBAC-a — korisnik s ulogom Poštar može pristupiti administrativnim endpointima ili URL-ovima | Srednja | Visok | Testirati svaki zaštićeni API endpoint direktnim HTTP zahtjevima za svaku ulogu (TC-13, TC-14); uključiti provjeru Security Loga |
+| R02 | Optimizacijski algoritam ne uvažava prioritete sandučića ili radna pravila — ruta sadrži sandučiće koji nisu dostupni za taj dan | Srednja | Visok | Pokriti unit testovima sve kombinacije prioriteta i radnih dana; sistemski test s rubnim slučajevima (TC-22, TC-23) |
+| R03 | Real-time sinhronizacija između poštara i dispečera ne funkcioniše — dispečer vidi zastarjele statuse | Srednja | Visok | Integracioni test s istovremenim sesijama poštara i dispečera; potvrditi automatsko osvježavanje unutar 60 sekundi (TC-33) |
+| R04 | Sesija korisnika ostaje aktivna nakon odjave — moguć neovlašten pristup na dijeljenim uređajima | Niska | Visok | Testirati invalidaciju sesije na serveru i blokadu zaštićenih ruta nakon odjave (TC-10, TC-11) |
+| R05 | Mobilni prikaz za poštara nije upotrebljiv na manjim ekranima — terenska operativnost sistema kompromitovana | Visoka | Srednji | UI testiranje na ekranima < 480px za sve ključne akcije poštara: pregled rute, promjena statusa, unos napomene (TC-31) |
+| R06 | Generisanje rute za veći broj sandučića premašuje vremenski prag od 5 sekundi — dispečer ne može efikasno raditi | Niska | Srednji | Sistemski performansni test s 50 sandučića; pratiti API response time u integracionim testovima (TC-24) |
