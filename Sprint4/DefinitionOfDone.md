@@ -2,7 +2,7 @@
 ---
 ## Scope
 
-DoD se primjenjuje na **sve User Storije u svim sprintovima**, od Sprinta 1 do kraja projekta. Svi članovi tima su dužni poznavati i primjenjivati isti standard bez izuzetaka, osim u slučajevima definisanim u sekciji *Izuzeci*.
+DoD se primjenjuje na **sve User Storije u svim sprintovima** do kraja projekta. Svi članovi tima su dužni poznavati i primjenjivati isti standard bez izuzetaka, osim u slučajevima definisanim u sekciji *Izuzeci*.
 
 ---
 
@@ -38,7 +38,7 @@ User Story je u stanju u kojem može biti prikazan na Sprint Reviewu – funkcio
 
 ## Izuzeci
 
-Ukoliko određena stavka DoD-a nije primjenjiva za konkretan User Story (npr. čisto dokumentacijski Story nema kod za review), izuzetak mora biti:
+Ukoliko određena stavka DoD-a nije primjenjiva za konkretan User Story, izuzetak mora biti:
 
 - eksplicitno dogovoren unutar tima,
 - zabilježen u komentaru na samom Story-ju u alatu za praćenje.
