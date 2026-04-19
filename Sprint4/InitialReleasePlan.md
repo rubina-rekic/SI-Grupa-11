@@ -355,20 +355,35 @@ Prezentovati završni sistem, predati individualnu refleksiju i peer evaluation,
 | R-004 | Preklapanje završnih akademskih obaveza s pripremom demonstracije | Visoka | Visok | Demonstracija se uvježbava u Sprintu 12 kao dio pripreme — ne prvi put u Sprintu 13 |
 
 ---
+## 3.1 Planirani release kandidati
+
+Od 9 planiranih inkremenata, tim identifikuje sljedeće release kandidate 
+— trenutke kada sistem nudi stvarnu vrijednost krajnjem korisniku:
+
+| Release | Nakon inkrementa | Sprint | Obrazloženje |
+|---------|-----------------|--------|--------------|
+| Release 1 | Inkrement 4 | Sprint 8 | Sistem prvi put može generisati i dodijeliti rutu poštaru — primarna poslovna vrijednost sistema je isporučena |
+| Release 2 | Inkrement 5 | Sprint 9 | Operativni krug je zatvoren — poštar radi na terenu, dispečer prati u realnom vremenu |
+| Release 3 (finalni) | Inkrement 8 | Sprint 12 | Sistem je stabilan, dokumentovan i spreman za produkcijsku upotrebu |
+
+Inkrementi 1–3 su internally shippable (preduslov za release) ali ne nose 
+dovoljno samostalne vrijednosti da bi bili ponuđeni kao release Product Owneru.
+
+---
 
 ## 4. Vizuelni pregled plana po sprintovima
 
-| Sprint | Inkrement | Ključne isporuke |
-|--------|-----------|-----------------|
-| Sprint 5 | Inkrement 1 | Autentifikacija, RBAC, Decision Log, AI Usage Log |
-| Sprint 6 | Inkrement 2 | Upravljanje poštarima i sandučićima |
-| Sprint 7 | Inkrement 3 | Prioriteti i radna pravila sandučića |
-| Sprint 8 | Inkrement 4 | Generisanje i upravljanje rutama |
-| Sprint 9 | Inkrement 5 | Mobilni prikaz, ažuriranje statusa, praćenje i izvještaj |
-| Sprint 10 | Inkrement 6 | Historija, prošireno izvještavanje, pretraga |
-| Sprint 11 | Inkrement 7 | Stabilizacija i regresijsko testiranje |
-| Sprint 12 | Inkrement 8 | Finalna verzija, dokumentacija, ažuriranje artefakata |
-| Sprint 13 | Inkrement 9 | Završna demonstracija, refleksija, peer evaluation |
+| Sprint | Inkrement | Ključne isporuke | Release? |
+|--------|-----------|-----------------|----------|
+| Sprint 5 | Inkrement 1 | Autentifikacija, RBAC | — |
+| Sprint 6 | Inkrement 2 | Upravljanje poštarima i sandučićima | — |
+| Sprint 7 | Inkrement 3 | Prioriteti i radna pravila | — |
+| Sprint 8 | Inkrement 4 | Generisanje i upravljanje rutama | ✅ Release 1 |
+| Sprint 9 | Inkrement 5 | Mobilni prikaz, praćenje, izvještaj | ✅ Release 2 |
+| Sprint 10 | Inkrement 6 | Historija, izvještavanje, pretraga | — |
+| Sprint 11 | Inkrement 7 | Stabilizacija i testiranje | — |
+| Sprint 12 | Inkrement 8 | Finalna verzija i dokumentacija | ✅ Release 3 |
+| Sprint 13 | Inkrement 9 | Demonstracija i refleksija | — |
 
 ---
 

@@ -31,7 +31,12 @@ Implementacija je testirana – ručno ili automatski – i potvrđeno je da rad
 ### 5. Push na repozitorij i merge na glavni branch
 Promjene su commitovane i pushane na repozitorij. Build se izvršava bez grešaka.
 
-### 6. Spremno za demonstraciju na Sprint Reviewu
+### 6. Evidentirana u relevantnim artefaktima
+Promjene koje zahtijevaju ažuriranje projektnih artefakata (Product Backlog, Decision Log,
+Sprint Review Summary ili drugi relevantni dokumenti) su evidentirane i reflektuju stvarno
+stanje stavke.
+
+### 7. Spremno za demonstraciju na Sprint Reviewu
 User Story je u stanju u kojem može biti prikazan na Sprint Reviewu – funkcionalan, pregledan i stabilan.
 
 ---

@@ -101,6 +101,8 @@ Primjeri:
 ### 2.4 Mapa i geolokacija
 - OpenStreetMap kao map podloga
 - Konkretna map biblioteka (npr. Leaflet) formalizuje se kroz Decision Log u implementacijskoj fazi
+- **Napomena:** Odluka o odabiru map biblioteke biće evidentirana u Decision Logu
+  (PBI-040) na početku Sprinta 5, prije nego što implementacija zahtijeva konačan izbor.
 
 ---
 
