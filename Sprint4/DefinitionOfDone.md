@@ -29,7 +29,7 @@ Kod je pregledan od strane najmanje jednog drugog člana tima. Eventualni koment
 Implementacija je testirana – ručno ili automatski – i potvrđeno je da radi ispravno. Nije pronađen kritičan bug koji blokira funkcionalnost.
 
 ### 5. Push na repozitorij i merge na glavni branch
-Promjene su commitovane, pushane na repozitorij i mergane na glavni branch (npr. main ili develop). Build se izvršava bez grešaka.
+Promjene su commitovane i pushane na repozitorij. Build se izvršava bez grešaka.
 
 ### 6. Spremno za demonstraciju na Sprint Reviewu
 User Story je u stanju u kojem može biti prikazan na Sprint Reviewu – funkcionalan, pregledan i stabilan.
