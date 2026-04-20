@@ -25,18 +25,19 @@ Sve stavke navedene u acceptance kriterijima User Storija su provjerene i potvr�
 ### 3. Urađen code review
 Kod je pregledan od strane najmanje jednog drugog člana tima. Eventualni komentari su razriješeni prije merganja.
 
-### 4. Testirano na odgovarajući način
-Implementacija je testirana – ručno ili automatski – i potvrđeno je da radi ispravno. Nije pronađen kritičan bug koji blokira funkcionalnost.
+### 4. Sveobuhvatno testiranje
+Implementacija je prošla kroz set testnih scenarija (ručnih ili automatizovanih). Potvrđeno je da sistem ispravno funkcioniše u standardnim uslovima, ali i da adekvatno obrađuje nevalidne unose, greške i granične slučajeve (edge cases).
 
-### 5. Push na repozitorij i merge na glavni branch
+### 5. Sigurnost i integritet podataka
+Verifikovano je da nova funkcionalnost poštuje definisane nivoe pristupa (autentifikacija i autorizacija). Procesiranje podataka je u skladu sa arhitekturom sistema i ne narušava integritet ili stabilnost postojećih modula.
+
+### 6. Push na repozitorij i merge na glavni branch
 Promjene su commitovane i pushane na repozitorij. Build se izvršava bez grešaka.
 
-### 6. Evidentirana u relevantnim artefaktima
-Promjene koje zahtijevaju ažuriranje projektnih artefakata (Product Backlog, Decision Log,
-Sprint Review Summary ili drugi relevantni dokumenti) su evidentirane i reflektuju stvarno
-stanje stavke.
+### 7. Evidentirana u relevantnim artefaktima
+Promjene koje zahtijevaju ažuriranje projektnih artefakata (Product Backlog, Decision Log, Sprint Review Summary ili drugi relevantni dokumenti) su dokumentovane i odražavaju stvarno stanje.
 
-### 7. Spremno za demonstraciju na Sprint Reviewu
+### 8. Spremno za demonstraciju na Sprint Reviewu
 User Story je u stanju u kojem može biti prikazan na Sprint Reviewu – funkcionalan, pregledan i stabilan.
 
 ---
