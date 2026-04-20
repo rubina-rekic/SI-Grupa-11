@@ -219,26 +219,6 @@ Aplikacija se deployuje na **virtualnu mašinu (VM) u oblaku** ili ekvivalentni 
 
 ### 5.2 Arhitektura deployovanja
 
-```
-Internet
-    │
-    ▼
-┌─────────────────────────────┐
-│  Nginx (reverse proxy)      │  Port 80 / 443
-│  - Servira React build      │
-│  - Proksira /api → Kestrel  │
-└────────────┬────────────────┘
-             │
-    ┌────────┴────────┐
-    ▼                 ▼
-┌──────────┐    ┌──────────────┐
-│  Kestrel │    │  PostgreSQL  │
-│  .NET 8  │    │  Docker      │
-│  Port    │    │  kontejner   │
-│  5000    │    │  Port 5432   │
-└──────────┘    └──────────────┘
-```
-
 **Komponente:**
 - **Nginx** — web server i reverse proxy; servira statički React build (`npm run build` izlaz); proksira sve `/api/*` zahtjeve na Kestrel; terminira SSL
 - **Kestrel** — ASP.NET Core-ov ugrađeni web server; radi unutar Docker kontejnera; nije direktno izložen internetu (uvijek iza Nginxa)
