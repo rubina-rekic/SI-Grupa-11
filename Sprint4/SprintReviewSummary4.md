@@ -37,7 +37,7 @@ Sve planirane stavke su završene.
 
 ## Glavni problemi i blokeri
 
-Nije bilo blokatora. Deployment odluka ostaje otvorena stavka za Sprint 5.
+Nije bilo blokatora. 
 
 ---
 
