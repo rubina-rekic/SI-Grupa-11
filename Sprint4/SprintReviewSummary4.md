@@ -18,13 +18,11 @@ Završna validacija human-first faze projekta i uspostavljanje tehničkih temelj
 | PBI-036 | Definition of Done | Nejla Karalić, Rubina Rekić | Definirano 7 kriterija završenosti; primjenjuje se na sve User Storije u svim sprintovima |
 | PBI-037 | Initial Release Plan | Rubina Rekić | Mapiranje svih PBI-a na sprintove 5–13; definirani 3 release kandidata (Sprint 8, 9, 12) |
 | PBI-038 | Tehnički skeleton projekta | Emrah Žunić i Kerim Šikalo  | Folder PROJEKAT u repozitoriju sa PostRoute.Api (Controllers, Contracts, Configuration), PostRoute.BLL (Services, Models, DependencyInjection) i PostRoute.DAL (Repositories, Entities, DependencyInjection); frontend sa Vite + React + TypeScript strukturom |
-| — | Struktura repozitorija i tehnički setup | Faruk Avdegić, Emrah Žunić i Ibrahim Tabaković | Dokumentovana GitLab Flow branching strategija, tehnički stack (React 18, ASP.NET Core, PostgreSQL), CI/CD osnove u TechnicalSetup.md |
+| — | Struktura repozitorija i tehnički setup | Faruk Avdegić, Emrah Žunić i Ibrahim Tabaković | Dokumentovana GitLab Flow branching strategija, tehnički stack (React 19, ASP.NET Core .NET 9, PostgreSQL), CI/CD pipeline koraci, deployment strategija (Ubuntu VM + Docker + Nginx) i lokalni razvojni setup u TechnicalSetup.md |
 
 ## Šta nije završeno
 
-| Stavka | Razlog | Plan |
-|--------|--------|------|
-| Deployment odluka | Tim još nije donio finalnu odluku o deployment okruženju (fizički server, cloud VM ili Docker) | Bit će evidentirana kao formalna odluka u Decision Logu na početku Sprinta 5 |
+Sve planirane stavke su završene.
 
 ---
 
@@ -46,10 +44,10 @@ Nije bilo blokatora. Deployment odluka ostaje otvorena stavka za Sprint 5.
 ## Ključne odluke donesene u sprintu
 
 - Odabran GitLab Flow kao branching strategija
-- Definiran tehnički stack: React 18 + TypeScript (frontend), ASP.NET Core + C# (backend), PostgreSQL (baza podataka)
+- Definiran tehnički stack: React 19 + TypeScript 6 (frontend), ASP.NET Core .NET 9 + C# (backend), PostgreSQL 16 (baza podataka)
 - Backend strukturiran po slojevima: API / BLL / DAL — u skladu sa Architecture Overview dokumentom
 - Definirani release kandidati: Release 1 nakon Sprinta 8, Release 2 nakon Sprinta 9, Release 3 (finalni) nakon Sprinta 12
-- Deployment odluka odgođena za Sprint 5 i bit će evidentirana u Decision Logu
+- Definisana deployment strategija: Ubuntu 22.04 LTS VM + Docker Compose + Nginx reverse proxy + Kestrel
 
 ---
 
