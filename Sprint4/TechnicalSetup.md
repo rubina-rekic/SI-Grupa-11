@@ -169,8 +169,6 @@ Primjeri:
 
 ### 4.2 Inicijalni setup
 
-> **Napomena (Sprint 4 skeleton):** Projekt je trenutno u inicijalnoj skeleton fazi. Biblioteke označene kao "planiran Sprint 5+" (React Router, Tailwind, EF Core, ASP.NET Identity, PostgreSQL) nisu još dodane u projekt. Template konfiguracije (`.env.example`, `appsettings.Example.json`) i Docker/CI fajlovi bit će dodani pri postavljanju tehničkog skeletona (PBI-038).
-
 ```bash
 # Kloniranje i setup
 git clone <repo-url>
