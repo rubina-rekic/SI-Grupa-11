@@ -2,148 +2,146 @@
 
 ## Planirani inkrementi
 
-Razvoj rješenja *Sistem za optimizaciju ruta punjenja i pražnjenja poštanskih sandučića* zasnovan je na **Scrum** metodologiji. Projektni ciklus obuhvata period od **Sprinta 5 do Sprinta 13**, osiguravajući iterativnu isporuku kroz četiri ključna izdanja (release-a).
+Razvoj rješenja *Sistem za optimizaciju ruta punjenja i pražnjenja poštanskih sandučića* organizovan je prema **Scrum metodologiji**, uz jasno definisane iteracije i kontinuiranu isporuku vrijednosti.
 
-Sistem je podijeljen tako da svaki release isporučuje potpuno testabilan i upotrebljiv dio softvera koji donosi direktnu vrijednost korisniku.
+Projektni ciklus obuhvata period od **Sprinta 5 do Sprinta 13**, tokom kojeg se planira realizacija kroz **četiri ključna izdanja (release-a)**. Svaki release predstavlja zaokruženu funkcionalnu cjelinu koja se može samostalno testirati i koristiti u realnom okruženju.
 
 ### Dinamika isporuke po fazama
 
 | Release | Naziv inkrementa | Obuhvat Sprintova | Ključni ishod |
 | :--- | :--- | :--- | :--- |
-| **R1** | **System Foundation & RBAC Setup** | Sprint 5 – 6 | Funkcionalna platforma sa RBAC sistemom, upravljanjem korisnicima i registrom lokacija. |
-| **R2** | **Optimization & Intelligence Service** | Sprint 7 – 8 | Implementiran algoritam za proračun ruta i dispečerski modul za planiranje rada. |
-| **R3** | **Field Operations & Mobile Sync** | Sprint 9 – 10 | Aktivirana terenska aplikacija za poštare sa real-time potvrdom zadatka. |
-| **R4** | **Analytics & Reporting** | Sprint 11 – 12 | Dashboard za analitiku (BI), automatizovano izvještavanje i finalna stabilizacija. |
+| **R1** | **System Foundation & RBAC Setup** | Sprint 5 – 6 | Postavljena osnovna platforma sa autentifikacijom, upravljanjem korisnicima i registrom sandučića. |
+| **R2** | **Optimization & Intelligence Service** | Sprint 7 – 8 | Implementiran algoritam za optimizaciju ruta, vizuelni prikaz i mobilni interfejs. |
+| **R3** | **Field Operations & Monitoring** | Sprint 9 – 10 | Real-time potvrda zadataka sa terena, praćenje ruta i prva faza stabilizacije. |
+| **R4** | **Analytics & Finalization** | Sprint 11 – 13 | Uvedena BI analitika, kompletirana dokumentacija i izvršena završna demonstracija. |
+
 ---
 
 ## RELEASE 1 – SYSTEM FOUNDATION & RBAC SETUP
 
 ### Cilj inkrementa
-Uspostaviti osnovni radni okvir sistema koji uključuje sigurnosnu infrastrukturu, upravljanje korisnicima i digitalnu evidenciju poštanskih sandučića na terenu.
+Uspostaviti osnovni radni okvir sistema koji uključuje sigurnosnu infrastrukturu, upravljanje korisnicima i digitalnu evidenciju poštanskih sandučića.
 
 ### Glavne funkcionalnosti
-- PBI-011: Kreiranje korisničkog računa poštara 
-- PBI-012: Autentifikacija i prijava na sistem 
-- PBI-014: Sistem uloga i permisija (Administrator, Dispečer, Poštar)
-- PBI-015: Upravljanje sandučićima – unos GPS lokacija i osnovnih informacija 
-- PBI-016: Kategorizacija sandučića prema tipu i prioritetu
+* **PBI-011:** Kreiranje korisničkog računa poštara
+* **PBI-012:** Autentifikacija i prijava na sistem
+* **PBI-013:** Oporavak lozinke (Forgot password)
+* **PBI-014:** Sistem uloga i permisija (Admin, Dispečer, Poštar)
+* **PBI-015:** Upravljanje profilima poštara
+* **PBI-017:** Dodavanje poštanskog sandučića (GPS lokacija i osnovne informacije)
+* **PBI-020:** Definisanje prioriteta sandučića
+* **PBI-021:** Evidencija radnih pravila (vremena pražnjenja)
 
 ### Zavisnosti
-- PBI-010: Domain model
-- PBI-017: Dizajn baze podataka
-- PBI-039, PBI-040: Team Charter i Setup okruženja
+* **PBI-033:** Domain model (osnova za bazu podataka)
+* **PBI-038:** Tehnički skeleton projekta (.NET/Git setup)
+* **PBI-039:** Team Charter (radna pravila tima)
 
 ### Rizici
-- R-021: Sigurnosni propusti u autentifikaciji
-- R-004: Netačni podaci o lokacijama sandučića (GPS koordinate)
-- R-011: Kašnjenje u postavljanju razvojnog okruženja
-- R-012: Konflikti pri spajanju koda između članova tima
+* **R-010:** Sigurnosni propusti u autentifikaciji i autorizaciji
+* **R-011:** Kašnjenje u postavljanju razvojnog okruženja
+* **R-015:** Inkonzistentni podaci pri unosu GPS koordinata sandučića
+* **R-023:** Konflikti pri spajanju koda (Merge conflicts)
 
 ### Okvirni sprintovi
-- Sprint 5: Sigurnosni protokoli i upravljanje korisnicima
-- Sprint 6: CRUD operacije za sandučiće i integracija mapa
+* **Sprint 5:** Sigurnosni protokoli, upravljanje korisnicima i PoC algoritma.
+* **Sprint 6:** CRUD operacije za sandučiće, prioriteti i radna pravila.
 
 ### Vrijednost
-Ovaj release predstavlja osnovni operativni sistem. Omogućava dispečerima da digitalizuju mrežu sandučića i sigurno upravljaju osobljem, čime se postavlja temelj za optimizaciju.
+Ovaj release digitalizuje mrežu sandučića i omogućava sigurno upravljanje osobljem, čime se postavlja temelj za primjenu optimizacijskih algoritama.
 
 ---
 
 ## RELEASE 2 – OPTIMIZATION & INTELLIGENCE SERVICE
 
 ### Cilj inkrementa
-Implementirati ključnu poslovnu logiku – algoritam za optimizaciju ruta koji izračunava najefikasnije putanje za poštare.
+Implementirati ključnu poslovnu logiku kroz algoritam za optimizaciju ruta i omogućiti prvi uvid u mobilni interfejs.
 
 ### Glavne funkcionalnosti
-- PBI-022: Razvoj algoritma za optimizaciju ruta (Nearest-neighbor heuristika)
-- PBI-023: Dodjela generisanih ruta specifičnim poštarima
-- PBI-025: Vizuelni prikaz optimizovane putanje na mapi za dispečera
-- US-20: Ručna modifikacija rute u hitnim slučajevima
+* **PBI-022:** Razvoj algoritma za optimizaciju ruta (Heuristika)
+* **PBI-023:** Automatska dodjela ruta poštarima
+* **PBI-025:** Vizuelni prikaz optimizovane putanje na mapi za dispečera
+* **PBI-026:** Responzivni (mobilni) prikaz dodijeljene rute
 
 ### Zavisnosti
-- Release 1: Validni podaci o sandučićima i lokacijama
+* **Release 1:** Validni podaci o sandučićima u bazi podataka.
+* **PBI-040:** Decision Log (dokumentovana odluka o odabranom algoritmu).
 
 ### Rizici
-- R-001: Pogrešna procjena napora za algoritam optimizacije
-- R-003: Generisanje suboptimalnih ruta uslijed logičke greške
-- R-002: Problemi sa performansama algoritma pri velikom broju tačaka
-- R-018: Teška integracija sa eksternim API servisima za mape
+* **R-001:** Pogrešna procjena napora za algoritam (kompleksnost implementacije)
+* **R-008:** Zavisnost o eksternim servisima (OpenStreetMap API preciznost)
+* **R-034:** Preveliki JavaScript bundle usporava mobilni prikaz rute
 
 ### Okvirni sprintovi
-- Sprint 7: Razvoj i testiranje logike optimizacije
-- Sprint 8: Vizualizacija rute i modul za dodjelu zadataka
+* **Sprint 7:** Implementacija logike optimizacije i integracija sa mapama.
+* **Sprint 8:** Vizualizacija rute za dispečera i inicijalni mobilni UI.
 
 ### Vrijednost
-Sistem postaje "inteligentan". Primarna vrijednost je ušteda vremena i resursa (goriva) kroz smanjenje pređenih kilometara poštara.
+Primarna vrijednost je ušteda vremena i resursa (goriva) kroz smanjenje pređenih kilometara, uz uvođenje podrške za rad na mobilnim uređajima.
 
 ---
 
-## RELEASE 3 – FIELD OPERATIONS & MOBILE SYNC
+## RELEASE 3 – FIELD OPERATIONS & MONITORING
 
 ### Cilj inkrementa
-Povezati dispečerski centar sa radom na terenu omogućavanjem poštarima da prate rute putem mobilnog interfejsa i potvrđuju obavljene zadatke.
+Zatvoriti krug komunikacije između dispečera i terena uz praćenje statusa u realnom vremenu i stabilizaciju osnovnih funkcija.
 
 ### Glavne funkcionalnosti
-- PBI-028: Responzivni interfejs za mobilne uređaje 
-- PBI-030: Digitalna potvrda pražnjenja/punjenja sandučića u realnom vremenu
-- US-32: Slanje notifikacija poštaru o novododijeljenoj ruti
-- US-35: Mogućnost prijave problema na sandučiću (npr. oštećenje) direktno sa terena
+* **PBI-027:** Ažuriranje statusa sandučića (pražnjenje/punjenje) u realnom vremenu
+* **PBI-029:** Praćenje statusa rute od strane dispečera (Monitoring)
+* **PBI-049:** Historija obilazaka i arhiva ruta
+* **PBI-051:** Pretraga i filtriranje sandučića po statusu
+* **PBI-052:** Stabilizacija sistema i regresijsko testiranje
 
 ### Zavisnosti
-- Release 2: Funkcionalan modul za dodjelu ruta
-- NFR-22: Sigurna HTTPS/TLS komunikacija
+* **Release 2:** Funkcionalan modul za proračun i dodjelu ruta.
+* **PBI-035:** Test Strategy (definisan proces verifikacije podataka).
 
 ### Rizici
-- R-033: Slabe performanse na starijim mobilnim uređajima
-- R-020: Gubitak mrežne konekcije na terenu pri slanju potvrde
-- R-034: UI/UX neusklađenost sa potrebama krajnjih korisnika (poštara)
-- R-035: Problemi sa keširanjem podataka na klijentskoj strani
+* **R-032:** Problemi sa sinhronizacijom (dispečer vidi zastarjele podatke)
+* **R-020:** Gubitak mrežne konekcije na terenu (Offline mod)
+* **R-021:** Akumulacija bugova uslijed kasnog testiranja
 
 ### Okvirni sprintovi
-- Sprint 9: Mobilni interfejs i notifikacije
-- Sprint 10: Logika potvrde zadataka i rukovanje offline stanjem
+* **Sprint 9:** Logika potvrde zadataka, notifikacije i pretraga.
+* **Sprint 10:** Historija, stabilizacija koda i bug fixing.
 
 ### Vrijednost
-Ovim release-om se zatvara operativni ciklus. Sistem više nije samo alat za planiranje, već postaje alat za direktno izvršenje i praćenje rada na terenu.
+Sistem postaje alat za direktno izvršenje i nadzor, omogućavajući potpunu transparentnost u radu poštara na terenu.
 
 ---
 
-## RELEASE 4 – ANALYTICS & REPORTING
+## RELEASE 4 – ANALYTICS & FINALIZATION
 
 ### Cilj inkrementa
-Omogućiti uvid u performanse sistema kroz izvještaje i analitiku, te finalizirati tehničku dokumentaciju za produkcijsko okruženje.
+Finalizirati projekt kroz naprednu analitiku performansi, kompletnu dokumentaciju i završnu prezentaciju rješenja.
 
 ### Glavne funkcionalnosti
-- PBI-037: Dashboard sa statistikom (broj ispražnjenih sandučića, pređeni kilometri)
-- PBI-038: Generisanje i izvoz izvještaja u PDF/Excel formatu
-- PBI-056: Finalna tehnička dokumentacija (Architecture, Deployment guide)
-- PBI-061: Završna stabilizacija sistema i bug fixing
+* **PBI-050:** Dashboard sa operativnim izvještajima (statistika efikasnosti)
+* **PBI-055:** Korisnička dokumentacija (Uputstvo za rad)
+* **PBI-056:** Tehnička dokumentacija (Arhitektura i Deployment)
+* **PBI-061:** Završna demonstracija sistema
 
 ### Zavisnosti
-- Stabilna baza podataka sa historijskim podacima iz Release-a 3
+* **Release 3:** Stabilna baza sa historijskim podacima za analizu.
 
 ### Rizici
-- R-007: Netačna interpretacija podataka u statističkim izvještajima
-- R-008: Nedostatak testnih podataka za generisanje reprezentativnih izvještaja
-- R-036: Greške pri generisanju PDF dokumenata uslijed specifičnih karaktera
-- R-010: Kašnjenje u izradi dokumentacije zbog fokusa na tehničke bugove
+* **R-007:** Netačna interpretacija podataka u BI izvještajima
+* **R-017:** Kašnjenje dokumentacije zbog fokusiranja na finalne bugove
 
 ### Okvirni sprintovi
-- Sprint 11: Razvoj modula za izvještavanje i analitiku
-- Sprint 12: Finalizacija dokumentacije, poliranje UI-a i završna demonstracija
+* **Sprint 11:** Razvoj BI dashboarda i statističkih modula.
+* **Sprint 12:** Finalizacija tehničkih artefakata i poliranje UI-a.
+* **Sprint 13:** Refleksija tima, primopredaja i završna demonstracija.
 
 ### Vrijednost
-Zadnji release pretvara sirove podatke u korisne informacije za menadžment. Omogućava analizu efikasnosti i pruža uvid u opravdanost investicije u sistem optimizacije.
+Pretvara operativne podatke u strateške informacije za menadžment i osigurava dugoročnu održivost sistema kroz kompletnu dokumentaciju.
 
 ---
 
 ## 3. Kriteriji završetka i osiguranje kvaliteta
 
 Svaki release se smatra zvanično isporučenim isključivo ukoliko su ispunjeni sljedeći uslovi:
-1.  **DoD usklađenost:** Sve stavke inkrementa ispunjavaju stavke definisane u *Definition of Done* dokumentu .
-2.  **QA Verifikacija:** Inkrement je uspješno prošao planirana QA testiranja bez otvorenih kritičnih bugova.
-3.  **PO Approval:** Product Owner je potvrdio ispunjenje Acceptance Criteria na Sprint Review sastanku.
-
----
-
-## ZAKLJUČAK
-Plan je strukturiran tako da tim u ranim fazama rješava tehnički najzahtjevnije stavke (Autentifikacija i Algoritam), dok su kasnije faze fokusirane na korisničko iskustvo na terenu i analitičku nadogradnju, čime se rizik neuspjeha projekta svodi na minimum.
+1. **DoD usklađenost:** Sve stavke inkrementa ispunjavaju kriterije definisane u *Definition of Done*.
+2. **QA Verifikacija:** Inkrement je prošao planirana testiranja bez otvorenih bugova visokog prioriteta.
+3. **PO Approval:** Product Owner je potvrdio ispunjenje Acceptance Criteria na Sprint Review sastanku.
