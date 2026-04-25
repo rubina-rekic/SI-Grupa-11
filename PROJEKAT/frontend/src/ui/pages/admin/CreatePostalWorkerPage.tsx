@@ -5,15 +5,23 @@ import { z } from "zod"
 import { createUser } from "../../../infrastructure/api/users/usersApi"
 import { PasswordStrengthIndicator } from "../../components/common/PasswordStrengthIndicator"
 
+function capitalizeFirst(value: string): string {
+  if (!value) return value
+  return value.charAt(0).toUpperCase() + value.slice(1)
+}
+
+const nameRules = z
+  .string()
+  .min(2, "Mora imati najmanje 2 znaka")
+  .max(50, "Može imati najviše 50 znakova")
+  .regex(
+    /^[\p{L}'-]+$/u,
+    "Samo slova, crtica (-) i apostrof (') su dozvoljeni — bez brojeva, simbola i razmaka",
+  )
+
 const schema = z.object({
-  firstName: z
-    .string()
-    .min(1, "Ime je obavezno")
-    .max(50, "Ime može imati najviše 50 znakova"),
-  lastName: z
-    .string()
-    .min(1, "Prezime je obavezno")
-    .max(50, "Prezime može imati najviše 50 znakova"),
+  firstName: nameRules,
+  lastName: nameRules,
   username: z
     .string()
     .min(3, "Korisničko ime mora imati najmanje 3 znaka")
@@ -48,6 +56,9 @@ export function CreatePostalWorkerPage() {
   } = useForm<FormData>({ resolver: zodResolver(schema) })
 
   const passwordValue = watch("password") ?? ""
+
+  const { onChange: onFirstNameChange, ...firstNameRest } = register("firstName")
+  const { onChange: onLastNameChange, ...lastNameRest } = register("lastName")
 
   const onSubmit = async (data: FormData) => {
     const result = await createUser(data)
@@ -96,7 +107,11 @@ export function CreatePostalWorkerPage() {
                 id="firstName"
                 className={`form-field__input${errors.firstName ? " form-field__input--error" : ""}`}
                 placeholder="npr. Amar"
-                {...register("firstName")}
+                {...firstNameRest}
+                onChange={(e) => {
+                  e.target.value = capitalizeFirst(e.target.value)
+                  onFirstNameChange(e)
+                }}
               />
               {errors.firstName && (
                 <p className="form-field__error">{errors.firstName.message}</p>
@@ -111,7 +126,11 @@ export function CreatePostalWorkerPage() {
                 id="lastName"
                 className={`form-field__input${errors.lastName ? " form-field__input--error" : ""}`}
                 placeholder="npr. Hodžić"
-                {...register("lastName")}
+                {...lastNameRest}
+                onChange={(e) => {
+                  e.target.value = capitalizeFirst(e.target.value)
+                  onLastNameChange(e)
+                }}
               />
               {errors.lastName && (
                 <p className="form-field__error">{errors.lastName.message}</p>

@@ -48,7 +48,7 @@ public sealed class UsersController : ControllerBase
             var user = await _userService.CreateAsync(command, cancellationToken);
             var response = new UserResponse(user.Id, user.Username, user.Email, user.Role);
 
-            return CreatedAtAction(nameof(GetByIdAsync), new { userId = user.Id }, response);
+            return Created($"/api/users/{user.Id}", response);
         }
         catch (InvalidOperationException ex)
         {
