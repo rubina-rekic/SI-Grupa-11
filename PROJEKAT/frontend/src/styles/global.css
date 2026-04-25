@@ -110,3 +110,202 @@ body {
     grid-template-columns: repeat(1, minmax(0, 1fr));
   }
 }
+
+/* ── Page layout ── */
+.page-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 2.5rem 1rem;
+}
+
+/* ── Form card ── */
+.form-card {
+  width: 100%;
+  max-width: 560px;
+  background: #ffffff;
+  border: 1px solid #d6e2ee;
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+.form-card__header {
+  padding: 1.5rem 1.75rem 1.25rem;
+  border-bottom: 1px solid #e8f0f8;
+}
+
+.form-card__title {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #0f2d4a;
+}
+
+.form-card__subtitle {
+  margin: 0.5rem 0 0;
+  font-size: 0.9rem;
+  color: #4f657a;
+  line-height: 1.5;
+}
+
+.form-card__body {
+  padding: 1.5rem 1.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+}
+
+/* ── Form fields ── */
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.form-field__label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #1f3a52;
+}
+
+.form-field__input {
+  padding: 0.55rem 0.75rem;
+  border: 1px solid #c8d9ea;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-family: inherit;
+  color: #182432;
+  background: #f7fafc;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  outline: none;
+}
+
+.form-field__input:focus {
+  border-color: #3b82c4;
+  background: #ffffff;
+  box-shadow: 0 0 0 3px rgba(59, 130, 196, 0.12);
+}
+
+.form-field__input::placeholder {
+  color: #9ab0c4;
+}
+
+.form-field__input--error {
+  border-color: #d94040;
+  background: #fff8f8;
+}
+
+.form-field__input--error:focus {
+  border-color: #d94040;
+  box-shadow: 0 0 0 3px rgba(217, 64, 64, 0.1);
+}
+
+.form-field__error {
+  font-size: 0.8rem;
+  color: #c0392b;
+  margin: 0;
+}
+
+/* ── Role badge ── */
+.role-badge {
+  display: inline-block;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: #1a5c96;
+  background: #dbeafe;
+  border-radius: 999px;
+  padding: 0.18rem 0.6rem;
+}
+
+/* ── Password strength indicator ── */
+.password-strength {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-top: 0.4rem;
+}
+
+.password-strength__bars {
+  display: flex;
+  gap: 4px;
+  flex: 1;
+}
+
+.password-strength__bar {
+  height: 4px;
+  flex: 1;
+  border-radius: 2px;
+  background: #e2eaf2;
+  transition: background 0.2s;
+}
+
+.password-strength__bar--weak   { background: #e53e3e; }
+.password-strength__bar--fair   { background: #ed8936; }
+.password-strength__bar--good   { background: #68d391; }
+.password-strength__bar--strong { background: #38a169; }
+
+.password-strength__label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  min-width: 3.5rem;
+  text-align: right;
+}
+
+.password-strength__label--weak   { color: #e53e3e; }
+.password-strength__label--fair   { color: #ed8936; }
+.password-strength__label--good   { color: #38a169; }
+.password-strength__label--strong { color: #276749; }
+
+/* ── Buttons ── */
+.form-actions {
+  margin-top: 0.5rem;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.6rem 1.4rem;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  transition: background 0.15s, opacity 0.15s;
+}
+
+.btn--primary {
+  background: #1a5c96;
+  color: #ffffff;
+  width: 100%;
+}
+
+.btn--primary:hover:not(:disabled) {
+  background: #154d80;
+}
+
+.btn--primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+@media (max-width: 560px) {
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .form-card__header,
+  .form-card__body {
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
+  }
+}

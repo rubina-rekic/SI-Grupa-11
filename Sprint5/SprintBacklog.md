@@ -6,9 +6,9 @@
  
 | ID | Naziv stavke / zadatka | Odgovorna osoba | Procjena | Status | Napomena |
 |---|---|---|---|---|---|
-| PBI-011 / US-01 | Administratorsko kreiranje korisničkog računa poštara | [Kerim i Emrah] | 2h | To Do | Forma za unos podataka, uloga "Poštar" |
-| PBI-011 / US-02 | Validacija unosa pri kreiranju računa | [Kerim i Emrah] | 2h | To Do | Jedinstvenost emaila, jačina lozinke, indikator |
-| PBI-011 / US-03 | Feedback o statusu kreiranja računa | [Kerim i Emrah] | 1h | To Do | Toast obavijesti, greške servera, zaštita od duplog slanja |
+| PBI-011 / US-01 | Administratorsko kreiranje korisničkog računa poštara | [Kerim i Emrah] | 2h | Done | Forma za unos podataka, uloga "Poštar" |
+| PBI-011 / US-02 | Validacija unosa pri kreiranju računa | [Kerim i Emrah] | 2h | Done | Jedinstvenost emaila, jačina lozinke, indikator |
+| PBI-011 / US-03 | Feedback o statusu kreiranja računa | [Kerim i Emrah] | 1h | Done | Toast obavijesti, greške servera, zaštita od duplog slanja |
 | PBI-012 / US-04 | Osnovna prijava na sistem | [Nejla i Aldin] | 1h 30min | To Do | Login forma, sesija, redirect na dashboard, zaključavanje nakon 5 pokušaja |
 | PBI-012 / US-05 | Rukovanje neispravnim kredencijalima | [Nejla i Aldin] | 1h | To Do | Generička poruka greške, validacija emaila, 3s blokada |
 | PBI-012 / US-06 | Obavezna promjena lozinke pri prvoj prijavi | [Nejla i Aldin] | 1h 30min | To Do | Blokada navigacije, provjera da nova ≠ inicijalna |

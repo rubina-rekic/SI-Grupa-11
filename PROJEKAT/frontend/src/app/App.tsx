@@ -1,14 +1,12 @@
-﻿import { useBootstrapStatus } from "../application/hooks/useBootstrapStatus"
+﻿import { Toaster } from "sonner"
 import { AppRouter } from "../infrastructure/routing/AppRouter"
-import { AppLayout } from "../ui/layouts/AppLayout"
 
 function App() {
-  const status = useBootstrapStatus()
-
   return (
-    <AppLayout status={status.message} initializedAtUtc={status.initializedAtUtc}>
+    <>
       <AppRouter />
-    </AppLayout>
+      <Toaster position="top-right" richColors closeButton />
+    </>
   )
 }
 
