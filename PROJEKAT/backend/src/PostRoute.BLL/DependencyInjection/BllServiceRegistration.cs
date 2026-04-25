@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using PostRoute.BLL.Services;
 using PostRoute.DAL.DependencyInjection;
 
@@ -6,9 +7,9 @@ namespace PostRoute.BLL.DependencyInjection;
 
 public static class BllServiceRegistration
 {
-    public static IServiceCollection AddBusinessLayer(this IServiceCollection services)
+    public static IServiceCollection AddBusinessLayer(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddDataAccessLayer();
+        services.AddDataAccessLayer(configuration);
         services.AddScoped<IUserService, UserService>();
 
         return services;
