@@ -1,15 +1,7 @@
-﻿import { useBootstrapStatus } from "../application/hooks/useBootstrapStatus"
-import { AppRouter } from "../infrastructure/routing/AppRouter"
-import { AppLayout } from "../ui/layouts/AppLayout"
+﻿import { AppRouter } from "../infrastructure/routing/AppRouter"
 
 function App() {
-  const status = useBootstrapStatus()
-
-  return (
-    <AppLayout status={status.message} initializedAtUtc={status.initializedAtUtc}>
-      <AppRouter />
-    </AppLayout>
-  )
+  return <AppRouter />
 }
 
 export default App

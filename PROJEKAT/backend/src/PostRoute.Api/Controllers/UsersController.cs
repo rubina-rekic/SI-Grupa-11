@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using PostRoute.Api.Contracts.Users;
+using PostRoute.BLL.Commands;
 using PostRoute.BLL.Services;
 
 namespace PostRoute.Api.Controllers;
@@ -27,5 +28,31 @@ public sealed class UsersController : ControllerBase
 
         var response = new UserResponse(user.Id, user.Username, user.Email, user.Role);
         return Ok(response);
+    }
+
+    [HttpPost]
+    public async Task<ActionResult<UserResponse>> CreateAsync(
+        [FromBody] CreateUserRequest request,
+        CancellationToken cancellationToken)
+    {
+        try
+        {
+            var command = new CreateUserCommand(
+                request.FirstName,
+                request.LastName,
+                request.Username,
+                request.Email,
+                request.Password
+            );
+
+            var user = await _userService.CreateAsync(command, cancellationToken);
+            var response = new UserResponse(user.Id, user.Username, user.Email, user.Role);
+
+            return CreatedAtAction(nameof(GetByIdAsync), new { userId = user.Id }, response);
+        }
+        catch (InvalidOperationException ex)
+        {
+            return Conflict(new { message = ex.Message });
+        }
     }
 }
