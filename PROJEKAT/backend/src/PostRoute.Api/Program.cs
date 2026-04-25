@@ -4,6 +4,17 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddApiLayer(builder.Configuration);
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("Frontend", policy =>
+    {
+        policy
+            .WithOrigins("http://localhost:5173")
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    });
+});
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
@@ -11,6 +22,7 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 }
 
+app.UseCors("Frontend");
 app.UseAuthorization();
 app.MapControllers();
 
