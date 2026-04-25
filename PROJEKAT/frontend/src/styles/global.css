@@ -225,6 +225,45 @@ body {
   padding: 0.18rem 0.6rem;
 }
 
+/* ── Password strength indicator ── */
+.password-strength {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-top: 0.4rem;
+}
+
+.password-strength__bars {
+  display: flex;
+  gap: 4px;
+  flex: 1;
+}
+
+.password-strength__bar {
+  height: 4px;
+  flex: 1;
+  border-radius: 2px;
+  background: #e2eaf2;
+  transition: background 0.2s;
+}
+
+.password-strength__bar--weak   { background: #e53e3e; }
+.password-strength__bar--fair   { background: #ed8936; }
+.password-strength__bar--good   { background: #68d391; }
+.password-strength__bar--strong { background: #38a169; }
+
+.password-strength__label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  min-width: 3.5rem;
+  text-align: right;
+}
+
+.password-strength__label--weak   { color: #e53e3e; }
+.password-strength__label--fair   { color: #ed8936; }
+.password-strength__label--good   { color: #38a169; }
+.password-strength__label--strong { color: #276749; }
+
 /* ── Buttons ── */
 .form-actions {
   margin-top: 0.5rem;
