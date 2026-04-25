@@ -1,2 +1,20 @@
 ﻿**/bin/
 **/obj/
+
+# Visual Studio
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Test results
+TestResults/
+coverage/
+
+# Publish output
+publish/
+*.nupkg
+
+# Sensitive config (use user secrets or env vars for local dev)
+appsettings.Development.json

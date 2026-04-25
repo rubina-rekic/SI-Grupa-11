@@ -1,1 +1,7 @@
-/.github
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# JetBrains IDEs
+.idea/
