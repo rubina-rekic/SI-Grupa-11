@@ -1,5 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
+import { toast } from "sonner"
 import { z } from "zod"
 import { createUser } from "../../../infrastructure/api/users/usersApi"
 import { PasswordStrengthIndicator } from "../../components/common/PasswordStrengthIndicator"
@@ -42,6 +43,7 @@ export function CreatePostalWorkerPage() {
     handleSubmit,
     watch,
     setError,
+    reset,
     formState: { isSubmitting, errors },
   } = useForm<FormData>({ resolver: zodResolver(schema) })
 
@@ -50,13 +52,26 @@ export function CreatePostalWorkerPage() {
   const onSubmit = async (data: FormData) => {
     const result = await createUser(data)
 
+    if (result.status === 201) {
+      toast.success("Račun uspješno kreiran", {
+        description: `Poštar ${data.username} može se prijaviti s privremenom lozinkom.`,
+      })
+      reset()
+      return
+    }
+
     if (result.status === 409) {
       if (result.error?.includes("Email")) {
         setError("email", { message: result.error })
       } else {
         setError("username", { message: result.error })
       }
+      return
     }
+
+    toast.error("Greška pri kreiranju računa", {
+      description: result.error ?? "Neočekivana greška servera. Pokušajte ponovo.",
+    })
   }
 
   return (
