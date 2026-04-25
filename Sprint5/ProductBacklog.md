@@ -22,8 +22,8 @@
 | PBI-036 | Definisati Definition of Done (DoD) | Jasno definisati listu kriterija koje svaka stavka backloga mora ispuniti da bi se smatrala završenom (kod, testovi, dokumentacija, review). | documentation | High | 2h | Done | Sprint 4 |  |
 | PBI-037 | Izraditi Initial Release Plan | Planirati okvirne termine i sadržaj isporuka (release-a) kroz preostale sprintove do kraja semestra. | documentation | High | 3h | Done | Sprint 4 | Strategija isporuke vrijednosti |
 | PBI-038 | Uspostaviti tehnički skeleton projekta | Kreirati osnovnu strukturu solution-a, postaviti Git repozitorij, CI/CD osnove i povezati osnovne biblioteke bez biznis logike. | technical | High | 5h | Done | Sprint 4 | Priprema za implementaciju |
-| PBI-040 | Uspostaviti Decision Log | Kreirati dokument za praćenje svih ključnih tehničkih i arhitektonskih odluka. | documentation | High | 1h | To Do | Sprint 5 |  |
-| PBI-041 | Uspostaviti AI Usage Log | Kreirati dokument za evidenciju korištenja AI alata (promptovi, svrha, modifikacije). | documentation | High | 1h | To Do | Sprint 5 | |
+| PBI-040 | Uspostaviti Decision Log | Kreirati dokument za praćenje svih ključnih tehničkih i arhitektonskih odluka. | documentation | High | 1h | Done | Sprint 5 |  |
+| PBI-041 | Uspostaviti AI Usage Log | Kreirati dokument za evidenciju korištenja AI alata (promptovi, svrha, modifikacije). | documentation | High | 1h | Done | Sprint 5 | |
 | PBI-011 | Kreiranje korisničkog računa poštara | Omogućiti administratoru da kreira korisnički račun za poštara i dodijeli mu početne kredencijale za pristup sistemu. | feature | High | 6h | Done | Sprint 5 | Administratorsko kreiranje naloga |
 | PBI-012 | Prijava korisnika | Omogućiti korisniku prijavu u sistem putem emaila/korisničkog imena i lozinke, uz obaveznu promjenu inicijalne lozinke pri prvoj prijavi. | feature | High | 5h | To Do | Sprint 5|  |
 | PBI-013 | Odjava korisnika | Omogućiti sigurno odjavljivanje iz sistema. | feature | Medium | 1h 30min | To Do | Sprint 5 |  |
