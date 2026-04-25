@@ -53,10 +53,12 @@ Nije bilo blokatora.
 
 ## Povratna informacija Product Ownera
 
-*Bit će popunjeno nakon sedmičnog sastanka.*
-
+Initial releease plan je detaljan i realističan. Tehnički skeleton i struktura repozitorija su dobro osmišljeni, što će olakšati razvoj u narednim sprintovima.
+U Definition of Done potrebno je bilo dodati ko vrši testiranje (konkretno, developer koji implementira funkcionalnost). Ostatak sprint reviewa je prošao bez primjedbi.
 ---
 
 ## Zaključak za naredni sprint
 
-*Bit će popunjeno nakon sedmičnog sastanka.*
+U sprintu 5 osnovni zadatak bit će omogućiti kreiranje profila i osigurati zaštitu podataka.
+Ovo obuhvata implementaciju korisničkih računa, autentifikacije i autorizacije, kao i osiguravanje sigurnosnih protokola.
+Svi nedostaci prethodnog sprinta su adresirani, kako se isti ne bi propagirali u naredne faze razvoja.

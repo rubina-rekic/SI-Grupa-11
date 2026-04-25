@@ -26,7 +26,9 @@ Sve stavke navedene u acceptance kriterijima User Storija su provjerene i potvr�
 Kod je pregledan od strane najmanje jednog drugog člana tima. Eventualni komentari su razriješeni prije merganja.
 
 ### 4. Sveobuhvatno testiranje
-Implementacija je prošla kroz set testnih scenarija (ručnih ili automatizovanih). Potvrđeno je da sistem ispravno funkcioniše u standardnim uslovima, ali i da adekvatno obrađuje nevalidne unose, greške i granične slučajeve (edge cases).
+Nakon implementacije funkcionalnosti za koju je bio zaduzen, clan tima piše i izvršava testne slučajeve koji istu pokrivaju. 
+Krajnji rezultat testiranja je pozitivan – funkcionalnost radi kako je očekivano u svim standardnim scenarijima.
+Takođe, potvrđeno je da sistem adekvatno obrađuje nevalidne unose, greške i granične slučajeve (edge cases).
 
 ### 5. Sigurnost i integritet podataka
 Verifikovano je da nova funkcionalnost poštuje definisane nivoe pristupa (autentifikacija i autorizacija). Procesiranje podataka je u skladu sa arhitekturom sistema i ne narušava integritet ili stabilnost postojećih modula.
