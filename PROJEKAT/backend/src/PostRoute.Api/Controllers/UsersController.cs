@@ -55,4 +55,24 @@ public sealed class UsersController : ControllerBase
             return Conflict(new { message = ex.Message });
         }
     }
+    [HttpPost("login")]
+    public async Task<ActionResult<UserResponse>> LoginAsync(
+        [FromBody] LoginRequest request,
+        CancellationToken cancellationToken)
+    {
+        try
+        {
+            var user = await _userService.LoginAsync(request.Email, request.Password, cancellationToken);
+            var response = new UserResponse(user.Id, user.Username, user.Email, user.Role);
+            return Ok(response);
+        }
+        catch (InvalidOperationException ex) when (ex.Message.Contains("locked"))
+        {
+            return StatusCode(423);
+        }
+        catch (InvalidOperationException)
+        {
+            return BadRequest(new { message = "Invalid credentials" });
+        }
+    }
 }

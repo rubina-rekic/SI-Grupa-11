@@ -51,4 +51,30 @@ public sealed class UserService : IUserService
 
         return new UserModel(user.Id, user.Username, user.Email, user.Role);
     }
+
+    public async Task<UserModel> LoginAsync(string email, string password, CancellationToken cancellationToken)
+    {
+        var user = await _userRepository.GetByEmailAsync(email, cancellationToken);
+
+        if (user is null || user.IsLockedOut)
+            throw new InvalidOperationException("Invalid credentials or account is locked.");
+
+        if (!BCrypt.Net.BCrypt.Verify(password, user.PasswordHash))
+        {
+            user.FailedAttempts++;
+
+            if (user.FailedAttempts >= 5)
+                user.IsLockedOut = true;
+
+            await _userRepository.UpdateAsync(user, cancellationToken);
+            throw new InvalidOperationException("Invalid credentials.");
+        }
+
+        user.FailedAttempts = 0;
+        await _userRepository.UpdateAsync(user, cancellationToken);
+
+        return new UserModel(user.Id, user.Username, user.Email, user.Role);
+    }
 }
+
+
