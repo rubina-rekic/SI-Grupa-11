@@ -4,4 +4,5 @@ public sealed record UserModel(
     Guid Id,
     string Username,
     string Email,
-    string Role);
+    string Role,
+    bool MustChangePassword );

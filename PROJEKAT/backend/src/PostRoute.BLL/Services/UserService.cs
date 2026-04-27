@@ -23,7 +23,7 @@ public sealed class UserService : IUserService
             return null;
         }
 
-        return new UserModel(user.Id, user.Username, user.Email, user.Role);
+        return new UserModel(user.Id, user.Username, user.Email, user.Role, user.MustChangePassword);
     }
 
     public async Task<UserModel> CreateAsync(CreateUserCommand command, CancellationToken cancellationToken)
@@ -49,7 +49,7 @@ public sealed class UserService : IUserService
 
         await _userRepository.AddAsync(user, cancellationToken);
 
-        return new UserModel(user.Id, user.Username, user.Email, user.Role);
+        return new UserModel(user.Id, user.Username, user.Email, user.Role, user.MustChangePassword);
     }
 
     public async Task<UserModel> LoginAsync(string email, string password, CancellationToken cancellationToken)
@@ -73,7 +73,23 @@ public sealed class UserService : IUserService
         user.FailedAttempts = 0;
         await _userRepository.UpdateAsync(user, cancellationToken);
 
-        return new UserModel(user.Id, user.Username, user.Email, user.Role);
+        return new UserModel(user.Id, user.Username, user.Email, user.Role, user.MustChangePassword);
+    }
+
+    public async Task ChangePasswordAsync(
+        string email,
+        string newPassword,
+        CancellationToken cancellationToken)
+    {
+        var user = await _userRepository.GetByEmailAsync(email, cancellationToken);
+
+        if (user is null)
+            throw new InvalidOperationException("User not found.");
+
+        user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(newPassword);
+        user.MustChangePassword = false;
+
+        await _userRepository.UpdateAsync(user, cancellationToken);
     }
 }
 
