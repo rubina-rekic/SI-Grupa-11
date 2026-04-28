@@ -26,7 +26,13 @@ public sealed class UsersController : ControllerBase
             return NotFound();
         }
 
-        var response = new UserResponse(user.Id, user.Username, user.Email, user.Role);
+        var response = new UserResponse(
+    user.Id,
+    user.Username,
+    user.Email,
+    user.Role,
+    user.MustChangePassword
+);
         return Ok(response);
     }
 
@@ -46,7 +52,13 @@ public sealed class UsersController : ControllerBase
             );
 
             var user = await _userService.CreateAsync(command, cancellationToken);
-            var response = new UserResponse(user.Id, user.Username, user.Email, user.Role);
+            var response = new UserResponse(
+    user.Id,
+    user.Username,
+    user.Email,
+    user.Role,
+    user.MustChangePassword
+);
 
             return Created($"/api/users/{user.Id}", response);
         }
@@ -54,5 +66,44 @@ public sealed class UsersController : ControllerBase
         {
             return Conflict(new { message = ex.Message });
         }
+    }
+    [HttpPost("login")]
+    public async Task<ActionResult<UserResponse>> LoginAsync(
+        [FromBody] LoginRequest request,
+        CancellationToken cancellationToken)
+    {
+        try
+        {
+            var user = await _userService.LoginAsync(request.Email, request.Password, cancellationToken);
+            var response = new UserResponse(
+    user.Id,
+    user.Username,
+    user.Email,
+    user.Role,
+    user.MustChangePassword
+);
+            return Ok(response);
+        }
+        catch (InvalidOperationException ex) when (ex.Message.Contains("locked"))
+        {
+            return StatusCode(423);
+        }
+        catch (InvalidOperationException)
+        {
+            return BadRequest(new { message = "Invalid credentials" });
+        }
+    }
+
+    [HttpPost("change-password")]
+    public async Task<IActionResult> ChangePasswordAsync(
+    [FromBody] ChangePasswordRequest request,
+    CancellationToken cancellationToken) {
+        await _userService.ChangePasswordAsync(
+            request.Email,
+            request.NewPassword,
+            cancellationToken
+        );
+
+    return Ok(new { message = "Password changed." });
     }
 }

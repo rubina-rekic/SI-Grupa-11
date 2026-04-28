@@ -11,4 +11,6 @@ public sealed class User
     public string Role { get; set; } = string.Empty;
     public bool MustChangePassword { get; set; } = true;
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    public int FailedAttempts { get; set; }
+    public bool IsLockedOut { get; set; }
 }
