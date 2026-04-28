@@ -5,5 +5,6 @@ public record CreateUserCommand(
     string LastName,
     string Username,
     string Email,
-    string Password
+    string Password,
+    string Role
 );

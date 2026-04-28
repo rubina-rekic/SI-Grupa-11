@@ -1,7 +1,9 @@
 import '../../styles/global.css';
 import { useState } from 'react';
+import { useAuth } from '../../application/hooks/useAuth';
 
 export default function LoginPage() {
+    const { login } = useAuth();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
@@ -54,48 +56,21 @@ export default function LoginPage() {
         setIsLoading(true);
 
         try {
-            const response = await fetch('http://localhost:5032/api/users/login', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ email, password }),
-            });
-
-            if (response.ok) {
-                const data = await response.json();
-                console.log(data);
-
-                localStorage.setItem('token', data.token);
-                localStorage.setItem('email', data.email);
-                if (data.mustChangePassword) {
-                    localStorage.setItem('mustChangePassword', 'true');
-                    window.location.href = '/change-password';
-                } else {
-                    window.location.href = '/dashboard';
-                }
-                return;
-            }
-
-            if (response.status === 423) {
+            await login(email, password);
+        } catch (error: any) {
+            if (error.message?.includes('locked')) {
                 setIsLocked(true);
                 setPassword('');
                 setError('Račun je zaključan nakon više neuspješnih pokušaja.');
-                return;
-            }
-
-            if (response.status === 403) {
+            } else if (error.message?.includes('deactivated')) {
                 setPassword('');
                 setError('Vaš račun je deaktiviran. Kontaktirajte administratora.');
                 startCooldown();
-                return;
+            } else {
+                setPassword('');
+                setError('Neispravni kredencijali. Molimo pokušajte ponovo.');
+                startCooldown();
             }
-
-            setPassword('');
-            setError('Neispravni kredencijali. Molimo pokušajte ponovo.');
-            startCooldown();
-        } catch {
-            setError('Greška pri povezivanju sa serverom.');
         } finally {
             setIsLoading(false);
         }

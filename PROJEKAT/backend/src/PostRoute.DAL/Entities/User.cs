@@ -14,3 +14,4 @@ public sealed class User
     public int FailedAttempts { get; set; }
     public bool IsLockedOut { get; set; }
 }
+

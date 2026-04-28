@@ -1,19 +1,94 @@
-import { useLogout } from "../../application/hooks/useLogout"
+import { useAuth } from "../../application/hooks/useAuth"
+import { Layout } from "../components/Layout/Layout"
+import { useLocation } from "react-router-dom"
+import { useEffect } from "react"
+import { toast } from "sonner"
 
 export default function DashboardPage() {
-  const { handleLogout } = useLogout()
+  const { currentUser } = useAuth()
+  const location = useLocation()
 
-  return (
-    <div className="page-container">
-      <div className="form-card">
-        <header style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-          <h1>Dashboard</h1>
-          <button onClick={handleLogout} className="btn-secondary">
-            Odjava
-          </button>
-        </header>
-        <p>Uspješno ste prijavljeni u PostRoute sistem.</p>
+  useEffect(() => {
+    if (location.state?.accessDenied) {
+      toast.error("Pristup odbijen", {
+        description: "Nemate potrebne privilegije za pregled ove stranice.",
+      })
+      // Clear the state to prevent showing toast again on refresh
+      window.history.replaceState({}, document.title)
+    }
+  }, [location.state])
+
+  if (!currentUser) {
+    return <div>Loading...</div>
+  }
+
+  const renderAdminDashboard = () => (
+    <div className="dashboard-grid">
+      <div className="dashboard-card">
+        <h3>👥 Upravljanje korisnicima</h3>
+        <p>Kreirajte i upravljajte korisničkim računima poštara</p>
+        <button className="btn-primary">Upravljanje korisnicima</button>
+      </div>
+      
+      <div className="dashboard-card">
+        <h3>📮 Pregled sandučića</h3>
+        <p>Pregledajte status sandučića i lokacije</p>
+        <button className="btn-primary">Pregled sandučića</button>
+      </div>
+      
+      <div className="dashboard-card">
+        <h3>📊 Statistika sistema</h3>
+        <p>Analizirajte performanse i statistike</p>
+        <button className="btn-primary">Statistike</button>
+      </div>
+      
+      <div className="dashboard-card">
+        <h3>⚙️ Postavke sistema</h3>
+        <p>Konfigurišite sistemske postavke</p>
+        <button className="btn-primary">Postavke</button>
       </div>
     </div>
+  )
+
+  const renderPostalWorkerDashboard = () => (
+    <div className="dashboard-grid">
+      <div className="dashboard-card">
+        <h3>🗺️ Moja današnja ruta</h3>
+        <p>Pregledajte današnju dostavnu rutu</p>
+        <button className="btn-primary">Prikaži rutu</button>
+      </div>
+      
+      <div className="dashboard-card">
+        <h3>📍 Mapa sandučića</h3>
+        <p>Lokacije sandučića na vašoj ruti</p>
+        <button className="btn-primary">Mapa</button>
+      </div>
+      
+      <div className="dashboard-card">
+        <h3>⚠️ Prijava problema</h3>
+        <p>Prijavite probleme na terenu</p>
+        <button className="btn-primary">Prijavi problem</button>
+      </div>
+    </div>
+  )
+
+  return (
+    <Layout>
+      <div className="dashboard-page">
+        <div className="dashboard-header">
+          <h1>
+            Dobrodošli, {currentUser.username} ({currentUser.role === "Administrator" ? "Administrator" : "Poštar"})
+          </h1>
+          <p className="dashboard-subtitle">
+            {currentUser.role === "Administrator" 
+              ? "Upravljajte PostRoute sistemom" 
+              : "Upravljajte vašom dostavnom rutom"
+            }
+          </p>
+        </div>
+        
+        {currentUser.role === "Administrator" ? renderAdminDashboard() : renderPostalWorkerDashboard()}
+      </div>
+    </Layout>
   )
 }

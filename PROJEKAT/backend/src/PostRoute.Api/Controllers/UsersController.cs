@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using PostRoute.Api.Contracts.Users;
+using PostRoute.Api.Middleware;
 using PostRoute.BLL.Commands;
 using PostRoute.BLL.Services;
+using PostRoute.Domain.Entities;
 
 namespace PostRoute.Api.Controllers;
 
@@ -37,6 +39,7 @@ public sealed class UsersController : ControllerBase
     }
 
     [HttpPost]
+    [RequiredRole("Administrator")]
     public async Task<ActionResult<UserResponse>> CreateAsync(
         [FromBody] CreateUserRequest request,
         CancellationToken cancellationToken)
@@ -48,7 +51,8 @@ public sealed class UsersController : ControllerBase
                 request.LastName,
                 request.Username,
                 request.Email,
-                request.Password
+                request.Password,
+                request.Role ?? UserRole.PostalWorker
             );
 
             var user = await _userService.CreateAsync(command, cancellationToken);
@@ -75,6 +79,11 @@ public sealed class UsersController : ControllerBase
         try
         {
             var user = await _userService.LoginAsync(request.Email, request.Password, cancellationToken);
+            
+            HttpContext.Session.SetString("UserId", user.Id.ToString());
+            HttpContext.Session.SetString("UserRole", user.Role);
+            HttpContext.Session.SetString("Username", user.Username);
+            
             var response = new UserResponse(
     user.Id,
     user.Username,
@@ -105,5 +114,35 @@ public sealed class UsersController : ControllerBase
         );
 
     return Ok(new { message = "Password changed." });
+    }
+
+    [HttpPost("logout")]
+    public IActionResult Logout()
+    {
+        HttpContext.Session.Clear();
+        return Ok(new { message = "Logged out successfully" });
+    }
+
+    [HttpGet("current-user")]
+    public ActionResult<UserResponse> GetCurrentUser()
+    {
+        var userId = HttpContext.Session.GetString("UserId");
+        var userRole = HttpContext.Session.GetString("UserRole");
+        var username = HttpContext.Session.GetString("Username");
+
+        if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(userRole))
+        {
+            return Unauthorized(new { message = "Not logged in" });
+        }
+
+        var response = new UserResponse(
+            Guid.Parse(userId),
+            username,
+            "",
+            userRole,
+            false
+        );
+
+        return Ok(response);
     }
 }

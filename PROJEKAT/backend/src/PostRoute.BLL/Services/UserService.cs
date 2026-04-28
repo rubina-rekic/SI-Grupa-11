@@ -2,6 +2,7 @@
 using PostRoute.BLL.Models;
 using PostRoute.DAL.Entities;
 using PostRoute.DAL.Repositories;
+using PostRoute.Domain.Entities;
 
 namespace PostRoute.BLL.Services;
 
@@ -34,6 +35,9 @@ public sealed class UserService : IUserService
         if (await _userRepository.UsernameExistsAsync(command.Username, cancellationToken))
             throw new InvalidOperationException($"Korisničko ime '{command.Username}' je već u upotrebi.");
 
+        if (!UserRole.IsValidRole(command.Role))
+            throw new InvalidOperationException($"Nevažeća uloga: {command.Role}");
+
         var user = new User
         {
             Id = Guid.NewGuid(),
@@ -42,7 +46,7 @@ public sealed class UserService : IUserService
             Username = command.Username,
             Email = command.Email,
             PasswordHash = BCrypt.Net.BCrypt.HashPassword(command.Password),
-            Role = "PostalWorker",
+            Role = command.Role,
             MustChangePassword = true,
             CreatedAt = DateTime.UtcNow,
         };

@@ -8,6 +8,7 @@ public sealed class AppDbContext : DbContext
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
     public DbSet<User> Users => Set<User>();
+    public DbSet<SecurityLog> SecurityLogs => Set<SecurityLog>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -22,6 +23,15 @@ public sealed class AppDbContext : DbContext
             entity.Property(u => u.Email).IsRequired().HasMaxLength(200);
             entity.Property(u => u.PasswordHash).IsRequired();
             entity.Property(u => u.Role).IsRequired().HasMaxLength(50);
+        });
+
+        modelBuilder.Entity<SecurityLog>(entity =>
+        {
+            entity.HasKey(s => s.Id);
+            entity.Property(s => s.AttemptedUrl).IsRequired().HasMaxLength(500);
+            entity.Property(s => s.AccessType).IsRequired().HasMaxLength(50);
+            entity.Property(s => s.IpAddress).HasMaxLength(45);
+            entity.Property(s => s.UserAgent).HasMaxLength(500);
         });
     }
 }
