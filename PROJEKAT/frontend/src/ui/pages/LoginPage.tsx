@@ -57,12 +57,17 @@ export default function LoginPage() {
 
         try {
             await login(email, password);
-        } catch (error: any) {
-            if (error.status === 423) {
+        } catch (error: unknown) {
+            const maybeStatus = typeof error === 'object' && error !== null && 'status' in error
+                ? (error as { status?: number }).status
+                : undefined;
+            const message = error instanceof Error ? error.message : '';
+
+            if (maybeStatus === 423) {
                 setIsLocked(true);
                 setPassword('');
                 setError('Račun je zaključan nakon više neuspješnih pokušaja.');
-            } else if (error.message?.includes('deactivated')) {
+            } else if (message.includes('deactivated')) {
                 setPassword('');
                 setError('Vaš račun je deaktiviran. Kontaktirajte administratora.');
                 startCooldown();
