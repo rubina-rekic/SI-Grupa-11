@@ -41,6 +41,9 @@ const schema = z.object({
     .max(128, "Lozinka može imati najviše 128 znakova")
     .regex(/[A-Z]/, "Lozinka mora sadržavati najmanje jedno veliko slovo")
     .regex(/\d/, "Lozinka mora sadržavati najmanje jedan broj"),
+  role: z.enum(["Administrator", "PostalWorker"]).refine((val) => val !== undefined, {
+    message: "Uloga je obavezno polje",
+  }),
 })
 
 type FormData = z.infer<typeof schema>
@@ -89,10 +92,9 @@ export function CreatePostalWorkerPage() {
     <div className="page-container">
       <div className="form-card">
         <div className="form-card__header">
-          <h1 className="form-card__title">Kreiranje računa poštara</h1>
+          <h1 className="form-card__title">Kreiranje korisničkog računa</h1>
           <p className="form-card__subtitle">
-            Novi korisnički račun bit će kreiran s ulogom{" "}
-            <span className="role-badge">Poštar</span>. Poštar će morati
+            Kreirajte novi korisnički račun sa odabranom ulogom. Korisnik će morati
             promijeniti lozinku pri prvoj prijavi.
           </p>
         </div>
@@ -168,6 +170,24 @@ export function CreatePostalWorkerPage() {
             />
             {errors.email && (
               <p className="form-field__error">{errors.email.message}</p>
+            )}
+          </div>
+
+          <div className="form-field">
+            <label className="form-field__label" htmlFor="role">
+              Uloga
+            </label>
+            <select
+              id="role"
+              className={`form-field__input${errors.role ? " form-field__input--error" : ""}`}
+              {...register("role")}
+            >
+              <option value="">Odaberite ulogu</option>
+              <option value="PostalWorker">Poštar</option>
+              <option value="Administrator">Administrator</option>
+            </select>
+            {errors.role && (
+              <p className="form-field__error">{errors.role.message}</p>
             )}
           </div>
 

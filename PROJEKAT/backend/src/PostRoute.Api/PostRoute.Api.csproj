@@ -16,6 +16,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\PostRoute.BLL\PostRoute.BLL.csproj" />
+    <ProjectReference Include="..\PostRoute.Domain\PostRoute.Domain.csproj" />
   </ItemGroup>
 
 </Project>

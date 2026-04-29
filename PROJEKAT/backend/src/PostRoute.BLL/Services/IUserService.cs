@@ -9,6 +9,5 @@ public interface IUserService
     Task<UserModel> CreateAsync(CreateUserCommand command, CancellationToken cancellationToken);
 
     Task<UserModel> LoginAsync(string email, string password, CancellationToken cancellationToken);
-    Task ChangePasswordAsync(string email, string newPassword, CancellationToken cancellationToken
-);
+    Task ChangePasswordAsync(string email, string currentPassword, string newPassword, CancellationToken cancellationToken);
 }

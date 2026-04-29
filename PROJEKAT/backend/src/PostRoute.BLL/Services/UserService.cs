@@ -1,7 +1,9 @@
 ﻿using PostRoute.BLL.Commands;
+using PostRoute.BLL.Exceptions;
 using PostRoute.BLL.Models;
 using PostRoute.DAL.Entities;
 using PostRoute.DAL.Repositories;
+using PostRoute.Domain.Entities;
 
 namespace PostRoute.BLL.Services;
 
@@ -34,6 +36,9 @@ public sealed class UserService : IUserService
         if (await _userRepository.UsernameExistsAsync(command.Username, cancellationToken))
             throw new InvalidOperationException($"Korisničko ime '{command.Username}' je već u upotrebi.");
 
+        if (!UserRole.IsValidRole(command.Role))
+            throw new InvalidOperationException($"Nevažeća uloga: {command.Role}");
+
         var user = new User
         {
             Id = Guid.NewGuid(),
@@ -42,7 +47,7 @@ public sealed class UserService : IUserService
             Username = command.Username,
             Email = command.Email,
             PasswordHash = BCrypt.Net.BCrypt.HashPassword(command.Password),
-            Role = "PostalWorker",
+            Role = command.Role,
             MustChangePassword = true,
             CreatedAt = DateTime.UtcNow,
         };
@@ -56,8 +61,11 @@ public sealed class UserService : IUserService
     {
         var user = await _userRepository.GetByEmailAsync(email, cancellationToken);
 
-        if (user is null || user.IsLockedOut)
-            throw new InvalidOperationException("Invalid credentials or account is locked.");
+        if (user is null)
+            throw new InvalidCredentialsException();
+
+        if (user.IsLockedOut)
+            throw new AccountLockedException();
 
         if (!BCrypt.Net.BCrypt.Verify(password, user.PasswordHash))
         {
@@ -67,7 +75,11 @@ public sealed class UserService : IUserService
                 user.IsLockedOut = true;
 
             await _userRepository.UpdateAsync(user, cancellationToken);
-            throw new InvalidOperationException("Invalid credentials.");
+
+            if (user.IsLockedOut)
+                throw new AccountLockedException();
+
+            throw new InvalidCredentialsException();
         }
 
         user.FailedAttempts = 0;
@@ -78,6 +90,7 @@ public sealed class UserService : IUserService
 
     public async Task ChangePasswordAsync(
         string email,
+        string currentPassword,
         string newPassword,
         CancellationToken cancellationToken)
     {
@@ -85,6 +98,9 @@ public sealed class UserService : IUserService
 
         if (user is null)
             throw new InvalidOperationException("User not found.");
+
+        if (!BCrypt.Net.BCrypt.Verify(currentPassword, user.PasswordHash))
+            throw new InvalidOperationException("Current password is incorrect.");
 
         user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(newPassword);
         user.MustChangePassword = false;

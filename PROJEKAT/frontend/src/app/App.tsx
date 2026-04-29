@@ -1,5 +1,6 @@
 ﻿import { Toaster } from "sonner"
 import { AppRouter } from "../infrastructure/routing/AppRouter"
+import "../styles/layout.css"
 
 function App() {
   return (
