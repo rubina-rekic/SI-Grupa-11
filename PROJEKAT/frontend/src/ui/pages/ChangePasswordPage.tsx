@@ -1,7 +1,13 @@
 import '../../styles/global.css';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../application/hooks/useAuth';
+import { httpClient } from '../../infrastructure/api/httpClient';
 
 export default function ChangePasswordPage() {
+    const { currentUser } = useAuth();
+    const navigate = useNavigate();
+    const [currentPassword, setCurrentPassword] = useState('');
     const [newPassword, setNewPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [error, setError] = useState('');
@@ -22,7 +28,7 @@ export default function ChangePasswordPage() {
         setError('');
         setSuccess('');
 
-        if (!newPassword || !confirmPassword) {
+        if (!currentPassword || !newPassword || !confirmPassword) {
             setError('Sva polja su obavezna.');
             return;
         }
@@ -39,28 +45,33 @@ export default function ChangePasswordPage() {
             return;
         }
 
+        if (!currentUser?.email) {
+            setError('Sesija nije pronađena. Prijavite se ponovo.');
+            navigate('/login', { replace: true });
+            return;
+        }
+
         setIsLoading(true);
 
         try {
-            const email = localStorage.getItem('email');
+            const response = await httpClient('/api/users/change-password', {
+                method: 'POST',
+                body: {
+                    email: currentUser.email,
+                    currentPassword,
+                    newPassword,
+                },
+            });
 
-            await fetch('http://localhost:5032/api/users/change-password', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                email,
-                newPassword,
-            }),
-        });
-
-            localStorage.removeItem('mustChangePassword');
+            if (response.error) {
+                setError(response.error);
+                return;
+            }
 
             setSuccess('Lozinka uspješno promijenjena. Dobrodošli!');
 
             setTimeout(() => {
-                window.location.href = '/dashboard';
+                navigate('/dashboard', { replace: true });
             }, 1500);
         } catch {
             setError('Greška pri promjeni lozinke.');
@@ -83,6 +94,21 @@ export default function ChangePasswordPage() {
                             {success}
                         </p>
                     )}
+
+                    <div className="form-field">
+                        <label className="form-field__label">
+                            Trenutna lozinka
+                        </label>
+
+                        <input
+                            type="password"
+                            className="form-field__input"
+                            value={currentPassword}
+                            onChange={(e) =>
+                                setCurrentPassword(e.target.value)
+                            }
+                        />
+                    </div>
 
                     <div className="form-field">
                         <label className="form-field__label">
