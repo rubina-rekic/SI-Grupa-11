@@ -83,6 +83,7 @@ public sealed class UsersController : ControllerBase
             HttpContext.Session.SetString("UserId", user.Id.ToString());
             HttpContext.Session.SetString("UserRole", user.Role);
             HttpContext.Session.SetString("Username", user.Username);
+            HttpContext.Session.SetString("Email", user.Email);
             
             var response = new UserResponse(
     user.Id,
@@ -129,6 +130,7 @@ public sealed class UsersController : ControllerBase
         var userId = HttpContext.Session.GetString("UserId");
         var userRole = HttpContext.Session.GetString("UserRole");
         var username = HttpContext.Session.GetString("Username");
+        var email = HttpContext.Session.GetString("Email");
 
         if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(userRole))
         {
@@ -137,8 +139,8 @@ public sealed class UsersController : ControllerBase
 
         var response = new UserResponse(
             Guid.Parse(userId),
-            username,
-            "",
+            username ?? string.Empty,
+            email ?? string.Empty,
             userRole,
             false
         );
