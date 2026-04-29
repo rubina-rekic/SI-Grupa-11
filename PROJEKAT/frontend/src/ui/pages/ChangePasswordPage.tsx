@@ -38,6 +38,11 @@ export default function ChangePasswordPage() {
             return;
         }
 
+        if (newPassword === currentPassword) {
+            setError('Nova lozinka mora biti različita od trenutne lozinke.');
+            return;
+        }
+
         if (!validatePassword(newPassword)) {
             setError(
                 'Lozinka mora imati najmanje 8 karaktera, broj i simbol.'
