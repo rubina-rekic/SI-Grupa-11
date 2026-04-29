@@ -30,6 +30,9 @@ jobs:
       - name: Build
         run: dotnet build PROJEKAT/backend/PostRoute.sln --configuration Release --no-restore
 
+      - name: Test
+        run: dotnet test PROJEKAT/backend/PostRoute.sln --configuration Release --no-build --verbosity normal
+
       - name: Publish
         run: dotnet publish PROJEKAT/backend/src/PostRoute.Api/PostRoute.Api.csproj --configuration Release --no-build --output PROJEKAT/backend/artifacts/publish
 
@@ -38,3 +41,4 @@ jobs:
         with:
           name: backend-publish
           path: PROJEKAT/backend/artifacts/publish
+          
