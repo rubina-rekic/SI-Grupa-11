@@ -113,6 +113,7 @@ public sealed class UsersController : ControllerBase
             HttpContext.Session.SetString("UserRole", user.Role);
             HttpContext.Session.SetString("Username", user.Username);
             HttpContext.Session.SetString("Email", user.Email);
+            HttpContext.Session.SetString("MustChangePassword", user.MustChangePassword.ToString());
 
             await LogLoginAttemptAsync(user.Id, user.Role, "LoginSuccess", true, cancellationToken);
 
@@ -163,6 +164,8 @@ public sealed class UsersController : ControllerBase
                 cancellationToken
             );
 
+            HttpContext.Session.SetString("MustChangePassword", "False");
+
             return Ok(new { message = "Password changed." });
         }
         catch (InvalidOperationException ex)
@@ -191,12 +194,15 @@ public sealed class UsersController : ControllerBase
             return Unauthorized(new { message = "Not logged in" });
         }
 
+        var mustChangePasswordStr = HttpContext.Session.GetString("MustChangePassword");
+        var mustChangePassword = bool.TryParse(mustChangePasswordStr, out var mcp) && mcp;
+
         var response = new UserResponse(
             Guid.Parse(userId),
             username ?? string.Empty,
             email ?? string.Empty,
             userRole,
-            false
+            mustChangePassword
         );
 
         return Ok(response);
