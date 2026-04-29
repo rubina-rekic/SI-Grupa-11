@@ -1,5 +1,8 @@
-﻿using PostRoute.Api.Configuration;
+﻿using Microsoft.EntityFrameworkCore;
+using PostRoute.Api.Configuration;
 using PostRoute.Api.Middleware;
+using PostRoute.BLL.Services;
+using PostRoute.DAL;
 using PostRoute.Domain.Entities;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -37,5 +40,14 @@ app.UseSession();
 app.UseMiddleware<RoleAuthorizationMiddleware>();
 app.UseAuthorization();
 app.MapControllers();
+
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    await dbContext.Database.MigrateAsync(CancellationToken.None);
+
+    var userSeedService = scope.ServiceProvider.GetRequiredService<IUserSeedService>();
+    await userSeedService.SeedDefaultUsersAsync(CancellationToken.None);
+}
 
 app.Run();

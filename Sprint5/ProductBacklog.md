@@ -25,9 +25,9 @@
 | PBI-040 | Uspostaviti Decision Log | Kreirati dokument za praćenje svih ključnih tehničkih i arhitektonskih odluka. | documentation | High | 1h | Done | Sprint 5 |  |
 | PBI-041 | Uspostaviti AI Usage Log | Kreirati dokument za evidenciju korištenja AI alata (promptovi, svrha, modifikacije). | documentation | High | 1h | Done | Sprint 5 | |
 | PBI-011 | Kreiranje korisničkog računa poštara | Omogućiti administratoru da kreira korisnički račun za poštara i dodijeli mu početne kredencijale za pristup sistemu. | feature | High | 6h | Done | Sprint 5 | Administratorsko kreiranje naloga |
-| PBI-012 | Prijava korisnika | Omogućiti korisniku prijavu u sistem putem emaila/korisničkog imena i lozinke, uz obaveznu promjenu inicijalne lozinke pri prvoj prijavi. | feature | High | 5h | To Do | Sprint 5|  |
-| PBI-013 | Odjava korisnika | Omogućiti sigurno odjavljivanje iz sistema. | feature | Medium | 1h 30min | To Do | Sprint 5 |  |
-| PBI-014 | Uloge i pristup po ulozi | Ograničiti pristup funkcionalnostima na osnovu uloge: administrator, dispečer, poštar. | feature | High | 5h 30min | To Do | Sprint 5 |  |
+| PBI-012 | Prijava korisnika | Omogućiti korisniku prijavu u sistem putem emaila/korisničkog imena i lozinke, uz obaveznu promjenu inicijalne lozinke pri prvoj prijavi. | feature | High | 5h | Done | Sprint 5|  |
+| PBI-013 | Odjava korisnika | Omogućiti sigurno odjavljivanje iz sistema. | feature | Medium | 1h 30min | Done | Sprint 5 |  |
+| PBI-014 | Uloge i pristup po ulozi | Ograničiti pristup funkcionalnostima na osnovu uloge: administrator, dispečer, poštar. | feature | High | 5h 30min | Done | Sprint 5 |  |
 | PBI-015 | Dodavanje poštara | Omogućiti administratoru unos i evidenciju osnovnih podataka o novom poštaru u sistemu. | feature | High | 3h | To Do | Sprint 6 | Operativni podaci o poštaru |
 | PBI-016 | Pregled liste poštara | Omogućiti pregled svih poštara sa osnovnim podacima i statusom aktivnosti. | feature | Medium | 2h 30min | To Do | Sprint 6 |  |
 | PBI-017 | Dodavanje poštanskog sandučića | Omogućiti unos novog sandučića sa lokacijom, tipom i osnovnim podacima. | feature | High | 4h | To Do | Sprint 6 |  |
