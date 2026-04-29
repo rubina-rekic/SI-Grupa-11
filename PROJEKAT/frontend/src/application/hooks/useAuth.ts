@@ -52,6 +52,11 @@ export function useAuth() {
       })
 
       if (!response.ok) {
+        if (response.status === 423) {
+          const err = new Error("Account locked") as Error & { status?: number }
+          err.status = 423
+          throw err
+        }
         if (response.status === 403) {
           const errorData = await response.json()
           throw new Error(errorData.message || "Access denied")
