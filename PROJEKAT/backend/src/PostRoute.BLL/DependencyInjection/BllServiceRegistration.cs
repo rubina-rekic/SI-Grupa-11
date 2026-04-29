@@ -11,6 +11,7 @@ public static class BllServiceRegistration
     {
         services.AddDataAccessLayer(configuration);
         services.AddScoped<IUserService, UserService>();
+        services.AddScoped<IUserSeedService, UserSeedService>();
 
         return services;
     }

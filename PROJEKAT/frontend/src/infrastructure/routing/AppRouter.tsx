@@ -4,6 +4,7 @@ import LoginPage from "../../ui/pages/LoginPage"
 import DashboardPage from "../../ui/pages/DashboardPage"
 import ChangePasswordPage from "../../ui/pages/ChangePasswordPage"
 import { useAuth } from "../../application/hooks/useAuth"
+import { Layout } from "../../ui/components/Layout/Layout"
 
 function PrivateRoute({ children, requiredRole }: { children: React.ReactNode; requiredRole?: string }) {
   const { currentUser, loading } = useAuth()
@@ -50,12 +51,14 @@ export function AppRouter() {
         path="/admin/mailboxes"
         element={
           <PrivateRoute requiredRole="Administrator">
-            <div className="page-container">
-              <div className="form-card">
-                <h1>Pregled sandučića</h1>
-                <p>Admin funkcionalnost za pregled sandučića</p>
+            <Layout>
+              <div className="page-container">
+                <div className="form-card">
+                  <h1>Pregled sandučića</h1>
+                  <p>Admin funkcionalnost za pregled sandučića</p>
+                </div>
               </div>
-            </div>
+            </Layout>
           </PrivateRoute>
         }
       />
@@ -63,12 +66,14 @@ export function AppRouter() {
         path="/admin/statistics"
         element={
           <PrivateRoute requiredRole="Administrator">
-            <div className="page-container">
-              <div className="form-card">
-                <h1>Statistika sistema</h1>
-                <p>Admin funkcionalnost za statistike</p>
+            <Layout>
+              <div className="page-container">
+                <div className="form-card">
+                  <h1>Statistika sistema</h1>
+                  <p>Admin funkcionalnost za statistike</p>
+                </div>
               </div>
-            </div>
+            </Layout>
           </PrivateRoute>
         }
       />
@@ -76,12 +81,14 @@ export function AppRouter() {
         path="/admin/settings"
         element={
           <PrivateRoute requiredRole="Administrator">
-            <div className="page-container">
-              <div className="form-card">
-                <h1>Postavke sistema</h1>
-                <p>Admin funkcionalnost za postavke</p>
+            <Layout>
+              <div className="page-container">
+                <div className="form-card">
+                  <h1>Postavke sistema</h1>
+                  <p>Admin funkcionalnost za postavke</p>
+                </div>
               </div>
-            </div>
+            </Layout>
           </PrivateRoute>
         }
       />
@@ -89,12 +96,14 @@ export function AppRouter() {
         path="/worker/route"
         element={
           <PrivateRoute requiredRole="PostalWorker">
-            <div className="page-container">
-              <div className="form-card">
-                <h1>Moja današnja ruta</h1>
-                <p>Funkcionalnost za poštare - prikaz rute</p>
+            <Layout>
+              <div className="page-container">
+                <div className="form-card">
+                  <h1>Moja današnja ruta</h1>
+                  <p>Funkcionalnost za poštare - prikaz rute</p>
+                </div>
               </div>
-            </div>
+            </Layout>
           </PrivateRoute>
         }
       />
@@ -102,12 +111,14 @@ export function AppRouter() {
         path="/worker/mailboxes"
         element={
           <PrivateRoute requiredRole="PostalWorker">
-            <div className="page-container">
-              <div className="form-card">
-                <h1>Mapa sandučića</h1>
-                <p>Funkcionalnost za poštare - mapa sandučića</p>
+            <Layout>
+              <div className="page-container">
+                <div className="form-card">
+                  <h1>Mapa sandučića</h1>
+                  <p>Funkcionalnost za poštare - mapa sandučića</p>
+                </div>
               </div>
-            </div>
+            </Layout>
           </PrivateRoute>
         }
       />
@@ -115,12 +126,14 @@ export function AppRouter() {
         path="/worker/issues"
         element={
           <PrivateRoute requiredRole="PostalWorker">
-            <div className="page-container">
-              <div className="form-card">
-                <h1>Prijava problema na terenu</h1>
-                <p>Funkcionalnost za poštare - prijava problema</p>
+            <Layout>
+              <div className="page-container">
+                <div className="form-card">
+                  <h1>Prijava problema na terenu</h1>
+                  <p>Funkcionalnost za poštare - prijava problema</p>
+                </div>
               </div>
-            </div>
+            </Layout>
           </PrivateRoute>
         }
       />
