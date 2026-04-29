@@ -106,16 +106,36 @@ public sealed class UsersController : ControllerBase
 
     [HttpPost("change-password")]
     public async Task<IActionResult> ChangePasswordAsync(
-    [FromBody] ChangePasswordRequest request,
-    CancellationToken cancellationToken) {
-        await _userService.ChangePasswordAsync(
-            request.Email,
-            request.CurrentPassword,
-            request.NewPassword,
-            cancellationToken
-        );
+        [FromBody] ChangePasswordRequest request,
+        CancellationToken cancellationToken)
+    {
+        var sessionEmail = HttpContext.Session.GetString("Email");
 
-    return Ok(new { message = "Password changed." });
+        if (string.IsNullOrEmpty(sessionEmail))
+        {
+            return Unauthorized(new { message = "Niste prijavljeni." });
+        }
+
+        if (!string.Equals(sessionEmail, request.Email, StringComparison.OrdinalIgnoreCase))
+        {
+            return Forbid();
+        }
+
+        try
+        {
+            await _userService.ChangePasswordAsync(
+                request.Email,
+                request.CurrentPassword,
+                request.NewPassword,
+                cancellationToken
+            );
+
+            return Ok(new { message = "Password changed." });
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
     }
 
     [HttpPost("logout")]
