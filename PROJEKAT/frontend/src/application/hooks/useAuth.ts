@@ -69,12 +69,13 @@ export function useAuth() {
   const logout = async () => {
     try {
       await httpClient("/api/users/logout", { method: "POST" })
+      toast.success("Uspješno ste se odjavili iz sistema.")
     } catch (error) {
       console.error("Logout error:", error)
+      toast.error("Greška pri odjavi. Pokušajte ponovo.")
     } finally {
       setCurrentUser(null)
       navigate("/login", { replace: true })
-      toast.success("Uspješno ste se odjavili iz sistema.")
     }
   }
 
