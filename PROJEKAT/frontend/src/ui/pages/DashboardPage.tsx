@@ -1,12 +1,13 @@
 import { useAuth } from "../../application/hooks/useAuth"
 import { Layout } from "../components/Layout/Layout"
-import { useLocation } from "react-router-dom"
+import { useLocation, useNavigate } from "react-router-dom"
 import { useEffect } from "react"
 import { toast } from "sonner"
 
 export default function DashboardPage() {
   const { currentUser } = useAuth()
   const location = useLocation()
+  const navigate = useNavigate()
 
   useEffect(() => {
     if (location.state?.accessDenied) {
@@ -27,25 +28,25 @@ export default function DashboardPage() {
       <div className="dashboard-card">
         <h3>👥 Upravljanje korisnicima</h3>
         <p>Kreirajte i upravljajte korisničkim računima poštara</p>
-        <button className="btn-primary">Upravljanje korisnicima</button>
+        <button className="btn-primary" onClick={() => navigate("/admin/users/new")}>Upravljanje korisnicima</button>
       </div>
-      
+
       <div className="dashboard-card">
         <h3>📮 Pregled sandučića</h3>
         <p>Pregledajte status sandučića i lokacije</p>
-        <button className="btn-primary">Pregled sandučića</button>
+        <button className="btn-primary" onClick={() => navigate("/admin/mailboxes")}>Pregled sandučića</button>
       </div>
-      
+
       <div className="dashboard-card">
         <h3>📊 Statistika sistema</h3>
         <p>Analizirajte performanse i statistike</p>
-        <button className="btn-primary">Statistike</button>
+        <button className="btn-primary" onClick={() => navigate("/admin/statistics")}>Statistike</button>
       </div>
-      
+
       <div className="dashboard-card">
         <h3>⚙️ Postavke sistema</h3>
         <p>Konfigurišite sistemske postavke</p>
-        <button className="btn-primary">Postavke</button>
+        <button className="btn-primary" onClick={() => navigate("/admin/settings")}>Postavke</button>
       </div>
     </div>
   )
@@ -55,19 +56,19 @@ export default function DashboardPage() {
       <div className="dashboard-card">
         <h3>🗺️ Moja današnja ruta</h3>
         <p>Pregledajte današnju dostavnu rutu</p>
-        <button className="btn-primary">Prikaži rutu</button>
+        <button className="btn-primary" onClick={() => navigate("/worker/route")}>Prikaži rutu</button>
       </div>
-      
+
       <div className="dashboard-card">
         <h3>📍 Mapa sandučića</h3>
         <p>Lokacije sandučića na vašoj ruti</p>
-        <button className="btn-primary">Mapa</button>
+        <button className="btn-primary" onClick={() => navigate("/worker/mailboxes")}>Mapa</button>
       </div>
-      
+
       <div className="dashboard-card">
         <h3>⚠️ Prijava problema</h3>
         <p>Prijavite probleme na terenu</p>
-        <button className="btn-primary">Prijavi problem</button>
+        <button className="btn-primary" onClick={() => navigate("/worker/issues")}>Prijavi problem</button>
       </div>
     </div>
   )
