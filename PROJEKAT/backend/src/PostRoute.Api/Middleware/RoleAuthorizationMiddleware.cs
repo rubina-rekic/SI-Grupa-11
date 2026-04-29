@@ -49,11 +49,13 @@ public class RoleAuthorizationMiddleware
     {
         using var scope = _serviceProvider.CreateScope();
         var securityLogRepository = scope.ServiceProvider.GetRequiredService<ISecurityLogRepository>();
-        
+
+        Guid? parsedUserId = Guid.TryParse(userId, out var guid) ? guid : null;
+
         var securityLog = new SecurityLog
         {
             Id = Guid.NewGuid(),
-            UserId = userId,
+            UserId = parsedUserId,
             AttemptedUrl = context.Request.Path + context.Request.QueryString,
             UserRole = userRole,
             IpAddress = GetClientIpAddress(context),

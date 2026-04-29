@@ -24,7 +24,7 @@ public sealed class UsersController : ControllerBase
     }
 
     private async Task LogLoginAttemptAsync(
-        string? userId,
+        Guid? userId,
         string? userRole,
         string accessType,
         bool isSuccessful,
@@ -114,7 +114,7 @@ public sealed class UsersController : ControllerBase
             HttpContext.Session.SetString("Username", user.Username);
             HttpContext.Session.SetString("Email", user.Email);
 
-            await LogLoginAttemptAsync(user.Id.ToString(), user.Role, "LoginSuccess", true, cancellationToken);
+            await LogLoginAttemptAsync(user.Id, user.Role, "LoginSuccess", true, cancellationToken);
 
             var response = new UserResponse(
                 user.Id,

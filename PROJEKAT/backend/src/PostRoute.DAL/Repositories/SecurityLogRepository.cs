@@ -18,7 +18,7 @@ public sealed class SecurityLogRepository : ISecurityLogRepository
         await _context.SaveChangesAsync(cancellationToken);
     }
 
-    public async Task<List<SecurityLog>> GetByUserIdAsync(string userId, CancellationToken cancellationToken)
+    public async Task<List<SecurityLog>> GetByUserIdAsync(Guid userId, CancellationToken cancellationToken)
     {
         return await _context.SecurityLogs
             .Where(s => s.UserId == userId)
