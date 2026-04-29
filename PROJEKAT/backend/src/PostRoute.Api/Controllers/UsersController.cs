@@ -2,6 +2,7 @@
 using PostRoute.Api.Contracts.Users;
 using PostRoute.Api.Middleware;
 using PostRoute.BLL.Commands;
+using PostRoute.BLL.Exceptions;
 using PostRoute.BLL.Services;
 using PostRoute.Domain.Entities;
 
@@ -94,11 +95,11 @@ public sealed class UsersController : ControllerBase
 );
             return Ok(response);
         }
-        catch (InvalidOperationException ex) when (ex.Message.Contains("locked"))
+        catch (AccountLockedException)
         {
-            return StatusCode(423);
+            return StatusCode(423, new { message = "Račun je zaključan nakon više neuspješnih pokušaja." });
         }
-        catch (InvalidOperationException)
+        catch (InvalidCredentialsException)
         {
             return BadRequest(new { message = "Invalid credentials" });
         }

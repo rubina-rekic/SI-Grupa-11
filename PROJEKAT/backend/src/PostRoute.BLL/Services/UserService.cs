@@ -1,4 +1,5 @@
 ﻿using PostRoute.BLL.Commands;
+using PostRoute.BLL.Exceptions;
 using PostRoute.BLL.Models;
 using PostRoute.DAL.Entities;
 using PostRoute.DAL.Repositories;
@@ -60,8 +61,11 @@ public sealed class UserService : IUserService
     {
         var user = await _userRepository.GetByEmailAsync(email, cancellationToken);
 
-        if (user is null || user.IsLockedOut)
-            throw new InvalidOperationException("Invalid credentials or account is locked.");
+        if (user is null)
+            throw new InvalidCredentialsException();
+
+        if (user.IsLockedOut)
+            throw new AccountLockedException();
 
         if (!BCrypt.Net.BCrypt.Verify(password, user.PasswordHash))
         {
@@ -71,7 +75,11 @@ public sealed class UserService : IUserService
                 user.IsLockedOut = true;
 
             await _userRepository.UpdateAsync(user, cancellationToken);
-            throw new InvalidOperationException("Invalid credentials.");
+
+            if (user.IsLockedOut)
+                throw new AccountLockedException();
+
+            throw new InvalidCredentialsException();
         }
 
         user.FailedAttempts = 0;
