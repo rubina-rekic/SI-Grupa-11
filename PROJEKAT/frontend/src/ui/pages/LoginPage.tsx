@@ -83,7 +83,7 @@ export default function LoginPage() {
                     <h1 className="form-card__title">Prijava</h1>
                 </div>
 
-                <form className="form-card__body" onSubmit={handleLogin}>
+                <form className="form-card__body" onSubmit={handleLogin} noValidate>
                     {error && <p className="form-field__error">{error}</p>}
 
                     <div className="form-field">
@@ -98,10 +98,14 @@ export default function LoginPage() {
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                             disabled={isLocked}
+                            autoComplete="email"
                             className={`form-field__input ${
                                 emailError ? 'input-error' : ''
                             }`}
                         />
+                        {emailError && !error && (
+                            <p className="form-field__error">Email adresa je obavezna.</p>
+                        )}
                     </div>
 
                     <div className="form-field">
@@ -116,10 +120,14 @@ export default function LoginPage() {
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             disabled={isLocked}
+                            autoComplete="current-password"
                             className={`form-field__input ${
                                 passwordError ? 'input-error' : ''
                             }`}
                         />
+                        {passwordError && (
+                            <p className="form-field__error">Lozinka je obavezna.</p>
+                        )}
                     </div>
 
                     <div className="form-actions">

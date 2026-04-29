@@ -4,6 +4,7 @@ import { toast } from "sonner"
 import { z } from "zod"
 import { createUser } from "../../../infrastructure/api/users/usersApi"
 import { PasswordStrengthIndicator } from "../../components/common/PasswordStrengthIndicator"
+import { Layout } from "../../components/Layout/Layout"
 
 function capitalizeFirst(value: string): string {
   if (!value) return value
@@ -89,6 +90,7 @@ export function CreatePostalWorkerPage() {
   }
 
   return (
+    <Layout>
     <div className="page-container">
       <div className="form-card">
         <div className="form-card__header">
@@ -99,7 +101,7 @@ export function CreatePostalWorkerPage() {
           </p>
         </div>
 
-        <form className="form-card__body" onSubmit={handleSubmit(onSubmit)}>
+        <form className="form-card__body" onSubmit={handleSubmit(onSubmit)} noValidate>
           <div className="form-row">
             <div className="form-field">
               <label className="form-field__label" htmlFor="firstName">
@@ -107,8 +109,10 @@ export function CreatePostalWorkerPage() {
               </label>
               <input
                 id="firstName"
+                type="text"
                 className={`form-field__input${errors.firstName ? " form-field__input--error" : ""}`}
                 placeholder="npr. Amar"
+                autoComplete="given-name"
                 {...firstNameRest}
                 onChange={(e) => {
                   e.target.value = capitalizeFirst(e.target.value)
@@ -126,8 +130,10 @@ export function CreatePostalWorkerPage() {
               </label>
               <input
                 id="lastName"
+                type="text"
                 className={`form-field__input${errors.lastName ? " form-field__input--error" : ""}`}
                 placeholder="npr. Hodžić"
+                autoComplete="family-name"
                 {...lastNameRest}
                 onChange={(e) => {
                   e.target.value = capitalizeFirst(e.target.value)
@@ -146,9 +152,10 @@ export function CreatePostalWorkerPage() {
             </label>
             <input
               id="username"
+              type="text"
               className={`form-field__input${errors.username ? " form-field__input--error" : ""}`}
               placeholder="npr. amar.hodzic"
-              autoComplete="off"
+              autoComplete="username"
               {...register("username")}
             />
             {errors.username && (
@@ -165,7 +172,7 @@ export function CreatePostalWorkerPage() {
               type="email"
               className={`form-field__input${errors.email ? " form-field__input--error" : ""}`}
               placeholder="npr. amar.hodzic@posta.ba"
-              autoComplete="off"
+              autoComplete="email"
               {...register("email")}
             />
             {errors.email && (
@@ -221,5 +228,6 @@ export function CreatePostalWorkerPage() {
         </form>
       </div>
     </div>
+    </Layout>
   )
 }

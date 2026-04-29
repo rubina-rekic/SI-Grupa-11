@@ -87,56 +87,52 @@ export default function ChangePasswordPage() {
                     <h1 className="form-card__title">Promjena lozinke</h1>
                 </div>
 
-                <form className="form-card__body" onSubmit={handleSubmit}>
+                <form className="form-card__body" onSubmit={handleSubmit} noValidate>
                     {error && <p className="form-field__error">{error}</p>}
-                    {success && (
-                        <p style={{ color: 'green', fontWeight: 600 }}>
-                            {success}
-                        </p>
-                    )}
+                    {success && <p className="form-success">{success}</p>}
 
                     <div className="form-field">
-                        <label className="form-field__label">
+                        <label className="form-field__label" htmlFor="currentPassword">
                             Trenutna lozinka
                         </label>
 
                         <input
+                            id="currentPassword"
                             type="password"
                             className="form-field__input"
                             value={currentPassword}
-                            onChange={(e) =>
-                                setCurrentPassword(e.target.value)
-                            }
+                            onChange={(e) => setCurrentPassword(e.target.value)}
+                            autoComplete="current-password"
                         />
                     </div>
 
                     <div className="form-field">
-                        <label className="form-field__label">
+                        <label className="form-field__label" htmlFor="newPassword">
                             Nova lozinka
                         </label>
 
                         <input
+                            id="newPassword"
                             type="password"
                             className="form-field__input"
                             value={newPassword}
-                            onChange={(e) =>
-                                setNewPassword(e.target.value)
-                            }
+                            onChange={(e) => setNewPassword(e.target.value)}
+                            autoComplete="new-password"
                         />
                     </div>
 
                     <div className="form-field">
-                        <label className="form-field__label">
+                        <label className="form-field__label" htmlFor="confirmPassword">
                             Potvrdi lozinku
                         </label>
 
                         <input
+                            id="confirmPassword"
                             type="password"
                             className="form-field__input"
                             value={confirmPassword}
-                            onChange={(e) =>
-                                setConfirmPassword(e.target.value)
-                            }
+                            onChange={(e) => setConfirmPassword(e.target.value)}
+                            autoComplete="new-password"
                         />
                     </div>
 
