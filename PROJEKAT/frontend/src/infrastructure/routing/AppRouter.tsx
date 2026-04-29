@@ -18,6 +18,10 @@ function PrivateRoute({ children, requiredRole }: { children: React.ReactNode; r
     return <Navigate to="/login" replace state={{ from: location }} />
   }
 
+  if (currentUser.mustChangePassword) {
+    return <Navigate to="/change-password" replace />
+  }
+
   if (requiredRole && currentUser.role !== requiredRole) {
     // Show toast notification for access denied
     setTimeout(() => {

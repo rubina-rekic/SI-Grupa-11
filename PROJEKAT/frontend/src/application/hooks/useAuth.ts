@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
+import { toast } from "sonner"
 import { httpClient } from "../../infrastructure/api/httpClient"
 
 interface User {
@@ -72,7 +73,8 @@ export function useAuth() {
       console.error("Logout error:", error)
     } finally {
       setCurrentUser(null)
-      navigate("/login")
+      navigate("/login", { replace: true })
+      toast.success("Uspješno ste se odjavili iz sistema.")
     }
   }
 

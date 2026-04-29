@@ -102,6 +102,9 @@ public sealed class UserService : IUserService
         if (!BCrypt.Net.BCrypt.Verify(currentPassword, user.PasswordHash))
             throw new InvalidOperationException("Current password is incorrect.");
 
+        if (BCrypt.Net.BCrypt.Verify(newPassword, user.PasswordHash))
+            throw new InvalidOperationException("Nova lozinka mora biti različita od trenutne lozinke.");
+
         user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(newPassword);
         user.MustChangePassword = false;
 
