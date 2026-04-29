@@ -110,6 +110,7 @@ public sealed class UsersController : ControllerBase
     CancellationToken cancellationToken) {
         await _userService.ChangePasswordAsync(
             request.Email,
+            request.CurrentPassword,
             request.NewPassword,
             cancellationToken
         );

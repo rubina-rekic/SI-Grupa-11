@@ -82,6 +82,7 @@ public sealed class UserService : IUserService
 
     public async Task ChangePasswordAsync(
         string email,
+        string currentPassword,
         string newPassword,
         CancellationToken cancellationToken)
     {
@@ -89,6 +90,9 @@ public sealed class UserService : IUserService
 
         if (user is null)
             throw new InvalidOperationException("User not found.");
+
+        if (!BCrypt.Net.BCrypt.Verify(currentPassword, user.PasswordHash))
+            throw new InvalidOperationException("Current password is incorrect.");
 
         user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(newPassword);
         user.MustChangePassword = false;
