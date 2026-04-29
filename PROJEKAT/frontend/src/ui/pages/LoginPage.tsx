@@ -58,7 +58,7 @@ export default function LoginPage() {
         try {
             await login(email, password);
         } catch (error: any) {
-            if (error.message?.includes('locked')) {
+            if (error.status === 423) {
                 setIsLocked(true);
                 setPassword('');
                 setError('Račun je zaključan nakon više neuspješnih pokušaja.');
