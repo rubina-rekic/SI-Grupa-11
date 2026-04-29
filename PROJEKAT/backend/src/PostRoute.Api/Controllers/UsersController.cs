@@ -4,6 +4,8 @@ using PostRoute.Api.Middleware;
 using PostRoute.BLL.Commands;
 using PostRoute.BLL.Exceptions;
 using PostRoute.BLL.Services;
+using PostRoute.DAL.Entities;
+using PostRoute.DAL.Repositories;
 using PostRoute.Domain.Entities;
 
 namespace PostRoute.Api.Controllers;
@@ -13,10 +15,36 @@ namespace PostRoute.Api.Controllers;
 public sealed class UsersController : ControllerBase
 {
     private readonly IUserService _userService;
+    private readonly ISecurityLogRepository _securityLogRepository;
 
-    public UsersController(IUserService userService)
+    public UsersController(IUserService userService, ISecurityLogRepository securityLogRepository)
     {
         _userService = userService;
+        _securityLogRepository = securityLogRepository;
+    }
+
+    private async Task LogLoginAttemptAsync(
+        string? userId,
+        string? userRole,
+        string accessType,
+        bool isSuccessful,
+        CancellationToken cancellationToken)
+    {
+        var log = new SecurityLog
+        {
+            Id = Guid.NewGuid(),
+            UserId = userId,
+            AttemptedUrl = Request.Path + Request.QueryString,
+            UserRole = userRole,
+            IpAddress = Request.Headers["X-Forwarded-For"].FirstOrDefault()?.Split(',')[0].Trim()
+                ?? HttpContext.Connection.RemoteIpAddress?.ToString()
+                ?? "Unknown",
+            AccessType = accessType,
+            UserAgent = Request.Headers["User-Agent"].ToString(),
+            IsSuccessful = isSuccessful,
+        };
+
+        await _securityLogRepository.AddAsync(log, cancellationToken);
     }
 
     [HttpGet("{userId:guid}")]
@@ -80,27 +108,31 @@ public sealed class UsersController : ControllerBase
         try
         {
             var user = await _userService.LoginAsync(request.Email, request.Password, cancellationToken);
-            
+
             HttpContext.Session.SetString("UserId", user.Id.ToString());
             HttpContext.Session.SetString("UserRole", user.Role);
             HttpContext.Session.SetString("Username", user.Username);
             HttpContext.Session.SetString("Email", user.Email);
-            
+
+            await LogLoginAttemptAsync(user.Id.ToString(), user.Role, "LoginSuccess", true, cancellationToken);
+
             var response = new UserResponse(
-    user.Id,
-    user.Username,
-    user.Email,
-    user.Role,
-    user.MustChangePassword
-);
+                user.Id,
+                user.Username,
+                user.Email,
+                user.Role,
+                user.MustChangePassword
+            );
             return Ok(response);
         }
         catch (AccountLockedException)
         {
+            await LogLoginAttemptAsync(null, null, "AccountLocked", false, cancellationToken);
             return StatusCode(423, new { message = "Račun je zaključan nakon više neuspješnih pokušaja." });
         }
         catch (InvalidCredentialsException)
         {
+            await LogLoginAttemptAsync(null, null, "LoginFailed", false, cancellationToken);
             return BadRequest(new { message = "Invalid credentials" });
         }
     }
