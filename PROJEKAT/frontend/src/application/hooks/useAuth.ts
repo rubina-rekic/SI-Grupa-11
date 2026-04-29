@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { useNavigate } from "react-router-dom"
 import { toast } from "sonner"
 import { httpClient } from "../../infrastructure/api/httpClient"
@@ -16,11 +16,7 @@ export function useAuth() {
   const [loading, setLoading] = useState(true)
   const navigate = useNavigate()
 
-  useEffect(() => {
-    checkAuthStatus()
-  }, [])
-
-  const checkAuthStatus = async () => {
+  const checkAuthStatus = useCallback(async () => {
     try {
       const result = await httpClient<User>("/api/users/current-user")
 
@@ -37,7 +33,11 @@ export function useAuth() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [navigate])
+
+  useEffect(() => {
+    checkAuthStatus()
+  }, [checkAuthStatus])
 
   const login = async (email: string, password: string) => {
     const result = await httpClient<User>("/api/users/login", {
