@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
+import { httpClient } from "../../infrastructure/api/httpClient"
 
 interface User {
   id: string
@@ -20,13 +21,10 @@ export function useAuth() {
 
   const checkAuthStatus = async () => {
     try {
-      const response = await fetch("/api/users/current-user", {
-        credentials: "include"
-      })
-      
-      if (response.ok) {
-        const user = await response.json()
-        setCurrentUser(user)
+      const result = await httpClient<User>("/api/users/current-user")
+
+      if (result.data) {
+        setCurrentUser(result.data)
       } else {
         setCurrentUser(null)
         navigate("/login")
@@ -41,51 +39,35 @@ export function useAuth() {
   }
 
   const login = async (email: string, password: string) => {
-    try {
-      const response = await fetch("/api/users/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-        body: JSON.stringify({ email, password }),
-      })
+    const result = await httpClient<User>("/api/users/login", {
+      method: "POST",
+      body: { email, password },
+    })
 
-      if (!response.ok) {
-        if (response.status === 423) {
-          const err = new Error("Account locked") as Error & { status?: number }
-          err.status = 423
-          throw err
-        }
-        if (response.status === 403) {
-          const errorData = await response.json()
-          throw new Error(errorData.message || "Access denied")
-        }
-        throw new Error("Login failed")
+    if (!result.data) {
+      if (result.status === 423) {
+        const err = new Error("Account locked") as Error & { status?: number }
+        err.status = 423
+        throw err
       }
-
-      const user = await response.json()
-      setCurrentUser(user)
-      
-      if (user.mustChangePassword) {
-        navigate("/change-password")
-      } else {
-        navigate("/dashboard")
-      }
-      
-      return user
-    } catch (error: any) {
-      console.error("Login error:", error)
-      throw error
+      throw new Error(result.error || "Login failed")
     }
+
+    const user = result.data
+    setCurrentUser(user)
+
+    if (user.mustChangePassword) {
+      navigate("/change-password")
+    } else {
+      navigate("/dashboard")
+    }
+
+    return user
   }
 
   const logout = async () => {
     try {
-      await fetch("/api/users/logout", {
-        method: "POST",
-        credentials: "include"
-      })
+      await httpClient("/api/users/logout", { method: "POST" })
     } catch (error) {
       console.error("Logout error:", error)
     } finally {
@@ -99,6 +81,6 @@ export function useAuth() {
     loading,
     login,
     logout,
-    checkAuthStatus
+    checkAuthStatus,
   }
 }
