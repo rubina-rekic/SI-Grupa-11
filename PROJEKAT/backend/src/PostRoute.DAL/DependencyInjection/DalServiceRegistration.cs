@@ -13,6 +13,7 @@ public static class DalServiceRegistration
             options.UseNpgsql(configuration.GetConnectionString("DefaultConnection")));
 
         services.AddScoped<IUserRepository, UserRepository>();
+        services.AddScoped<ISecurityLogRepository, SecurityLogRepository>();
 
         return services;
     }

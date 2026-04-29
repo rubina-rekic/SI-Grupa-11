@@ -4,4 +4,5 @@ public sealed record UserResponse(
     Guid Id,
     string Username,
     string Email,
-    string Role);
+    string Role,
+    bool MustChangePassword );

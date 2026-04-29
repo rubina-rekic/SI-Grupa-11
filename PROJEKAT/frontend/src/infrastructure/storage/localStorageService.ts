@@ -9,3 +9,9 @@ export function getLocalItem(key: string): string | null {
 export function removeLocalItem(key: string) {
   localStorage.removeItem(key)
 }
+
+export function clearAuth() {
+  localStorage.removeItem("token")
+  localStorage.removeItem("role")
+  localStorage.removeItem("mustChangePassword")
+}
