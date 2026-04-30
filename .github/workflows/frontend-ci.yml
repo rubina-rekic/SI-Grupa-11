@@ -1,0 +1,78 @@
+name: Frontend CI
+
+# CI: build na svaki PR/push. CD: Netlify deploy samo na push u main.
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      - 'PROJEKAT/frontend/**'
+      - '.github/workflows/frontend-ci.yml'
+  pull_request:
+    branches: [main, develop]
+    paths:
+      - 'PROJEKAT/frontend/**'
+      - '.github/workflows/frontend-ci.yml'
+
+concurrency:
+  group: frontend-ci-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Lint & Build
+    runs-on: ubuntu-latest
+    env:
+      # Vite inline-uje sve VITE_ vars u bundle pri buildu, pa apsolutni
+      # backend URL mora biti poznat u ovom koraku. Postaviti kao GitHub
+      # Repository Variable (Settings -> Secrets and variables -> Actions
+      # -> Variables): VITE_API_BASE_URL = https://<render-backend-url>
+      VITE_API_BASE_URL: ${{ vars.VITE_API_BASE_URL || 'http://localhost:5032' }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: 'npm'
+          cache-dependency-path: PROJEKAT/frontend/package-lock.json
+
+      - name: Install dependencies
+        working-directory: PROJEKAT/frontend
+        run: npm ci
+
+      - name: Build
+        working-directory: PROJEKAT/frontend
+        run: npm run build
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-dist
+          path: PROJEKAT/frontend/dist
+          retention-days: 7
+
+  deploy:
+    name: Deploy to Netlify
+    needs: build
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+
+    steps:
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: frontend-dist
+          path: dist
+
+      - name: Deploy to Netlify
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID:    ${{ secrets.NETLIFY_SITE_ID }}
+        run: npx netlify-cli deploy --prod --dir=dist --site=$NETLIFY_SITE_ID --auth=$NETLIFY_AUTH_TOKEN
