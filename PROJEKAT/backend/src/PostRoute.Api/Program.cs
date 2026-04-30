@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.EntityFrameworkCore;
 using PostRoute.Api.Configuration;
 using PostRoute.Api.Middleware;
 using PostRoute.BLL.Services;
@@ -6,6 +7,16 @@ using PostRoute.DAL;
 using PostRoute.Domain.Entities;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Trust the X-Forwarded-Proto header from Render/Cloudflare so ASP.NET Core
+// knows the external connection is HTTPS. Without this, the app sees only HTTP
+// internally and downgrades SameSite=None to Lax (because None requires Secure).
+builder.Services.Configure<ForwardedHeadersOptions>(options =>
+{
+    options.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+    options.KnownNetworks.Clear();
+    options.KnownProxies.Clear();
+});
 
 builder.Services.AddApiLayer(builder.Configuration);
 builder.Services.AddDistributedMemoryCache();
@@ -45,6 +56,7 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 }
 
+app.UseForwardedHeaders();
 app.UseCors("Frontend");
 app.UseSession();
 app.UseMiddleware<RoleAuthorizationMiddleware>();
