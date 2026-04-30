@@ -1,5 +1,9 @@
 name: Frontend CI
 
+# Triggers:
+#  - PRs to develop or main → CI only
+#  - Pushes to develop      → CI only
+#  - Pushes to main         → CI + CD (deploy)
 on:
   push:
     branches: [main, develop]
@@ -12,9 +16,23 @@ on:
       - 'PROJEKAT/frontend/**'
       - '.github/workflows/frontend-ci.yml'
 
+concurrency:
+  group: frontend-ci-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
+permissions:
+  contents: read
+
 jobs:
   build:
+    name: Lint & Build
     runs-on: ubuntu-latest
+
+    # Build-time configuration. Vite inlines anything prefixed with VITE_ into
+    # the bundle, so non-secret values like the API URL belong here. NEVER put
+    # actual secrets in VITE_ vars — anything bundled is publicly visible.
+    env:
+      VITE_API_BASE_URL: ${{ vars.VITE_API_BASE_URL || 'http://localhost:5032' }}
 
     steps:
       - uses: actions/checkout@v4
@@ -43,3 +61,36 @@ jobs:
         with:
           name: frontend-dist
           path: PROJEKAT/frontend/dist
+          retention-days: 7
+
+  # CD job — only runs on a real push to main. Depends on a green build.
+  deploy:
+    name: Deploy frontend
+    needs: build
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+    permissions:
+      contents: read
+
+    steps:
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: frontend-dist
+          path: dist
+
+      # NOTE: Replace the step below with whatever static host you actually use
+      # (Azure Static Web Apps, Netlify, Vercel, S3+CloudFront, GitHub Pages, …).
+      # All credentials/tokens MUST come from secrets.
+      - name: Deploy to production
+        env:
+          DEPLOY_TOKEN: ${{ secrets.FRONTEND_DEPLOY_TOKEN }}
+        run: |
+          echo "Deploying frontend bundle to production…"
+          echo "TODO: wire this up to your static-host provider."
+          echo "Built files are in ./dist."
+          # Example (Azure Static Web Apps via CLI):
+          #   npx -y @azure/static-web-apps-cli deploy ./dist \
+          #     --deployment-token "$DEPLOY_TOKEN" --env production

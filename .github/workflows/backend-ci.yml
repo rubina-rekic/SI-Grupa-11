@@ -1,5 +1,10 @@
 name: Backend CI
 
+# Triggers:
+#  - Pull requests targeting develop or main → CI only (no deploy)
+#  - Pushes to develop                       → CI only (post-merge verification)
+#  - Pushes to main                          → CI + CD (deploy)
+# Path filters keep the workflow from running on unrelated commits (e.g. frontend-only).
 on:
   push:
     branches: [main, develop]
@@ -12,9 +17,47 @@ on:
       - 'PROJEKAT/backend/**'
       - '.github/workflows/backend-ci.yml'
 
+# Cancel in-progress runs on develop to save CI minutes.
+# On main, never cancel — we don't want an active deploy interrupted by a new push.
+concurrency:
+  group: backend-ci-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
+permissions:
+  contents: read
+
 jobs:
-  build:
+  build-test:
+    name: Build & Test
     runs-on: ubuntu-latest
+
+    # Postgres service container — gives integration tests / EF migration smoke
+    # checks a real database to talk to. Credentials match the dev compose file.
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_DB: postroute_ci
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 10
+
+    env:
+      DOTNET_NOLOGO: 'true'
+      DOTNET_CLI_TELEMETRY_OPTOUT: 'true'
+      # .NET configuration values can be supplied via env vars using __ as the
+      # section separator. This overrides ConnectionStrings:DefaultConnection
+      # without anything being hardcoded in appsettings.json.
+      ConnectionStrings__DefaultConnection: 'Host=localhost;Port=5432;Database=postroute_ci;Username=postgres;Password=postgres'
+      # Seeding is gated by config (see Program.cs). Disabled in CI by default;
+      # tests that need seeded users should arrange their own fixtures.
+      Seeding__Enabled: 'false'
 
     steps:
       - uses: actions/checkout@v4
@@ -41,4 +84,65 @@ jobs:
         with:
           name: backend-publish
           path: PROJEKAT/backend/artifacts/publish
-          
+          retention-days: 7
+
+  # CD job — only runs on a real push to main (not on PRs, not on develop).
+  # Depends on build-test passing first.
+  deploy:
+    name: Deploy backend
+    needs: build-test
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    # Use a GitHub Environment named "production" so secrets and required
+    # reviewers can be managed there. Create it under Settings → Environments.
+    environment:
+      name: production
+    permissions:
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: backend-publish
+          path: PROJEKAT/backend/artifacts/publish
+
+      - name: Setup .NET (for migrations)
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '9.0.x'
+
+      # Apply EF Core migrations against the production database BEFORE
+      # deploying the new app version, so the schema is ready when the new
+      # bits start serving traffic. Connection string comes from secrets.
+      # NOTE: We restore + build here because EF tools need the compiled
+      # migration DLLs (bin/), not the published runtime artifact.
+      - name: Apply EF Core migrations
+        env:
+          ConnectionStrings__DefaultConnection: ${{ secrets.PRODUCTION_DB_CONNECTION_STRING }}
+        run: |
+          dotnet tool install --global dotnet-ef --version 9.0.4
+          export PATH="$PATH:$HOME/.dotnet/tools"
+          dotnet restore PROJEKAT/backend/PostRoute.sln
+          dotnet build PROJEKAT/backend/PostRoute.sln --configuration Release --no-restore
+          dotnet ef database update \
+            --project PROJEKAT/backend/src/PostRoute.DAL/PostRoute.DAL.csproj \
+            --startup-project PROJEKAT/backend/src/PostRoute.Api/PostRoute.Api.csproj \
+            --configuration Release
+
+      # NOTE: Replace the step below with whatever provider you actually use
+      # (Azure Web App, AWS Elastic Beanstalk, Render, Fly.io, SSH, …).
+      # All sensitive values MUST come from secrets — never inline them.
+      - name: Deploy to production
+        env:
+          ConnectionStrings__DefaultConnection: ${{ secrets.PRODUCTION_DB_CONNECTION_STRING }}
+          Seeding__Enabled: ${{ vars.SEEDING_ENABLED || 'true' }}
+        run: |
+          echo "Deploying backend artifact to production…"
+          echo "TODO: wire this up to your hosting provider."
+          echo "The published app is in PROJEKAT/backend/artifacts/publish."
+          # Example (Azure):
+          #   az webapp deploy --resource-group <rg> --name <app> \
+          #     --src-path PROJEKAT/backend/artifacts/publish --type zip
