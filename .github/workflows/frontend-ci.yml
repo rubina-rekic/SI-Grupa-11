@@ -63,5 +63,27 @@ jobs:
           path: PROJEKAT/frontend/dist
           retention-days: 7
 
-  # Deployment is handled by deploy.yml which runs on every push to main.
-  # The frontend is built inside the Docker image on the VM — no separate deploy step needed here.
+  # Deploy to Netlify — only on push to main, after a green build.
+  # Requires two GitHub Secrets (Settings → Secrets → Actions):
+  #   NETLIFY_AUTH_TOKEN — Personal access token from Netlify user settings
+  #   NETLIFY_SITE_ID    — Site ID from Netlify site configuration
+  deploy:
+    name: Deploy to Netlify
+    needs: build
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+
+    steps:
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: frontend-dist
+          path: dist
+
+      - name: Deploy to Netlify
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID:    ${{ secrets.NETLIFY_SITE_ID }}
+        run: npx netlify-cli deploy --prod --dir=dist --site=$NETLIFY_SITE_ID --auth=$NETLIFY_AUTH_TOKEN
