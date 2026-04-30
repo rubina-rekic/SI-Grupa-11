@@ -28,10 +28,9 @@ USER appuser
 
 COPY --from=build /app/publish .
 
-# Port 5000 — Nginx proxies to this inside the Docker network.
-# ASPNETCORE_URLS overrides the default Kestrel ports.
-ENV ASPNETCORE_URLS=http://+:5000
+# Render dodjeljuje dinamički $PORT. Lokalno fallback na 5000.
+# ASPNETCORE_URLS koristi shell expansion pa mora kroz sh -c entrypoint.
 ENV ASPNETCORE_ENVIRONMENT=Production
 
 EXPOSE 5000
-ENTRYPOINT ["dotnet", "PostRoute.Api.dll"]
+ENTRYPOINT ["sh", "-c", "ASPNETCORE_URLS=http://+:${PORT:-5000} dotnet PostRoute.Api.dll"]

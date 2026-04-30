@@ -14,6 +14,11 @@ builder.Services.AddSession(options =>
     options.IdleTimeout = TimeSpan.FromMinutes(30);
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
+    // SameSite=None + Secure potrebno kada su frontend i backend na različitim
+    // domenama (npr. netlify.app i onrender.com). Bez ovoga browser blokira
+    // slanje session cookie-a u cross-site zahtjevima.
+    options.Cookie.SameSite = SameSiteMode.None;
+    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
 });
 
 var allowedOrigins = builder.Configuration
