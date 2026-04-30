@@ -1,5 +1,10 @@
 name: Backend CI
 
+# Triggers:
+#  - Pull requests targeting develop or main → CI only (no deploy)
+#  - Pushes to develop                       → CI only (post-merge verification)
+#  - Pushes to main                          → CI + CD (deploy)
+# Path filters keep the workflow from running on unrelated commits (e.g. frontend-only).
 on:
   push:
     branches: [main, develop]
@@ -12,9 +17,47 @@ on:
       - 'PROJEKAT/backend/**'
       - '.github/workflows/backend-ci.yml'
 
+# Cancel in-progress runs on develop to save CI minutes.
+# On main, never cancel — we don't want an active deploy interrupted by a new push.
+concurrency:
+  group: backend-ci-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
+permissions:
+  contents: read
+
 jobs:
-  build:
+  build-test:
+    name: Build & Test
     runs-on: ubuntu-latest
+
+    # Postgres service container — gives integration tests / EF migration smoke
+    # checks a real database to talk to. Credentials match the dev compose file.
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_DB: postroute_ci
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 10
+
+    env:
+      DOTNET_NOLOGO: 'true'
+      DOTNET_CLI_TELEMETRY_OPTOUT: 'true'
+      # .NET configuration values can be supplied via env vars using __ as the
+      # section separator. This overrides ConnectionStrings:DefaultConnection
+      # without anything being hardcoded in appsettings.json.
+      ConnectionStrings__DefaultConnection: 'Host=localhost;Port=5432;Database=postroute_ci;Username=postgres;Password=postgres'
+      # Seeding is gated by config (see Program.cs). Disabled in CI by default;
+      # tests that need seeded users should arrange their own fixtures.
+      Seeding__Enabled: 'false'
 
     steps:
       - uses: actions/checkout@v4
@@ -41,4 +84,7 @@ jobs:
         with:
           name: backend-publish
           path: PROJEKAT/backend/artifacts/publish
-          
+          retention-days: 7
+
+  # Deployment is handled by deploy.yml which runs on every push to main.
+  # Keeping CI here separate from CD avoids re-running tests during deploy.

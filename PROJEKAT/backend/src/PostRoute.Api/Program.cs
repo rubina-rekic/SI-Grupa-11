@@ -16,12 +16,17 @@ builder.Services.AddSession(options =>
     options.Cookie.IsEssential = true;
 });
 
+var allowedOrigins = builder.Configuration
+    .GetSection("Cors:AllowedOrigins")
+    .Get<string[]>()
+    ?? ["http://localhost:5173", "http://localhost:5174"];
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("Frontend", policy =>
     {
         policy
-            .WithOrigins("http://localhost:5173", "http://localhost:5174")
+            .WithOrigins(allowedOrigins)
             .AllowAnyHeader()
             .AllowAnyMethod()
             .AllowCredentials();
@@ -41,13 +46,27 @@ app.UseMiddleware<RoleAuthorizationMiddleware>();
 app.UseAuthorization();
 app.MapControllers();
 
+// Lightweight health endpoint used by Docker Compose healthcheck and Nginx proxy.
+app.MapGet("/health", () => Results.Ok());
+
+// Apply pending migrations on startup so a fresh deployment ends up with the
+// right schema before traffic arrives. Seeding is gated on Seeding:Enabled so
+// it can be turned off in environments where default users are not desired.
+// Default: enabled in Development, disabled elsewhere unless explicitly turned
+// on via env var (Seeding__Enabled=true) or appsettings.
 using (var scope = app.Services.CreateScope())
 {
     var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     await dbContext.Database.MigrateAsync(CancellationToken.None);
 
-    var userSeedService = scope.ServiceProvider.GetRequiredService<IUserSeedService>();
-    await userSeedService.SeedDefaultUsersAsync(CancellationToken.None);
+    var seedingEnabled = app.Configuration.GetValue<bool?>("Seeding:Enabled")
+        ?? app.Environment.IsDevelopment();
+
+    if (seedingEnabled)
+    {
+        var userSeedService = scope.ServiceProvider.GetRequiredService<IUserSeedService>();
+        await userSeedService.SeedDefaultUsersAsync(CancellationToken.None);
+    }
 }
 
 app.Run();

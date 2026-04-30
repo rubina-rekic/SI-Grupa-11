@@ -1,5 +1,9 @@
 name: Frontend CI
 
+# Triggers:
+#  - PRs to develop or main → CI only
+#  - Pushes to develop      → CI only
+#  - Pushes to main         → CI + CD (deploy)
 on:
   push:
     branches: [main, develop]
@@ -12,9 +16,23 @@ on:
       - 'PROJEKAT/frontend/**'
       - '.github/workflows/frontend-ci.yml'
 
+concurrency:
+  group: frontend-ci-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
+
+permissions:
+  contents: read
+
 jobs:
   build:
+    name: Lint & Build
     runs-on: ubuntu-latest
+
+    # Build-time configuration. Vite inlines anything prefixed with VITE_ into
+    # the bundle, so non-secret values like the API URL belong here. NEVER put
+    # actual secrets in VITE_ vars — anything bundled is publicly visible.
+    env:
+      VITE_API_BASE_URL: ${{ vars.VITE_API_BASE_URL || 'http://localhost:5032' }}
 
     steps:
       - uses: actions/checkout@v4
@@ -43,3 +61,7 @@ jobs:
         with:
           name: frontend-dist
           path: PROJEKAT/frontend/dist
+          retention-days: 7
+
+  # Deployment is handled by deploy.yml which runs on every push to main.
+  # The frontend is built inside the Docker image on the VM — no separate deploy step needed here.
