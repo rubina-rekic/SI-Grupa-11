@@ -1,0 +1,67 @@
+name: Deploy to production
+
+# Runs on every push to main — no path filter so it triggers regardless of
+# whether backend, frontend, or config files changed.
+# CI (build + tests) already ran and passed on the PR before this merge.
+on:
+  push:
+    branches: [main]
+
+# Never cancel a running deploy — let it finish.
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    name: Deploy via SSH
+    runs-on: ubuntu-latest
+    environment:
+      name: production
+
+    steps:
+      # SSH into the VM and run docker compose.
+      # The VM must have:
+      #   - Docker + Compose plugin installed
+      #   - Repo cloned at ~/postroute  (or adjust the path below)
+      #   - A .env file at ~/postroute/PROJEKAT/.env with DATABASE_URL etc.
+      - name: Deploy to VM
+        uses: appleboy/ssh-action@v1.2.0
+        env:
+          # Pass secrets as env vars so they can update the .env file on the VM.
+          # appleboy/ssh-action forwards these to the remote shell via "envs".
+          DATABASE_URL:    ${{ secrets.PRODUCTION_DB_CONNECTION_STRING }}
+          SEEDING_ENABLED: ${{ vars.SEEDING_ENABLED || 'false' }}
+        with:
+          host:     ${{ secrets.VM_HOST }}
+          username: ${{ secrets.VM_USER }}
+          key:      ${{ secrets.VM_SSH_KEY }}
+          envs:     DATABASE_URL,SEEDING_ENABLED
+          # Commands run on the VM in sequence; any non-zero exit aborts.
+          script: |
+            set -e
+
+            cd ~/postroute
+
+            # Pull latest code from main
+            git pull origin main
+
+            # Write/overwrite the .env file with the latest secrets.
+            # This file is never committed — it lives only on the VM.
+            cat > PROJEKAT/.env << EOF
+            DATABASE_URL=${DATABASE_URL}
+            SEEDING_ENABLED=${SEEDING_ENABLED}
+            EOF
+
+            # Rebuild changed images and restart containers
+            docker compose -f PROJEKAT/docker-compose.prod.yml \
+              --env-file PROJEKAT/.env \
+              up -d --build
+
+            # Clean up dangling images to free disk space
+            docker image prune -f
+
+            echo "Deploy complete."

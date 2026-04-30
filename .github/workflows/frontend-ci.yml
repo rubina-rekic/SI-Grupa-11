@@ -63,34 +63,5 @@ jobs:
           path: PROJEKAT/frontend/dist
           retention-days: 7
 
-  # CD job — only runs on a real push to main. Depends on a green build.
-  deploy:
-    name: Deploy frontend
-    needs: build
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    runs-on: ubuntu-latest
-    environment:
-      name: production
-    permissions:
-      contents: read
-
-    steps:
-      - name: Download build artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: frontend-dist
-          path: dist
-
-      # NOTE: Replace the step below with whatever static host you actually use
-      # (Azure Static Web Apps, Netlify, Vercel, S3+CloudFront, GitHub Pages, …).
-      # All credentials/tokens MUST come from secrets.
-      - name: Deploy to production
-        env:
-          DEPLOY_TOKEN: ${{ secrets.FRONTEND_DEPLOY_TOKEN }}
-        run: |
-          echo "Deploying frontend bundle to production…"
-          echo "TODO: wire this up to your static-host provider."
-          echo "Built files are in ./dist."
-          # Example (Azure Static Web Apps via CLI):
-          #   npx -y @azure/static-web-apps-cli deploy ./dist \
-          #     --deployment-token "$DEPLOY_TOKEN" --env production
+  # Deployment is handled by deploy.yml which runs on every push to main.
+  # The frontend is built inside the Docker image on the VM — no separate deploy step needed here.

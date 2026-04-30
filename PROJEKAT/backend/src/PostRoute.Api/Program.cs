@@ -41,6 +41,9 @@ app.UseMiddleware<RoleAuthorizationMiddleware>();
 app.UseAuthorization();
 app.MapControllers();
 
+// Lightweight health endpoint used by Docker Compose healthcheck and Nginx proxy.
+app.MapGet("/health", () => Results.Ok());
+
 // Apply pending migrations on startup so a fresh deployment ends up with the
 // right schema before traffic arrives. Seeding is gated on Seeding:Enabled so
 // it can be turned off in environments where default users are not desired.
