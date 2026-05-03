@@ -448,4 +448,68 @@ public sealed class UserServiceTests
             CreatedAt = DateTime.UtcNow,
         };
     }
+        [Fact]
+    public async Task GetAllAsync_WhenUsersExist_ShouldReturnMappedUserModelsWithIsLockedOut()
+    {
+        var users = new List<User>
+        {
+            CreateUser("Password123"),
+            CreateUser("Password456")
+        };
+
+        users[0].IsLockedOut = true;
+        users[1].IsLockedOut = false;
+
+        _userRepositoryMock
+            .Setup(x => x.GetAllAsync(It.IsAny<CancellationToken>()))
+            .ReturnsAsync(users);
+
+        var result = await _sut.GetAllAsync(CancellationToken.None);
+
+        Assert.NotNull(result);
+        var resultList = result.ToList();
+        Assert.Equal(2, resultList.Count);
+
+        Assert.Equal(users[0].Id, resultList[0].Id);
+        Assert.Equal(users[0].Username, resultList[0].Username);
+        Assert.Equal(users[0].Email, resultList[0].Email);
+        Assert.Equal(users[0].Role, resultList[0].Role);
+        Assert.Equal(users[0].MustChangePassword, resultList[0].MustChangePassword);
+        Assert.Equal(users[0].IsLockedOut, resultList[0].IsLockedOut);
+
+        Assert.Equal(users[1].Id, resultList[1].Id);
+        Assert.Equal(users[1].Username, resultList[1].Username);
+        Assert.Equal(users[1].Email, resultList[1].Email);
+        Assert.Equal(users[1].Role, resultList[1].Role);
+        Assert.Equal(users[1].MustChangePassword, resultList[1].MustChangePassword);
+        Assert.Equal(users[1].IsLockedOut, resultList[1].IsLockedOut);
+    }
+
+    [Fact]
+    public async Task GetAllAsync_WhenNoUsersExist_ShouldReturnEmptyList()
+    {
+        _userRepositoryMock
+            .Setup(x => x.GetAllAsync(It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new List<User>());
+
+        var result = await _sut.GetAllAsync(CancellationToken.None);
+
+        Assert.NotNull(result);
+        Assert.Empty(result);
+    }
+
+    [Fact]
+    public async Task GetAllAsync_WhenRepositoryThrowsException_ShouldPropagateException()
+    {
+        var expectedException = new Exception("Database error");
+
+        _userRepositoryMock
+            .Setup(x => x.GetAllAsync(It.IsAny<CancellationToken>()))
+            .ThrowsAsync(expectedException);
+
+        var exception = await Assert.ThrowsAsync<Exception>(
+            () => _sut.GetAllAsync(CancellationToken.None));
+
+        Assert.Equal(expectedException, exception);
+    }
 }
