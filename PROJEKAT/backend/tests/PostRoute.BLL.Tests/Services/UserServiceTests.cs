@@ -63,6 +63,7 @@ public sealed class UserServiceTests
         Assert.Equal(user.Email, result.Email);
         Assert.Equal(user.Role, result.Role);
         Assert.Equal(user.MustChangePassword, result.MustChangePassword);
+        Assert.Equal(user.IsLockedOut, result.IsLockedOut);
     }
 
     [Fact]
@@ -194,6 +195,7 @@ public sealed class UserServiceTests
         Assert.Equal(command.Email, result.Email);
         Assert.Equal(command.Role, result.Role);
         Assert.True(result.MustChangePassword);
+        Assert.False(result.IsLockedOut);
     }
 
     [Fact]
@@ -322,6 +324,7 @@ public sealed class UserServiceTests
         Assert.Equal(user.Email, result.Email);
         Assert.Equal(user.Role, result.Role);
         Assert.Equal(user.MustChangePassword, result.MustChangePassword);
+        Assert.Equal(user.IsLockedOut, result.IsLockedOut);
     }
 
     [Fact]

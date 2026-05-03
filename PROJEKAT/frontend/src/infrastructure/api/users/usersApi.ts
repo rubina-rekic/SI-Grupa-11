@@ -26,6 +26,7 @@ export interface UserListDto {
   email: string
   role: string
   mustChangePassword: boolean
+  isLockedOut: boolean
 }
 
 export function getUsers(): Promise<ApiResponse<UserListDto[]>> {

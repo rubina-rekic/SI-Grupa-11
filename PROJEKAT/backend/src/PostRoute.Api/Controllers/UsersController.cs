@@ -58,12 +58,13 @@ public sealed class UsersController : ControllerBase
         }
 
         var response = new UserResponse(
-    user.Id,
-    user.Username,
-    user.Email,
-    user.Role,
-    user.MustChangePassword
-);
+            user.Id,
+            user.Username,
+            user.Email,
+            user.Role,
+            user.MustChangePassword,
+            user.IsLockedOut
+        );
         return Ok(response);
     }
 
@@ -86,12 +87,13 @@ public sealed class UsersController : ControllerBase
 
             var user = await _userService.CreateAsync(command, cancellationToken);
             var response = new UserResponse(
-    user.Id,
-    user.Username,
-    user.Email,
-    user.Role,
-    user.MustChangePassword
-);
+                user.Id,
+                user.Username,
+                user.Email,
+                user.Role,
+                user.MustChangePassword,
+                user.IsLockedOut
+            );
 
             return Created($"/api/users/{user.Id}", response);
         }
@@ -122,7 +124,8 @@ public sealed class UsersController : ControllerBase
                 user.Username,
                 user.Email,
                 user.Role,
-                user.MustChangePassword
+                user.MustChangePassword,
+                user.IsLockedOut
             );
             return Ok(response);
         }
@@ -202,7 +205,8 @@ public sealed class UsersController : ControllerBase
             username ?? string.Empty,
             email ?? string.Empty,
             userRole,
-            mustChangePassword
+            mustChangePassword,
+            false
         );
 
         return Ok(response);
@@ -211,7 +215,7 @@ public sealed class UsersController : ControllerBase
     public async Task<ActionResult<IEnumerable<UserResponse>>> GetAllAsync(CancellationToken cancellationToken)
     {
         var users = await _userService.GetAllAsync(cancellationToken);
-        var response = users.Select(u => new UserResponse(u.Id, u.Username, u.Email, u.Role, u.MustChangePassword));
+        var response = users.Select(u => new UserResponse(u.Id, u.Username, u.Email, u.Role, u.MustChangePassword, u.IsLockedOut));
         return Ok(response);
     }
 }
