@@ -10,4 +10,5 @@ public interface IUserRepository
     Task<bool> UsernameExistsAsync(string username, CancellationToken cancellationToken);
     Task AddAsync(User user, CancellationToken cancellationToken);
     Task UpdateAsync(User user, CancellationToken cancellationToken);
+    Task<IEnumerable<User>> GetAllAsync(CancellationToken cancellationToken);
 }

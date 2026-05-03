@@ -110,6 +110,12 @@ public sealed class UserService : IUserService
 
         await _userRepository.UpdateAsync(user, cancellationToken);
     }
+
+    public async Task<IEnumerable<UserModel>> GetAllAsync(CancellationToken cancellationToken)
+{
+    var users = await _userRepository.GetAllAsync(cancellationToken);
+    return users.Select(u => new UserModel(u.Id, u.Username, u.Email, u.Role, u.MustChangePassword));
+}
 }
 
 

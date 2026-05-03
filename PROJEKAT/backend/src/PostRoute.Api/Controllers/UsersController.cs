@@ -207,4 +207,11 @@ public sealed class UsersController : ControllerBase
 
         return Ok(response);
     }
+    [RequiredRole("Administrator")]
+    public async Task<ActionResult<IEnumerable<UserResponse>>> GetAllAsync(CancellationToken cancellationToken)
+    {
+        var users = await _userService.GetAllAsync(cancellationToken);
+        var response = users.Select(u => new UserResponse(u.Id, u.Username, u.Email, u.Role, u.MustChangePassword));
+        return Ok(response);
+    }
 }

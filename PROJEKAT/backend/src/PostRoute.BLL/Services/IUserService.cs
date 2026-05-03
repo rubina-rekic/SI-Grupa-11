@@ -10,4 +10,5 @@ public interface IUserService
 
     Task<UserModel> LoginAsync(string email, string password, CancellationToken cancellationToken);
     Task ChangePasswordAsync(string email, string currentPassword, string newPassword, CancellationToken cancellationToken);
+    Task<IEnumerable<UserModel>> GetAllAsync(CancellationToken cancellationToken);
 }

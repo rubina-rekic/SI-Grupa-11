@@ -47,4 +47,11 @@ public sealed class UserRepository : IUserRepository
         _context.Users.Update(user);
         await _context.SaveChangesAsync(cancellationToken);
     }
+    public async Task<IEnumerable<User>> GetAllAsync(CancellationToken cancellationToken)
+{
+    return await _context.Users
+        .OrderBy(u => u.LastName)
+        .ThenBy(u => u.FirstName)
+        .ToListAsync(cancellationToken);
+}
 }
