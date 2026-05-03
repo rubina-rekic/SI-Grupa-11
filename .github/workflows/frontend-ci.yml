@@ -43,7 +43,7 @@ jobs:
 
       - name: Install dependencies
         working-directory: PROJEKAT/frontend
-        run: npm ci
+        run: npm install
 
       - name: Build
         working-directory: PROJEKAT/frontend

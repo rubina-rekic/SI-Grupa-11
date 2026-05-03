@@ -6,4 +6,4 @@ public sealed record UserResponse(
     string Email,
     string Role,
     bool MustChangePassword,
-    bool IsLockedOut );
+    bool IsLockedOut);
