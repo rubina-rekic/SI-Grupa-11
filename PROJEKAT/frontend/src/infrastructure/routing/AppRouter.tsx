@@ -5,6 +5,7 @@ import DashboardPage from "../../ui/pages/DashboardPage"
 import ChangePasswordPage from "../../ui/pages/ChangePasswordPage"
 import { useAuth } from "../../application/hooks/useAuth"
 import { Layout } from "../../ui/components/Layout/Layout"
+import PostalWorkersListPage from "../../ui/pages/admin/PostalWorkersListPage"
 
 function PrivateRoute({ children, requiredRole }: { children: React.ReactNode; requiredRole?: string }) {
   const { currentUser, loading } = useAuth()
@@ -16,6 +17,10 @@ function PrivateRoute({ children, requiredRole }: { children: React.ReactNode; r
 
   if (!currentUser) {
     return <Navigate to="/login" replace state={{ from: location }} />
+  }
+
+  if (currentUser.mustChangePassword) {
+    return <Navigate to="/change-password" replace />
   }
 
   if (requiredRole && currentUser.role !== requiredRole) {
@@ -142,6 +147,14 @@ export function AppRouter() {
         }
       />
       <Route path="*" element={<Navigate to="/login" replace />} />
+      <Route
+        path="/admin/users"
+        element={
+          <PrivateRoute>
+            <PostalWorkersListPage />
+          </PrivateRoute>
+        }
+      />
     </Routes>
   )
 }

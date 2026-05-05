@@ -9,13 +9,13 @@
 | PBI-011 / US-01 | Administratorsko kreiranje korisničkog računa poštara | [Kerim i Emrah] | 2h | Done | Forma za unos podataka, uloga "Poštar" |
 | PBI-011 / US-02 | Validacija unosa pri kreiranju računa | [Kerim i Emrah] | 2h | Done | Jedinstvenost emaila, jačina lozinke, indikator |
 | PBI-011 / US-03 | Feedback o statusu kreiranja računa | [Kerim i Emrah] | 1h | Done | Toast obavijesti, greške servera, zaštita od duplog slanja |
-| PBI-012 / US-04 | Osnovna prijava na sistem | [Nejla i Aldin] | 1h 30min | To Do | Login forma, sesija, redirect na dashboard, zaključavanje nakon 5 pokušaja |
-| PBI-012 / US-05 | Rukovanje neispravnim kredencijalima | [Nejla i Aldin] | 1h | To Do | Generička poruka greške, validacija emaila, 3s blokada |
-| PBI-012 / US-06 | Obavezna promjena lozinke pri prvoj prijavi | [Nejla i Aldin] | 1h 30min | To Do | Blokada navigacije, provjera da nova ≠ inicijalna |
-| PBI-013 / US-07 | Sigurna odjava iz sistema | [Rubina] | 1h 30min | To Do | Uništavanje sesije, brisanje cookieja, zaštita back dugmeta |
-| PBI-014 / US-08 | Definisanje sistemskih uloga | [Ibrahim i Faruk] | 1h 30min | To Do | Administrator / Poštar, Role ID u bazi, API level validation |
-| PBI-014 / US-09 | Personalizovani dashboard prema ulozi | [Ibrahim i Faruk] | 2h | To Do | Različit sidebar meni, personalizovana dobrodošlica |
-| PBI-014 / US-10 | Restrikcija neovlaštenog pristupa | [Ibrahim i Faruk] | 2h | To Do | Blokada URL-a, Security Log zapis, API provjera tokena |
+| PBI-012 / US-04 | Osnovna prijava na sistem | [Nejla i Aldin] | 1h 30min | Done | Login forma, sesija, redirect na dashboard, zaključavanje nakon 5 pokušaja |
+| PBI-012 / US-05 | Rukovanje neispravnim kredencijalima | [Nejla i Aldin] | 1h | Done | Generička poruka greške, validacija emaila, 3s blokada |
+| PBI-012 / US-06 | Obavezna promjena lozinke pri prvoj prijavi | [Nejla i Aldin] | 1h 30min | Done | Blokada navigacije, provjera da nova ≠ inicijalna |
+| PBI-013 / US-07 | Sigurna odjava iz sistema | [Rubina] | 1h 30min | Done | Uništavanje sesije, brisanje cookieja, zaštita back dugmeta |
+| PBI-014 / US-08 | Definisanje sistemskih uloga | [Ibrahim i Faruk] | 1h 30min | Done | Administrator / Poštar, Role ID u bazi, API level validation |
+| PBI-014 / US-09 | Personalizovani dashboard prema ulozi | [Ibrahim i Faruk] | 2h | Done | Različit sidebar meni, personalizovana dobrodošlica |
+| PBI-014 / US-10 | Restrikcija neovlaštenog pristupa | [Ibrahim i Faruk] | 2h | Done | Blokada URL-a, Security Log zapis, API provjera tokena |
 
 ---
 

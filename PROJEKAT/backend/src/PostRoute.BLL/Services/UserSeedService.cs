@@ -17,15 +17,15 @@ public sealed class UserSeedService : IUserSeedService
     {
         var defaultUsers = new[]
         {
-            new SeedUser("Admin", "User", "admin", "admin@posta.ba", "Admin123!", UserRole.Administrator),
-            new SeedUser("Postar", "Jedan", "postar1", "postar1@posta.ba", "Postar123!", UserRole.PostalWorker),
-            new SeedUser("Postar", "Dva", "postar2", "postar2@posta.ba", "Postar123!", UserRole.PostalWorker),
+            new SeedUser("Admin", "User", "admin", "admin@mail.com", "Admin123!", UserRole.Administrator),
+            new SeedUser("Postar", "User", "postar", "postar@mail.com", "Postar123!", UserRole.PostalWorker),
+            new SeedUser("Postar", "User", "postar1", "postar1@mail.com", "Postar123!", UserRole.PostalWorker)
         };
 
-        foreach (var seed in defaultUsers)
+        foreach (var seedUser in defaultUsers)
         {
-            if (await _userRepository.EmailExistsAsync(seed.Email, cancellationToken)
-                || await _userRepository.UsernameExistsAsync(seed.Username, cancellationToken))
+            if (await _userRepository.EmailExistsAsync(seedUser.Email, cancellationToken)
+                || await _userRepository.UsernameExistsAsync(seedUser.Username, cancellationToken))
             {
                 continue;
             }
@@ -33,16 +33,16 @@ public sealed class UserSeedService : IUserSeedService
             var user = new User
             {
                 Id = Guid.NewGuid(),
-                FirstName = seed.FirstName,
-                LastName = seed.LastName,
-                Username = seed.Username,
-                Email = seed.Email,
-                PasswordHash = BCrypt.Net.BCrypt.HashPassword(seed.Password),
-                Role = seed.Role,
+                FirstName = seedUser.FirstName,
+                LastName = seedUser.LastName,
+                Username = seedUser.Username,
+                Email = seedUser.Email,
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword(seedUser.Password),
+                Role = seedUser.Role,
                 MustChangePassword = false,
                 CreatedAt = DateTime.UtcNow,
                 FailedAttempts = 0,
-                IsLockedOut = false,
+                IsLockedOut = false
             };
 
             await _userRepository.AddAsync(user, cancellationToken);

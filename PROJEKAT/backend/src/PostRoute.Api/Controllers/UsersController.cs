@@ -58,12 +58,13 @@ public sealed class UsersController : ControllerBase
         }
 
         var response = new UserResponse(
-    user.Id,
-    user.Username,
-    user.Email,
-    user.Role,
-    user.MustChangePassword
-);
+            user.Id,
+            user.Username,
+            user.Email,
+            user.Role,
+            user.MustChangePassword,
+            user.IsLockedOut
+        );
         return Ok(response);
     }
 
@@ -86,12 +87,13 @@ public sealed class UsersController : ControllerBase
 
             var user = await _userService.CreateAsync(command, cancellationToken);
             var response = new UserResponse(
-    user.Id,
-    user.Username,
-    user.Email,
-    user.Role,
-    user.MustChangePassword
-);
+                user.Id,
+                user.Username,
+                user.Email,
+                user.Role,
+                user.MustChangePassword,
+                user.IsLockedOut
+            );
 
             return Created($"/api/users/{user.Id}", response);
         }
@@ -113,6 +115,7 @@ public sealed class UsersController : ControllerBase
             HttpContext.Session.SetString("UserRole", user.Role);
             HttpContext.Session.SetString("Username", user.Username);
             HttpContext.Session.SetString("Email", user.Email);
+            HttpContext.Session.SetString("MustChangePassword", user.MustChangePassword.ToString());
 
             await LogLoginAttemptAsync(user.Id, user.Role, "LoginSuccess", true, cancellationToken);
 
@@ -121,7 +124,8 @@ public sealed class UsersController : ControllerBase
                 user.Username,
                 user.Email,
                 user.Role,
-                user.MustChangePassword
+                user.MustChangePassword,
+                user.IsLockedOut
             );
             return Ok(response);
         }
@@ -163,6 +167,8 @@ public sealed class UsersController : ControllerBase
                 cancellationToken
             );
 
+            HttpContext.Session.SetString("MustChangePassword", "False");
+
             return Ok(new { message = "Password changed." });
         }
         catch (InvalidOperationException ex)
@@ -191,14 +197,25 @@ public sealed class UsersController : ControllerBase
             return Unauthorized(new { message = "Not logged in" });
         }
 
+        var mustChangePasswordStr = HttpContext.Session.GetString("MustChangePassword");
+        var mustChangePassword = bool.TryParse(mustChangePasswordStr, out var mcp) && mcp;
+
         var response = new UserResponse(
             Guid.Parse(userId),
             username ?? string.Empty,
             email ?? string.Empty,
             userRole,
+            mustChangePassword,
             false
         );
 
+        return Ok(response);
+    }
+    [RequiredRole("Administrator")]
+    public async Task<ActionResult<IEnumerable<UserResponse>>> GetAllAsync(CancellationToken cancellationToken)
+    {
+        var users = await _userService.GetAllAsync(cancellationToken);
+        var response = users.Select(u => new UserResponse(u.Id, u.Username, u.Email, u.Role, u.MustChangePassword, u.IsLockedOut));
         return Ok(response);
     }
 }

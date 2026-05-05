@@ -19,3 +19,16 @@ export interface UserDto {
 export function createUser(data: CreateUserDto): Promise<ApiResponse<UserDto>> {
   return httpClient<UserDto>("/api/users", { method: "POST", body: data })
 }
+
+export interface UserListDto {
+  id: string
+  username: string
+  email: string
+  role: string
+  mustChangePassword: boolean
+  isLockedOut: boolean
+}
+
+export function getUsers(): Promise<ApiResponse<UserListDto[]>> {
+  return httpClient<UserListDto[]>("/api/users", { method: "GET" })
+}

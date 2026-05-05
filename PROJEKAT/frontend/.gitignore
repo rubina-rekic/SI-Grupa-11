@@ -20,6 +20,9 @@ dist-ssr
 # Test coverage
 coverage/
 
+# Netlify local config
+.netlify/
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

@@ -5,4 +5,5 @@ public sealed record UserModel(
     string Username,
     string Email,
     string Role,
-    bool MustChangePassword );
+    bool MustChangePassword,
+    bool IsLockedOut );
