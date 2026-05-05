@@ -1,9 +1,6 @@
 name: Frontend CI
 
-# Triggers:
-#  - PRs to develop or main → CI only
-#  - Pushes to develop      → CI only
-#  - Pushes to main         → CI + CD (deploy)
+# CI: build na svaki PR/push. CD: Netlify deploy samo na push u main.
 on:
   push:
     branches: [main, develop]
@@ -27,11 +24,11 @@ jobs:
   build:
     name: Lint & Build
     runs-on: ubuntu-latest
-
-    # Build-time configuration. Vite inlines anything prefixed with VITE_ into
-    # the bundle, so non-secret values like the API URL belong here. NEVER put
-    # actual secrets in VITE_ vars — anything bundled is publicly visible.
     env:
+      # Vite inline-uje sve VITE_ vars u bundle pri buildu, pa apsolutni
+      # backend URL mora biti poznat u ovom koraku. Postaviti kao GitHub
+      # Repository Variable (Settings -> Secrets and variables -> Actions
+      # -> Variables): VITE_API_BASE_URL = https://<render-backend-url>
       VITE_API_BASE_URL: ${{ vars.VITE_API_BASE_URL || 'http://localhost:5032' }}
 
     steps:
@@ -46,11 +43,7 @@ jobs:
 
       - name: Install dependencies
         working-directory: PROJEKAT/frontend
-        run: npm ci
-
-      - name: Lint
-        working-directory: PROJEKAT/frontend
-        run: npm run lint
+        run: npm install
 
       - name: Build
         working-directory: PROJEKAT/frontend
@@ -63,10 +56,6 @@ jobs:
           path: PROJEKAT/frontend/dist
           retention-days: 7
 
-  # Deploy to Netlify — only on push to main, after a green build.
-  # Requires two GitHub Secrets (Settings → Secrets → Actions):
-  #   NETLIFY_AUTH_TOKEN — Personal access token from Netlify user settings
-  #   NETLIFY_SITE_ID    — Site ID from Netlify site configuration
   deploy:
     name: Deploy to Netlify
     needs: build

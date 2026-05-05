@@ -28,7 +28,7 @@ export default function DashboardPage() {
       <div className="dashboard-card">
         <h3>👥 Upravljanje korisnicima</h3>
         <p>Kreirajte i upravljajte korisničkim računima poštara</p>
-        <button className="btn-primary" onClick={() => navigate("/admin/users/new")}>Upravljanje korisnicima</button>
+        <button className="btn-primary" onClick={() => navigate("/admin/users")}>Upravljanje korisnicima</button>
       </div>
 
       <div className="dashboard-card">
@@ -81,13 +81,13 @@ export default function DashboardPage() {
             Dobrodošli, {currentUser.username} ({currentUser.role === "Administrator" ? "Administrator" : "Poštar"})
           </h1>
           <p className="dashboard-subtitle">
-            {currentUser.role === "Administrator" 
-              ? "Upravljajte PostRoute sistemom" 
+            {currentUser.role === "Administrator"
+              ? "Upravljajte PostRoute sistemom"
               : "Upravljajte vašom dostavnom rutom"
             }
           </p>
         </div>
-        
+
         {currentUser.role === "Administrator" ? renderAdminDashboard() : renderPostalWorkerDashboard()}
       </div>
     </Layout>

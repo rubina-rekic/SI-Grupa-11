@@ -5,4 +5,5 @@ public sealed record UserResponse(
     string Username,
     string Email,
     string Role,
-    bool MustChangePassword );
+    bool MustChangePassword,
+    bool IsLockedOut);

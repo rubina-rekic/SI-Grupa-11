@@ -25,7 +25,7 @@ public sealed class UserService : IUserService
             return null;
         }
 
-        return new UserModel(user.Id, user.Username, user.Email, user.Role, user.MustChangePassword);
+        return new UserModel(user.Id, user.Username, user.Email, user.Role, user.MustChangePassword, user.IsLockedOut);
     }
 
     public async Task<UserModel> CreateAsync(CreateUserCommand command, CancellationToken cancellationToken)
@@ -54,7 +54,7 @@ public sealed class UserService : IUserService
 
         await _userRepository.AddAsync(user, cancellationToken);
 
-        return new UserModel(user.Id, user.Username, user.Email, user.Role, user.MustChangePassword);
+        return new UserModel(user.Id, user.Username, user.Email, user.Role, user.MustChangePassword, user.IsLockedOut);
     }
 
     public async Task<UserModel> LoginAsync(string email, string password, CancellationToken cancellationToken)
@@ -85,7 +85,7 @@ public sealed class UserService : IUserService
         user.FailedAttempts = 0;
         await _userRepository.UpdateAsync(user, cancellationToken);
 
-        return new UserModel(user.Id, user.Username, user.Email, user.Role, user.MustChangePassword);
+        return new UserModel(user.Id, user.Username, user.Email, user.Role, user.MustChangePassword, user.IsLockedOut);
     }
 
     public async Task ChangePasswordAsync(
@@ -110,6 +110,12 @@ public sealed class UserService : IUserService
 
         await _userRepository.UpdateAsync(user, cancellationToken);
     }
+
+    public async Task<IEnumerable<UserModel>> GetAllAsync(CancellationToken cancellationToken)
+{
+    var users = await _userRepository.GetAllAsync(cancellationToken);
+    return users.Select(u => new UserModel(u.Id, u.Username, u.Email, u.Role, u.MustChangePassword, u.IsLockedOut));
+}
 }
 
 
