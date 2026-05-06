@@ -1,13 +1,14 @@
-import { render, screen, fireEvent, waitFor } from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { BrowserRouter } from 'react-router-dom'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { Toaster } from 'sonner'
-import { CreateMailboxPage } from '../CreateMailboxPage'
-import { MailboxType } from '../../../infrastructure/api/mailboxes/mailboxesApi'
+import CreateMailboxPage from '../CreateMailboxPage'
+import { MailboxType } from '../../../../infrastructure/api/mailboxes/mailboxesApi'
+import '@testing-library/jest-dom'
 
 // Mock the API
-jest.mock('../../../infrastructure/api/mailboxes/mailboxesApi', () => ({
+jest.mock('../../../../infrastructure/api/mailboxes/mailboxesApi', () => ({
   createMailbox: jest.fn(),
   checkSerialNumberExists: jest.fn(),
   getAllMailboxes: jest.fn(),
@@ -78,7 +79,7 @@ jest.mock('sonner', () => ({
   Toaster: () => <div data-testid="toaster" />
 }))
 
-import { createMailbox, checkSerialNumberExists } from '../../../infrastructure/api/mailboxes/mailboxesApi'
+import { createMailbox, checkSerialNumberExists } from '../../../../infrastructure/api/mailboxes/mailboxesApi'
 
 const createTestQueryClient = () => new QueryClient({
   defaultOptions: {
