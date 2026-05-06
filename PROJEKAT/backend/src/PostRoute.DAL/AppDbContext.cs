@@ -9,6 +9,7 @@ public sealed class AppDbContext : DbContext
 
     public DbSet<User> Users => Set<User>();
     public DbSet<SecurityLog> SecurityLogs => Set<SecurityLog>();
+    public DbSet<Mailbox> Mailboxes => Set<Mailbox>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -32,6 +33,17 @@ public sealed class AppDbContext : DbContext
             entity.Property(s => s.AccessType).IsRequired().HasMaxLength(50);
             entity.Property(s => s.IpAddress).HasMaxLength(45);
             entity.Property(s => s.UserAgent).HasMaxLength(500);
+        });
+
+        modelBuilder.Entity<Mailbox>(entity =>
+        {
+            entity.HasKey(m => m.Id);
+            entity.HasIndex(m => m.SerialNumber).IsUnique();
+            entity.Property(m => m.SerialNumber).IsRequired().HasMaxLength(50);
+            entity.Property(m => m.Address).IsRequired().HasMaxLength(200);
+            entity.Property(m => m.Capacity).IsRequired();
+            entity.Property(m => m.InstallationYear).IsRequired();
+            entity.Property(m => m.Notes).HasMaxLength(500);
         });
     }
 }
