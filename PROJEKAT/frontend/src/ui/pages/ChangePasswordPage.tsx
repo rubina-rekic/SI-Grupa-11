@@ -1,0 +1,157 @@
+import '../../styles/global.css';
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../application/hooks/useAuth';
+import { httpClient } from '../../infrastructure/api/httpClient';
+
+export default function ChangePasswordPage() {
+    const { currentUser } = useAuth();
+    const navigate = useNavigate();
+    const [currentPassword, setCurrentPassword] = useState('');
+    const [newPassword, setNewPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
+    const [error, setError] = useState('');
+    const [success, setSuccess] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
+
+    const validatePassword = (password: string) => {
+        const hasMinLength = password.length >= 8;
+        const hasNumber = /\d/.test(password);
+        const hasSymbol = /[^A-Za-z0-9]/.test(password);
+
+        return hasMinLength && hasNumber && hasSymbol;
+    };
+
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+
+        setError('');
+        setSuccess('');
+
+        if (!currentPassword || !newPassword || !confirmPassword) {
+            setError('Sva polja su obavezna.');
+            return;
+        }
+
+        if (newPassword !== confirmPassword) {
+            setError('Lozinke se ne podudaraju.');
+            return;
+        }
+
+        if (newPassword === currentPassword) {
+            setError('Nova lozinka mora biti različita od trenutne lozinke.');
+            return;
+        }
+
+        if (!validatePassword(newPassword)) {
+            setError(
+                'Lozinka mora imati najmanje 8 karaktera, broj i simbol.'
+            );
+            return;
+        }
+
+        if (!currentUser?.email) {
+            setError('Sesija nije pronađena. Prijavite se ponovo.');
+            navigate('/login', { replace: true });
+            return;
+        }
+
+        setIsLoading(true);
+
+        try {
+            const response = await httpClient('/api/users/change-password', {
+                method: 'POST',
+                body: {
+                    email: currentUser.email,
+                    currentPassword,
+                    newPassword,
+                },
+            });
+
+            if (response.error) {
+                setError(response.error);
+                return;
+            }
+
+            setSuccess('Lozinka uspješno promijenjena. Dobrodošli!');
+
+            setTimeout(() => {
+                navigate('/dashboard', { replace: true });
+            }, 1500);
+        } catch {
+            setError('Greška pri promjeni lozinke.');
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    return (
+        <div className="page-container">
+            <div className="form-card">
+                <div className="form-card__header">
+                    <h1 className="form-card__title">Promjena lozinke</h1>
+                </div>
+
+                <form className="form-card__body" onSubmit={handleSubmit} noValidate>
+                    {error && <p className="form-field__error">{error}</p>}
+                    {success && <p className="form-success">{success}</p>}
+
+                    <div className="form-field">
+                        <label className="form-field__label" htmlFor="currentPassword">
+                            Trenutna lozinka
+                        </label>
+
+                        <input
+                            id="currentPassword"
+                            type="password"
+                            className="form-field__input"
+                            value={currentPassword}
+                            onChange={(e) => setCurrentPassword(e.target.value)}
+                            autoComplete="current-password"
+                        />
+                    </div>
+
+                    <div className="form-field">
+                        <label className="form-field__label" htmlFor="newPassword">
+                            Nova lozinka
+                        </label>
+
+                        <input
+                            id="newPassword"
+                            type="password"
+                            className="form-field__input"
+                            value={newPassword}
+                            onChange={(e) => setNewPassword(e.target.value)}
+                            autoComplete="new-password"
+                        />
+                    </div>
+
+                    <div className="form-field">
+                        <label className="form-field__label" htmlFor="confirmPassword">
+                            Potvrdi lozinku
+                        </label>
+
+                        <input
+                            id="confirmPassword"
+                            type="password"
+                            className="form-field__input"
+                            value={confirmPassword}
+                            onChange={(e) => setConfirmPassword(e.target.value)}
+                            autoComplete="new-password"
+                        />
+                    </div>
+
+                    <div className="form-actions">
+                        <button
+                            type="submit"
+                            className="btn btn--primary"
+                            disabled={isLoading}
+                        >
+                            {isLoading ? 'Spašavanje...' : 'Spasi'}
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    );
+}

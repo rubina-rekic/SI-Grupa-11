@@ -1,0 +1,314 @@
+:root {
+  font-family: "Segoe UI", "Inter", "Trebuchet MS", sans-serif;
+  color: #1e2d3d;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: #f0f4f8;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+/* ── Standalone page (login, change-password) ── */
+.page-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1rem;
+  background: linear-gradient(150deg, #dce8f5 0%, #eef4f9 50%, #d8e7f4 100%);
+}
+
+/* Inside sidebar layout — centrirano bez full-height */
+.content-area .page-container {
+  min-height: unset;
+  background: none;
+  padding: 0;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+}
+
+/* ── Form card ── */
+.form-card {
+  width: 100%;
+  max-width: 520px;
+  background: #ffffff;
+  border: 1px solid #dce6f0;
+  border-radius: 16px;
+  box-shadow: 0 6px 28px rgba(27, 58, 92, 0.1);
+  overflow: hidden;
+}
+
+.form-card__header {
+  padding: 26px 28px 20px;
+  background: linear-gradient(135deg, #1b3a5c 0%, #2563a8 100%);
+}
+
+.form-card__title {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.form-card__subtitle {
+  margin: 6px 0 0;
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.78);
+  line-height: 1.5;
+}
+
+.form-card__body {
+  padding: 24px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.form-card__footer {
+  padding: 16px 28px;
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  background: #f8fafc;
+  border-top: 1px solid #e2e8f0;
+}
+
+/* ── Form fields ── */
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.form-field__label {
+  font-size: 0.845rem;
+  font-weight: 600;
+  color: #334155;
+}
+
+.form-field__input {
+  padding: 9px 12px;
+  border: 1.5px solid #ccd9e6;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-family: inherit;
+  color: #1e2d3d;
+  background: #f8fafc;
+  transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
+  outline: none;
+}
+
+.form-field__input:focus {
+  border-color: #2563a8;
+  background: #ffffff;
+  box-shadow: 0 0 0 3px rgba(37, 99, 168, 0.1);
+}
+
+.form-field__input::placeholder {
+  color: #9fb3c8;
+}
+
+.form-field__input--error {
+  border-color: #dc2626;
+  background: #fef2f2;
+}
+
+.form-field__input--error:focus {
+  border-color: #dc2626;
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+}
+
+.form-field__error {
+  font-size: 0.79rem;
+  color: #dc2626;
+  margin: 0;
+}
+
+.form-success {
+  font-size: 0.875rem;
+  color: #15803d;
+  font-weight: 600;
+  margin: 0;
+  padding: 10px 12px;
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  border-radius: 8px;
+}
+
+/* ── Buttons ── */
+.form-actions {
+  margin-top: 4px;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  transition: background 0.15s, box-shadow 0.15s, transform 0.1s;
+}
+
+.btn--primary {
+  background: #1b3a5c;
+  color: #ffffff;
+  width: 100%;
+  box-shadow: 0 2px 8px rgba(27, 58, 92, 0.2);
+}
+
+.btn--primary:hover:not(:disabled) {
+  background: #0f2540;
+  box-shadow: 0 4px 14px rgba(27, 58, 92, 0.28);
+}
+
+.btn--primary:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+.btn--primary:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* ── Password strength ── */
+.password-strength {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.password-strength__bars {
+  display: flex;
+  gap: 4px;
+  flex: 1;
+}
+
+.password-strength__bar {
+  height: 4px;
+  flex: 1;
+  border-radius: 2px;
+  background: #e2e8f0;
+  transition: background 0.2s;
+}
+
+.password-strength__bar--weak   { background: #ef4444; }
+.password-strength__bar--fair   { background: #f97316; }
+.password-strength__bar--good   { background: #84cc16; }
+.password-strength__bar--strong { background: #16a34a; }
+
+.password-strength__label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  min-width: 3.5rem;
+  text-align: right;
+}
+
+.password-strength__label--weak   { color: #ef4444; }
+.password-strength__label--fair   { color: #f97316; }
+.password-strength__label--good   { color: #65a30d; }
+.password-strength__label--strong { color: #16a34a; }
+
+/* ── Legacy ── */
+.input-error {
+  border-color: #dc2626 !important;
+  background: #fef2f2 !important;
+}
+
+.input-error:focus {
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1) !important;
+}
+
+/* ── App shell (structure overview page) ── */
+.app-shell {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.app-shell__header {
+  background: #ffffff;
+  border: 1px solid #d6e2ee;
+  border-radius: 14px;
+  padding: 1rem 1.25rem;
+}
+
+.app-shell__title  { margin: 0; font-size: 1.1rem; font-weight: 700; }
+.app-shell__status { margin: 0.4rem 0 0; color: #1b3a5c; font-weight: 600; }
+.app-shell__timestamp { margin: 0.3rem 0 0; color: #4f657a; font-size: 0.9rem; }
+
+.overview {
+  background: #ffffff;
+  border: 1px solid #d6e2ee;
+  border-radius: 14px;
+  padding: 1.25rem;
+}
+
+.overview__title    { margin: 0; font-size: 1.5rem; }
+.overview__subtitle { margin: 0.75rem 0 0; color: #3f556d; }
+.overview__meta     { margin: 0.75rem 0 0; color: #4f657a; font-size: 0.95rem; }
+
+.overview__grid {
+  margin-top: 1rem;
+  display: grid;
+  gap: 0.85rem;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.overview__card {
+  background: #f4f8fb;
+  border: 1px solid #d7e4ef;
+  border-radius: 10px;
+  padding: 0.85rem;
+}
+
+.overview__card p { margin: 0.65rem 0 0; color: #374d63; }
+
+.layer-tag {
+  display: inline-block;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: #0f3152;
+  background: #dbe9f6;
+  border-radius: 999px;
+  padding: 0.28rem 0.62rem;
+}
+
+@media (max-width: 560px) {
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .form-card__header,
+  .form-card__body {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+}
