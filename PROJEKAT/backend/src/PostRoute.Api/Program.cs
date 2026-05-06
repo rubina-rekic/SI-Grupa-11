@@ -35,7 +35,7 @@ builder.Services.AddSession(options =>
 var allowedOrigins = builder.Configuration
     .GetSection("Cors:AllowedOrigins")
     .Get<string[]>()
-    ?? ["http://localhost:5173", "http://localhost:5174"];
+    ?? ["http://localhost:5173", "http://localhost:5174", "http://localhost:5175"];
 
 builder.Services.AddCors(options =>
 {

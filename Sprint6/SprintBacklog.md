@@ -9,7 +9,7 @@
 | PBI-015 / US-12 | Validacija duplog ID broja | Emrah | 1h | Done | Provjera jedinstvenosti ID-a, poruka s imenom postojećeg poštara, blokada dugmeta |
 | PBI-016 / US-13 | Tabelarni pregled poštara | Rubina | 2h 30min | Done | Prikaz svih poštara u sistemu i status njihove aktivnosti |
 | PBI-017 / US-14 | Unos lokacije sandučića putem koordinata | Nejla | 3h | Done | Forma s koordinatama, validacija raspona, mini-mapa s pinom, dugme Odaberi na mapi |
-| PBI-017 / US-15 | Unos tipa i osnovnih podataka sandučića | Aldin | 2h | To Do | Dropdown tip, serijski broj, kapacitet, godina instalacije, jedinstvenost serijskog broja |
+| PBI-017 / US-15 | Unos tipa i osnovnih podataka sandučića | Aldin | 2h | Done | Dropdown tip, serijski broj, kapacitet, godina instalacije, jedinstvenost serijskog broja, Google Maps integracija, ujednačen dizajn |
 | PBI-018 / US-16 | Ažuriranje podataka o sandučiću | Ibrahim | 2h | To Do | Forma prepopulirana postojećim podacima, iste validacije kao pri kreiranju, Audit Log |
 | PBI-019 / US-17 | Pregled liste sandučića | Faruk | 2h 30min | To Do | Tabela s kolonama, straničenje 25/str, filteri, sortiranje po prioritetu, prazna lista poruka |
 

@@ -22,7 +22,7 @@ Pokreće PostgreSQL 16 na portu **5433**. Podaci se čuvaju u Docker volumenu iz
 ### 2. Backend migracija
 
 ```bash
-cd backend
+cd PROJEKAT/backend
 dotnet ef database update --project src/PostRoute.DAL --startup-project src/PostRoute.Api
 ```
 
@@ -31,7 +31,7 @@ dotnet ef database update --project src/PostRoute.DAL --startup-project src/Post
 ### 3. Pokretanje backenda
 
 ```bash
-cd backend
+cd PROJEKAT/backend
 dotnet run --project src/PostRoute.Api
 ```
 
@@ -40,7 +40,7 @@ Swagger dostupan na: `http://localhost:5000/swagger`
 ### 4. Pokretanje frontenda
 
 ```bash
-cd frontend
+cd PROJEKAT/frontend
 npm ci
 npm run dev
 ```

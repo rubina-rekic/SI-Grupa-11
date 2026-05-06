@@ -42,9 +42,21 @@ export const mailboxTypeLabels = {
 }
 
 export async function createMailbox(request: CreateMailboxRequest): Promise<MailboxResponse> {
-    const response = await httpClient("/mailboxes", {
+    // Konvertujemo podatke u format koji backend očekuje
+    const backendRequest = {
+        serialNumber: request.serialNumber,
+        address: request.address,
+        latitude: parseFloat(request.latitude.toFixed(6)),
+        longitude: parseFloat(request.longitude.toFixed(6)),
+        type: request.type,
+        capacity: request.capacity,
+        installationYear: request.installationYear,
+        notes: request.notes
+    }
+    
+    const response = await httpClient("/api/mailboxes", {
         method: "POST",
-        body: request
+        body: backendRequest
     })
     if (response.error || !response.data) {
         throw new Error(response.error || "Greška pri kreiranju sandučića")
@@ -53,7 +65,7 @@ export async function createMailbox(request: CreateMailboxRequest): Promise<Mail
 }
 
 export async function checkSerialNumberExists(serialNumber: string): Promise<boolean> {
-    const response = await httpClient(`/mailboxes/check-serial-number/${encodeURIComponent(serialNumber)}`)
+    const response = await httpClient(`/api/mailboxes/check-serial-number/${encodeURIComponent(serialNumber)}`)
     if (response.error || response.data === null) {
         throw new Error(response.error || "Greška pri provjeri serijskog broja")
     }
@@ -61,7 +73,7 @@ export async function checkSerialNumberExists(serialNumber: string): Promise<boo
 }
 
 export async function getAllMailboxes(): Promise<MailboxResponse[]> {
-    const response = await httpClient("/mailboxes")
+    const response = await httpClient("/api/mailboxes")
     if (response.error || !response.data) {
         throw new Error(response.error || "Greška pri učitavanju sandučića")
     }

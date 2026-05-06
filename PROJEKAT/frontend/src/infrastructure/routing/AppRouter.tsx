@@ -1,12 +1,13 @@
 ﻿import { Navigate, Route, Routes, useLocation } from "react-router-dom"
 import { CreatePostalWorkerPage } from "../../ui/pages/admin/CreatePostalWorkerPage"
-import { CreateMailboxPage } from "../../ui/pages/admin/CreateMailboxPage"
+import CreateMailboxPage from "../../ui/pages/admin/CreateMailboxPage"
 import LoginPage from "../../ui/pages/LoginPage"
 import DashboardPage from "../../ui/pages/DashboardPage"
 import ChangePasswordPage from "../../ui/pages/ChangePasswordPage"
 import { useAuth } from "../../application/hooks/useAuth"
 import { Layout } from "../../ui/components/Layout/Layout"
 import PostalWorkersListPage from "../../ui/pages/admin/PostalWorkersListPage"
+import MailboxListPage from "../../ui/pages/admin/MailboxListPage"
 
 function PrivateRoute({ children, requiredRole }: { children: React.ReactNode; requiredRole?: string }) {
   const { currentUser, loading } = useAuth()
@@ -61,14 +62,7 @@ export function AppRouter() {
         path="/admin/mailboxes"
         element={
           <PrivateRoute requiredRole="Administrator">
-            <Layout>
-              <div className="page-container">
-                <div className="form-card">
-                  <h1>Pregled sandučića</h1>
-                  <p>Admin funkcionalnost za pregled sandučića</p>
-                </div>
-              </div>
-            </Layout>
+            <MailboxListPage />
           </PrivateRoute>
         }
       />
