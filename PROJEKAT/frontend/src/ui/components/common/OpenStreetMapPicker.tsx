@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react"
 import { MapContainer as LeafletMap, Marker, TileLayer, useMapEvents } from "react-leaflet"
 import "leaflet/dist/leaflet.css"
-import L from "leaflet"
+import L, { type LeafletEvent, type LeafletMouseEvent } from "leaflet"
 
 // Fix for default marker icon
-delete (L.Icon.Default.prototype as any)._getIconUrl
+delete (L.Icon.Default.prototype as L.Icon.Default & { _getIconUrl?: unknown })._getIconUrl
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
   iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
@@ -24,7 +24,7 @@ interface OpenStreetMapPickerProps {
 
 function MapEvents({ onLocationSelect }: { onLocationSelect: (lat: number, lng: number) => void }) {
   useMapEvents({
-    click: (e: any) => {
+    click: (e: LeafletMouseEvent) => {
       const { lat, lng } = e.latlng
       onLocationSelect(lat, lng)
     },
@@ -54,8 +54,9 @@ export default function OpenStreetMapPicker({
     onLocationSelect(lat, lng)
   }
 
-  const handleMarkerDrag = (e: any) => {
-    const { lat, lng } = e.target.getLatLng()
+  const handleMarkerDrag = (e: LeafletEvent) => {
+    const marker = e.target as L.Marker
+    const { lat, lng } = marker.getLatLng()
     setPosition([lat, lng])
     onLocationSelect(lat, lng)
   }

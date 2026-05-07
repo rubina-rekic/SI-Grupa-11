@@ -41,3 +41,6 @@ jobs:
 
       - name: Build
         run: dotnet build PROJEKAT/backend/PostRoute.sln --configuration Release --no-restore
+
+      - name: Test
+        run: dotnet test PROJEKAT/backend/PostRoute.sln --configuration Release --no-build --verbosity normal
