@@ -5,6 +5,7 @@ using PostRoute.Api.Middleware;
 using PostRoute.BLL.Commands;
 using PostRoute.BLL.Services;
 using PostRoute.DAL.Entities;
+using System.Security.Claims;
 
 namespace PostRoute.Api.Controllers;
 
@@ -60,6 +61,66 @@ public sealed class MailboxesController : ControllerBase
         }
 
         return Ok(MapToResponse(mailbox));
+    }
+
+    [HttpPut("{id:guid}")]
+    [RequiredRole("Administrator")]
+    public async Task<ActionResult<MailboxResponse>> UpdateAsync(
+        Guid id,
+        [FromBody] UpdateMailboxRequest request,
+        CancellationToken cancellationToken)
+    {
+        try
+        {
+            // Log authentication details
+            Console.WriteLine($"=== UPDATE MAILBOX AUTH DEBUG ===");
+            Console.WriteLine($"User.Identity.IsAuthenticated: {User.Identity?.IsAuthenticated}");
+            Console.WriteLine($"User.Identity.Name: {User.Identity?.Name}");
+            Console.WriteLine($"User.Claims count: {User.Claims?.Count()}");
+            
+            if (User.Claims != null)
+            {
+                foreach (var claim in User.Claims)
+                {
+                    Console.WriteLine($"Claim: {claim.Type} = {claim.Value}");
+                }
+            }
+            
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            Console.WriteLine($"Extracted UserId: {userId}");
+            
+            if (string.IsNullOrEmpty(userId) || !Guid.TryParse(userId, out var userGuid))
+            {
+                Console.WriteLine("User ID not found or invalid - returning 401");
+                return Unauthorized("User ID not found or invalid");
+            }
+
+            var command = new UpdateMailboxCommand(
+                id,
+                request.SerialNumber,
+                request.Address,
+                request.Latitude,
+                request.Longitude,
+                request.Type,
+                request.Priority,
+                request.Capacity,
+                request.InstallationYear,
+                request.Notes,
+                userGuid
+            );
+
+            var mailbox = await _mailboxService.UpdateAsync(command, cancellationToken);
+
+            return Ok(MapToResponse(mailbox));
+        }
+        catch (InvalidOperationException ex)
+        {
+            if (ex.Message.Contains("nije pronađen"))
+            {
+                return NotFound();
+            }
+            return Conflict(new { message = ex.Message });
+        }
     }
 
     [HttpGet]
