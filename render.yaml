@@ -1,8 +1,3 @@
-<<<<<<< HEAD
-# Render deklarativna konfiguracija — backend deploy iz main grane.
-# Tajne (Neon connection string, Cors origins) se postavljaju kroz Render
-# dashboard (Settings -> Environment), NE u ovom fajlu.
-=======
 # Render deklarativna konfiguracija — automatski deploy backend-a iz ove grane.
 # Render automatski pull-uje na svaki push u branch koji je niže naveden.
 #
@@ -11,7 +6,6 @@
 #
 # Da Render prati ovaj fajl: u dashboardu otvori projekat, postavi
 # "Auto-Deploy: yes" i grana = main.
->>>>>>> origin/develop
 
 services:
   - type: web
@@ -27,13 +21,7 @@ services:
     envVars:
       - key: ASPNETCORE_ENVIRONMENT
         value: Production
-<<<<<<< HEAD
       # Postaviti rucno u Render dashboardu:
       #   ConnectionStrings__DefaultConnection  - Neon connection string
       #   Cors__AllowedOrigins__0               - Netlify URL
       #   Seeding__Enabled                      - true (prvi deploy), pa false
-=======
-      # ConnectionStrings__DefaultConnection — set manually in Render dashboard
-      # Cors__AllowedOrigins__0  — set manually (Netlify URL)
-      # Seeding__Enabled         — set to "true" on first deploy, "false" after
->>>>>>> origin/develop
