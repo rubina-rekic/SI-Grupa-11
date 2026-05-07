@@ -16,6 +16,7 @@ public interface IMailboxRepository
         bool sortByPriority,
         CancellationToken cancellationToken);
     Task<bool> SerialNumberExistsAsync(string serialNumber, CancellationToken cancellationToken);
+    Task<bool> SerialNumberExistsAsync(string serialNumber, Guid? excludeId, CancellationToken cancellationToken);
     Task<Mailbox> AddAsync(Mailbox mailbox, CancellationToken cancellationToken);
     Task<Mailbox> UpdateAsync(Mailbox mailbox, CancellationToken cancellationToken);
     Task DeleteAsync(Guid id, CancellationToken cancellationToken);

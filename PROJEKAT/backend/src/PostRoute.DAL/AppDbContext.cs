@@ -10,6 +10,7 @@ public sealed class AppDbContext : DbContext
     public DbSet<User> Users => Set<User>();
     public DbSet<SecurityLog> SecurityLogs => Set<SecurityLog>();
     public DbSet<Mailbox> Mailboxes => Set<Mailbox>();
+    public DbSet<MailboxAuditLog> MailboxAuditLogs => Set<MailboxAuditLog>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -44,6 +45,21 @@ public sealed class AppDbContext : DbContext
             entity.Property(m => m.Capacity).IsRequired();
             entity.Property(m => m.InstallationYear).IsRequired();
             entity.Property(m => m.Notes).HasMaxLength(500);
+        });
+
+        modelBuilder.Entity<MailboxAuditLog>(entity =>
+        {
+            entity.HasKey(m => m.Id);
+            entity.Property(m => m.FieldName).IsRequired().HasMaxLength(50);
+            entity.Property(m => m.Action).IsRequired().HasMaxLength(20);
+            entity.HasOne(m => m.Mailbox)
+                .WithMany()
+                .HasForeignKey(m => m.MailboxId)
+                .OnDelete(DeleteBehavior.Cascade);
+            entity.HasOne(m => m.User)
+                .WithMany()
+                .HasForeignKey(m => m.UserId)
+                .OnDelete(DeleteBehavior.Restrict);
         });
     }
 }

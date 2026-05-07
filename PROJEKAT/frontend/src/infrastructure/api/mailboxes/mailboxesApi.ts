@@ -1,6 +1,19 @@
 import { httpClient } from "../httpClient"
+import { getApiBaseUrl } from "../../config/environment"
 
 export interface CreateMailboxRequest {
+    serialNumber: string
+    address: string
+    latitude: number
+    longitude: number
+    type: MailboxType
+    capacity: number
+    installationYear: number
+    notes?: string
+    priority?: MailboxPriority
+}
+
+export interface UpdateMailboxRequest {
     serialNumber: string
     address: string
     latitude: number
@@ -129,4 +142,48 @@ export async function getAllMailboxes(query: MailboxListQuery = {}): Promise<Pag
         throw new Error(response.error || "Greška pri učitavanju sandučića")
     }
     return response.data as PagedResponse<MailboxResponse>
+}
+
+export async function getMailboxById(id: string): Promise<MailboxResponse> {
+    const response = await httpClient(`/api/mailboxes/${id}`)
+    if (response.error || !response.data) {
+        throw new Error(response.error || "Greška pri učitavanju sandučića")
+    }
+    return response.data as MailboxResponse
+}
+
+export async function updateMailbox(id: string, request: UpdateMailboxRequest): Promise<MailboxResponse> {
+    console.log("=== UPDATE MAILBOX FRONTEND DEBUG ===");
+    console.log("Updating mailbox ID:", id);
+    console.log("Request data:", request);
+    console.log("API Base URL:", getApiBaseUrl());
+    
+    const backendRequest = {
+        serialNumber: request.serialNumber,
+        address: request.address,
+        latitude: parseFloat(request.latitude.toFixed(6)),
+        longitude: parseFloat(request.longitude.toFixed(6)),
+        type: request.type,
+        priority: request.priority ?? MailboxPriority.Srednji,
+        capacity: request.capacity,
+        installationYear: request.installationYear,
+        notes: request.notes
+    }
+
+    console.log("Backend request:", backendRequest);
+
+    const response = await httpClient(`/api/mailboxes/${id}`, {
+        method: "PUT",
+        body: backendRequest
+    })
+    
+    console.log("HTTP Response:", response);
+    console.log("Response status:", response.status);
+    console.log("Response error:", response.error);
+    
+    if (response.error || !response.data) {
+        console.error("Update failed:", response.error);
+        throw new Error(response.error || "Greška pri ažuriranju sandučića")
+    }
+    return response.data as MailboxResponse
 }

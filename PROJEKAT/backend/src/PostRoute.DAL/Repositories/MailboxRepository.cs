@@ -74,6 +74,15 @@ public class MailboxRepository : IMailboxRepository
             .AnyAsync(m => m.SerialNumber == serialNumber, cancellationToken);
     }
 
+    public async Task<bool> SerialNumberExistsAsync(string serialNumber, Guid? excludeId, CancellationToken cancellationToken)
+    {
+        if (excludeId == null)
+            return await SerialNumberExistsAsync(serialNumber, cancellationToken);
+
+        return await _context.Mailboxes
+            .AnyAsync(m => m.SerialNumber == serialNumber && m.Id != excludeId.Value, cancellationToken);
+    }
+
     public async Task<Mailbox> AddAsync(Mailbox mailbox, CancellationToken cancellationToken)
     {
         mailbox.CreatedAt = DateTime.UtcNow;

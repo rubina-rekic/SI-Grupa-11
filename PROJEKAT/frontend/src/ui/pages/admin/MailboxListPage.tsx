@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, useMemo } from "react"
 import { MapContainer, Marker, TileLayer } from "react-leaflet"
+import { useNavigate } from "react-router-dom"
 import "leaflet/dist/leaflet.css"
 import { toast } from "sonner"
 import {
@@ -19,6 +20,7 @@ import OpenStreetMapPicker from "../../components/common/OpenStreetMapPicker"
 const PAGE_SIZE = 25
 
 export default function MailboxListPage() {
+    const navigate = useNavigate()
     const [mailboxes, setMailboxes] = useState<MailboxResponse[]>([])
     const [loading, setLoading] = useState(true)
 
@@ -121,9 +123,13 @@ export default function MailboxListPage() {
 
                         <div style={{
                             display: "grid",
-                            gridTemplateColumns: "1fr 1fr 2fr",
-                            gap: "12px",
-                            marginBottom: "16px"
+                            gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))",
+                            gap: "16px",
+                            marginBottom: "24px",
+                            padding: "20px",
+                            backgroundColor: "#f8fafc",
+                            borderRadius: "8px",
+                            border: "1px solid #e2e8f0"
                         }}>
                             <div>
                                 <label className="form-field__label" htmlFor="filter-type">Tip</label>
@@ -155,7 +161,7 @@ export default function MailboxListPage() {
                                 </select>
                             </div>
                             <div>
-                                <label className="form-field__label" htmlFor="filter-search">Pretraga po adresi (Naselje/Ulica)</label>
+                                <label className="form-field__label" htmlFor="filter-search">Pretraga po adresi</label>
                                 <input
                                     id="filter-search"
                                     type="text"
@@ -212,6 +218,7 @@ export default function MailboxListPage() {
                                                 Prioritet {sortByPriority ? "▲" : ""}
                                             </th>
                                             <th style={{ ...thStyle, textAlign: "center" }}>Status</th>
+                                            <th style={{ ...thStyle, textAlign: "center" }}>Akcije</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -237,6 +244,25 @@ export default function MailboxListPage() {
                                                 </td>
                                                 <td style={{ ...tdStyle, textAlign: "center" }}>
                                                     <StatusBadge status={mailbox.status} />
+                                                </td>
+                                                <td style={{ ...tdStyle, textAlign: "center" }}>
+                                                    <button
+                                                        className="btn"
+                                                        style={{
+                                                            padding: "6px 12px",
+                                                            fontSize: "0.8rem",
+                                                            backgroundColor: "#2563a8",
+                                                            color: "white",
+                                                            border: "none",
+                                                            borderRadius: "4px",
+                                                            cursor: "pointer",
+                                                            marginRight: "4px"
+                                                        }}
+                                                        onClick={() => navigate(`/admin/mailboxes/${mailbox.id}/edit`)}
+                                                        title="Uredi sandučić"
+                                                    >
+                                                        Uredi
+                                                    </button>
                                                 </td>
                                             </tr>
                                         ))}

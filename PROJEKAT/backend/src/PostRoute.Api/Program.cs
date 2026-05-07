@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.HttpOverrides;
+﻿using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
 using PostRoute.Api.Configuration;
 using PostRoute.Api.Middleware;
@@ -20,22 +21,49 @@ builder.Services.Configure<ForwardedHeadersOptions>(options =>
 
 builder.Services.AddApiLayer(builder.Configuration);
 builder.Services.AddDistributedMemoryCache();
+
+// Add authentication services
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.LoginPath = "/login";
+        options.LogoutPath = "/logout";
+        options.AccessDeniedPath = "/access-denied";
+        options.Cookie.HttpOnly = true;
+        options.Cookie.SameSite = SameSiteMode.Lax;
+        options.Cookie.SecurePolicy = CookieSecurePolicy.None;
+        options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
+        options.SlidingExpiration = true;
+    });
+
 builder.Services.AddSession(options =>
 {
     options.IdleTimeout = TimeSpan.FromMinutes(30);
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
-    // SameSite=None + Secure potrebno kada su frontend i backend na različitim
-    // domenama (npr. netlify.app i onrender.com). Bez ovoga browser blokira
-    // slanje session cookie-a u cross-site zahtjevima.
-    options.Cookie.SameSite = SameSiteMode.None;
-    options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+    // Za cross-origin localhost portove moramo koristiti None
+    // Bez Secure za development, ali to neće raditi u modernim browserima
+    // Zato moramo koristiti workaround sa domain=null
+    if (builder.Environment.IsDevelopment())
+    {
+        options.Cookie.SameSite = SameSiteMode.None;
+        options.Cookie.SecurePolicy = CookieSecurePolicy.None;
+        options.Cookie.Domain = null; // Allow across localhost ports
+    }
+    else
+    {
+        // SameSite=None + Secure potrebno kada su frontend i backend na različitim
+        // domenama (npr. netlify.app i onrender.com). Bez ovoga browser blokira
+        // slanje session cookie-a u cross-site zahtjevima.
+        options.Cookie.SameSite = SameSiteMode.None;
+        options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+    }
 });
 
 var allowedOrigins = builder.Configuration
     .GetSection("Cors:AllowedOrigins")
     .Get<string[]>()
-    ?? ["http://localhost:5173", "http://localhost:5174", "http://localhost:5175"];
+    ?? ["http://localhost:5173", "http://localhost:5174", "http://localhost:5175", "http://localhost:5176"];
 
 builder.Services.AddCors(options =>
 {
@@ -59,6 +87,7 @@ if (app.Environment.IsDevelopment())
 app.UseForwardedHeaders();
 app.UseCors("Frontend");
 app.UseSession();
+app.UseAuthentication();
 app.UseMiddleware<RoleAuthorizationMiddleware>();
 app.UseAuthorization();
 app.MapControllers();

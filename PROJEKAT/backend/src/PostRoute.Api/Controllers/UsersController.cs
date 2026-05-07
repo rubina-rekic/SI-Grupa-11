@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Mvc;
 using PostRoute.Api.Contracts.Users;
 using PostRoute.Api.Middleware;
 using PostRoute.BLL.Commands;
@@ -7,6 +9,7 @@ using PostRoute.BLL.Services;
 using PostRoute.DAL.Entities;
 using PostRoute.DAL.Repositories;
 using PostRoute.Domain.Entities;
+using System.Security.Claims;
 
 namespace PostRoute.Api.Controllers;
 
@@ -109,13 +112,41 @@ public sealed class UsersController : ControllerBase
     {
         try
         {
+            Console.WriteLine("=== LOGIN DEBUG ===");
+            Console.WriteLine($"Login attempt for email: {request.Email}");
+
             var user = await _userService.LoginAsync(request.Email, request.Password, cancellationToken);
+
+            Console.WriteLine($"User found: {user.Id}, Role: {user.Role}");
+            Console.WriteLine($"Session ID before: {HttpContext.Session.Id}");
 
             HttpContext.Session.SetString("UserId", user.Id.ToString());
             HttpContext.Session.SetString("UserRole", user.Role);
-            HttpContext.Session.SetString("Username", user.Username);
             HttpContext.Session.SetString("Email", user.Email);
             HttpContext.Session.SetString("MustChangePassword", user.MustChangePassword.ToString());
+
+            Console.WriteLine($"Session ID after: {HttpContext.Session.Id}");
+            Console.WriteLine($"Session UserId: {HttpContext.Session.GetString("UserId")}");
+            Console.WriteLine($"Session UserRole: {HttpContext.Session.GetString("UserRole")}");
+
+            // Create cookie authentication
+            var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                new Claim(ClaimTypes.Name, user.Username),
+                new Claim(ClaimTypes.Email, user.Email),
+                new Claim(ClaimTypes.Role, user.Role)
+            };
+
+            var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+            var authProperties = new AuthenticationProperties
+            {
+                IsPersistent = true,
+                ExpiresUtc = DateTimeOffset.UtcNow.AddMinutes(30)
+            };
+
+            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, 
+                new ClaimsPrincipal(claimsIdentity), authProperties);
 
             await LogLoginAttemptAsync(user.Id, user.Role, "LoginSuccess", true, cancellationToken);
 
@@ -187,6 +218,13 @@ public sealed class UsersController : ControllerBase
     [HttpGet("current-user")]
     public ActionResult<UserResponse> GetCurrentUser()
     {
+        Console.WriteLine("=== CURRENT USER DEBUG ===");
+        Console.WriteLine($"Session ID: {HttpContext.Session.Id}");
+        Console.WriteLine($"Session UserId: {HttpContext.Session.GetString("UserId")}");
+        Console.WriteLine($"Session UserRole: {HttpContext.Session.GetString("UserRole")}");
+        Console.WriteLine($"Session Email: {HttpContext.Session.GetString("Email")}");
+        Console.WriteLine($"Available session keys: {string.Join(", ", HttpContext.Session.Keys)}");
+
         var userId = HttpContext.Session.GetString("UserId");
         var userRole = HttpContext.Session.GetString("UserRole");
         var username = HttpContext.Session.GetString("Username");
@@ -194,6 +232,7 @@ public sealed class UsersController : ControllerBase
 
         if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(userRole))
         {
+            Console.WriteLine("User not logged in - returning 401");
             return Unauthorized(new { message = "Not logged in" });
         }
 

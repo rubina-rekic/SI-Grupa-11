@@ -1,6 +1,7 @@
 ﻿import { Navigate, Route, Routes, useLocation } from "react-router-dom"
 import { CreatePostalWorkerPage } from "../../ui/pages/admin/CreatePostalWorkerPage"
 import CreateMailboxPage from "../../ui/pages/admin/CreateMailboxPage"
+import EditMailboxPage from "../../ui/pages/admin/EditMailboxPage"
 import LoginPage from "../../ui/pages/LoginPage"
 import DashboardPage from "../../ui/pages/DashboardPage"
 import ChangePasswordPage from "../../ui/pages/ChangePasswordPage"
@@ -63,6 +64,14 @@ export function AppRouter() {
         element={
           <PrivateRoute requiredRole="Administrator">
             <MailboxListPage />
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="/admin/mailboxes/:id/edit"
+        element={
+          <PrivateRoute requiredRole="Administrator">
+            <EditMailboxPage />
           </PrivateRoute>
         }
       />
