@@ -72,26 +72,9 @@ public sealed class MailboxesController : ControllerBase
     {
         try
         {
-            // Log authentication details
-            Console.WriteLine($"=== UPDATE MAILBOX AUTH DEBUG ===");
-            Console.WriteLine($"User.Identity.IsAuthenticated: {User.Identity?.IsAuthenticated}");
-            Console.WriteLine($"User.Identity.Name: {User.Identity?.Name}");
-            Console.WriteLine($"User.Claims count: {User.Claims?.Count()}");
-            
-            if (User.Claims != null)
-            {
-                foreach (var claim in User.Claims)
-                {
-                    Console.WriteLine($"Claim: {claim.Type} = {claim.Value}");
-                }
-            }
-            
-            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            Console.WriteLine($"Extracted UserId: {userId}");
-            
+            var userId = HttpContext.Session.GetString("UserId");
             if (string.IsNullOrEmpty(userId) || !Guid.TryParse(userId, out var userGuid))
             {
-                Console.WriteLine("User ID not found or invalid - returning 401");
                 return Unauthorized("User ID not found or invalid");
             }
 
