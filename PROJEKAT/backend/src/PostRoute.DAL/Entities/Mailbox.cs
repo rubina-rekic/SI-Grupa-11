@@ -30,6 +30,12 @@ public class Mailbox
     public MailboxType Type { get; set; }
 
     [Required]
+    public MailboxPriority Priority { get; set; } = MailboxPriority.Srednji;
+
+    [Required]
+    public MailboxStatus Status { get; set; } = MailboxStatus.Prazan;
+
+    [Required]
     [Range(1, int.MaxValue, ErrorMessage = "Capacity must be greater than 0")]
     public int Capacity { get; set; }
 
@@ -58,4 +64,25 @@ public enum MailboxType
     
     [Display(Name = "Specijalni (prioritetni)")]
     SpecialPriority = 4
+}
+
+public enum MailboxPriority
+{
+    [Display(Name = "Visok")]
+    Visok = 1,
+
+    [Display(Name = "Srednji")]
+    Srednji = 2,
+
+    [Display(Name = "Nizak")]
+    Nizak = 3
+}
+
+public enum MailboxStatus
+{
+    [Display(Name = "Prazan")]
+    Prazan = 0,
+
+    [Display(Name = "Pun")]
+    Pun = 1
 }

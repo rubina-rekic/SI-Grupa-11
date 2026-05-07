@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using PostRoute.Api.Contracts.Common;
 using PostRoute.Api.Contracts.Mailboxes;
 using PostRoute.Api.Middleware;
 using PostRoute.BLL.Commands;
@@ -34,26 +35,13 @@ public sealed class MailboxesController : ControllerBase
                 request.Type,
                 request.Capacity,
                 request.InstallationYear,
-                request.Notes
+                request.Notes,
+                request.Priority
             );
 
             var mailbox = await _mailboxService.CreateAsync(command, cancellationToken);
-            
-            var response = new MailboxResponse(
-                mailbox.Id,
-                mailbox.SerialNumber,
-                mailbox.Address,
-                mailbox.Latitude,
-                mailbox.Longitude,
-                mailbox.Type,
-                mailbox.Capacity,
-                mailbox.InstallationYear,
-                mailbox.CreatedAt,
-                mailbox.UpdatedAt,
-                mailbox.Notes
-            );
 
-            return Created($"/api/mailboxes/{mailbox.Id}", response);
+            return Created($"/api/mailboxes/{mailbox.Id}", MapToResponse(mailbox));
         }
         catch (InvalidOperationException ex)
         {
@@ -71,41 +59,29 @@ public sealed class MailboxesController : ControllerBase
             return NotFound();
         }
 
-        var response = new MailboxResponse(
-            mailbox.Id,
-            mailbox.SerialNumber,
-            mailbox.Address,
-            mailbox.Latitude,
-            mailbox.Longitude,
-            mailbox.Type,
-            mailbox.Capacity,
-            mailbox.InstallationYear,
-            mailbox.CreatedAt,
-            mailbox.UpdatedAt,
-            mailbox.Notes
-        );
-
-        return Ok(response);
+        return Ok(MapToResponse(mailbox));
     }
 
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<MailboxResponse>>> GetAllAsync(CancellationToken cancellationToken)
+    public async Task<ActionResult<PagedResponse<MailboxResponse>>> GetAllAsync(
+        [FromQuery] int page = 1,
+        [FromQuery] int pageSize = 25,
+        [FromQuery] MailboxType? type = null,
+        [FromQuery] MailboxPriority? priority = null,
+        [FromQuery] string? search = null,
+        [FromQuery] bool sortByPriority = false,
+        CancellationToken cancellationToken = default)
     {
-        var mailboxes = await _mailboxService.GetAllAsync(cancellationToken);
-        
-        var response = mailboxes.Select(m => new MailboxResponse(
-            m.Id,
-            m.SerialNumber,
-            m.Address,
-            m.Latitude,
-            m.Longitude,
-            m.Type,
-            m.Capacity,
-            m.InstallationYear,
-            m.CreatedAt,
-            m.UpdatedAt,
-            m.Notes
-        ));
+        var result = await _mailboxService.GetPagedAsync(
+            page, pageSize, type, priority, search, sortByPriority, cancellationToken);
+
+        var response = new PagedResponse<MailboxResponse>(
+            result.Items.Select(MapToResponse).ToList(),
+            result.TotalCount,
+            result.Page,
+            result.PageSize,
+            result.TotalPages
+        );
 
         return Ok(response);
     }
@@ -116,4 +92,20 @@ public sealed class MailboxesController : ControllerBase
         var exists = await _mailboxService.SerialNumberExistsAsync(serialNumber, cancellationToken);
         return Ok(exists);
     }
+
+    private static MailboxResponse MapToResponse(Mailbox m) => new(
+        m.Id,
+        m.SerialNumber,
+        m.Address,
+        m.Latitude,
+        m.Longitude,
+        m.Type,
+        m.Priority,
+        m.Status,
+        m.Capacity,
+        m.InstallationYear,
+        m.CreatedAt,
+        m.UpdatedAt,
+        m.Notes
+    );
 }

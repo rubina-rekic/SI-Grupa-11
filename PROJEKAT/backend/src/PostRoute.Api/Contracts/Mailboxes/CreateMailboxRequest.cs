@@ -24,6 +24,8 @@ public class CreateMailboxRequest
     [Required(ErrorMessage = "Tip sandučića je obavezan")]
     public MailboxType Type { get; set; }
 
+    public MailboxPriority Priority { get; set; } = MailboxPriority.Srednji;
+
     [Required(ErrorMessage = "Kapacitet je obavezan")]
     [Range(1, int.MaxValue, ErrorMessage = "Kapacitet mora biti veći od 0")]
     public int Capacity { get; set; }

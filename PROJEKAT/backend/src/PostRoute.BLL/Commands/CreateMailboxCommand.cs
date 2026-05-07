@@ -10,5 +10,6 @@ public record CreateMailboxCommand(
     MailboxType Type,
     int Capacity,
     int InstallationYear,
-    string? Notes = null
+    string? Notes = null,
+    MailboxPriority Priority = MailboxPriority.Srednji
 );

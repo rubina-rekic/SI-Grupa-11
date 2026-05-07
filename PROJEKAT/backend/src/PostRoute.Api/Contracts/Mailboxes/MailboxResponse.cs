@@ -9,6 +9,8 @@ public record MailboxResponse(
     decimal Latitude,
     decimal Longitude,
     MailboxType Type,
+    MailboxPriority Priority,
+    MailboxStatus Status,
     int Capacity,
     int InstallationYear,
     DateTime CreatedAt,

@@ -31,6 +31,43 @@ public class MailboxRepository : IMailboxRepository
             .ToListAsync(cancellationToken);
     }
 
+    public async Task<(IReadOnlyList<Mailbox> Items, int TotalCount)> GetPagedAsync(
+        int page,
+        int pageSize,
+        MailboxType? type,
+        MailboxPriority? priority,
+        string? addressSearch,
+        bool sortByPriority,
+        CancellationToken cancellationToken)
+    {
+        var query = _context.Mailboxes.AsQueryable();
+
+        if (type.HasValue)
+            query = query.Where(m => m.Type == type.Value);
+
+        if (priority.HasValue)
+            query = query.Where(m => m.Priority == priority.Value);
+
+        if (!string.IsNullOrWhiteSpace(addressSearch))
+        {
+            var needle = addressSearch.Trim().ToLower();
+            query = query.Where(m => m.Address.ToLower().Contains(needle));
+        }
+
+        var totalCount = await query.CountAsync(cancellationToken);
+
+        query = sortByPriority
+            ? query.OrderBy(m => m.Priority).ThenBy(m => m.SerialNumber)
+            : query.OrderBy(m => m.SerialNumber);
+
+        var items = await query
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync(cancellationToken);
+
+        return (items, totalCount);
+    }
+
     public async Task<bool> SerialNumberExistsAsync(string serialNumber, CancellationToken cancellationToken)
     {
         return await _context.Mailboxes

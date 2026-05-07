@@ -9,6 +9,7 @@ export interface CreateMailboxRequest {
     capacity: number
     installationYear: number
     notes?: string
+    priority?: MailboxPriority
 }
 
 export interface MailboxResponse {
@@ -18,11 +19,21 @@ export interface MailboxResponse {
     latitude: number
     longitude: number
     type: MailboxType
+    priority: MailboxPriority
+    status: MailboxStatus
     capacity: number
     installationYear: number
     createdAt: string
     updatedAt: string
     notes?: string
+}
+
+export interface PagedResponse<T> {
+    items: T[]
+    totalCount: number
+    page: number
+    pageSize: number
+    totalPages: number
 }
 
 export const MailboxType = {
@@ -31,29 +42,61 @@ export const MailboxType = {
     IndoorResidential: 3,
     SpecialPriority: 4
 } as const
-
 export type MailboxType = typeof MailboxType[keyof typeof MailboxType]
 
-export const mailboxTypeLabels = {
+export const mailboxTypeLabels: Record<MailboxType, string> = {
     [MailboxType.WallSmall]: "Zidni (mali)",
     [MailboxType.StandaloneLarge]: "Samostojeći (veliki)",
     [MailboxType.IndoorResidential]: "Unutrašnji (stambene zgrade)",
     [MailboxType.SpecialPriority]: "Specijalni (prioritetni)"
 }
 
+export const MailboxPriority = {
+    Visok: 1,
+    Srednji: 2,
+    Nizak: 3
+} as const
+export type MailboxPriority = typeof MailboxPriority[keyof typeof MailboxPriority]
+
+export const mailboxPriorityLabels: Record<MailboxPriority, string> = {
+    [MailboxPriority.Visok]: "Visok",
+    [MailboxPriority.Srednji]: "Srednji",
+    [MailboxPriority.Nizak]: "Nizak"
+}
+
+export const MailboxStatus = {
+    Prazan: 0,
+    Pun: 1
+} as const
+export type MailboxStatus = typeof MailboxStatus[keyof typeof MailboxStatus]
+
+export const mailboxStatusLabels: Record<MailboxStatus, string> = {
+    [MailboxStatus.Prazan]: "Prazan",
+    [MailboxStatus.Pun]: "Pun"
+}
+
+export interface MailboxListQuery {
+    page?: number
+    pageSize?: number
+    type?: MailboxType
+    priority?: MailboxPriority
+    search?: string
+    sortByPriority?: boolean
+}
+
 export async function createMailbox(request: CreateMailboxRequest): Promise<MailboxResponse> {
-    // Konvertujemo podatke u format koji backend očekuje
     const backendRequest = {
         serialNumber: request.serialNumber,
         address: request.address,
         latitude: parseFloat(request.latitude.toFixed(6)),
         longitude: parseFloat(request.longitude.toFixed(6)),
         type: request.type,
+        priority: request.priority ?? MailboxPriority.Srednji,
         capacity: request.capacity,
         installationYear: request.installationYear,
         notes: request.notes
     }
-    
+
     const response = await httpClient("/api/mailboxes", {
         method: "POST",
         body: backendRequest
@@ -72,10 +115,18 @@ export async function checkSerialNumberExists(serialNumber: string): Promise<boo
     return response.data as boolean
 }
 
-export async function getAllMailboxes(): Promise<MailboxResponse[]> {
-    const response = await httpClient("/api/mailboxes")
+export async function getAllMailboxes(query: MailboxListQuery = {}): Promise<PagedResponse<MailboxResponse>> {
+    const params = new URLSearchParams()
+    params.set("page", String(query.page ?? 1))
+    params.set("pageSize", String(query.pageSize ?? 25))
+    if (query.type !== undefined) params.set("type", String(query.type))
+    if (query.priority !== undefined) params.set("priority", String(query.priority))
+    if (query.search) params.set("search", query.search)
+    if (query.sortByPriority) params.set("sortByPriority", "true")
+
+    const response = await httpClient(`/api/mailboxes?${params.toString()}`)
     if (response.error || !response.data) {
         throw new Error(response.error || "Greška pri učitavanju sandučića")
     }
-    return response.data as MailboxResponse[]
+    return response.data as PagedResponse<MailboxResponse>
 }

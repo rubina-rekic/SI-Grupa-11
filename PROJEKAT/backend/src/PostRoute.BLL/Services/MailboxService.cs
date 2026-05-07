@@ -1,4 +1,5 @@
 using PostRoute.BLL.Commands;
+using PostRoute.BLL.Models;
 using PostRoute.DAL.Entities;
 using PostRoute.DAL.Repositories;
 
@@ -53,6 +54,7 @@ public class MailboxService : IMailboxService
             Latitude = command.Latitude,
             Longitude = command.Longitude,
             Type = command.Type,
+            Priority = command.Priority,
             Capacity = command.Capacity,
             InstallationYear = command.InstallationYear,
             Notes = command.Notes?.Trim()
@@ -74,6 +76,25 @@ public class MailboxService : IMailboxService
     public async Task<IEnumerable<Mailbox>> GetAllAsync(CancellationToken cancellationToken)
     {
         return await _mailboxRepository.GetAllAsync(cancellationToken);
+    }
+
+    public async Task<PagedResult<Mailbox>> GetPagedAsync(
+        int page,
+        int pageSize,
+        MailboxType? type,
+        MailboxPriority? priority,
+        string? addressSearch,
+        bool sortByPriority,
+        CancellationToken cancellationToken)
+    {
+        if (page < 1) page = 1;
+        if (pageSize < 1) pageSize = 25;
+        if (pageSize > 100) pageSize = 100;
+
+        var (items, total) = await _mailboxRepository.GetPagedAsync(
+            page, pageSize, type, priority, addressSearch, sortByPriority, cancellationToken);
+
+        return new PagedResult<Mailbox>(items, total, page, pageSize);
     }
 
     public async Task<bool> SerialNumberExistsAsync(string serialNumber, CancellationToken cancellationToken)
