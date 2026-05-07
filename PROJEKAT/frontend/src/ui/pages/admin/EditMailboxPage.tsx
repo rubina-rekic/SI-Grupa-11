@@ -89,7 +89,7 @@ export default function EditMailboxPage() {
                 })
                 
                 setSelectedLocation({ lat: mailbox.latitude, lng: mailbox.longitude })
-            } catch (error) {
+            } catch {
                 toast.error("Greška pri učitavanju sandučića")
                 navigate("/admin/mailboxes")
             } finally {

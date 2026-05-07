@@ -9,12 +9,14 @@ namespace PostRoute.BLL.Tests.Services;
 public sealed class MailboxServiceTestsPBI019
 {
     private readonly Mock<IMailboxRepository> _repo;
+    private readonly Mock<IMailboxAuditLogRepository> _auditLogRepo;
     private readonly MailboxService _sut;
 
     public MailboxServiceTestsPBI019()
     {
         _repo = new Mock<IMailboxRepository>();
-        _sut = new MailboxService(_repo.Object);
+        _auditLogRepo = new Mock<IMailboxAuditLogRepository>();
+        _sut = new MailboxService(_repo.Object, _auditLogRepo.Object);
     }
 
     private static Mailbox MakeMailbox(string sn = "SN1", MailboxPriority p = MailboxPriority.Srednji) => new()
