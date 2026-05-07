@@ -6,12 +6,12 @@
 
 | Nivo | US | Alat | Broj testova | Rezultat |
 | --- | --- | --- | --- | --- |
-| Unit — Backend (BLL Servisi) | US-11, US-12, US-13, US-14, US-15 | xUnit + Moq | 46 testova | PASS |
+| Unit — Backend (BLL Servisi) | US-11, US-12, US-13, US-14, US-15, US-17 | xUnit + Moq | 54 testova | PASS |
 | Unit — Backend (API Kontroleri) | US-14, US-15, US-16, US-17 | xUnit + Moq | 18 testova | PASS |
-| Unit — Backend (DAL Repozitorij) | US-14, US-15, US-16, US-17 | xUnit + EF InMemory | 11 testova | PASS |
+| Unit — Backend (DAL Repozitorij) | US-14, US-15, US-16, US-17 | xUnit + EF InMemory | 19 testova | PASS |
 | Unit — Frontend (komponente i interakcija) | US-14, US-15 | Jest + React Testing Library | 17 testova | PASS |
 | Unit — Frontend (poslovna logika) | US-14, US-15 | TypeScript (vanilla) | 8 testnih grupa | PASS |
-| **Ukupno Sprint 6** | **US-11 do US-15** | | **~100 testova** | **PASS** |
+| **Ukupno Sprint 6** | **US-11 do US-17** | | **~116 testova** | **PASS** |
 
 ---
 
@@ -79,6 +79,9 @@
 | Unit — BLL | US-14, US-15 | Null vraćen za nepostojući sandučić po ID-u | `MailboxServiceTests.GetByIdAsync_WhenMailboxDoesNotExist_ShouldReturnNull` | PASS |
 | Unit — BLL | US-15 | Sandučić se dohvata po serijskom broju | `MailboxServiceTests.GetBySerialNumberAsync_WhenMailboxExists_ShouldReturnMailbox` | PASS |
 | Unit — BLL | US-15 | Delegiranje provjere serijskog broja repozitoriju | `MailboxServiceTests.SerialNumberExistsAsync_ShouldReturnRepositoryResult` | PASS |
+| Unit — BLL | US-15 | Prioritet sandučića se ispravno postavlja iz komande pri kreiranju | `MailboxServiceTests.CreateAsync_SetsPriorityFromCommand` | PASS |
+| Unit — BLL | US-15 | Prioritet se defaultuje na `Srednji` kada nije naveden u komandi | `MailboxServiceTests.CreateAsync_DefaultsPriorityToSrednjiWhenNotSpecified` | PASS |
+| Unit — BLL | US-15 | Status novog sandučića se defaultuje na `Prazan` | `MailboxServiceTests.CreateAsync_DefaultsStatusToPrazan` | PASS |
 | Unit — API | US-14, US-15 | API vraća 201 Created s ispravnim Location headerom i kompletnim `MailboxResponse` | `MailboxesControllerTests.CreateAsync_ShouldReturnCreatedResult_WhenValidRequest` | PASS |
 | Unit — API | US-14, US-15 | Prazan serijski broj vraća 400 Bad Request | `MailboxesControllerTests.CreateAsync_ShouldReturnBadRequest_WhenInvalidRequest` | PASS |
 | Unit — API | US-15 | Dupli serijski broj vraća 409 Conflict | `MailboxesControllerTests.CreateAsync_ShouldReturnConflict_WhenSerialNumberExists` | PASS |
@@ -123,6 +126,7 @@
 
 - [backend/tests/PostRoute.BLL.Tests/Services/MailboxServiceTests.PBI017.cs](../PROJEKAT/backend/tests/PostRoute.BLL.Tests/Services/MailboxServiceTests.PBI017.cs) — 14 testova (8 metoda; uključuje [Theory] s 7 parametriziranih scenarija)
 - [backend/tests/PostRoute.BLL.Tests/Services/MailboxServiceTests.cs](../PROJEKAT/backend/tests/PostRoute.BLL.Tests/Services/MailboxServiceTests.cs) — 10 testova
+- [backend/tests/PostRoute.BLL.Tests/Services/MailboxServiceTests.PBI019.cs](../PROJEKAT/backend/tests/PostRoute.BLL.Tests/Services/MailboxServiceTests.PBI019.cs) — 3 testa za CreateAsync s prioritetom/statusom (pokriva PBI-017 i PBI-019)
 - [backend/PostRoute.Api.Tests/Controllers/MailboxesControllerTests.PBI017.cs](../PROJEKAT/backend/PostRoute.Api.Tests/Controllers/MailboxesControllerTests.PBI017.cs) — 18 testova (12 metoda; uključuje [Theory] s 7 parametriziranih scenarija)
 - [backend/tests/PostRoute.DAL.Tests/Repositories/MailboxRepositoryTests.cs](../PROJEKAT/backend/tests/PostRoute.DAL.Tests/Repositories/MailboxRepositoryTests.cs) — 11 testova (pokriva PBI-017, PBI-018, PBI-019)
 - [frontend/src/ui/pages/admin/__tests__/CreateMailboxPage.test.tsx](../PROJEKAT/frontend/src/ui/pages/admin/__tests__/CreateMailboxPage.test.tsx) — 17 testova
@@ -130,21 +134,54 @@
 
 ---
 
-## PBI-018 i PBI-019 — Izmjena i pregled sandučića (djelimično pokriveno)
+## PBI-018 — Izmjena podataka o sandučiću (djelimično pokriveno)
 
-PBI-018 (US-16: Ažuriranje podataka o sandučiću) i PBI-019 (US-17: Pregled liste sandučića) su u statusu *To Do* za ovaj sprint. Repozitorij i API sloj su međutim testirani i pripremljeni za buduću implementaciju servisa.
+PBI-018 (US-16: Ažuriranje podataka o sandučiću) je u statusu *To Do* za ovaj sprint. Repozitorij sloj je testiran i spreman za buduću implementaciju servisa i kontrolera.
 
 | Nivo | US | AC | Test koji pokriva | Status |
 | --- | --- | --- | --- | --- |
 | Unit — DAL | US-16 | Ažuriranje sandučića persistira izmjene s novim `UpdatedAt` timestampom | `MailboxRepositoryTests.UpdateAsync_ShouldUpdateMailboxInDatabase` | PASS |
-| Unit — DAL | US-17 | Lista svih sandučića vraća se sortirana po serijskom broju | `MailboxRepositoryTests.GetAllAsync_ShouldReturnAllMailboxesOrderedBySerialNumber` | PASS |
-| Unit — DAL | US-17 | Sandučić dohvaćen po ID-u — svi podaci ispravno učitani | `MailboxRepositoryTests.GetByIdAsync_WhenMailboxExists_ShouldReturnMailbox` | PASS |
-| Unit — DAL | US-17 | Null vraćen za nepostojući ID | `MailboxRepositoryTests.GetByIdAsync_WhenMailboxDoesNotExist_ShouldReturnNull` | PASS |
-| Unit — DAL | US-17 | Brisanje sandučića uklanja entitet iz baze | `MailboxRepositoryTests.DeleteAsync_ShouldRemoveMailboxFromDatabase` | PASS |
-| Unit — DAL | US-17 | Brisanje nepostojećeg sandučića ne baca grešku | `MailboxRepositoryTests.DeleteAsync_WhenMailboxDoesNotExist_ShouldNotThrowException` | PASS |
+| Unit — DAL | US-16 | Sandučić dohvaćen po ID-u — svi podaci ispravno učitani | `MailboxRepositoryTests.GetByIdAsync_WhenMailboxExists_ShouldReturnMailbox` | PASS |
+| Unit — DAL | US-16 | Null vraćen za nepostojući ID | `MailboxRepositoryTests.GetByIdAsync_WhenMailboxDoesNotExist_ShouldReturnNull` | PASS |
+| Unit — DAL | US-16 | Brisanje sandučića uklanja entitet iz baze | `MailboxRepositoryTests.DeleteAsync_ShouldRemoveMailboxFromDatabase` | PASS |
+| Unit — DAL | US-16 | Brisanje nepostojećeg sandučića ne baca grešku | `MailboxRepositoryTests.DeleteAsync_WhenMailboxDoesNotExist_ShouldNotThrowException` | PASS |
+
+### Fajlovi sa testovima
+
+- [backend/tests/PostRoute.DAL.Tests/Repositories/MailboxRepositoryTests.cs](../PROJEKAT/backend/tests/PostRoute.DAL.Tests/Repositories/MailboxRepositoryTests.cs) — 11 testova (dijeljeno s PBI-017 i PBI-019)
+
+---
+
+## PBI-019 — Pregled sandučića na listi
+
+### Pokriveni AC (US-17)
+
+| Nivo | US | AC | Test koji pokriva | Status |
+| --- | --- | --- | --- | --- |
+| Unit — BLL | US-17 | Stranica ispod 1 se automatski clampuje na 1 | `MailboxServiceTests.GetPagedAsync_ClampsPageBelow1ToOne` | PASS |
+| Unit — BLL | US-17 | Veličina stranice ispod 1 se defaultuje na 25 | `MailboxServiceTests.GetPagedAsync_ClampsPageSizeBelow1To25` | PASS |
+| Unit — BLL | US-17 | Veličina stranice iznad 100 se clampuje na 100 | `MailboxServiceTests.GetPagedAsync_ClampsPageSizeAbove100To100` | PASS |
+| Unit — BLL | US-17 | Svi filteri (tip, prioritet, adresa) i zastavica sortiranja ispravno proslijeđeni repozitoriju | `MailboxServiceTests.GetPagedAsync_PassesAllFiltersToRepository` | PASS |
+| Unit — BLL | US-17 | Servis vraća stavke i ukupan broj sa ispravnim brojem stranica iz repozitorija | `MailboxServiceTests.GetPagedAsync_ReturnsItemsAndTotalsFromRepository` | PASS |
+| Unit — DAL | US-17 | Bez filtera vraćaju se svi sandučići | `MailboxRepositoryTests.GetPagedAsync_ReturnsAllWithoutFilters` | PASS |
+| Unit — DAL | US-17 | Filtriranje po tipu sandučića vraća samo odgovarajuće zapise | `MailboxRepositoryTests.GetPagedAsync_FiltersByType` | PASS |
+| Unit — DAL | US-17 | Filtriranje po prioritetu vraća samo odgovarajuće zapise | `MailboxRepositoryTests.GetPagedAsync_FiltersByPriority` | PASS |
+| Unit — DAL | US-17 | Filtriranje po adresi je case-insensitive | `MailboxRepositoryTests.GetPagedAsync_FiltersByAddressCaseInsensitive` | PASS |
+| Unit — DAL | US-17 | Sortiranje po prioritetu (silazno: Visok → Srednji → Nizak) kada je zastavica aktivna | `MailboxRepositoryTests.GetPagedAsync_SortsByPriorityWhenFlagSet` | PASS |
+| Unit — DAL | US-17 | Zadano sortiranje po serijskom broju (rastuće) kada sortiranje po prioritetu nije aktivno | `MailboxRepositoryTests.GetPagedAsync_DefaultSortBySerialNumberWhenFlagOff` | PASS |
+| Unit — DAL | US-17 | Paginacija vraća ispravne zapise za svaku stranicu | `MailboxRepositoryTests.GetPagedAsync_PaginatesCorrectly` | PASS |
+| Unit — DAL | US-17 | Kombinacija filtera (tip + prioritet) vraća samo zapise koji zadovoljavaju oba uvjeta | `MailboxRepositoryTests.GetPagedAsync_CombinesFilters` | PASS |
+| Unit — DAL | US-17 | Lista svih sandučića sortirana po serijskom broju (opći repozitorij) | `MailboxRepositoryTests.GetAllAsync_ShouldReturnAllMailboxesOrderedBySerialNumber` | PASS |
 | Unit — API | US-17 | API vraća kompletnu listu svih sandučića | `MailboxesControllerTests.GetAllAsync_ShouldReturnAllMailboxes` | PASS |
 | Unit — API | US-17 | API vraća sandučić po ID-u s ispravnim podacima | `MailboxesControllerTests.GetByIdAsync_ShouldReturnMailbox_WhenMailboxExists` | PASS |
 | Unit — API | US-17 | API vraća 404 Not Found za nepostojući sandučić | `MailboxesControllerTests.GetByIdAsync_ShouldReturnNotFound_WhenMailboxDoesNotExist` | PASS |
+
+### Fajlovi sa testovima
+
+- [backend/tests/PostRoute.BLL.Tests/Services/MailboxServiceTests.PBI019.cs](../PROJEKAT/backend/tests/PostRoute.BLL.Tests/Services/MailboxServiceTests.PBI019.cs) — 5 testova za `GetPagedAsync`
+- [backend/tests/PostRoute.DAL.Tests/Repositories/MailboxRepositoryTests.PBI019.cs](../PROJEKAT/backend/tests/PostRoute.DAL.Tests/Repositories/MailboxRepositoryTests.PBI019.cs) — 8 testova
+- [backend/tests/PostRoute.DAL.Tests/Repositories/MailboxRepositoryTests.cs](../PROJEKAT/backend/tests/PostRoute.DAL.Tests/Repositories/MailboxRepositoryTests.cs) — 11 testova (dijeljeno s PBI-017 i PBI-018)
+- [backend/PostRoute.Api.Tests/Controllers/MailboxesControllerTests.PBI017.cs](../PROJEKAT/backend/PostRoute.Api.Tests/Controllers/MailboxesControllerTests.PBI017.cs) — 3 testa za GetAll/GetById (dijeljeno s PBI-017)
 
 ---
 
@@ -152,9 +189,9 @@ PBI-018 (US-16: Ažuriranje podataka o sandučiću) i PBI-019 (US-17: Pregled li
 
 | Test strategija nivo | US | PBI | Dokaz | Status |
 | --- | --- | --- | --- | --- |
-| Unit — BLL Servisi | US-11, US-12, US-13, US-14, US-15 | PBI-015, PBI-016, PBI-017 | `UserServiceTests`, `MailboxServiceTests`, `MailboxServiceTests.PBI017` | PASS |
+| Unit — BLL Servisi | US-11, US-12, US-13, US-14, US-15, US-17 | PBI-015, PBI-016, PBI-017, PBI-019 | `UserServiceTests`, `MailboxServiceTests`, `MailboxServiceTests.PBI017`, `MailboxServiceTests.PBI019` | PASS |
 | Unit — API Kontroleri | US-14, US-15, US-17 | PBI-017, PBI-019 | `MailboxesControllerTests.PBI017` | PASS |
-| Unit — DAL Repozitorij (EF InMemory) | US-14, US-15, US-16, US-17 | PBI-017, PBI-018, PBI-019 | `MailboxRepositoryTests` | PASS |
+| Unit — DAL Repozitorij (EF InMemory) | US-14, US-15, US-16, US-17 | PBI-017, PBI-018, PBI-019 | `MailboxRepositoryTests`, `MailboxRepositoryTests.PBI019` | PASS |
 | Unit — Frontend komponente | US-14, US-15 | PBI-017 | `CreateMailboxPage.test.tsx` | PASS |
 | Unit — Frontend poslovna logika | US-14, US-15 | PBI-017 | `CreateMailboxPage.simple.test.ts` | PASS |
 
