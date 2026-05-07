@@ -107,26 +107,34 @@ export default function CreateMailboxPage() {
             setValue("installationYear", new Date().getFullYear())
             setSelectedLocation(null)
             
-        } catch (error: any) {
+        } catch (error: unknown) {
+            const errorDetails = error as {
+                message?: string
+                response?: unknown
+                status?: number
+                code?: unknown
+                config?: unknown
+                stack?: unknown
+            }
             console.error("=== CREATE MAILBOX ERROR ===")
             console.error("Error object:", error)
-            console.error("Error message:", error.message)
-            console.error("Error response:", error.response)
-            console.error("Error status:", error.status)
-            console.error("Error code:", error.code)
-            console.error("Error config:", error.config)
-            console.error("Stack trace:", error.stack)
+            console.error("Error message:", errorDetails.message)
+            console.error("Error response:", errorDetails.response)
+            console.error("Error status:", errorDetails.status)
+            console.error("Error code:", errorDetails.code)
+            console.error("Error config:", errorDetails.config)
+            console.error("Stack trace:", errorDetails.stack)
             console.error("=== END ERROR ===")
             
-            if (error.message?.includes("već postoji")) {
+            if (errorDetails.message?.includes("već postoji")) {
                 toast.error("Sandučić sa ovim serijskim brojem već postoji")
-            } else if (error.message?.includes("Pristup odbijen")) {
+            } else if (errorDetails.message?.includes("Pristup odbijen")) {
                 toast.error("Nemate dozvolu za kreiranje sandučića. Molimo prijavite se kao Administrator.")
-            } else if (error.status === 403) {
+            } else if (errorDetails.status === 403) {
                 toast.error("Nemate dozvolu za kreiranje sandučića. Provjerite da li ste ulogovani kao Administrator.")
-            } else if (error.status === 401) {
+            } else if (errorDetails.status === 401) {
                 toast.error("Niste ulogovani. Molimo prijavite se.")
-            } else if (error.status >= 500) {
+            } else if (errorDetails.status !== undefined && errorDetails.status >= 500) {
                 toast.error("Greška na serveru. Molimo pokušajte ponovo kasnije.")
             } else {
                 const errorMessage = error instanceof Error ? error.message : "Greška pri kreiranju sandučića"

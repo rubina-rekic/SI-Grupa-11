@@ -46,20 +46,20 @@ export default function MailboxListPage() {
         setShowMap(!showMap)
     }
 
-    useEffect(() => {
-        loadMailboxes()
-    }, [])
-
-    const loadMailboxes = async () => {
+    const loadMailboxes = useCallback(async () => {
         try {
             const data = await getAllMailboxes()
             setMailboxes(data)
-        } catch (error) {
+        } catch {
             toast.error("Greška pri učitavanju sandučića")
         } finally {
             setLoading(false)
         }
-    }
+    }, [])
+
+    useEffect(() => {
+        void loadMailboxes()
+    }, [loadMailboxes])
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
@@ -125,8 +125,9 @@ export default function MailboxListPage() {
             
             // Reload mailboxes
             await loadMailboxes()
-        } catch (error: any) {
-            if (error.message?.includes("već postoji")) {
+        } catch (error: unknown) {
+            const message = error instanceof Error ? error.message : ""
+            if (message.includes("već postoji")) {
                 toast.error("Sandučić sa ovim serijskim brojem već postoji")
             } else {
                 toast.error("Greška pri kreiranju sandučića")

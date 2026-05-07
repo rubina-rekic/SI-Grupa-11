@@ -21,8 +21,8 @@ permissions:
   contents: read
 
 jobs:
-  build:
-    name: Lint & Build
+  verify:
+    name: Verify frontend
     runs-on: ubuntu-latest
     env:
       # Vite inline-uje sve VITE_ vars u bundle pri buildu, pa apsolutni
@@ -43,7 +43,11 @@ jobs:
 
       - name: Install dependencies
         working-directory: PROJEKAT/frontend
-        run: npm install
+        run: npm ci
+
+      - name: Lint
+        working-directory: PROJEKAT/frontend
+        run: npm run lint
 
       - name: Build
         working-directory: PROJEKAT/frontend
@@ -58,13 +62,15 @@ jobs:
 
   deploy:
     name: Deploy to Netlify
-    needs: build
+    needs: verify
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     environment:
       name: production
 
     steps:
+      - uses: actions/checkout@v4
+
       - name: Download build artifact
         uses: actions/download-artifact@v4
         with:
@@ -74,5 +80,5 @@ jobs:
       - name: Deploy to Netlify
         env:
           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
-          NETLIFY_SITE_ID:    ${{ secrets.NETLIFY_SITE_ID }}
-        run: npx netlify-cli deploy --prod --dir=dist --site=$NETLIFY_SITE_ID --auth=$NETLIFY_AUTH_TOKEN
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+        run: npx --yes netlify-cli deploy --prod --dir=dist --site="$NETLIFY_SITE_ID" --auth="$NETLIFY_AUTH_TOKEN"

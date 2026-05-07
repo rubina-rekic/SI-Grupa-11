@@ -15,6 +15,7 @@ desktop.ini
 *.sln.docstates
 
 # .NET build output
+.dotnet-home/
 bin/
 obj/
 *.dll

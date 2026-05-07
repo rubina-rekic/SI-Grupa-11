@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useRef, useState } from "react"
 
 interface GoogleMapPickerProps {
@@ -37,7 +38,7 @@ export default function GoogleMapPicker({
           // Čekajmo da se Google Maps učita
           setTimeout(checkGoogleMaps, 100)
         }
-      } catch (err) {
+      } catch {
         setError("Google Maps API nije dostupan. Provjerite internet konekciju.")
         setLoading(false)
       }
