@@ -9,9 +9,6 @@ using Xunit;
 
 namespace PostRoute.Api.Tests.Controllers;
 
-/// <summary>
-/// Unit testovi za PBI-017: MailboxesController API endpoints
-/// </summary>
 public sealed class MailboxesControllerTestsPBI017
 {
     private readonly Mock<IMailboxService> _mailboxServiceMock;

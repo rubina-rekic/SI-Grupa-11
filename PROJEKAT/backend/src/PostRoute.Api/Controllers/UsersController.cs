@@ -218,32 +218,30 @@ public sealed class UsersController : ControllerBase
     [HttpGet("current-user")]
     public ActionResult<UserResponse> GetCurrentUser()
     {
-        Console.WriteLine("=== CURRENT USER DEBUG ===");
-        Console.WriteLine($"Session ID: {HttpContext.Session.Id}");
-        Console.WriteLine($"Session UserId: {HttpContext.Session.GetString("UserId")}");
-        Console.WriteLine($"Session UserRole: {HttpContext.Session.GetString("UserRole")}");
-        Console.WriteLine($"Session Email: {HttpContext.Session.GetString("Email")}");
-        Console.WriteLine($"Available session keys: {string.Join(", ", HttpContext.Session.Keys)}");
-
-        var userId = HttpContext.Session.GetString("UserId");
-        var userRole = HttpContext.Session.GetString("UserRole");
-        var username = HttpContext.Session.GetString("Username");
-        var email = HttpContext.Session.GetString("Email");
-
-        if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(userRole))
+        if (!User.Identity?.IsAuthenticated ?? true)
         {
-            Console.WriteLine("User not logged in - returning 401");
             return Unauthorized(new { message = "Not logged in" });
         }
 
+        var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        var usernameClaim = User.FindFirst(ClaimTypes.Name)?.Value;
+        var emailClaim = User.FindFirst(ClaimTypes.Email)?.Value;
+        var roleClaim = User.FindFirst(ClaimTypes.Role)?.Value;
+
+        if (string.IsNullOrEmpty(userIdClaim) || string.IsNullOrEmpty(roleClaim))
+        {
+            return Unauthorized(new { message = "Not logged in" });
+        }
+
+        // Also check session for mustChangePassword
         var mustChangePasswordStr = HttpContext.Session.GetString("MustChangePassword");
         var mustChangePassword = bool.TryParse(mustChangePasswordStr, out var mcp) && mcp;
 
         var response = new UserResponse(
-            Guid.Parse(userId),
-            username ?? string.Empty,
-            email ?? string.Empty,
-            userRole,
+            Guid.Parse(userIdClaim),
+            usernameClaim ?? string.Empty,
+            emailClaim ?? string.Empty,
+            roleClaim,
             mustChangePassword,
             false
         );

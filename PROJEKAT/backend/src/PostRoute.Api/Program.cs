@@ -46,7 +46,7 @@ builder.Services.AddSession(options =>
     // Zato moramo koristiti workaround sa domain=null
     if (builder.Environment.IsDevelopment())
     {
-        options.Cookie.SameSite = SameSiteMode.None;
+        options.Cookie.SameSite = SameSiteMode.Lax;
         options.Cookie.SecurePolicy = CookieSecurePolicy.None;
         options.Cookie.Domain = null; // Allow across localhost ports
     }
