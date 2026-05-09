@@ -56,7 +56,6 @@ export default function EditMailboxPage() {
     const navigate = useNavigate()
     const [loading, setLoading] = useState(true)
     const [selectedLocation, setSelectedLocation] = useState<{ lat: number; lng: number } | null>(null)
-    const [showMap, setShowMap] = useState(false)
     const [originalData, setOriginalData] = useState<MailboxResponse | null>(null)
     
     const { register, handleSubmit, setValue, watch, formState: { errors, isSubmitting }, trigger, reset } = useForm<FormData>({
@@ -106,10 +105,6 @@ export default function EditMailboxPage() {
         setValue("longitude", lng)
         trigger(["latitude", "longitude"])
     }, [setValue, trigger])
-
-    const toggleMap = () => {
-        setShowMap(!showMap)
-    }
 
     const onSubmit = async (data: FormData) => {
         if (!id || !originalData) return
@@ -191,7 +186,7 @@ export default function EditMailboxPage() {
                     </div>
 
                     <form className="form-card__body" onSubmit={handleSubmit(onSubmit)} noValidate>
-                        {/* Osnovni podaci */}
+                        {/* Serijski broj i tip */}
                         <div className="form-row">
                             <div className="form-field">
                                 <label className="form-field__label" htmlFor="serialNumber">
@@ -207,9 +202,6 @@ export default function EditMailboxPage() {
                                     style={{ backgroundColor: "#f8fafc", cursor: "not-allowed" }}
                                     {...register("serialNumber")}
                                 />
-                                <p style={{ fontSize: "0.85rem", color: "#64748b", marginTop: "4px" }}>
-                                    📝 Uređujete postojeći sandučić - serijski broj se ne može promijeniti
-                                </p>
                                 {errors.serialNumber && (
                                     <p className="form-field__error">{errors.serialNumber.message}</p>
                                 )}
@@ -235,6 +227,43 @@ export default function EditMailboxPage() {
                             </div>
                         </div>
 
+                        {/* Mapa */}
+                        <div className="form-field">
+                            <label className="form-field__label">
+                                Lokacija na mapi *
+                            </label>
+                            <p style={{ fontSize: "0.85rem", color: "#64748b", marginBottom: "8px", marginTop: 0 }}>
+                                Kliknite na mapu da označite lokaciju sandučića ili predobseg da ažurirate adresu.
+                            </p>
+                            <div style={{ border: "1px solid #e2e8f0", borderRadius: "8px", overflow: "hidden" }}>
+                                <OpenStreetMapPicker
+                                    onLocationSelect={handleLocationSelect}
+                                    onAddressFound={(address) => setValue("address", address, { shouldValidate: true })}
+                                    initialLat={watchedLat}
+                                    initialLng={watchedLng}
+                                    height="350px"
+                                />
+                            </div>
+                            {selectedLocation ? (
+                                <div style={{
+                                    marginTop: "8px", padding: "8px 12px",
+                                    backgroundColor: "#f0fdf4", border: "1px solid #bbf7d0",
+                                    borderRadius: "6px", fontSize: "0.85rem", color: "#15803d"
+                                }}>
+                                    📍 Odabrana lokacija: {selectedLocation.lat.toFixed(6)}, {selectedLocation.lng.toFixed(6)}
+                                </div>
+                            ) : (
+                                <div style={{
+                                    marginTop: "8px", padding: "8px 12px",
+                                    backgroundColor: "#fef9c3", border: "1px solid #fde047",
+                                    borderRadius: "6px", fontSize: "0.85rem", color: "#854d0e"
+                                }}>
+                                    ⚠️ Lokacija nije odabrana — kliknite na mapu
+                                </div>
+                            )}
+                        </div>
+
+                        {/* Adresa */}
                         <div className="form-field">
                             <label className="form-field__label" htmlFor="address">
                                 Adresa *
@@ -252,96 +281,11 @@ export default function EditMailboxPage() {
                             )}
                         </div>
 
-                        {/* Koordinate */}
-                        <div className="form-row">
-                            <div className="form-field">
-                                <label className="form-field__label" htmlFor="latitude">
-                                    Latitude *
-                                </label>
-                                <input
-                                    id="latitude"
-                                    type="number"
-                                    step="0.000001"
-                                    className={`form-field__input${errors.latitude ? " form-field__input--error" : ""}`}
-                                    placeholder="-90 do 90"
-                                    {...register("latitude", { valueAsNumber: true })}
-                                />
-                                {errors.latitude && (
-                                    <p className="form-field__error">{errors.latitude.message}</p>
-                                )}
-                            </div>
-
-                            <div className="form-field">
-                                <label className="form-field__label" htmlFor="longitude">
-                                    Longitude *
-                                </label>
-                                <input
-                                    id="longitude"
-                                    type="number"
-                                    step="0.000001"
-                                    className={`form-field__input${errors.longitude ? " form-field__input--error" : ""}`}
-                                    placeholder="-180 do 180"
-                                    {...register("longitude", { valueAsNumber: true })}
-                                />
-                                {errors.longitude && (
-                                    <p className="form-field__error">{errors.longitude.message}</p>
-                                )}
-                            </div>
-                        </div>
-
-                        {/* Mapa */}
-                        <div className="form-field">
-                            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px" }}>
-                                <label className="form-field__label" style={{ margin: 0 }}>
-                                    Lokacija na mapi
-                                </label>
-                                <button
-                                    type="button"
-                                    className="btn"
-                                    style={{
-                                        padding: "6px 12px",
-                                        fontSize: "0.8rem",
-                                        backgroundColor: showMap ? "#2563a8" : "#1b3a5c",
-                                        color: "white",
-                                        border: "none",
-                                        borderRadius: "6px",
-                                        cursor: "pointer"
-                                    }}
-                                    onClick={toggleMap}
-                                >
-                                    {showMap ? "Sakrij mapu" : "Prikaži mapu"}
-                                </button>
-                            </div>
-                            
-                            {showMap && (
-                                <OpenStreetMapPicker
-                                    onLocationSelect={handleLocationSelect}
-                                    initialLat={watchedLat}
-                                    initialLng={watchedLng}
-                                    height="350px"
-                                />
-                            )}
-                            
-                            {selectedLocation && (
-                                <div style={{
-                                    marginTop: "8px",
-                                    padding: "8px 12px",
-                                    backgroundColor: "#f0fdf4",
-                                    border: "1px solid #bbf7d0",
-                                    borderRadius: "6px",
-                                    fontSize: "0.85rem",
-                                    color: "#15803d"
-                                }}>
-                                    📍 Izabrana lokacija: {selectedLocation.lat.toFixed(6)}, {selectedLocation.lng.toFixed(6)}
-                                </div>
-                            )}
-                        </div>
-
                         {/* Kapacitet i godina */}
                         <div className="form-row">
                             <div className="form-field">
                                 <label className="form-field__label" htmlFor="capacity">
-                                    Kapacitet *
+                                    Kapacitet (broj pisama) *
                                 </label>
                                 <input
                                     id="capacity"
@@ -365,7 +309,7 @@ export default function EditMailboxPage() {
                                     id="installationYear"
                                     type="number"
                                     className={`form-field__input${errors.installationYear ? " form-field__input--error" : ""}`}
-                                    placeholder="npr. 2023"
+                                    placeholder="npr. 2020"
                                     min="1900"
                                     max={new Date().getFullYear() + 10}
                                     {...register("installationYear", { valueAsNumber: true })}
@@ -374,6 +318,19 @@ export default function EditMailboxPage() {
                                     <p className="form-field__error">{errors.installationYear.message}</p>
                                 )}
                             </div>
+                        </div>
+
+                        {/* Info o tipu */}
+                        <div style={{
+                            padding: "12px", backgroundColor: "#f8fafc",
+                            border: "1px solid #e2e8f0", borderRadius: "8px",
+                            fontSize: "0.85rem", color: "#64748b"
+                        }}>
+                            <strong>Odabrani tip:</strong> {mailboxTypeLabels[watchedType]}
+                            {watchedType === MailboxType.WallSmall && <div style={{ marginTop: "4px" }}>🏠 Zidni sandučić, manji kapacitet</div>}
+                            {watchedType === MailboxType.StandaloneLarge && <div style={{ marginTop: "4px" }}>📮 Samostojeći sandučić, veliki kapacitet</div>}
+                            {watchedType === MailboxType.IndoorResidential && <div style={{ marginTop: "4px" }}>🏢 Unutrašnji, stambene zgrade</div>}
+                            {watchedType === MailboxType.SpecialPriority && <div style={{ marginTop: "4px" }}>⭐ Specijalni, prioritetni tretman</div>}
                         </div>
 
                         {/* Napomene */}
@@ -393,49 +350,15 @@ export default function EditMailboxPage() {
                             )}
                         </div>
 
-                        {/* Informacije o tipu */}
-                        <div style={{
-                            padding: "12px",
-                            backgroundColor: "#f8fafc",
-                            border: "1px solid #e2e8f0",
-                            borderRadius: "8px",
-                            fontSize: "0.85rem",
-                            color: "#64748b"
-                        }}>
-                            <strong>Tip sandučića:</strong> {mailboxTypeLabels[watchedType]}
-                            {watchedType === MailboxType.WallSmall && (
-                                <div style={{ marginTop: "4px" }}>🏠 Zidni sandučić, manji kapacitet</div>
-                            )}
-                            {watchedType === MailboxType.StandaloneLarge && (
-                                <div style={{ marginTop: "4px" }}>📮 Samostojeći sandučić, veliki kapacitet</div>
-                            )}
-                            {watchedType === MailboxType.IndoorResidential && (
-                                <div style={{ marginTop: "4px" }}>🏢 Unutrašnji, stambene zgrade</div>
-                            )}
-                            {watchedType === MailboxType.SpecialPriority && (
-                                <div style={{ marginTop: "4px" }}>⭐ Specijalni, prioritetni tretman</div>
-                            )}
-                        </div>
-
                         {/* Dugmad */}
-                        <div className="form-actions" style={{
-                            display: "flex",
-                            justifyContent: "center",
-                            gap: "12px",
-                            marginTop: "24px"
-                        }}>
-                            <button 
+                        <div className="form-actions" style={{ display: "flex", justifyContent: "flex-end", gap: "12px", marginTop: "24px" }}>
+                            <button
                                 type="button"
                                 className="btn"
                                 style={{
-                                    padding: "12px 24px",
-                                    backgroundColor: "#64748b",
-                                    color: "white",
-                                    border: "none",
-                                    borderRadius: "6px",
-                                    cursor: "pointer",
-                                    fontSize: "0.9rem",
-                                    fontWeight: "500"
+                                    padding: "12px 24px", backgroundColor: "#64748b",
+                                    color: "white", border: "none", borderRadius: "6px",
+                                    cursor: "pointer", fontSize: "0.9rem", fontWeight: "500"
                                 }}
                                 onClick={() => navigate("/admin/mailboxes")}
                             >
@@ -445,13 +368,9 @@ export default function EditMailboxPage() {
                                 type="submit"
                                 className="btn btn--primary"
                                 disabled={isSubmitting}
-                                style={{
-                                    padding: "12px 24px",
-                                    fontSize: "0.9rem",
-                                    fontWeight: "500"
-                                }}
+                                style={{ padding: "12px 24px", fontSize: "0.9rem", fontWeight: "500" }}
                             >
-                                {isSubmitting ? "Čuvanje..." : "Sačuvaj izmjene"}
+                                {isSubmitting ? "Ažuriranje..." : "Spremi promjene"}
                             </button>
                         </div>
                     </form>

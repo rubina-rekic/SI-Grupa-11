@@ -6,6 +6,7 @@ import { createMailbox, checkSerialNumberExists, MailboxType, mailboxTypeLabels 
 import { Layout } from "../../components/Layout/Layout"
 import OpenStreetMapPicker from "../../components/common/OpenStreetMapPicker"
 import { useState, useCallback } from "react"
+import { useNavigate } from "react-router-dom"
 
 const schema = z.object({
     serialNumber: z
@@ -22,16 +23,12 @@ const schema = z.object({
         .min(1, "Adresa je obavezna")
         .max(200, "Adresa može imati najviše 200 karaktera"),
     latitude: z
-        .number()
-        .min(-90, "Latitude mora biti između -90 i 90")
-        .max(90, "Latitude mora biti između -90 i 90"),
+        .number({ error: "Odaberite lokaciju na mapi" })
+        .min(-90).max(90),
     longitude: z
-        .number()
-        .min(-180, "Longitude mora biti između -180 i 180")
-        .max(180, "Longitude mora biti između -180 i 180"),
-    type: z.nativeEnum(MailboxType).refine((val) => val !== undefined, {
-        message: "Tip sandučića je obavezan"
-    }),
+        .number({ error: "Odaberite lokaciju na mapi" })
+        .min(-180).max(180),
+    type: z.nativeEnum(MailboxType),
     capacity: z
         .number()
         .min(1, "Kapacitet mora biti veći od 0")
@@ -39,7 +36,7 @@ const schema = z.object({
     installationYear: z
         .number()
         .min(1900, "Godina instalacije mora biti nakon 1900")
-        .max(new Date().getFullYear() + 10, "Godina instalacije ne može biti u budućnosti"),
+        .max(new Date().getFullYear(), `Godina instalacije ne može biti veća od ${new Date().getFullYear()}`),
     notes: z
         .string()
         .max(500, "Napomene mogu imati najviše 500 karaktera")
@@ -49,37 +46,34 @@ const schema = z.object({
 type FormData = z.infer<typeof schema>
 
 export default function CreateMailboxPage() {
+    const navigate = useNavigate()
     const [selectedLocation, setSelectedLocation] = useState<{ lat: number; lng: number } | null>(null)
-    const [showMap, setShowMap] = useState(false)
-    
-    const { register, handleSubmit, setValue, watch, formState: { errors, isSubmitting }, trigger } = useForm<FormData>({
+
+    const { register, handleSubmit, setValue, watch, formState: { errors, isSubmitting } } = useForm<FormData>({
         resolver: zodResolver(schema),
         mode: "onChange",
         defaultValues: {
-            latitude: 43.8563,
-            longitude: 18.4131,
             type: MailboxType.WallSmall,
             capacity: 100,
             installationYear: new Date().getFullYear()
         }
     })
 
+    const watchedType = watch("type")
     const watchedLat = watch("latitude")
     const watchedLng = watch("longitude")
-    const watchedType = watch("type")
 
     const handleLocationSelect = useCallback((lat: number, lng: number) => {
         setSelectedLocation({ lat, lng })
-        setValue("latitude", lat)
-        setValue("longitude", lng)
-        trigger(["latitude", "longitude"])
-    }, [setValue, trigger])
-
-    const toggleMap = () => {
-        setShowMap(!showMap)
-    }
+        setValue("latitude", lat, { shouldValidate: true })
+        setValue("longitude", lng, { shouldValidate: true })
+    }, [setValue])
 
     const onSubmit = async (data: FormData) => {
+        if (!selectedLocation) {
+            toast.error("Odaberite lokaciju na mapi")
+            return
+        }
         try {
             await createMailbox({
                 serialNumber: data.serialNumber.trim(),
@@ -91,54 +85,16 @@ export default function CreateMailboxPage() {
                 installationYear: data.installationYear,
                 notes: data.notes?.trim() || undefined
             })
-            
-            toast.success(`Sandučić ${data.serialNumber} uspješno dodan!`, {
-                description: `Lokacija: ${data.latitude.toFixed(6)}, ${data.longitude.toFixed(6)}`
-            })
-            
-            // Reset form
-            setValue("serialNumber", "")
-            setValue("address", "")
-            setValue("notes", "")
-            setValue("latitude", 43.8563)
-            setValue("longitude", 18.4131)
-            setValue("type", MailboxType.WallSmall)
-            setValue("capacity", 100)
-            setValue("installationYear", new Date().getFullYear())
-            setSelectedLocation(null)
-            
+            toast.success(`Sandučić ${data.serialNumber} uspješno dodan!`)
+            navigate("/admin/mailboxes")
         } catch (error: unknown) {
-            const errorDetails = error as {
-                message?: string
-                response?: unknown
-                status?: number
-                code?: unknown
-                config?: unknown
-                stack?: unknown
-            }
-            console.error("=== CREATE MAILBOX ERROR ===")
-            console.error("Error object:", error)
-            console.error("Error message:", errorDetails.message)
-            console.error("Error response:", errorDetails.response)
-            console.error("Error status:", errorDetails.status)
-            console.error("Error code:", errorDetails.code)
-            console.error("Error config:", errorDetails.config)
-            console.error("Stack trace:", errorDetails.stack)
-            console.error("=== END ERROR ===")
-            
-            if (errorDetails.message?.includes("već postoji")) {
+            const err = error as { message?: string; status?: number }
+            if (err.message?.includes("već postoji")) {
                 toast.error("Sandučić sa ovim serijskim brojem već postoji")
-            } else if (errorDetails.message?.includes("Pristup odbijen")) {
-                toast.error("Nemate dozvolu za kreiranje sandučića. Molimo prijavite se kao Administrator.")
-            } else if (errorDetails.status === 403) {
-                toast.error("Nemate dozvolu za kreiranje sandučića. Provjerite da li ste ulogovani kao Administrator.")
-            } else if (errorDetails.status === 401) {
-                toast.error("Niste ulogovani. Molimo prijavite se.")
-            } else if (errorDetails.status !== undefined && errorDetails.status >= 500) {
-                toast.error("Greška na serveru. Molimo pokušajte ponovo kasnije.")
+            } else if (err.status === 403) {
+                toast.error("Nemate dozvolu za kreiranje sandučića.")
             } else {
-                const errorMessage = error instanceof Error ? error.message : "Greška pri kreiranju sandučića"
-                toast.error(errorMessage)
+                toast.error("Greška pri kreiranju sandučića. Pokušajte ponovo.")
             }
         }
     }
@@ -150,12 +106,13 @@ export default function CreateMailboxPage() {
                     <div className="form-card__header">
                         <h1 className="form-card__title">Dodavanje novog sandučića</h1>
                         <p className="form-card__subtitle">
-                            Unesite osnovne podatke o sandučiću i izaberite lokaciju na mapi.
+                            Unesite podatke o sandučiću i označite lokaciju na mapi.
                         </p>
                     </div>
 
                     <form className="form-card__body" onSubmit={handleSubmit(onSubmit)} noValidate>
-                        {/* Osnovni podaci */}
+
+                        {/* Serijski broj i tip */}
                         <div className="form-row">
                             <div className="form-field">
                                 <label className="form-field__label" htmlFor="serialNumber">
@@ -194,104 +151,38 @@ export default function CreateMailboxPage() {
                             </div>
                         </div>
 
+                        {/* Mapa */}
                         <div className="form-field">
-                            <label className="form-field__label" htmlFor="address">
-                                Adresa *
+                            <label className="form-field__label">
+                                Lokacija na mapi *
                             </label>
-                            <input
-                                id="address"
-                                type="text"
-                                className={`form-field__input${errors.address ? " form-field__input--error" : ""}`}
-                                placeholder="npr. Zmaja od Bosne 1, Sarajevo"
-                                autoComplete="street-address"
-                                {...register("address")}
-                            />
-                            {errors.address && (
-                                <p className="form-field__error">{errors.address.message}</p>
-                            )}
-                        </div>
-
-                        {/* Koordinate */}
-                        <div className="form-row">
-                            <div className="form-field">
-                                <label className="form-field__label" htmlFor="latitude">
-                                    Latitude *
-                                </label>
-                                <input
-                                    id="latitude"
-                                    type="number"
-                                    step="0.000001"
-                                    className={`form-field__input${errors.latitude ? " form-field__input--error" : ""}`}
-                                    placeholder="-90 do 90"
-                                    {...register("latitude", { valueAsNumber: true })}
-                                />
-                                {errors.latitude && (
-                                    <p className="form-field__error">{errors.latitude.message}</p>
-                                )}
-                            </div>
-
-                            <div className="form-field">
-                                <label className="form-field__label" htmlFor="longitude">
-                                    Longitude *
-                                </label>
-                                <input
-                                    id="longitude"
-                                    type="number"
-                                    step="0.000001"
-                                    className={`form-field__input${errors.longitude ? " form-field__input--error" : ""}`}
-                                    placeholder="-180 do 180"
-                                    {...register("longitude", { valueAsNumber: true })}
-                                />
-                                {errors.longitude && (
-                                    <p className="form-field__error">{errors.longitude.message}</p>
-                                )}
-                            </div>
-                        </div>
-
-                        {/* Google Maps */}
-                        <div className="form-field">
-                            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px" }}>
-                                <label className="form-field__label" style={{ margin: 0 }}>
-                                    Lokacija na mapi
-                                </label>
-                                <button
-                                    type="button"
-                                    className="btn"
-                                    style={{
-                                        padding: "6px 12px",
-                                        fontSize: "0.8rem",
-                                        backgroundColor: showMap ? "#2563a8" : "#1b3a5c",
-                                        color: "white",
-                                        border: "none",
-                                        borderRadius: "6px",
-                                        cursor: "pointer"
-                                    }}
-                                    onClick={toggleMap}
-                                >
-                                    {showMap ? "Sakrij mapu" : "Prikaži mapu"}
-                                </button>
-                            </div>
-                            
-                            {showMap && (
+                            <p style={{ fontSize: "0.85rem", color: "#64748b", marginBottom: "8px", marginTop: 0 }}>
+                                Kliknite na mapu da označite lokaciju sandučića.
+                            </p>
+                            <div style={{ border: "1px solid #e2e8f0", borderRadius: "8px", overflow: "hidden" }}>
                                 <OpenStreetMapPicker
                                     onLocationSelect={handleLocationSelect}
-                                    initialLat={watchedLat}
-                                    initialLng={watchedLng}
+                                    onAddressFound={(address) => setValue("address", address, { shouldValidate: true })}
+                                    initialLat={watchedLat ?? 43.8563}
+                                    initialLng={watchedLng ?? 18.4131}
                                     height="350px"
                                 />
-                            )}
-                            
-                            {selectedLocation && (
+                            </div>
+                            {selectedLocation ? (
                                 <div style={{
-                                    marginTop: "8px",
-                                    padding: "8px 12px",
-                                    backgroundColor: "#f0fdf4",
-                                    border: "1px solid #bbf7d0",
-                                    borderRadius: "6px",
-                                    fontSize: "0.85rem",
-                                    color: "#15803d"
+                                    marginTop: "8px", padding: "8px 12px",
+                                    backgroundColor: "#f0fdf4", border: "1px solid #bbf7d0",
+                                    borderRadius: "6px", fontSize: "0.85rem", color: "#15803d"
                                 }}>
-                                    📍 Izabrana lokacija: {selectedLocation.lat.toFixed(6)}, {selectedLocation.lng.toFixed(6)}
+                                    📍 Odabrana lokacija: {selectedLocation.lat.toFixed(6)}, {selectedLocation.lng.toFixed(6)}
+                                </div>
+                            ) : (
+                                <div style={{
+                                    marginTop: "8px", padding: "8px 12px",
+                                    backgroundColor: "#fef9c3", border: "1px solid #fde047",
+                                    borderRadius: "6px", fontSize: "0.85rem", color: "#854d0e"
+                                }}>
+                                    ⚠️ Lokacija nije odabrana — kliknite na mapu
                                 </div>
                             )}
                         </div>
@@ -300,7 +191,7 @@ export default function CreateMailboxPage() {
                         <div className="form-row">
                             <div className="form-field">
                                 <label className="form-field__label" htmlFor="capacity">
-                                    Kapacitet *
+                                    Kapacitet (broj pisama) *
                                 </label>
                                 <input
                                     id="capacity"
@@ -324,15 +215,28 @@ export default function CreateMailboxPage() {
                                     id="installationYear"
                                     type="number"
                                     className={`form-field__input${errors.installationYear ? " form-field__input--error" : ""}`}
-                                    placeholder="npr. 2023"
+                                    placeholder="npr. 2020"
                                     min="1900"
-                                    max={new Date().getFullYear() + 10}
+                                    max={new Date().getFullYear()}
                                     {...register("installationYear", { valueAsNumber: true })}
                                 />
                                 {errors.installationYear && (
                                     <p className="form-field__error">{errors.installationYear.message}</p>
                                 )}
                             </div>
+                        </div>
+
+                        {/* Info o tipu */}
+                        <div style={{
+                            padding: "12px", backgroundColor: "#f8fafc",
+                            border: "1px solid #e2e8f0", borderRadius: "8px",
+                            fontSize: "0.85rem", color: "#64748b"
+                        }}>
+                            <strong>Odabrani tip:</strong> {mailboxTypeLabels[watchedType]}
+                            {watchedType === MailboxType.WallSmall && <div style={{ marginTop: "4px" }}>🏠 Zidni sandučić, manji kapacitet</div>}
+                            {watchedType === MailboxType.StandaloneLarge && <div style={{ marginTop: "4px" }}>📮 Samostojeći sandučić, veliki kapacitet</div>}
+                            {watchedType === MailboxType.IndoorResidential && <div style={{ marginTop: "4px" }}>🏢 Unutrašnji, stambene zgrade</div>}
+                            {watchedType === MailboxType.SpecialPriority && <div style={{ marginTop: "4px" }}>⭐ Specijalni, prioritetni tretman</div>}
                         </div>
 
                         {/* Napomene */}
@@ -352,63 +256,25 @@ export default function CreateMailboxPage() {
                             )}
                         </div>
 
-                        {/* Informacije o tipu */}
-                        <div style={{
-                            padding: "12px",
-                            backgroundColor: "#f8fafc",
-                            border: "1px solid #e2e8f0",
-                            borderRadius: "8px",
-                            fontSize: "0.85rem",
-                            color: "#64748b"
-                        }}>
-                            <strong>Tip sandučića:</strong> {mailboxTypeLabels[watchedType]}
-                            {watchedType === MailboxType.WallSmall && (
-                                <div style={{ marginTop: "4px" }}>🏠 Zidni sandučić, manji kapacitet</div>
-                            )}
-                            {watchedType === MailboxType.StandaloneLarge && (
-                                <div style={{ marginTop: "4px" }}>📮 Samostojeći sandučić, veliki kapacitet</div>
-                            )}
-                            {watchedType === MailboxType.IndoorResidential && (
-                                <div style={{ marginTop: "4px" }}>🏢 Unutrašnji, stambene zgrade</div>
-                            )}
-                            {watchedType === MailboxType.SpecialPriority && (
-                                <div style={{ marginTop: "4px" }}>⭐ Specijalni, prioritetni tretman</div>
-                            )}
-                        </div>
-
                         {/* Dugmad */}
-                        <div className="form-actions" style={{
-                            display: "flex",
-                            justifyContent: "center",
-                            gap: "12px",
-                            marginTop: "24px"
-                        }}>
-                            <button 
+                        <div className="form-actions" style={{ display: "flex", justifyContent: "flex-end", gap: "12px", marginTop: "24px" }}>
+                            <button
                                 type="button"
                                 className="btn"
                                 style={{
-                                    padding: "12px 24px",
-                                    backgroundColor: "#64748b",
-                                    color: "white",
-                                    border: "none",
-                                    borderRadius: "6px",
-                                    cursor: "pointer",
-                                    fontSize: "0.9rem",
-                                    fontWeight: "500"
+                                    padding: "12px 24px", backgroundColor: "#64748b",
+                                    color: "white", border: "none", borderRadius: "6px",
+                                    cursor: "pointer", fontSize: "0.9rem", fontWeight: "500"
                                 }}
-                                onClick={() => window.history.back()}
+                                onClick={() => navigate("/admin/mailboxes")}
                             >
                                 Otkaži
                             </button>
                             <button
                                 type="submit"
                                 className="btn btn--primary"
-                                disabled={isSubmitting}
-                                style={{
-                                    padding: "12px 24px",
-                                    fontSize: "0.9rem",
-                                    fontWeight: "500"
-                                }}
+                                disabled={isSubmitting || !selectedLocation}
+                                style={{ padding: "12px 24px", fontSize: "0.9rem", fontWeight: "500" }}
                             >
                                 {isSubmitting ? "Čuvanje..." : "Sačuvaj sandučić"}
                             </button>
