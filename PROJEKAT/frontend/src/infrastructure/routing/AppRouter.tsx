@@ -9,6 +9,7 @@ import { useAuth } from "../../application/hooks/useAuth"
 import { Layout } from "../../ui/components/Layout/Layout"
 import PostalWorkersListPage from "../../ui/pages/admin/PostalWorkersListPage"
 import MailboxListPage from "../../ui/pages/admin/MailboxListPage"
+import MailboxHistoryPage from "../../ui/pages/admin/MailboxHistoryPage"
 
 function PrivateRoute({ children, requiredRole }: { children: React.ReactNode; requiredRole?: string }) {
   const { currentUser, loading } = useAuth()
@@ -164,6 +165,14 @@ export function AppRouter() {
         element={
           <PrivateRoute>
             <PostalWorkersListPage />
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="/admin/mailboxes/history"
+        element={
+          <PrivateRoute requiredRole="Administrator">
+            <MailboxHistoryPage />
           </PrivateRoute>
         }
       />

@@ -37,7 +37,7 @@ public sealed class MailboxesController : ControllerBase
                 request.Capacity,
                 request.InstallationYear,
                 request.Notes,
-                request.Priority
+                request.Priority 
             );
 
             var mailbox = await _mailboxService.CreateAsync(command, cancellationToken);
@@ -89,7 +89,8 @@ public sealed class MailboxesController : ControllerBase
                 request.Capacity,
                 request.InstallationYear,
                 request.Notes,
-                userGuid
+                userGuid,
+                request.Reason
             );
 
             var mailbox = await _mailboxService.UpdateAsync(command, cancellationToken);
@@ -136,6 +137,31 @@ public sealed class MailboxesController : ControllerBase
         var exists = await _mailboxService.SerialNumberExistsAsync(serialNumber, cancellationToken);
         return Ok(exists);
     }
+
+    [HttpGet("{id:guid}/history")]
+[RequiredRole("Administrator")]
+public async Task<ActionResult> GetHistoryAsync(
+    Guid id,
+    CancellationToken cancellationToken)
+{
+    var logs = await _mailboxService.GetAuditLogAsync(id, cancellationToken);
+
+    var response = logs.Select(log => new
+    {
+        log.Id,
+        log.MailboxId,
+        log.UserId,
+        Username = log.User.Username,
+        log.FieldName,
+        log.OldValue,
+        log.NewValue,
+        log.Action,
+        log.Reason,
+        log.Timestamp
+    });
+
+    return Ok(response);
+}
 
     private static MailboxResponse MapToResponse(Mailbox m) => new(
         m.Id,

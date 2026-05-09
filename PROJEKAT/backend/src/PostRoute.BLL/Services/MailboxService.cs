@@ -164,17 +164,17 @@ public class MailboxService : IMailboxService
     private async Task LogChangesAsync(Mailbox existingMailbox, UpdateMailboxCommand command, CancellationToken cancellationToken)
     {
         var changes = new List<(string FieldName, object? OldValue, object? NewValue)>
-        {
-            ("SerialNumber", existingMailbox.SerialNumber, command.SerialNumber),
-            ("Address", existingMailbox.Address, command.Address),
-            ("Latitude", existingMailbox.Latitude, command.Latitude),
-            ("Longitude", existingMailbox.Longitude, command.Longitude),
-            ("Type", existingMailbox.Type, command.Type),
-            ("Priority", existingMailbox.Priority, command.Priority),
-            ("Capacity", existingMailbox.Capacity, command.Capacity),
-            ("InstallationYear", existingMailbox.InstallationYear, command.InstallationYear),
-            ("Notes", existingMailbox.Notes, command.Notes)
-        };
+    {
+        ("SerialNumber", existingMailbox.SerialNumber, command.SerialNumber),
+        ("Address", existingMailbox.Address, command.Address),
+        ("Latitude", existingMailbox.Latitude, command.Latitude),
+        ("Longitude", existingMailbox.Longitude, command.Longitude),
+        ("Type", existingMailbox.Type, command.Type),
+        ("Priority", existingMailbox.Priority, command.Priority),
+        ("Capacity", existingMailbox.Capacity, command.Capacity),
+        ("InstallationYear", existingMailbox.InstallationYear, command.InstallationYear),
+        ("Notes", existingMailbox.Notes, command.Notes)
+    };
 
         foreach (var change in changes)
         {
@@ -191,11 +191,17 @@ public class MailboxService : IMailboxService
                     FieldName = change.FieldName,
                     OldValue = oldValueStr,
                     NewValue = newValueStr,
-                    Action = "UPDATE"
+                    Action = "UPDATE",
+                    Reason = change.FieldName == "Priority" ? command.Reason : null
                 };
 
                 await _auditLogRepository.LogAsync(auditLog, cancellationToken);
             }
         }
+    }
+
+    public async Task<IEnumerable<MailboxAuditLog>> GetAuditLogAsync(Guid mailboxId, CancellationToken cancellationToken)
+    {
+        return await _auditLogRepository.GetByMailboxIdAsync(mailboxId, cancellationToken);
     }
 }

@@ -30,6 +30,9 @@ public class MailboxAuditLog
     [MaxLength(20)]
     public string Action { get; set; } = string.Empty; // "UPDATE", "CREATE", "DELETE"
 
+    [MaxLength(200)]
+    public string? Reason { get; set; }
+
     // Navigation properties
     public Mailbox Mailbox { get; set; } = null!;
     public User User { get; set; } = null!;

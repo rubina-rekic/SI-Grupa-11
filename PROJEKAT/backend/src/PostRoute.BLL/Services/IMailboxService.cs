@@ -21,4 +21,5 @@ public interface IMailboxService
         CancellationToken cancellationToken);
     Task<bool> SerialNumberExistsAsync(string serialNumber, CancellationToken cancellationToken);
     Task<bool> SerialNumberExistsAsync(string serialNumber, Guid? excludeId, CancellationToken cancellationToken);
+    Task<IEnumerable<MailboxAuditLog>> GetAuditLogAsync(Guid mailboxId, CancellationToken cancellationToken);
 }

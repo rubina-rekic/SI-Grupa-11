@@ -123,7 +123,9 @@ export default function EditMailboxPage() {
                 capacity: data.capacity,
                 installationYear: data.installationYear,
                 notes: data.notes?.trim() || undefined,
-                priority: data.priority
+                priority: data.priority,
+                reason: data.priorityReason?.trim() || undefined
+
             }
 
             await updateMailbox(id, updateData)

@@ -1,5 +1,6 @@
 import { httpClient } from "../httpClient"
 import { getApiBaseUrl } from "../../config/environment"
+import type { ApiResponse } from "../../../shared/types/api"
 
 export interface CreateMailboxRequest {
     serialNumber: string
@@ -23,6 +24,7 @@ export interface UpdateMailboxRequest {
     installationYear: number
     notes?: string
     priority?: MailboxPriority
+    reason?: string
 }
 
 export interface MailboxResponse {
@@ -167,7 +169,8 @@ export async function updateMailbox(id: string, request: UpdateMailboxRequest): 
         priority: request.priority ?? MailboxPriority.Srednji,
         capacity: request.capacity,
         installationYear: request.installationYear,
-        notes: request.notes
+        notes: request.notes,
+        reason: request.reason
     }
 
     console.log("Backend request:", backendRequest);
@@ -186,4 +189,21 @@ export async function updateMailbox(id: string, request: UpdateMailboxRequest): 
         throw new Error(response.error || "Greška pri ažuriranju sandučića")
     }
     return response.data as MailboxResponse
+}
+
+export interface AuditLogDto {
+    id: string
+    mailboxId: string
+    userId: string
+    username: string
+    fieldName: string
+    oldValue: string | null
+    newValue: string | null
+    action: string
+    reason: string | null
+    timestamp: string
+}
+
+export function getMailboxHistory(id: string): Promise<ApiResponse<AuditLogDto[]>> {
+    return httpClient<AuditLogDto[]>(`/api/mailboxes/${id}/history`, { method: "GET" })
 }

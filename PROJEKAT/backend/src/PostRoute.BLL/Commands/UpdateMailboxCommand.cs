@@ -13,5 +13,6 @@ public sealed record UpdateMailboxCommand(
     int Capacity,
     int InstallationYear,
     string? Notes,
-    Guid UserId
+    Guid UserId,
+    string? Reason
 );

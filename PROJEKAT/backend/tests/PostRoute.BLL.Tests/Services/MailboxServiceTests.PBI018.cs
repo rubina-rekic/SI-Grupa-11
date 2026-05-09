@@ -45,7 +45,8 @@ public sealed class MailboxServiceTestsPBI018
         Capacity: 200,
         InstallationYear: 2025,
         Notes: "nove napomene",
-        UserId: userId
+        UserId: userId,
+        Reason: "Promjena prioriteta"
     );
 
     [Fact]
@@ -154,6 +155,61 @@ public sealed class MailboxServiceTestsPBI018
     }
 
     [Fact]
+    public async Task UpdateAsync_WhenPriorityChanges_LogsReasonInAuditEntry()
+    {
+        var id = Guid.NewGuid();
+        var userId = Guid.NewGuid();
+        var existing = ExistingMailbox(id);
+        _repo.Setup(r => r.GetByIdAsync(id, It.IsAny<CancellationToken>())).ReturnsAsync(existing);
+        _repo.Setup(r => r.UpdateAsync(It.IsAny<Mailbox>(), It.IsAny<CancellationToken>()))
+             .ReturnsAsync((Mailbox m, CancellationToken _) => m);
+
+        var capturedLogs = new List<MailboxAuditLog>();
+        _auditRepo.Setup(a => a.LogAsync(It.IsAny<MailboxAuditLog>(), It.IsAny<CancellationToken>()))
+                  .Callback<MailboxAuditLog, CancellationToken>((log, _) => capturedLogs.Add(log));
+
+        var cmd = new UpdateMailboxCommand(
+            Id: id,
+            SerialNumber: "NEW-001",
+            Address: "Nova adresa",
+            Latitude: 44.0m,
+            Longitude: 18.0m,
+            Type: MailboxType.SpecialPriority,
+            Priority: MailboxPriority.Visok,
+            Capacity: 200,
+            InstallationYear: 2025,
+            Notes: "nove napomene",
+            UserId: userId,
+            Reason: "Povećan opseg pošte"
+        );
+
+        await _sut.UpdateAsync(cmd, CancellationToken.None);
+
+        var priorityLog = Assert.Single(capturedLogs, l => l.FieldName == "Priority");
+        Assert.Equal("Srednji", priorityLog.OldValue);
+        Assert.Equal("Visok", priorityLog.NewValue);
+        Assert.Equal("Povećan opseg pošte", priorityLog.Reason);
+    }
+
+    [Fact]
+    public async Task GetAuditLogAsync_ReturnsAuditLogsForMailbox()
+    {
+        var mailboxId = Guid.NewGuid();
+        var expectedLogs = new List<MailboxAuditLog>
+        {
+            new MailboxAuditLog { Id = Guid.NewGuid(), MailboxId = mailboxId, UserId = Guid.NewGuid(), FieldName = "Priority", OldValue = "Srednji", NewValue = "Visok", Action = "UPDATE", Reason = "Sezona praznika" },
+            new MailboxAuditLog { Id = Guid.NewGuid(), MailboxId = mailboxId, UserId = Guid.NewGuid(), FieldName = "Address", OldValue = "Stara", NewValue = "Nova", Action = "UPDATE", Reason = null }
+        };
+
+        _auditRepo.Setup(a => a.GetByMailboxIdAsync(mailboxId, It.IsAny<CancellationToken>()))
+                  .ReturnsAsync(expectedLogs);
+
+        var result = await _sut.GetAuditLogAsync(mailboxId, CancellationToken.None);
+
+        Assert.Equal(expectedLogs, result);
+    }
+
+    [Fact]
     public async Task UpdateAsync_DoesNotLogAuditForUnchangedFields()
     {
         var id = Guid.NewGuid();
@@ -173,7 +229,8 @@ public sealed class MailboxServiceTestsPBI018
             Capacity: existing.Capacity,
             InstallationYear: existing.InstallationYear,
             Notes: existing.Notes,
-            UserId: Guid.NewGuid()
+            UserId: Guid.NewGuid(),
+            Reason: null
         );
 
         await _sut.UpdateAsync(cmd, CancellationToken.None);

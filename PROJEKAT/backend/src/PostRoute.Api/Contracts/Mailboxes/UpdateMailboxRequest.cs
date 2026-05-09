@@ -36,4 +36,6 @@ public class UpdateMailboxRequest
 
     [MaxLength(500, ErrorMessage = "Napomene ne mogu biti duže od 500 karaktera")]
     public string? Notes { get; set; }
+    [MaxLength(200, ErrorMessage = "Obrazloženje ne može biti duže od 200 karaktera")]
+public string? Reason { get; set; }
 }
