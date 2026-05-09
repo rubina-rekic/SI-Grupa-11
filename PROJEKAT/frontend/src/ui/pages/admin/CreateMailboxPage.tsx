@@ -2,11 +2,11 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { toast } from "sonner"
 import { z } from "zod"
-import { createMailbox, checkSerialNumberExists, MailboxType, mailboxTypeLabels } from "../../../infrastructure/api/mailboxes/mailboxesApi"
 import { Layout } from "../../components/Layout/Layout"
 import OpenStreetMapPicker from "../../components/common/OpenStreetMapPicker"
 import { useState, useCallback } from "react"
 import { useNavigate } from "react-router-dom"
+import { createMailbox, checkSerialNumberExists, MailboxType, MailboxPriority, mailboxTypeLabels } from "../../../infrastructure/api/mailboxes/mailboxesApi"
 
 const schema = z.object({
     serialNumber: z
@@ -29,6 +29,7 @@ const schema = z.object({
         .number({ error: "Odaberite lokaciju na mapi" })
         .min(-180).max(180),
     type: z.nativeEnum(MailboxType),
+    priority: z.nativeEnum(MailboxPriority),
     capacity: z
         .number()
         .min(1, "Kapacitet mora biti veći od 0")
@@ -54,6 +55,7 @@ export default function CreateMailboxPage() {
         mode: "onChange",
         defaultValues: {
             type: MailboxType.WallSmall,
+            priority: MailboxPriority.Srednji,
             capacity: 100,
             installationYear: new Date().getFullYear()
         }
@@ -81,6 +83,7 @@ export default function CreateMailboxPage() {
                 latitude: data.latitude,
                 longitude: data.longitude,
                 type: data.type,
+                priority: data.priority,
                 capacity: data.capacity,
                 installationYear: data.installationYear,
                 notes: data.notes?.trim() || undefined
@@ -112,7 +115,7 @@ export default function CreateMailboxPage() {
 
                     <form className="form-card__body" onSubmit={handleSubmit(onSubmit)} noValidate>
 
-                        {/* Serijski broj i tip */}
+                        {/* Red 1: Serijski broj i tip */}
                         <div className="form-row">
                             <div className="form-field">
                                 <label className="form-field__label" htmlFor="serialNumber">
@@ -149,6 +152,22 @@ export default function CreateMailboxPage() {
                                     <p className="form-field__error">{errors.type.message}</p>
                                 )}
                             </div>
+                        </div>
+
+                        {/* Prioritet — puna širina */}
+                        <div className="form-field">
+                            <label className="form-field__label" htmlFor="priority">
+                                Prioritet
+                            </label>
+                            <select
+                                id="priority"
+                                className="form-field__input"
+                                {...register("priority", { valueAsNumber: true })}
+                            >
+                                <option value={MailboxPriority.Visok}>🔴 Visok — pražnjenje svakodnevno</option>
+                                <option value={MailboxPriority.Srednji}>🟡 Srednji — pražnjenje svaka 2-3 dana</option>
+                                <option value={MailboxPriority.Nizak}>🟢 Nizak — pražnjenje po potrebi</option>
+                            </select>
                         </div>
 
                         {/* Mapa */}

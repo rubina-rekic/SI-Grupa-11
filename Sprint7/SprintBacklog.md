@@ -6,7 +6,7 @@
 
 | ID | Naziv stavke / zadatka | Odgovorna osoba | Procjena | Status | Napomena |
 |---|---|---|---|---|---|
-| PBI-020 / US-18 | Postavljanje prioriteta sandučića | - | 3h 30min | To Do | Dropdown Visok/Srednji/Nizak, kodiranje bojama, automatski prioritet, obrazloženje promjene, inicijalna vrijednost Srednji |
+| PBI-020 / US-18 | Postavljanje prioriteta sandučića | Rubina | 3h 30min | Done | Dropdown Visok/Srednji/Nizak, kodiranje bojama, automatski prioritet, obrazloženje promjene, inicijalna vrijednost Srednji |
 | PBI-021 / US-32 | Definisanje vremenskih okvira dostupnosti sandučića | - | 4h | To Do | Time picker 24h format, validacija vremena, dva termina dnevno, checkbox 24/7, upozorenje pri konfliktu s rutom |
 | PBI-021 / US-33 | Definisanje radnih dana sandučića | - | 2h | To Do | Sedam checkbox kontrola, default Pon-Pet, validacija min. jedan dan, Označi sve / Odznači sve |
 
