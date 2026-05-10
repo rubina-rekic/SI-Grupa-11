@@ -43,6 +43,21 @@ public class Mailbox
     [Range(1900, 2100, ErrorMessage = "Installation year must be reasonable")]
     public int InstallationYear { get; set; }
 
+    // US-32: Radna dostupnost
+    public bool IsAlwaysAvailable { get; set; } = false;
+
+    [Column(TypeName = "time")]
+    public TimeOnly? Slot1Start { get; set; }
+
+    [Column(TypeName = "time")]
+    public TimeOnly? Slot1End { get; set; }
+
+    [Column(TypeName = "time")]
+    public TimeOnly? Slot2Start { get; set; }
+
+    [Column(TypeName = "time")]
+    public TimeOnly? Slot2End { get; set; }
+
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
     public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
@@ -55,13 +70,13 @@ public enum MailboxType
 {
     [Display(Name = "Zidni (mali)")]
     WallSmall = 1,
-    
+
     [Display(Name = "Samostojeći (veliki)")]
     StandaloneLarge = 2,
-    
+
     [Display(Name = "Unutrašnji (stambene zgrade)")]
     IndoorResidential = 3,
-    
+
     [Display(Name = "Specijalni (prioritetni)")]
     SpecialPriority = 4
 }

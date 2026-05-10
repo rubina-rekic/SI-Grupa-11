@@ -15,5 +15,10 @@ public record MailboxResponse(
     int InstallationYear,
     DateTime CreatedAt,
     DateTime UpdatedAt,
-    string? Notes
+    string? Notes,
+    bool IsAlwaysAvailable = false,
+    TimeOnly? Slot1Start = null,
+    TimeOnly? Slot1End = null,
+    TimeOnly? Slot2Start = null,
+    TimeOnly? Slot2End = null
 );

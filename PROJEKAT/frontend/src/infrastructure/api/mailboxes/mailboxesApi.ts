@@ -12,6 +12,11 @@ export interface CreateMailboxRequest {
     installationYear: number
     notes?: string
     priority?: MailboxPriority
+    isAlwaysAvailable: boolean
+    slot1Start: string | null
+    slot1End: string | null
+    slot2Start: string | null
+    slot2End: string | null
 }
 
 export interface UpdateMailboxRequest {
@@ -25,6 +30,11 @@ export interface UpdateMailboxRequest {
     notes?: string
     priority?: MailboxPriority
     reason?: string
+    isAlwaysAvailable: boolean
+    slot1Start: string | null
+    slot1End: string | null
+    slot2Start: string | null
+    slot2End: string | null
 }
 
 export interface MailboxResponse {
@@ -41,6 +51,12 @@ export interface MailboxResponse {
     createdAt: string
     updatedAt: string
     notes?: string
+
+    isAlwaysAvailable: boolean
+    slot1Start: string | null
+    slot1End: string | null
+    slot2Start: string | null
+    slot2End: string | null
 }
 
 export interface PagedResponse<T> {
@@ -109,7 +125,12 @@ export async function createMailbox(request: CreateMailboxRequest): Promise<Mail
         priority: request.priority ?? MailboxPriority.Srednji,
         capacity: request.capacity,
         installationYear: request.installationYear,
-        notes: request.notes
+        notes: request.notes,
+        isAlwaysAvailable: request.isAlwaysAvailable,
+        slot1Start: request.slot1Start,
+        slot1End: request.slot1End,
+        slot2Start: request.slot2Start,
+        slot2End: request.slot2End,
     }
 
     const response = await httpClient("/api/mailboxes", {
@@ -159,7 +180,7 @@ export async function updateMailbox(id: string, request: UpdateMailboxRequest): 
     console.log("Updating mailbox ID:", id);
     console.log("Request data:", request);
     console.log("API Base URL:", getApiBaseUrl());
-    
+
     const backendRequest = {
         serialNumber: request.serialNumber,
         address: request.address,
@@ -170,7 +191,13 @@ export async function updateMailbox(id: string, request: UpdateMailboxRequest): 
         capacity: request.capacity,
         installationYear: request.installationYear,
         notes: request.notes,
-        reason: request.reason
+        reason: request.reason,
+        // US-32
+        isAlwaysAvailable: request.isAlwaysAvailable,
+        slot1Start: request.slot1Start,
+        slot1End: request.slot1End,
+        slot2Start: request.slot2Start,
+        slot2End: request.slot2End,
     }
 
     console.log("Backend request:", backendRequest);
@@ -179,11 +206,11 @@ export async function updateMailbox(id: string, request: UpdateMailboxRequest): 
         method: "PUT",
         body: backendRequest
     })
-    
+
     console.log("HTTP Response:", response);
     console.log("Response status:", response.status);
     console.log("Response error:", response.error);
-    
+
     if (response.error || !response.data) {
         console.error("Update failed:", response.error);
         throw new Error(response.error || "Greška pri ažuriranju sandučića")

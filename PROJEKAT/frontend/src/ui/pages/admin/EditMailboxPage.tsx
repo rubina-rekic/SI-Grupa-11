@@ -15,6 +15,8 @@ import {
 } from "../../../infrastructure/api/mailboxes/mailboxesApi"
 import { Layout } from "../../components/Layout/Layout"
 import OpenStreetMapPicker from "../../components/common/OpenStreetMapPicker"
+import { availabilitySchema, mapAvailabilityToRequest } from "../../../infrastructure/validation/availabilitySchema"
+import { AvailabilitySection } from "../../components/mailboxes/AvailabilitySection"
 
 const schema = z.object({
     serialNumber: z
@@ -50,7 +52,7 @@ const schema = z.object({
         .string()
         .max(500, "Napomene mogu imati najviše 500 karaktera")
         .optional()
-})
+}).and(availabilitySchema)
 
 type FormData = z.infer<typeof schema>
 
@@ -62,7 +64,7 @@ export default function EditMailboxPage() {
     const [originalData, setOriginalData] = useState<MailboxResponse | null>(null)
 
     const { register, handleSubmit, setValue, watch, formState: { errors, isSubmitting }, trigger, reset } = useForm<FormData>({
-        resolver: zodResolver(schema),
+        resolver: zodResolver(schema) as any,
         mode: "onChange"
     })
 
@@ -88,7 +90,14 @@ export default function EditMailboxPage() {
                     priority: mailbox.priority,
                     capacity: mailbox.capacity,
                     installationYear: mailbox.installationYear,
-                    notes: mailbox.notes || ""
+                    notes: mailbox.notes || "",
+                    // US-32
+                    isAlwaysAvailable: mailbox.isAlwaysAvailable,
+                    hasSecondSlot: !!(mailbox.slot2Start),
+                    slot1Start: mailbox.slot1Start?.slice(0, 5) ?? "",
+                    slot1End: mailbox.slot1End?.slice(0, 5) ?? "",
+                    slot2Start: mailbox.slot2Start?.slice(0, 5) ?? "",
+                    slot2End: mailbox.slot2End?.slice(0, 5) ?? "",
                 })
 
                 setSelectedLocation({ lat: mailbox.latitude, lng: mailbox.longitude })
@@ -124,8 +133,8 @@ export default function EditMailboxPage() {
                 installationYear: data.installationYear,
                 notes: data.notes?.trim() || undefined,
                 priority: data.priority,
-                reason: data.priorityReason?.trim() || undefined
-
+                reason: data.priorityReason?.trim() || undefined,
+                ...mapAvailabilityToRequest(data),
             }
 
             await updateMailbox(id, updateData)
@@ -192,6 +201,7 @@ export default function EditMailboxPage() {
                     </div>
 
                     <form className="form-card__body" onSubmit={handleSubmit(onSubmit)} noValidate>
+
                         {/* Red 1: Serijski broj i tip */}
                         <div className="form-row">
                             <div className="form-field">
@@ -265,6 +275,14 @@ export default function EditMailboxPage() {
                                 Opcionalno — unesite razlog ako mijenjate prioritet
                             </p>
                         </div>
+
+                        {/* US-32: Dostupnost */}
+                        <AvailabilitySection
+                            register={register}
+                            watch={watch}
+                            setValue={setValue}
+                            errors={errors}
+                        />
 
                         {/* Mapa */}
                         <div className="form-field">

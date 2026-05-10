@@ -7,6 +7,8 @@ import OpenStreetMapPicker from "../../components/common/OpenStreetMapPicker"
 import { useState, useCallback } from "react"
 import { useNavigate } from "react-router-dom"
 import { createMailbox, checkSerialNumberExists, MailboxType, MailboxPriority, mailboxTypeLabels } from "../../../infrastructure/api/mailboxes/mailboxesApi"
+import { availabilitySchema, mapAvailabilityToRequest } from "../../../infrastructure/validation/availabilitySchema"
+import { AvailabilitySection } from "../../components/mailboxes/AvailabilitySection"
 
 const schema = z.object({
     serialNumber: z
@@ -42,7 +44,7 @@ const schema = z.object({
         .string()
         .max(500, "Napomene mogu imati najviše 500 karaktera")
         .optional()
-})
+}).and(availabilitySchema)
 
 type FormData = z.infer<typeof schema>
 
@@ -50,14 +52,20 @@ export default function CreateMailboxPage() {
     const navigate = useNavigate()
     const [selectedLocation, setSelectedLocation] = useState<{ lat: number; lng: number } | null>(null)
 
-    const { register, handleSubmit, setValue, watch, formState: { errors, isSubmitting } } = useForm<FormData>({
-        resolver: zodResolver(schema),
+        const { register, handleSubmit, setValue, watch, formState: { errors, isSubmitting } } = useForm<FormData>({
+    resolver: zodResolver(schema) as any,
         mode: "onChange",
         defaultValues: {
             type: MailboxType.WallSmall,
             priority: MailboxPriority.Srednji,
             capacity: 100,
-            installationYear: new Date().getFullYear()
+            installationYear: new Date().getFullYear(),
+            isAlwaysAvailable: false,
+            hasSecondSlot: false,
+            slot1Start: "",
+            slot1End: "",
+            slot2Start: "",
+            slot2End: "",
         }
     })
 
@@ -86,7 +94,8 @@ export default function CreateMailboxPage() {
                 priority: data.priority,
                 capacity: data.capacity,
                 installationYear: data.installationYear,
-                notes: data.notes?.trim() || undefined
+                notes: data.notes?.trim() || undefined,
+                ...mapAvailabilityToRequest(data),
             })
             toast.success(`Sandučić ${data.serialNumber} uspješno dodan!`)
             navigate("/admin/mailboxes")
@@ -169,6 +178,14 @@ export default function CreateMailboxPage() {
                                 <option value={MailboxPriority.Nizak}>🟢 Nizak — pražnjenje po potrebi</option>
                             </select>
                         </div>
+
+                        {/* US-32: Dostupnost */}
+                        <AvailabilitySection
+                            register={register}
+                            watch={watch}
+                            setValue={setValue}
+                            errors={errors}
+                        />
 
                         {/* Mapa */}
                         <div className="form-field">
