@@ -7,7 +7,7 @@ const axiosInstance = axios.create({
   headers: { "Content-Type": "application/json" },
   withCredentials: true,
 })
-// Intercept response errors to handle them globally
+
 export async function httpClient<T>(
   path: string,
   options: ApiRequestOptions = {},
