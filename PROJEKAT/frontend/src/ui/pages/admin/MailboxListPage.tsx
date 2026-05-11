@@ -100,7 +100,7 @@ export default function MailboxListPage() {
                     <div className="form-card__body">
                         <div style={{ marginBottom: "16px" }}>
                             <h2 style={{ margin: 0, fontSize: "1.1rem", color: "#1e2d3d" }}>
-                                Lista sandučića ({totalCount})
+                                Lista sandučića — ukupno {totalCount}
                             </h2>
                         </div>
 
