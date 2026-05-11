@@ -14,37 +14,36 @@ export function Layout({ children }: LayoutProps) {
     return <div>Loading...</div>
   }
 
+  const roleLabel =
+    currentUser.role === "Administrator"
+      ? "Administrator"
+      : currentUser.role === "Dispatcher"
+        ? "Dispečer"
+        : "Poštar"
+
   return (
     <div className="app-layout">
       <div className={`sidebar-container ${sidebarOpen ? "open" : "closed"}`}>
-        <Sidebar 
-          userRole={currentUser.role} 
-          username={currentUser.username}
-        />
+        <Sidebar userRole={currentUser.role} username={currentUser.username} />
       </div>
-      
+
       <div className="main-content">
         <header className="top-header">
-          <button 
-            className="sidebar-toggle"
-            onClick={() => setSidebarOpen(!sidebarOpen)}
-          >
+          <button className="sidebar-toggle" onClick={() => setSidebarOpen(!sidebarOpen)}>
             ☰
           </button>
-          
+
           <div className="header-right">
             <span className="welcome-message">
-              Dobrodošli, {currentUser.username} ({currentUser.role === "Administrator" ? "Administrator" : "Poštar"})
+              Dobrodošli, {currentUser.username} ({roleLabel})
             </span>
             <button onClick={logout} className="btn-secondary">
               Odjava
             </button>
           </div>
         </header>
-        
-        <main className="content-area">
-          {children}
-        </main>
+
+        <main className="content-area">{children}</main>
       </div>
     </div>
   )

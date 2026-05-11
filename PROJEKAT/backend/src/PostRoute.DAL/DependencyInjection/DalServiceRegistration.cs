@@ -16,6 +16,7 @@ public static class DalServiceRegistration
         services.AddScoped<ISecurityLogRepository, SecurityLogRepository>();
         services.AddScoped<IMailboxRepository, MailboxRepository>();
         services.AddScoped<IMailboxAuditLogRepository, MailboxAuditLogRepository>();
+        services.AddScoped<IRouteRepository, RouteRepository>();
 
         return services;
     }

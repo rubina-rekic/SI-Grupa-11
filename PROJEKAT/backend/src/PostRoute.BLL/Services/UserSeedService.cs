@@ -18,6 +18,7 @@ public sealed class UserSeedService : IUserSeedService
         var defaultUsers = new[]
         {
             new SeedUser("Admin", "User", "admin", "admin@mail.com", "Admin123!", UserRole.Administrator),
+            new SeedUser("Dispecer", "User", "dispatcher", "dispatcher@mail.com", "Dispatcher123!", UserRole.Dispatcher),
             new SeedUser("Postar", "User", "postar", "postar@mail.com", "Postar123!", UserRole.PostalWorker),
             new SeedUser("Postar", "User", "postar1", "postar1@mail.com", "Postar123!", UserRole.PostalWorker)
         };

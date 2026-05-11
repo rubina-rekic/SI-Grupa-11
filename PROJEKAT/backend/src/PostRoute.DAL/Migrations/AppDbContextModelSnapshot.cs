@@ -42,6 +42,9 @@ namespace PostRoute.DAL.Migrations
                     b.Property<int>("InstallationYear")
                         .HasColumnType("integer");
 
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
                     b.Property<bool>("IsAlwaysAvailable")
                         .HasColumnType("boolean");
 
@@ -83,6 +86,9 @@ namespace PostRoute.DAL.Migrations
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("WorkingDays")
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
@@ -136,6 +142,77 @@ namespace PostRoute.DAL.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("MailboxAuditLogs");
+                });
+
+            modelBuilder.Entity("PostRoute.DAL.Entities.Route", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateOnly>("Date")
+                        .HasColumnType("date");
+
+                    b.Property<bool>("ExceedsStandardTime")
+                        .HasColumnType("boolean");
+
+                    b.Property<TimeOnly?>("PlannedEndTime")
+                        .HasColumnType("time");
+
+                    b.Property<TimeOnly>("PlannedStartTime")
+                        .HasColumnType("time");
+
+                    b.Property<Guid>("PostmanId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
+
+                    b.Property<decimal>("TotalDistanceKm")
+                        .HasColumnType("decimal(10,2)");
+
+                    b.Property<int>("TotalDurationMinutes")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PostmanId");
+
+                    b.ToTable("Routes");
+                });
+
+            modelBuilder.Entity("PostRoute.DAL.Entities.RouteItem", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<TimeOnly>("EstimatedArrivalTime")
+                        .HasColumnType("time");
+
+                    b.Property<Guid>("MailboxId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("Order")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid>("RouteId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MailboxId");
+
+                    b.HasIndex("RouteId");
+
+                    b.ToTable("RouteItems");
                 });
 
             modelBuilder.Entity("PostRoute.DAL.Entities.SecurityLog", b =>
@@ -254,6 +331,41 @@ namespace PostRoute.DAL.Migrations
                     b.Navigation("Mailbox");
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("PostRoute.DAL.Entities.Route", b =>
+                {
+                    b.HasOne("PostRoute.DAL.Entities.User", "Postman")
+                        .WithMany()
+                        .HasForeignKey("PostmanId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Postman");
+                });
+
+            modelBuilder.Entity("PostRoute.DAL.Entities.RouteItem", b =>
+                {
+                    b.HasOne("PostRoute.DAL.Entities.Mailbox", "Mailbox")
+                        .WithMany()
+                        .HasForeignKey("MailboxId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("PostRoute.DAL.Entities.Route", "Route")
+                        .WithMany("RouteItems")
+                        .HasForeignKey("RouteId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Mailbox");
+
+                    b.Navigation("Route");
+                });
+
+            modelBuilder.Entity("PostRoute.DAL.Entities.Route", b =>
+                {
+                    b.Navigation("RouteItems");
                 });
 #pragma warning restore 612, 618
         }
