@@ -7,6 +7,7 @@ public static class ApiServiceRegistration
 {
     public static IServiceCollection AddApiLayer(this IServiceCollection services, IConfiguration configuration)
     {
+        //trigger backend check
         services.AddControllers();
         services.AddOpenApi();
         services.AddBusinessLayer(configuration);
