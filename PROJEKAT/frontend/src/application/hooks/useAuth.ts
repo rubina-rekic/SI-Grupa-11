@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from "react"
 import { useNavigate } from "react-router-dom"
 import { toast } from "sonner"
 import { httpClient } from "../../infrastructure/api/httpClient"
-
+// Ova funkcija je namijenjena za upravljanje autentifikacijom korisnika, uključujući provjeru trenutnog korisnika, login i logout funkcionalnosti
 interface User {
     id: string
     username: string

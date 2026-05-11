@@ -6,7 +6,6 @@ using PostRoute.BLL.Commands;
 using PostRoute.BLL.Services;
 using PostRoute.DAL.Entities;
 using System.Security.Claims;
-// Ovaj kontroler je namijenjen samo administratorima, ali GET endpointi su javni
 namespace PostRoute.Api.Controllers;
 
 [ApiController]
