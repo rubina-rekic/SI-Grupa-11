@@ -1,4 +1,4 @@
-import { type UseFormRegister, type UseFormWatch, type UseFormSetValue, type FieldErrors } from "react-hook-form"
+import { type UseFormRegister, type UseFormWatch, type UseFormSetValue, type FieldErrors, type FieldValues } from "react-hook-form"
 
 export interface AvailabilityFields {
     isAlwaysAvailable: boolean
@@ -10,10 +10,10 @@ export interface AvailabilityFields {
 }
 
 interface Props {
-    register: UseFormRegister<any>
-    watch: UseFormWatch<any>
-    setValue: UseFormSetValue<any>
-    errors: FieldErrors<any>
+    register: UseFormRegister<FieldValues>
+    watch: UseFormWatch<FieldValues>
+    setValue: UseFormSetValue<FieldValues>
+    errors: FieldErrors<FieldValues>
 }
 
 export function AvailabilitySection({ register, watch, setValue, errors }: Props) {
@@ -125,7 +125,7 @@ export function AvailabilitySection({ register, watch, setValue, errors }: Props
                         {/* Greška vezana za odnos slot1Start/slot1End */}
                         {errors.slot1Range && (
                             <p className="form-field__error" style={{ marginTop: "4px" }}>
-                                {String((errors.slot1Range as any).message)}
+                                {String((errors.slot1Range as { message?: string }).message)}
                             </p>
                         )}
                     </div>
@@ -205,12 +205,12 @@ export function AvailabilitySection({ register, watch, setValue, errors }: Props
                             </div>
                             {errors.slot2Range && (
                                 <p className="form-field__error" style={{ marginTop: "4px" }}>
-                                    {String((errors.slot2Range as any).message)}
+                                    {String((errors.slot2Range as { message?: string }).message)}
                                 </p>
                             )}
                             {errors.slotsOverlap && (
                                 <p className="form-field__error" style={{ marginTop: "4px" }}>
-                                    {String((errors.slotsOverlap as any).message)}
+                                    {String((errors.slotsOverlap as { message?: string }).message)}
                                 </p>
                             )}
                         </div>

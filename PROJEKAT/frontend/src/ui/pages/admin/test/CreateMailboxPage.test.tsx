@@ -69,7 +69,7 @@ vi.mock('sonner', () => ({
   toast: { success: vi.fn(), error: vi.fn() },
 }))
 
-import { createMailbox, checkSerialNumberExists } from '../../../../infrastructure/api/mailboxes/mailboxesApi'
+import { createMailbox, checkSerialNumberExists, type MailboxResponse } from '../../../../infrastructure/api/mailboxes/mailboxesApi'
 import { toast } from 'sonner'
 
 const renderPage = () =>
@@ -211,7 +211,7 @@ describe('CreateMailboxPage — PBI-017', () => {
   describe('Slanje forme', () => {
     it('uspješno šalje formu s validnim podacima', async () => {
       const user = userEvent.setup()
-      vi.mocked(createMailbox).mockResolvedValue({} as any)
+      vi.mocked(createMailbox).mockResolvedValue({} as MailboxResponse)
       renderPage()
 
       await user.click(screen.getByTestId('select-location-btn'))
@@ -231,7 +231,7 @@ describe('CreateMailboxPage — PBI-017', () => {
 
     it('prikazuje toast uspjeha nakon kreiranja', async () => {
       const user = userEvent.setup()
-      vi.mocked(createMailbox).mockResolvedValue({} as any)
+      vi.mocked(createMailbox).mockResolvedValue({} as MailboxResponse)
       renderPage()
 
       await user.click(screen.getByTestId('select-location-btn'))
@@ -245,7 +245,7 @@ describe('CreateMailboxPage — PBI-017', () => {
 
     it('navigira na listu sandučića nakon uspješnog kreiranja', async () => {
       const user = userEvent.setup()
-      vi.mocked(createMailbox).mockResolvedValue({} as any)
+      vi.mocked(createMailbox).mockResolvedValue({} as MailboxResponse)
       renderPage()
 
       await user.click(screen.getByTestId('select-location-btn'))

@@ -42,7 +42,7 @@ vi.mock('../../../../infrastructure/api/mailboxes/mailboxesApi', () => ({
 }))
 
 vi.mock('../../../../infrastructure/validation/availabilitySchema', async () => {
-  const actual = await vi.importActual('../../../../infrastructure/validation/availabilitySchema') as any;
+  const actual = await vi.importActual('../../../../infrastructure/validation/availabilitySchema') as Record<string, unknown>;
   return {
     ...actual,
     mapAvailabilityToRequest: vi.fn().mockReturnValue({
@@ -60,20 +60,20 @@ vi.mock('../../../components/mailboxes/AvailabilitySection', () => ({
 }))
 
 vi.mock('../../../components/common/OpenStreetMapPicker', () => ({
-  default: ({ onLocationSelect, onAddressFound }: any) => (
+  default: ({ onLocationSelect, onAddressFound }: { onLocationSelect: (lat: number, lng: number) => void; onAddressFound: (addr: string) => void }) => (
     <button type="button" onClick={() => { onLocationSelect(44, 18); onAddressFound('Nova 1'); }}>Mock Map</button>
   ),
 }))
 
 vi.mock('../../../components/Layout/Layout', () => ({
-  Layout: ({ children }: any) => <div>{children}</div>,
+  Layout: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
 }))
 
 vi.mock('sonner', () => ({
   toast: { success: vi.fn(), error: vi.fn() },
 }))
 
-import { getMailboxById, updateMailbox } from '../../../../infrastructure/api/mailboxes/mailboxesApi'
+import { getMailboxById, updateMailbox, type MailboxResponse } from '../../../../infrastructure/api/mailboxes/mailboxesApi'
 import { toast } from 'sonner'
 
 const renderPage = () => render(<BrowserRouter><EditMailboxPage /></BrowserRouter>)
@@ -81,7 +81,7 @@ const renderPage = () => render(<BrowserRouter><EditMailboxPage /></BrowserRoute
 describe('EditMailboxPage', () => {
   beforeEach(() => {
     vi.clearAllMocks()
-    vi.mocked(getMailboxById).mockResolvedValue(mockMailbox as any)
+    vi.mocked(getMailboxById).mockResolvedValue(mockMailbox as MailboxResponse)
   })
 
   it('učitava i prikazuje podatke', async () => {
@@ -102,7 +102,7 @@ describe('EditMailboxPage', () => {
 
   it('poziva updateMailbox pri slanju', async () => {
     const user = userEvent.setup()
-    vi.mocked(updateMailbox).mockResolvedValue({} as any)
+    vi.mocked(updateMailbox).mockResolvedValue({} as MailboxResponse)
     renderPage()
     
     await screen.findByLabelText(/serijski broj/i)

@@ -1,5 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
+import { useForm, type Resolver, type FieldValues, type UseFormRegister, type UseFormWatch, type UseFormSetValue, type FieldErrors } from "react-hook-form"
 import { toast } from "sonner"
 import { z } from "zod"
 import { useEffect, useState, useCallback } from "react"
@@ -64,7 +64,7 @@ export default function EditMailboxPage() {
     const [originalData, setOriginalData] = useState<MailboxResponse | null>(null)
 
     const { register, handleSubmit, setValue, watch, formState: { errors, isSubmitting }, trigger, reset } = useForm<FormData>({
-        resolver: zodResolver(schema) as any,
+        resolver: zodResolver(schema) as unknown as Resolver<FormData>,
         mode: "onChange"
     })
 
@@ -278,10 +278,10 @@ export default function EditMailboxPage() {
 
                         {/* US-32: Dostupnost */}
                         <AvailabilitySection
-                            register={register}
-                            watch={watch}
-                            setValue={setValue}
-                            errors={errors}
+                            register={register as unknown as UseFormRegister<FieldValues>}
+                            watch={watch as unknown as UseFormWatch<FieldValues>}
+                            setValue={setValue as unknown as UseFormSetValue<FieldValues>}
+                            errors={errors as FieldErrors<FieldValues>}
                         />
 
                         {/* Mapa */}
