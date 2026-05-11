@@ -23,6 +23,7 @@ builder.Services.AddApiLayer(builder.Configuration);
 builder.Services.AddDistributedMemoryCache();
 
 // Add authentication services
+// Add authentication services
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
     {
@@ -30,10 +31,20 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         options.LogoutPath = "/logout";
         options.AccessDeniedPath = "/access-denied";
         options.Cookie.HttpOnly = true;
-        options.Cookie.SameSite = SameSiteMode.Lax;
-        options.Cookie.SecurePolicy = CookieSecurePolicy.None;
         options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
         options.SlidingExpiration = true;
+
+        if (builder.Environment.IsDevelopment())
+        {
+            options.Cookie.SameSite = SameSiteMode.Lax;
+            options.Cookie.SecurePolicy = CookieSecurePolicy.None;
+        }
+        else
+        {
+            // OVO JE KLJUČNO ZA PRODUKCIJU:
+            options.Cookie.SameSite = SameSiteMode.None; // Dozvoli cross-site
+            options.Cookie.SecurePolicy = CookieSecurePolicy.Always; // Zahtijevaj HTTPS
+        }
     });
 
 builder.Services.AddSession(options =>
