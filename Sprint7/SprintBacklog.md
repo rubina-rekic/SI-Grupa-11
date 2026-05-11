@@ -7,8 +7,11 @@
 | ID | Naziv stavke / zadatka | Odgovorna osoba | Procjena | Status | Napomena |
 |---|---|---|---|---|---|
 | PBI-020 / US-18 | Postavljanje prioriteta sandučića | Rubina | 3h 30min | Done | Dropdown Visok/Srednji/Nizak, kodiranje bojama, automatski prioritet, obrazloženje promjene, inicijalna vrijednost Srednji |
-| PBI-021 / US-32 | Definisanje vremenskih okvira dostupnosti sandučića | -| 4h | Done | Time picker 24h format, validacija vremena, dva termina dnevno, checkbox 24/7, upozorenje pri konfliktu s rutom |
-| PBI-021 / US-33 | Definisanje radnih dana sandučića | - | 2h | To Do | Sedam checkbox kontrola, default Pon-Pet, validacija min. jedan dan, Označi sve / Odznači sve |
+| PBI-020 / US-19 | Sortiranje liste sandučića po prioritetu | Ibrahim | 2h | To Do | Dugme "Sortiraj po prioritetu", jednim klikom, desc redoslijed (Visok→Srednji→Nizak), vizuelni indikator aktivnog sortiranja |
+| PBI-020 / US-20 | Pregled historije promjena prioriteta sandučića | Faruk | 3h | To Do | Tabela s kolonama: Datum/Vrijeme, Administrator, Stari prioritet, Novi prioritet, Obrazloženje; dostupna adminu iz forme sandučića |
+| PBI-021 / US-32 | Definisanje vremenskih okvira dostupnosti sandučića | Rubina | 4h | Done | Time picker 24h format, validacija vremena, dva termina dnevno, checkbox 24/7, upozorenje pri konfliktu s rutom |
+| PBI-021 / US-33 | Definisanje radnih dana sandučića | Nejla, Aldin | 2h | To Do | Sedam checkbox kontrola, default Pon-Pet, validacija min. jedan dan, Označi sve / Odznači sve |
+| PBI-022 / US-22 | Generisanje dnevne rute | Emrah, Kerim | 4h | To Do | Na osnovu GPS koordinata i prioriteta sandučića kreirati prijedlog dnevne rute za odabranog poštara |
 
 ---
 
@@ -16,9 +19,11 @@
 
 #### User Stories
 - **US-18:** Kao administrator, želim postaviti ili izmijeniti prioritet za pražnjenje/punjenje sandučića, kako bi sistem znao koje lokacije imaju veći operativni značaj.
+- **US-19:** Kao administrator, želim sortirati listu sandučića po prioritetu jednim klikom, kako bih brzo vidio najkritičnije lokacije na vrhu liste.
+- **US-20:** Kao administrator, želim pregledati historiju promjena prioriteta sandučića, kako bih znao ko je, kada i zbog čega izmijenio prioritet.
 
 #### Poslovna vrijednost
-Prioriteti omogućavaju da sistem i dispečer razlikuju kritične od manje kritičnih lokacija, što direktno utiče na kvalitet planiranja i redoslijed obilaska.
+Prioriteti omogućavaju da sistem i dispečer razlikuju kritične od manje kritičnih lokacija, što direktno utiče na kvalitet planiranja i redoslijed obilaska. Sortiranje i historija promjena dodatno osiguravaju operativnu preglednost i revizijsku sljedivost.
 
 #### Prioritet: High
 
@@ -35,7 +40,7 @@ Prioriteti omogućavaju da sistem i dispečer razlikuju kritične od manje kriti
 
 **Veze sa drugim storyjima:**
 - **Zavisi od:** US-14 i US-15.
-- **Utiče na:** US-22 (Generisanje dnevne rute).
+- **Utiče na:** US-19 (Sortiranje liste sandučića po prioritetu), US-20 (Pregled historije promjena prioriteta), US-22 (Generisanje dnevne rute).
 
 #### Acceptance criteria
 
@@ -45,6 +50,64 @@ Prioriteti omogućavaju da sistem i dispečer razlikuju kritične od manje kriti
 - Kada administrator ručno promijeni prioritet, tada sistem mora tražiti kratko obrazloženje koje se čuva u bazi.
 - Sistem ne smije dozvoliti da sandučić ostane bez dodijeljenog prioriteta; inicijalna vrijednost pri kreiranju mora biti "Srednji".
 - Kada se prioritet promijeni, tada se ta promjena mora odmah odraziti na listu prioriteta za generisanje rute u US-22 — sandučići sa Visokim prioritetom automatski se pomjeraju na vrh liste za obilazak.
+
+---
+
+##### ID storyja: US-19
+**Naziv storyja:** Sortiranje liste sandučića po prioritetu  
+**Opis:** Kao **administrator**, želim **klikom na dugme "Sortiraj po prioritetu" sortirati listu sandučića silaznim redoslijedom (Visok → Srednji → Nizak)**, kako bih **brzo stekao pregled nad najkritičnijim lokacijama i mogao donositi operativne odluke bez ručnog pretražavanja**.  
+**Poslovna vrijednost:** Smanjuje kognitivno opterećenje administratora — kritične lokacije su odmah vidljive na vrhu liste bez potrebe za filtriranjem ili skrolanjem.  
+**Prioritet:** Medium  
+**Pretpostavke i otvorena pitanja:**
+- *Pretpostavka:* Lista sandučića prikazana je u tabličnom prikazu s kojeg je dugme dostupno.
+- *Pretpostavka:* Sandučići istog prioriteta zadržavaju međusobni poredak iz prethodnog sortiranja (stabilan sort).
+- *Otvoreno pitanje:* Da li dugme treba omogućiti i obrnutu akciju (toggle Visok→Nizak / Nizak→Visok), ili je dovoljan samo jedan smjer?
+
+**Veze sa drugim storyjima:**
+- **Zavisi od:** US-15 (Pregled liste sandučića), US-18 (Postavljanje prioriteta sandučića).
+- **Utiče na:** US-22 (Generisanje dnevne rute) — administrator može vizuelno provjeriti prioritete prije pokretanja generisanja.
+
+#### Acceptance criteria
+
+- Kada administrator otvori listu sandučića, tada sistem mora prikazati dugme **"Sortiraj po prioritetu"** iznad tabele.
+- Kada administrator klikne na dugme, tada sistem mora **odmah** (bez ponovnog učitavanja stranice) preurediti redoslijed prikazanih redova: sandučići s prioritetom **Visok** prikazuju se prvi, zatim **Srednji**, a na kraju **Nizak**.
+- Sistem mora vizuelno označiti da je aktivno sortiranje po prioritetu (npr. ikonom strelice prema dolje pored naziva kolone "Prioritet" ili istaknutim stanjem dugmeta).
+- Sandučići unutar istog nivoa prioriteta moraju zadržati stabilan međusobni poredak.
+- Kada administrator klikne dugme drugi put, sortiranje se **invertira** (Nizak → Srednji → Visok), a vizuelni indikator se ažurira (strelica prema gore).
+- Kada se prioritet bilo kojeg sandučića promijeni (US-18), tada lista mora automatski ažurirati prikaz ako je sortiranje po prioritetu trenutno aktivno — novi poredak mora biti primijenjen odmah.
+- Sistem mora omogućiti kombinovanje sortiranja po prioritetu s postojećim filterima (npr. aktivni/neaktivni sandučići) — sortiranje se primjenjuje samo na filtrirani skup.
+
+---
+
+##### ID storyja: US-20
+**Naziv storyja:** Pregled historije promjena prioriteta sandučića  
+**Opis:** Kao **administrator**, želim **pregledati kompletnu historiju promjena prioriteta za određeni sandučić**, koja prikazuje **ko je, kada i zbog čega izmijenio prioritet**, kako bih **imao punu revizijsku sljedivost i mogao razumjeti zašto je lokacija dobila trenutni prioritet**.  
+**Poslovna vrijednost:** Osigurava transparentnost i odgovornost u upravljanju podacima — administrator može otkriti neočekivane promjene prioriteta, razumjeti poslovni kontekst odluka i po potrebi ispraviti grešku.  
+**Prioritet:** Medium  
+**Pretpostavke i otvorena pitanja:**
+- *Pretpostavka:* Svaka ručna promjena prioriteta (US-18) automatski kreira zapis u bazi s metapodacima (autor, timestamp, obrazloženje).
+- *Pretpostavka:* Automatske promjene prioriteta (US-18 — opcija "Automatski prioritet") također se bilježe, ali s autorom označenim kao "Sistem".
+- *Otvoreno pitanje:* Da li je potrebna mogućnost eksporta historije u CSV ili PDF format?
+- *Otvoreno pitanje:* Koliko dugo se čuvaju zapisi historije (retention policy)?
+
+**Veze sa drugim storyjima:**
+- **Zavisi od:** US-18 (Postavljanje prioriteta sandučića) — historija postoji samo ako US-18 bilježi promjene.
+- **Povezano sa:** US-15 (Pregled liste sandučića) — historija je dostupna iz detalja sandučića.
+
+#### Acceptance criteria
+
+- Kada administrator otvori formu za uređivanje sandučića, tada sistem mora prikazati sekciju ili tab **"Historija promjena prioriteta"**.
+- Sekcija mora prikazivati sve zapise u tabeli sa sljedećim kolonama:
+  - **Datum i vrijeme** — u formatu DD.MM.YYYY HH:mm
+  - **Administrator** — puno ime korisnika koji je napravio promjenu (ili "Sistem" za automatske promjene)
+  - **Stari prioritet** — vrijednost prije promjene, vizuelno označena bojom (crvena/žuta/zelena prema US-18)
+  - **Novi prioritet** — vrijednost nakon promjene, vizuelno označena bojom
+  - **Obrazloženje** — tekst koji je administrator unio pri promjeni (US-18)
+- Zapisi moraju biti sortirani **od najnovijeg prema najstarijem** (desc po datumu).
+- Sistem mora prikazati i automatske promjene (pokrenute opcijom "Automatski prioritet" iz US-18), s autorom "Sistem" i obrazloženjem koje navodi primijenjeno pravilo (npr. *"Automatski prioritet: sandučić tipa Specijalni"*).
+- Kada sandučić još nema nijednu promjenu prioriteta (npr. tek kreiran), tada sistem mora prikazati poruku: **"Nema evidentirane historije promjena prioriteta."**
+- Sistem mora onemogućiti brisanje ili uređivanje zapisa historije — svi zapisi su isključivo za čitanje.
+- Kada lista ima više od 20 zapisa, sistem mora primijeniti paginaciju ili lazy load — maksimalno 20 zapisa po stranici.
 
 ---
 
@@ -104,3 +167,40 @@ Uvođenje radnih pravila osigurava da generisane rute budu operativno izvodljive
 - Kada administrator označi ili odznači dan, tada sistem mora momentalno ažurirati bazu podataka tako da se promjena uzme u obzir pri sljedećem generisanju rute.
 - Sistem mora omogućiti opciju "Označi sve / Odznači sve" radi bržeg unosa podataka.
 - Kada algoritam generiše rutu za npr. Subotu, ako sandučić nema označenu subotu kao radni dan, tada taj sandučić mora biti potpuno izostavljen sa mape obilaska, bez obzira na njegov prioritet.
+
+---
+
+## PBI-022 Generisanje dnevne rute
+
+#### User Stories
+- **US-22:** Kao dispečer, želim pokrenuti algoritam za automatsko generisanje dnevne rute za odabranog poštara, kako bih dobio prijedlog obilaska zasnovan na lokacijama i prioritetima sandučića.
+
+#### Poslovna vrijednost
+Ovo je srce sistema. Automatizacija rute smanjuje manuelni rad dispečera, štedi vrijeme i osigurava da ključne lokacije ne budu zaboravljene.
+
+#### Prioritet: High
+
+---
+
+##### ID storyja: US-22
+**Naziv storyja:** Automatizovani proračun dnevne rute  
+**Opis:** Kao **dispečer**, želim **klikom na dugme "Generiši" aktivirati algoritam**, koji će **na osnovu GPS koordinata i prioriteta sandučića kreirati prijedlog dnevne rute za odabranog poštara**.  
+**Poslovna vrijednost:** Eliminacija manuelnog planiranja i smanjenje ljudske greške.  
+**Prioritet:** High  
+**Pretpostavke i otvorena pitanja:**
+- *Pretpostavka:* Sistem ima pristup koordinatama i prioritetima svih relevantnih sandučića.
+- *Otvoreno pitanje:* Koji algoritam koristiti u MVP-u s obzirom na broj tačaka i performanse sistema?
+
+**Veze sa drugim storyjima:**
+- **Zavisi od:** US-14 i US-18.
+- **Osnova za:** US-23, US-24 i US-25.
+
+#### Acceptance criteria
+
+- Kada dispečer klikne na dugme Generiši, tada sistem mora u obzir uzeti isključivo sandučiće koji su: Aktivni (US-13), imaju označen današnji radni dan (US-33) i čiji se vremenski okvir dostupnosti (US-32) podudara sa planiranim vremenom obilaska.
+- Sistem mora primijeniti prioritetno ponderisanje tako da sandučići sa statusom Visok prioritet (US-18) imaju prednost u redoslijedu obilaska u odnosu na one sa nižim prioritetom.
+- Kada se proces proračuna završi, tada sistem mora prikazati vizuelni prijedlog rute na interaktivnoj mapi (povezana linija između pinova) i hronološku listu adresa sa procijenjenim vremenom dolaska za svaku tačku.
+- Sistem mora izvršiti proračun unutar maksimalno 5 sekundi za rute do 50 tačaka; u suprotnom, mora prikazati indikator učitavanja (loader).
+- Kada algoritam izračuna da ukupno trajanje rute premašuje 8 sati rada, tada sistem mora prikazati narandžastu toast obavijest: Upozorenje: Ruta premašuje standardno radno vrijeme.
+- Sistem mora za MVP verziju koristiti algoritam zasnovan na Euklidskoj udaljenosti $$d = \sqrt{(x_2-x_1)^2 + (y_2-y_1)^2}$$ kako bi osigurali brzinu proračuna.
+- Kada u sistemu nema dostupnih sandučića za odabrane parametre, tada sistem mora onemogućiti dugme Generiši i prikazati poruku: Nema dostupnih lokacija za generisanje rute.
