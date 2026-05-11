@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using PostRoute.DAL;
@@ -11,9 +12,11 @@ using PostRoute.DAL;
 namespace PostRoute.DAL.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260509171556_AddReasonToMailboxAuditLog")]
+    partial class AddReasonToMailboxAuditLog
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -42,9 +45,6 @@ namespace PostRoute.DAL.Migrations
                     b.Property<int>("InstallationYear")
                         .HasColumnType("integer");
 
-                    b.Property<bool>("IsAlwaysAvailable")
-                        .HasColumnType("boolean");
-
                     b.Property<decimal>("Latitude")
                         .HasColumnType("decimal(9,6)");
 
@@ -62,18 +62,6 @@ namespace PostRoute.DAL.Migrations
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)");
-
-                    b.Property<TimeOnly?>("Slot1End")
-                        .HasColumnType("time");
-
-                    b.Property<TimeOnly?>("Slot1Start")
-                        .HasColumnType("time");
-
-                    b.Property<TimeOnly?>("Slot2End")
-                        .HasColumnType("time");
-
-                    b.Property<TimeOnly?>("Slot2Start")
-                        .HasColumnType("time");
 
                     b.Property<int>("Status")
                         .HasColumnType("integer");

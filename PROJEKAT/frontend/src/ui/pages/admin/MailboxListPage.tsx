@@ -76,13 +76,18 @@ export default function MailboxListPage() {
             <div className="page-container">
                 <div className="form-card">
                     <div className="form-card__header">
-                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                            <div>
-                                <h1 className="form-card__title">Pregled sandučića</h1>
-                                <p className="form-card__subtitle">
-                                    Upravljajte sandučićima i dodajte nove lokacije.
-                                </p>
-                            </div>
+                        <div style={{ display: "flex", gap: "8px" }}>
+                            <button
+                                className="btn"
+                                style={{
+                                    padding: "8px 16px", backgroundColor: "#64748b",
+                                    color: "white", border: "none", borderRadius: "6px",
+                                    cursor: "pointer"
+                                }}
+                                onClick={() => navigate("/admin/mailboxes/history")}
+                            >
+                                📋 Historija promjena
+                            </button>
                             <button
                                 className="btn btn--primary"
                                 onClick={() => navigate("/admin/mailboxes/new")}

@@ -1,19 +1,22 @@
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
+import { useForm, type Resolver, type FieldValues, type UseFormRegister, type UseFormWatch, type UseFormSetValue, type FieldErrors } from "react-hook-form"
 import { toast } from "sonner"
 import { z } from "zod"
 import { useEffect, useState, useCallback } from "react"
 import { useNavigate, useParams } from "react-router-dom"
-import { 
+import {
     getMailboxById,
     updateMailbox,
-    MailboxType, 
+    MailboxType,
+    MailboxPriority,
     mailboxTypeLabels,
     type MailboxResponse,
     type UpdateMailboxRequest
 } from "../../../infrastructure/api/mailboxes/mailboxesApi"
 import { Layout } from "../../components/Layout/Layout"
 import OpenStreetMapPicker from "../../components/common/OpenStreetMapPicker"
+import { availabilitySchema, mapAvailabilityToRequest } from "../../../infrastructure/validation/availabilitySchema"
+import { AvailabilitySection } from "../../components/mailboxes/AvailabilitySection"
 
 const schema = z.object({
     serialNumber: z
@@ -35,6 +38,7 @@ const schema = z.object({
     type: z.nativeEnum(MailboxType).refine((val) => val !== undefined, {
         message: "Tip sandučića je obavezan"
     }),
+    priority: z.nativeEnum(MailboxPriority),
     capacity: z
         .number()
         .min(1, "Kapacitet mora biti veći od 0")
@@ -43,11 +47,12 @@ const schema = z.object({
         .number()
         .min(1900, "Godina instalacije mora biti nakon 1900")
         .max(new Date().getFullYear() + 10, "Godina instalacije ne može biti u budućnosti"),
+    priorityReason: z.string().max(200).optional(),
     notes: z
         .string()
         .max(500, "Napomene mogu imati najviše 500 karaktera")
         .optional()
-})
+}).and(availabilitySchema)
 
 type FormData = z.infer<typeof schema>
 
@@ -57,9 +62,9 @@ export default function EditMailboxPage() {
     const [loading, setLoading] = useState(true)
     const [selectedLocation, setSelectedLocation] = useState<{ lat: number; lng: number } | null>(null)
     const [originalData, setOriginalData] = useState<MailboxResponse | null>(null)
-    
+
     const { register, handleSubmit, setValue, watch, formState: { errors, isSubmitting }, trigger, reset } = useForm<FormData>({
-        resolver: zodResolver(schema),
+        resolver: zodResolver(schema) as unknown as Resolver<FormData>,
         mode: "onChange"
     })
 
@@ -70,23 +75,31 @@ export default function EditMailboxPage() {
     useEffect(() => {
         const loadMailbox = async () => {
             if (!id) return
-            
+
             try {
                 setLoading(true)
                 const mailbox = await getMailboxById(id)
                 setOriginalData(mailbox)
-                
+
                 reset({
                     serialNumber: mailbox.serialNumber,
                     address: mailbox.address,
                     latitude: mailbox.latitude,
                     longitude: mailbox.longitude,
                     type: mailbox.type,
+                    priority: mailbox.priority,
                     capacity: mailbox.capacity,
                     installationYear: mailbox.installationYear,
-                    notes: mailbox.notes || ""
+                    notes: mailbox.notes || "",
+                    // US-32
+                    isAlwaysAvailable: mailbox.isAlwaysAvailable,
+                    hasSecondSlot: !!(mailbox.slot2Start),
+                    slot1Start: mailbox.slot1Start?.slice(0, 5) ?? "",
+                    slot1End: mailbox.slot1End?.slice(0, 5) ?? "",
+                    slot2Start: mailbox.slot2Start?.slice(0, 5) ?? "",
+                    slot2End: mailbox.slot2End?.slice(0, 5) ?? "",
                 })
-                
+
                 setSelectedLocation({ lat: mailbox.latitude, lng: mailbox.longitude })
             } catch {
                 toast.error("Greška pri učitavanju sandučića")
@@ -119,24 +132,26 @@ export default function EditMailboxPage() {
                 capacity: data.capacity,
                 installationYear: data.installationYear,
                 notes: data.notes?.trim() || undefined,
-                priority: originalData.priority
+                priority: data.priority,
+                reason: data.priorityReason?.trim() || undefined,
+                ...mapAvailabilityToRequest(data),
             }
 
             await updateMailbox(id, updateData)
-            
+
             toast.success(`Podaci o sandučiću ${data.serialNumber} su uspješno ažurirani!`, {
                 description: "Sve promjene su zabilježene u audit log."
             })
-            
+
             navigate("/admin/mailboxes")
-            
+
         } catch (error: unknown) {
             const errorDetails = error as {
                 message?: string
                 response?: unknown
                 status?: number
             }
-            
+
             if (errorDetails.message?.includes("već postoji")) {
                 toast.error("Sandučić sa ovim serijskim brojem već postoji")
             } else if (errorDetails.status === 404) {
@@ -186,7 +201,8 @@ export default function EditMailboxPage() {
                     </div>
 
                     <form className="form-card__body" onSubmit={handleSubmit(onSubmit)} noValidate>
-                        {/* Serijski broj i tip */}
+
+                        {/* Red 1: Serijski broj i tip */}
                         <div className="form-row">
                             <div className="form-field">
                                 <label className="form-field__label" htmlFor="serialNumber">
@@ -226,6 +242,47 @@ export default function EditMailboxPage() {
                                 )}
                             </div>
                         </div>
+
+                        {/* Red 2: Prioritet — puna širina */}
+                        <div className="form-field">
+                            <label className="form-field__label" htmlFor="priority">
+                                Prioritet
+                            </label>
+                            <select
+                                id="priority"
+                                className="form-field__input"
+                                {...register("priority", { valueAsNumber: true })}
+                            >
+                                <option value={MailboxPriority.Visok}>🔴 Visok — pražnjenje svakodnevno</option>
+                                <option value={MailboxPriority.Srednji}>🟡 Srednji — pražnjenje svaka 2-3 dana</option>
+                                <option value={MailboxPriority.Nizak}>🟢 Nizak — pražnjenje po potrebi</option>
+                            </select>
+                        </div>
+
+                        {/* Red 3: Obrazloženje — puna širina */}
+                        <div className="form-field">
+                            <label className="form-field__label" htmlFor="priorityReason">
+                                Obrazloženje promjene prioriteta
+                            </label>
+                            <input
+                                id="priorityReason"
+                                type="text"
+                                className="form-field__input"
+                                placeholder="npr. Povećan volumen pošte zbog praznika"
+                                {...register("priorityReason")}
+                            />
+                            <p style={{ fontSize: "0.8rem", color: "#64748b", marginTop: "4px" }}>
+                                Opcionalno — unesite razlog ako mijenjate prioritet
+                            </p>
+                        </div>
+
+                        {/* US-32: Dostupnost */}
+                        <AvailabilitySection
+                            register={register as unknown as UseFormRegister<FieldValues>}
+                            watch={watch as unknown as UseFormWatch<FieldValues>}
+                            setValue={setValue as unknown as UseFormSetValue<FieldValues>}
+                            errors={errors as FieldErrors<FieldValues>}
+                        />
 
                         {/* Mapa */}
                         <div className="form-field">

@@ -2,7 +2,7 @@ using PostRoute.DAL.Entities;
 
 namespace PostRoute.BLL.Commands;
 
-public sealed record UpdateMailboxCommand(
+public record UpdateMailboxCommand(
     Guid Id,
     string SerialNumber,
     string Address,
@@ -13,5 +13,13 @@ public sealed record UpdateMailboxCommand(
     int Capacity,
     int InstallationYear,
     string? Notes,
-    Guid UserId
+    Guid UserId,
+    string? Reason,
+
+    // US-32: Dostupnost
+    bool IsAlwaysAvailable = false,
+    TimeOnly? Slot1Start = null,
+    TimeOnly? Slot1End = null,
+    TimeOnly? Slot2Start = null,
+    TimeOnly? Slot2End = null
 );

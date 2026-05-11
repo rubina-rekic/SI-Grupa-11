@@ -5,6 +5,7 @@
     "lib": ["ES2023", "DOM", "DOM.Iterable"],
     "module": "esnext",
     "skipLibCheck": true,
+    "types": ["vitest/globals", "@testing-library/jest-dom"],
 
     /* Bundler mode */
     "moduleResolution": "bundler",
@@ -20,11 +21,6 @@
     "erasableSyntaxOnly": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["src"],
-  "exclude": [
-    "src/**/__tests__/**/*",
-    "src/**/*.test.*",
-    "src/**/*.spec.*"
-  ]
+  "include": ["src"]
 }
 

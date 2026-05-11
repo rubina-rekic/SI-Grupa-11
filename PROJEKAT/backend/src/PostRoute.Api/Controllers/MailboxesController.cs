@@ -29,16 +29,12 @@ public sealed class MailboxesController : ControllerBase
         try
         {
             var command = new CreateMailboxCommand(
-                request.SerialNumber,
-                request.Address,
-                request.Latitude,
-                request.Longitude,
-                request.Type,
-                request.Capacity,
-                request.InstallationYear,
-                request.Notes,
-                request.Priority
-            );
+    request.SerialNumber, request.Address, request.Latitude, request.Longitude,
+    request.Type, request.Capacity, request.InstallationYear, request.Notes,
+    request.Priority, request.Reason,
+    request.IsAlwaysAvailable,
+    request.Slot1Start, request.Slot1End, request.Slot2Start, request.Slot2End
+);
 
             var mailbox = await _mailboxService.CreateAsync(command, cancellationToken);
 
@@ -79,18 +75,12 @@ public sealed class MailboxesController : ControllerBase
             }
 
             var command = new UpdateMailboxCommand(
-                id,
-                request.SerialNumber,
-                request.Address,
-                request.Latitude,
-                request.Longitude,
-                request.Type,
-                request.Priority,
-                request.Capacity,
-                request.InstallationYear,
-                request.Notes,
-                userGuid
-            );
+     id, request.SerialNumber, request.Address, request.Latitude, request.Longitude,
+     request.Type, request.Priority, request.Capacity, request.InstallationYear,
+     request.Notes, userGuid, request.Reason,
+     request.IsAlwaysAvailable,
+     request.Slot1Start, request.Slot1End, request.Slot2Start, request.Slot2End
+ );
 
             var mailbox = await _mailboxService.UpdateAsync(command, cancellationToken);
 
@@ -137,19 +127,35 @@ public sealed class MailboxesController : ControllerBase
         return Ok(exists);
     }
 
+    [HttpGet("{id:guid}/history")]
+    [RequiredRole("Administrator")]
+    public async Task<ActionResult> GetHistoryAsync(
+    Guid id,
+    CancellationToken cancellationToken)
+    {
+        var logs = await _mailboxService.GetAuditLogAsync(id, cancellationToken);
+
+        var response = logs.Select(log => new
+        {
+            log.Id,
+            log.MailboxId,
+            log.UserId,
+            Username = log.User.Username,
+            log.FieldName,
+            log.OldValue,
+            log.NewValue,
+            log.Action,
+            log.Reason,
+            log.Timestamp
+        });
+
+        return Ok(response);
+    }
+
     private static MailboxResponse MapToResponse(Mailbox m) => new(
-        m.Id,
-        m.SerialNumber,
-        m.Address,
-        m.Latitude,
-        m.Longitude,
-        m.Type,
-        m.Priority,
-        m.Status,
-        m.Capacity,
-        m.InstallationYear,
-        m.CreatedAt,
-        m.UpdatedAt,
-        m.Notes
-    );
+     m.Id, m.SerialNumber, m.Address, m.Latitude, m.Longitude,
+     m.Type, m.Priority, m.Status, m.Capacity, m.InstallationYear,
+     m.CreatedAt, m.UpdatedAt, m.Notes,
+     m.IsAlwaysAvailable, m.Slot1Start, m.Slot1End, m.Slot2Start, m.Slot2End
+ );
 }

@@ -1,12 +1,14 @@
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
+import { useForm, type Resolver, type FieldValues, type UseFormRegister, type UseFormWatch, type UseFormSetValue, type FieldErrors } from "react-hook-form"
 import { toast } from "sonner"
 import { z } from "zod"
-import { createMailbox, checkSerialNumberExists, MailboxType, mailboxTypeLabels } from "../../../infrastructure/api/mailboxes/mailboxesApi"
 import { Layout } from "../../components/Layout/Layout"
 import OpenStreetMapPicker from "../../components/common/OpenStreetMapPicker"
 import { useState, useCallback } from "react"
 import { useNavigate } from "react-router-dom"
+import { createMailbox, checkSerialNumberExists, MailboxType, MailboxPriority, mailboxTypeLabels } from "../../../infrastructure/api/mailboxes/mailboxesApi"
+import { availabilitySchema, mapAvailabilityToRequest } from "../../../infrastructure/validation/availabilitySchema"
+import { AvailabilitySection } from "../../components/mailboxes/AvailabilitySection"
 
 const schema = z.object({
     serialNumber: z
@@ -29,6 +31,7 @@ const schema = z.object({
         .number({ error: "Odaberite lokaciju na mapi" })
         .min(-180).max(180),
     type: z.nativeEnum(MailboxType),
+    priority: z.nativeEnum(MailboxPriority),
     capacity: z
         .number()
         .min(1, "Kapacitet mora biti veći od 0")
@@ -41,7 +44,7 @@ const schema = z.object({
         .string()
         .max(500, "Napomene mogu imati najviše 500 karaktera")
         .optional()
-})
+}).and(availabilitySchema)
 
 type FormData = z.infer<typeof schema>
 
@@ -49,13 +52,20 @@ export default function CreateMailboxPage() {
     const navigate = useNavigate()
     const [selectedLocation, setSelectedLocation] = useState<{ lat: number; lng: number } | null>(null)
 
-    const { register, handleSubmit, setValue, watch, formState: { errors, isSubmitting } } = useForm<FormData>({
-        resolver: zodResolver(schema),
+        const { register, handleSubmit, setValue, watch, formState: { errors, isSubmitting } } = useForm<FormData>({
+    resolver: zodResolver(schema) as unknown as Resolver<FormData>,
         mode: "onChange",
         defaultValues: {
             type: MailboxType.WallSmall,
+            priority: MailboxPriority.Srednji,
             capacity: 100,
-            installationYear: new Date().getFullYear()
+            installationYear: new Date().getFullYear(),
+            isAlwaysAvailable: false,
+            hasSecondSlot: false,
+            slot1Start: "",
+            slot1End: "",
+            slot2Start: "",
+            slot2End: "",
         }
     })
 
@@ -81,9 +91,11 @@ export default function CreateMailboxPage() {
                 latitude: data.latitude,
                 longitude: data.longitude,
                 type: data.type,
+                priority: data.priority,
                 capacity: data.capacity,
                 installationYear: data.installationYear,
-                notes: data.notes?.trim() || undefined
+                notes: data.notes?.trim() || undefined,
+                ...mapAvailabilityToRequest(data),
             })
             toast.success(`Sandučić ${data.serialNumber} uspješno dodan!`)
             navigate("/admin/mailboxes")
@@ -112,7 +124,7 @@ export default function CreateMailboxPage() {
 
                     <form className="form-card__body" onSubmit={handleSubmit(onSubmit)} noValidate>
 
-                        {/* Serijski broj i tip */}
+                        {/* Red 1: Serijski broj i tip */}
                         <div className="form-row">
                             <div className="form-field">
                                 <label className="form-field__label" htmlFor="serialNumber">
@@ -150,6 +162,30 @@ export default function CreateMailboxPage() {
                                 )}
                             </div>
                         </div>
+
+                        {/* Prioritet — puna širina */}
+                        <div className="form-field">
+                            <label className="form-field__label" htmlFor="priority">
+                                Prioritet
+                            </label>
+                            <select
+                                id="priority"
+                                className="form-field__input"
+                                {...register("priority", { valueAsNumber: true })}
+                            >
+                                <option value={MailboxPriority.Visok}>🔴 Visok — pražnjenje svakodnevno</option>
+                                <option value={MailboxPriority.Srednji}>🟡 Srednji — pražnjenje svaka 2-3 dana</option>
+                                <option value={MailboxPriority.Nizak}>🟢 Nizak — pražnjenje po potrebi</option>
+                            </select>
+                        </div>
+
+                        {/* US-32: Dostupnost */}
+                        <AvailabilitySection
+                            register={register as unknown as UseFormRegister<FieldValues>}
+                            watch={watch as unknown as UseFormWatch<FieldValues>}
+                            setValue={setValue as unknown as UseFormSetValue<FieldValues>}
+                            errors={errors as FieldErrors<FieldValues>}
+                        />
 
                         {/* Mapa */}
                         <div className="form-field">
