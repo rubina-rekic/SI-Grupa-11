@@ -5,7 +5,6 @@ using PostRoute.Api.Middleware;
 using PostRoute.BLL.Commands;
 using PostRoute.BLL.Services;
 using PostRoute.DAL.Entities;
-using System.Security.Claims;
 namespace PostRoute.Api.Controllers;
 
 [ApiController]
