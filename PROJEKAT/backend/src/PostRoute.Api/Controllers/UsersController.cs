@@ -248,7 +248,8 @@ public sealed class UsersController : ControllerBase
 
         return Ok(response);
     }
-    [RequiredRole("Administrator")]
+    [HttpGet]
+    [Microsoft.AspNetCore.Authorization.Authorize(Roles = "Administrator")]
     public async Task<ActionResult<IEnumerable<UserResponse>>> GetAllAsync(CancellationToken cancellationToken)
     {
         var users = await _userService.GetAllAsync(cancellationToken);

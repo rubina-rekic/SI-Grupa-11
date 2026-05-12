@@ -11,6 +11,8 @@ public sealed class AppDbContext : DbContext
     public DbSet<SecurityLog> SecurityLogs => Set<SecurityLog>();
     public DbSet<Mailbox> Mailboxes => Set<Mailbox>();
     public DbSet<MailboxAuditLog> MailboxAuditLogs => Set<MailboxAuditLog>();
+    public DbSet<Route> Routes => Set<Route>();
+    public DbSet<RouteItem> RouteItems => Set<RouteItem>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -59,6 +61,32 @@ public sealed class AppDbContext : DbContext
             entity.HasOne(m => m.User)
                 .WithMany()
                 .HasForeignKey(m => m.UserId)
+                .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        modelBuilder.Entity<Route>(entity =>
+        {
+            entity.HasKey(r => r.Id);
+            entity.Property(r => r.Date).HasColumnType("date");
+            entity.Property(r => r.PlannedStartTime).HasColumnType("time");
+            entity.Property(r => r.PlannedEndTime).HasColumnType("time");
+            entity.HasOne(r => r.Postman)
+                .WithMany()
+                .HasForeignKey(r => r.PostmanId)
+                .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        modelBuilder.Entity<RouteItem>(entity =>
+        {
+            entity.HasKey(ri => ri.Id);
+            entity.Property(ri => ri.EstimatedArrivalTime).HasColumnType("time");
+            entity.HasOne(ri => ri.Route)
+                .WithMany(r => r.RouteItems)
+                .HasForeignKey(ri => ri.RouteId)
+                .OnDelete(DeleteBehavior.Cascade);
+            entity.HasOne(ri => ri.Mailbox)
+                .WithMany()
+                .HasForeignKey(ri => ri.MailboxId)
                 .OnDelete(DeleteBehavior.Restrict);
         });
     }

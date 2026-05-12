@@ -38,6 +38,12 @@ export default function DashboardPage() {
       </div>
 
       <div className="dashboard-card">
+        <h3>🗺️ Generisanje ruta</h3>
+        <p>Generišite dnevne rute za poštare</p>
+        <button className="btn-primary" onClick={() => navigate("/admin/routes/generate")}>Generisanje ruta</button>
+      </div>
+
+      <div className="dashboard-card">
         <h3>📊 Statistika sistema</h3>
         <p>Analizirajte performanse i statistike</p>
         <button className="btn-primary" onClick={() => navigate("/admin/statistics")}>Statistike</button>

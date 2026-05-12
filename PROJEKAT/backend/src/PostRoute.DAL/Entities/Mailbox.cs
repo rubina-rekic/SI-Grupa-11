@@ -64,6 +64,26 @@ public class Mailbox
 
     [MaxLength(500)]
     public string? Notes { get; set; }
+
+    public bool IsActive { get; set; } = true;
+    
+    public MailboxWorkingDays WorkingDays { get; set; } = MailboxWorkingDays.RadniDani;
+}
+
+[Flags]
+public enum MailboxWorkingDays
+{
+    None = 0,
+    Ponedjeljak = 1,
+    Utorak = 2,
+    Srijeda = 4,
+    Cetvrtak = 8,
+    Petak = 16,
+    Subota = 32,
+    Nedjelja = 64,
+    RadniDani = Ponedjeljak | Utorak | Srijeda | Cetvrtak | Petak,
+    Vikend = Subota | Nedjelja,
+    SvakiDan = RadniDani | Vikend
 }
 
 public enum MailboxType

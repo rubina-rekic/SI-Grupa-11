@@ -10,8 +10,9 @@ import { Layout } from "../../ui/components/Layout/Layout"
 import PostalWorkersListPage from "../../ui/pages/admin/PostalWorkersListPage"
 import MailboxListPage from "../../ui/pages/admin/MailboxListPage"
 import MailboxHistoryPage from "../../ui/pages/admin/MailboxHistoryPage"
+import GenerateRoutePage from "../../ui/pages/admin/GenerateRoutePage"
 
-function PrivateRoute({ children, requiredRole }: { children: React.ReactNode; requiredRole?: string }) {
+function PrivateRoute({ children, requiredRole, requiredRoles }: { children: React.ReactNode; requiredRole?: string; requiredRoles?: string[] }) {
   const { currentUser, loading } = useAuth()
   const location = useLocation()
 
@@ -27,7 +28,9 @@ function PrivateRoute({ children, requiredRole }: { children: React.ReactNode; r
     return <Navigate to="/change-password" replace />
   }
 
-  if (requiredRole && currentUser.role !== requiredRole) {
+  const hasRequiredRole = requiredRole ? currentUser.role === requiredRole : true
+  const hasOneOfRequiredRoles = requiredRoles ? requiredRoles.includes(currentUser.role) : true
+  if (!hasRequiredRole || !hasOneOfRequiredRoles) {
     // Show toast notification for access denied
     setTimeout(() => {
       // This will be handled by a global error boundary or toast system
@@ -163,7 +166,7 @@ export function AppRouter() {
       <Route
         path="/admin/users"
         element={
-          <PrivateRoute>
+          <PrivateRoute requiredRole="Administrator">
             <PostalWorkersListPage />
           </PrivateRoute>
         }
@@ -173,6 +176,14 @@ export function AppRouter() {
         element={
           <PrivateRoute requiredRole="Administrator">
             <MailboxHistoryPage />
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="/admin/routes/generate"
+        element={
+          <PrivateRoute requiredRoles={["Administrator", "Dispatcher"]}>
+            <GenerateRoutePage />
           </PrivateRoute>
         }
       />
