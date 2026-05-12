@@ -58,68 +58,68 @@ export default function PostalWorkersListPage() {
     return isLockedOut ? "Zaključan" : "Aktivan"
   }
 
-  if (loading) return <Layout><div className="page-container">Učitavanje...</div></Layout>
-  if (error) return <Layout><div className="page-container">{error}</div></Layout>
+  if (loading) return <Layout><div className="page-container users-page"><div className="users-page__shell">Učitavanje...</div></div></Layout>
+  if (error) return <Layout><div className="page-container users-page"><div className="users-page__shell">{error}</div></div></Layout>
 
   return (
     <Layout>
-      <div className="page-container">
-        <div className="form-card">
-          <div className="form-card__header" style={{ display: "flex", justifyContent: "space-between", flexWrap: "wrap", gap: "0.75rem" }}>
-            <h1 className="form-card__title">Lista korisnika</h1>
-            <div style={{ display: "flex", gap: "0.75rem", flexWrap: "wrap" }}>
-              <button className="btn btn--primary" onClick={() => navigate("/admin/users/new") }>
-                + Dodaj korisnika
-              </button>
-              <button className="btn btn--secondary" onClick={handleRefreshClick} disabled={loading}>
-                Osvježi
-              </button>
+      <div className="page-container users-page">
+        <div className="users-page__shell" style={{ width: "100%", maxWidth: "1400px", display: "flex", flexDirection: "column", gap: "20px" }}>
+          <div className="form-card users-page__card" style={{ maxWidth: "none", width: "100%" }}>
+            <div className="form-card__header users-page__header">
+              <h1 className="form-card__title">Lista korisnika</h1>
+              <div className="users-page__actions">
+                <button className="btn btn--primary users-page__action-primary" type="button" onClick={() => navigate("/admin/users/new")}>
+                  + Dodaj korisnika
+                </button>
+                <button className="btn-secondary users-page__refresh" type="button" onClick={handleRefreshClick} disabled={loading}>
+                  Osvježi
+                </button>
+              </div>
+            </div>
+
+            <div className="form-card__body" style={{ paddingTop: "20px" }}>
+              {users.length === 0 ? (
+                <p style={{ margin: 0 }}>Nema registrovanih korisnika.</p>
+              ) : (
+                <table style={{ width: "100%", borderCollapse: "collapse" }}>
+                  <thead>
+                    <tr style={{ borderBottom: "2px solid #e0e0e0", textAlign: "left" }}>
+                      <th style={{ padding: "12px" }}>Korisničko ime</th>
+                      <th style={{ padding: "12px" }}>Email</th>
+                      <th style={{ padding: "12px" }}>Uloga</th>
+                      <th style={{ padding: "12px", cursor: "pointer" }} onClick={handleStatusHeaderClick}>
+                        Status
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {users.map((user) => (
+                      <tr key={user.id} style={{ borderBottom: "1px solid #f0f0f0" }}>
+                        <td style={{ padding: "12px" }}>{user.username}</td>
+                        <td style={{ padding: "12px" }}>{user.email}</td>
+                        <td style={{ padding: "12px" }}>Poštar</td>
+                        <td style={{ padding: "12px" }}>
+                          <span style={{ display: "inline-flex", alignItems: "center", gap: "6px" }}>
+                            <span
+                              style={{
+                                width: "10px",
+                                height: "10px",
+                                borderRadius: "50%",
+                                backgroundColor: getStatusColor(user.isLockedOut),
+                                display: "inline-block"
+                              }}
+                            />
+                            {getStatusLabel(user.isLockedOut)}
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
             </div>
           </div>
-
-          {users.length === 0 ? (
-            <p>Nema registrovanih korisnika.</p>
-          ) : (
-            <table style={{ width: "100%", borderCollapse: "collapse", marginTop: "1rem" }}>
-              <thead>
-                <tr style={{ borderBottom: "2px solid #e0e0e0", textAlign: "left" }}>
-                  <th style={{ padding: "12px" }}>Korisničko ime</th>
-                  <th style={{ padding: "12px" }}>Email</th>
-                  <th style={{ padding: "12px" }}>Uloga</th>
-                  <th style={{ padding: "12px", cursor: "pointer" }} onClick={handleStatusHeaderClick}>
-                    Status
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {users.map((user) => (
-                  <tr key={user.id} style={{ borderBottom: "1px solid #f0f0f0" }}>
-                    <td style={{ padding: "12px" }}>{user.username}</td>
-                    <td style={{ padding: "12px" }}>{user.email}</td>
-                    <td style={{ padding: "12px" }}>
-                      Poštar
-                    </td>
-                    <td style={{ padding: "12px" }}>
-                      <span style={{
-                        display: "inline-flex",
-                        alignItems: "center",
-                        gap: "6px"
-                      }}>
-                        <span style={{
-                          width: "10px",
-                          height: "10px",
-                          borderRadius: "50%",
-                          backgroundColor: getStatusColor(user.isLockedOut),
-                          display: "inline-block"
-                        }} />
-                        {getStatusLabel(user.isLockedOut)}
-                      </span>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          )}
         </div>
       </div>
     </Layout>

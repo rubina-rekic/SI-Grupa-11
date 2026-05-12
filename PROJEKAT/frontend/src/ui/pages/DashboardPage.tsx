@@ -23,6 +23,13 @@ export default function DashboardPage() {
     return <div>Loading...</div>
   }
 
+  const roleLabel =
+    currentUser.role === "Administrator"
+      ? "Administrator"
+      : currentUser.role === "Dispatcher"
+        ? "Dispečer"
+        : "Poštar"
+
   const renderAdminDashboard = () => (
     <div className="dashboard-grid">
       <div className="dashboard-card">
@@ -57,6 +64,25 @@ export default function DashboardPage() {
     </div>
   )
 
+  const renderDispatcherDashboard = () => (
+    <div className="dashboard-grid">
+      <div className="dashboard-card">
+        <h3>🗺️ Generisanje dnevne rute</h3>
+        <p>Pokrenite algoritam za odabranog poštara i dobijte prijedlog obilaska</p>
+        <button className="btn-primary" onClick={() => navigate("/admin/routes/generate")}>Generiši rutu</button>
+      </div>
+
+      <div className="dashboard-card">
+        <h3>📋 Naredni koraci</h3>
+        <p>
+          Nakon generisanja rute dolaze dodjela poštaru, pregled detalja rute i ručna
+          izmjena redoslijeda obilaska.
+        </p>
+        <button className="btn-primary" type="button" onClick={() => navigate("/admin/routes/generate")}>Otvori generator</button>
+      </div>
+    </div>
+  )
+
   const renderPostalWorkerDashboard = () => (
     <div className="dashboard-grid">
       <div className="dashboard-card">
@@ -84,17 +110,23 @@ export default function DashboardPage() {
       <div className="dashboard-page">
         <div className="dashboard-header">
           <h1>
-            Dobrodošli, {currentUser.username} ({currentUser.role === "Administrator" ? "Administrator" : "Poštar"})
+            Dobrodošli, {currentUser.username} ({roleLabel})
           </h1>
           <p className="dashboard-subtitle">
             {currentUser.role === "Administrator"
               ? "Upravljajte PostRoute sistemom"
-              : "Upravljajte vašom dostavnom rutom"
+              : currentUser.role === "Dispatcher"
+                ? "Upravljajte dnevnim rutama i rasporedom obilaska"
+                : "Upravljajte vašom dostavnom rutom"
             }
           </p>
         </div>
 
-        {currentUser.role === "Administrator" ? renderAdminDashboard() : renderPostalWorkerDashboard()}
+        {currentUser.role === "Administrator"
+          ? renderAdminDashboard()
+          : currentUser.role === "Dispatcher"
+            ? renderDispatcherDashboard()
+            : renderPostalWorkerDashboard()}
       </div>
     </Layout>
   )

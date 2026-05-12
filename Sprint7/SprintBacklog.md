@@ -11,7 +11,7 @@
 | PBI-020 / US-20 | Pregled historije promjena prioriteta sandučića | Faruk | 3h | To Do | Tabela s kolonama: Datum/Vrijeme, Administrator, Stari prioritet, Novi prioritet, Obrazloženje; dostupna adminu iz forme sandučića |
 | PBI-021 / US-32 | Definisanje vremenskih okvira dostupnosti sandučića | Rubina | 4h | Done | Time picker 24h format, validacija vremena, dva termina dnevno, checkbox 24/7, upozorenje pri konfliktu s rutom |
 | PBI-021 / US-33 | Definisanje radnih dana sandučića | Nejla, Aldin | 2h | To Do | Sedam checkbox kontrola, default Pon-Pet, validacija min. jedan dan, Označi sve / Odznači sve |
-| PBI-022 / US-22 | Generisanje dnevne rute | Emrah, Kerim | 4h | To Do | Na osnovu GPS koordinata i prioriteta sandučića kreirati prijedlog dnevne rute za odabranog poštara |
+| PBI-022 / US-22 | Generisanje dnevne rute | Emrah, Kerim | 4h | Done | Na osnovu GPS koordinata i prioriteta sandučića kreirati prijedlog dnevne rute za odabranog poštara |
 
 ---
 
@@ -173,10 +173,10 @@ Uvođenje radnih pravila osigurava da generisane rute budu operativno izvodljive
 ## PBI-022 Generisanje dnevne rute
 
 #### User Stories
-- **US-22:** Kao dispečer, želim pokrenuti algoritam za automatsko generisanje dnevne rute za odabranog poštara, kako bih dobio prijedlog obilaska zasnovan na lokacijama i prioritetima sandučića.
+- **US-22:** Kao administrator ili dispečer, želim pokrenuti algoritam za automatsko generisanje dnevne rute za odabranog poštara, kako bih dobio prijedlog obilaska zasnovan na lokacijama i prioritetima sandučića.
 
 #### Poslovna vrijednost
-Ovo je srce sistema. Automatizacija rute smanjuje manuelni rad dispečera, štedi vrijeme i osigurava da ključne lokacije ne budu zaboravljene.
+Ovo je srce sistema. Automatizacija rute smanjuje manuelni rad administratora i dispečera, štedi vrijeme i osigurava da ključne lokacije ne budu zaboravljene.
 
 #### Prioritet: High
 
@@ -184,7 +184,7 @@ Ovo je srce sistema. Automatizacija rute smanjuje manuelni rad dispečera, šted
 
 ##### ID storyja: US-22
 **Naziv storyja:** Automatizovani proračun dnevne rute  
-**Opis:** Kao **dispečer**, želim **klikom na dugme "Generiši" aktivirati algoritam**, koji će **na osnovu GPS koordinata i prioriteta sandučića kreirati prijedlog dnevne rute za odabranog poštara**.  
+**Opis:** Kao **administrator ili dispečer**, želim **klikom na dugme "Generiši" aktivirati algoritam**, koji će **na osnovu GPS koordinata i prioriteta sandučića kreirati prijedlog dnevne rute za odabranog poštara**.  
 **Poslovna vrijednost:** Eliminacija manuelnog planiranja i smanjenje ljudske greške.  
 **Prioritet:** High  
 **Pretpostavke i otvorena pitanja:**
@@ -197,7 +197,7 @@ Ovo je srce sistema. Automatizacija rute smanjuje manuelni rad dispečera, šted
 
 #### Acceptance criteria
 
-- Kada dispečer klikne na dugme Generiši, tada sistem mora u obzir uzeti isključivo sandučiće koji su: Aktivni (US-13), imaju označen današnji radni dan (US-33) i čiji se vremenski okvir dostupnosti (US-32) podudara sa planiranim vremenom obilaska.
+- Kada administrator ili dispečer klikne na dugme Generiši, tada sistem mora u obzir uzeti isključivo sandučiće koji su: Aktivni (US-13), imaju označen današnji radni dan (US-33) i čiji se vremenski okvir dostupnosti (US-32) podudara sa planiranim vremenom obilaska.
 - Sistem mora primijeniti prioritetno ponderisanje tako da sandučići sa statusom Visok prioritet (US-18) imaju prednost u redoslijedu obilaska u odnosu na one sa nižim prioritetom.
 - Kada se proces proračuna završi, tada sistem mora prikazati vizuelni prijedlog rute na interaktivnoj mapi (povezana linija između pinova) i hronološku listu adresa sa procijenjenim vremenom dolaska za svaku tačku.
 - Sistem mora izvršiti proračun unutar maksimalno 5 sekundi za rute do 50 tačaka; u suprotnom, mora prikazati indikator učitavanja (loader).
