@@ -273,7 +273,7 @@ public sealed class MailboxRepositoryTests : IDisposable
     }
 
     [Fact]
-    public async Task DeleteAsync_ShouldRemoveMailboxFromDatabase()
+    public async Task DeleteAsync_ShouldSoftDeleteMailbox()
     {
         // Arrange
         var mailboxId = Guid.NewGuid();
@@ -297,24 +297,23 @@ public sealed class MailboxRepositoryTests : IDisposable
         Assert.NotNull(existingMailbox);
 
         // Act
-        await _sut.DeleteAsync(mailboxId, CancellationToken.None);
+        var deleted = await _sut.DeleteAsync(mailboxId, CancellationToken.None);
 
         // Assert
+        Assert.True(deleted);
         var deletedMailbox = await _context.Mailboxes.FindAsync(mailboxId);
-        Assert.Null(deletedMailbox);
+        Assert.NotNull(deletedMailbox);
+        Assert.False(deletedMailbox!.IsActive);
     }
 
     [Fact]
-    public async Task DeleteAsync_WhenMailboxDoesNotExist_ShouldNotThrowException()
+    public async Task DeleteAsync_WhenMailboxDoesNotExist_ShouldReturnFalse()
     {
         // Arrange
         var nonExistentId = Guid.NewGuid();
 
-        // Act & Assert - Should not throw
-        await _sut.DeleteAsync(nonExistentId, CancellationToken.None);
-
-        // Verify no exception was thrown and method completed
-        Assert.True(true);
+        var deleted = await _sut.DeleteAsync(nonExistentId, CancellationToken.None);
+        Assert.False(deleted);
     }
 
     public void Dispose()

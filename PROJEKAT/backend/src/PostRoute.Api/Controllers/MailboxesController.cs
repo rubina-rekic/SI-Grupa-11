@@ -94,6 +94,21 @@ public sealed class MailboxesController : ControllerBase
         }
     }
 
+    [HttpDelete("{id:guid}")]
+    [RequiredRole("Administrator")]
+    public async Task<IActionResult> DeleteAsync(Guid id, CancellationToken cancellationToken)
+    {
+        try
+        {
+            await _mailboxService.DeleteAsync(id, cancellationToken);
+            return NoContent();
+        }
+        catch (InvalidOperationException ex) when (ex.Message.Contains("nije pronadjen") || ex.Message.Contains("nije prona"))
+        {
+            return NotFound();
+        }
+    }
+
     [HttpGet]
     public async Task<ActionResult<PagedResponse<MailboxResponse>>> GetAllAsync(
         [FromQuery] int page = 1,

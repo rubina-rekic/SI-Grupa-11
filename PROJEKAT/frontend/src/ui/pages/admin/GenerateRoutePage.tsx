@@ -109,7 +109,7 @@ export default function GenerateRoutePage() {
       } else if (err && typeof err === "object" && "error" in err && typeof (err as Record<string, unknown>).error === "string") {
         toast.error((err as Record<string, unknown>).error as string)
       } else {
-        toast.error("Nema dostupnih lokacija za generisanje rute. Provjerite status, radni dan i dostupnost sandučića.")
+        toast.error("Nema dostupnih lokacija za generisanje rute. Provjerite status, dostupnost i pravila prioriteta sanducica.")
       }
     } finally {
       setLoading(false)

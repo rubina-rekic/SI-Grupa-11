@@ -24,20 +24,21 @@ public class RoutesController : ControllerBase
     {
         if (request.PostmanId == Guid.Empty)
         {
-            return BadRequest(new { Message = "Poštar je obavezan." });
+            return BadRequest(new { Message = "Postar je obavezan." });
         }
 
         var route = await _routeService.GenerateRouteAsync(request);
-        
-        // Prijavljeno je da rute često ostaju prazne zbog filtriranja pa vraćamo sve podatke u oba slučaja radi transparentnosti.
+
         if (route.RouteItems == null || route.RouteItems.Count == 0)
         {
-            return BadRequest(new { 
+            return BadRequest(new
+            {
                 Message = $"Nema dostupnih lokacija za generisanje rute. " +
-                          $"Ukupno sandučića: {route.TotalMailboxesCount}, Aktivnih: {route.ActiveMailboxesCount}, Obuhvaćenih radnim danom i opcijama dostupnosti: {route.DayFilteredMailboxesCount}." 
+                          $"Ukupno sanducica: {route.TotalMailboxesCount}, Aktivnih: {route.ActiveMailboxesCount}, " +
+                          $"Obuhvacenih pravilima prioriteta: {route.DayFilteredMailboxesCount}."
             });
         }
-        
+
         return Ok(route);
     }
 }

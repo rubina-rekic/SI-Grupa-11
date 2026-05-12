@@ -15,18 +15,19 @@ public class MailboxRepository : IMailboxRepository
     public async Task<Mailbox?> GetByIdAsync(Guid id, CancellationToken cancellationToken)
     {
         return await _context.Mailboxes
-            .FirstOrDefaultAsync(m => m.Id == id, cancellationToken);
+            .FirstOrDefaultAsync(m => m.Id == id && m.IsActive, cancellationToken);
     }
 
     public async Task<Mailbox?> GetBySerialNumberAsync(string serialNumber, CancellationToken cancellationToken)
     {
         return await _context.Mailboxes
-            .FirstOrDefaultAsync(m => m.SerialNumber == serialNumber, cancellationToken);
+            .FirstOrDefaultAsync(m => m.SerialNumber == serialNumber && m.IsActive, cancellationToken);
     }
 
     public async Task<IEnumerable<Mailbox>> GetAllAsync(CancellationToken cancellationToken)
     {
         return await _context.Mailboxes
+            .Where(m => m.IsActive)
             .OrderBy(m => m.SerialNumber)
             .ToListAsync(cancellationToken);
     }
@@ -40,7 +41,9 @@ public class MailboxRepository : IMailboxRepository
         bool sortByPriority,
         CancellationToken cancellationToken)
     {
-        var query = _context.Mailboxes.AsQueryable();
+        var query = _context.Mailboxes
+            .Where(m => m.IsActive)
+            .AsQueryable();
 
         if (type.HasValue)
             query = query.Where(m => m.Type == type.Value);
@@ -71,7 +74,7 @@ public class MailboxRepository : IMailboxRepository
     public async Task<bool> SerialNumberExistsAsync(string serialNumber, CancellationToken cancellationToken)
     {
         return await _context.Mailboxes
-            .AnyAsync(m => m.SerialNumber == serialNumber, cancellationToken);
+            .AnyAsync(m => m.SerialNumber == serialNumber && m.IsActive, cancellationToken);
     }
 
     public async Task<bool> SerialNumberExistsAsync(string serialNumber, Guid? excludeId, CancellationToken cancellationToken)
@@ -80,7 +83,7 @@ public class MailboxRepository : IMailboxRepository
             return await SerialNumberExistsAsync(serialNumber, cancellationToken);
 
         return await _context.Mailboxes
-            .AnyAsync(m => m.SerialNumber == serialNumber && m.Id != excludeId.Value, cancellationToken);
+            .AnyAsync(m => m.SerialNumber == serialNumber && m.Id != excludeId.Value && m.IsActive, cancellationToken);
     }
 
     public async Task<Mailbox> AddAsync(Mailbox mailbox, CancellationToken cancellationToken)
@@ -104,13 +107,20 @@ public class MailboxRepository : IMailboxRepository
         return mailbox;
     }
 
-    public async Task DeleteAsync(Guid id, CancellationToken cancellationToken)
+    public async Task<bool> DeleteAsync(Guid id, CancellationToken cancellationToken)
     {
-        var mailbox = await GetByIdAsync(id, cancellationToken);
-        if (mailbox != null)
+        var mailbox = await _context.Mailboxes
+            .FirstOrDefaultAsync(m => m.Id == id && m.IsActive, cancellationToken);
+
+        if (mailbox is null)
         {
-            _context.Mailboxes.Remove(mailbox);
-            await _context.SaveChangesAsync(cancellationToken);
+            return false;
         }
+
+        // Soft delete to preserve historical route references
+        mailbox.IsActive = false;
+        mailbox.UpdatedAt = DateTime.UtcNow;
+        await _context.SaveChangesAsync(cancellationToken);
+        return true;
     }
 }

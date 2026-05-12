@@ -15,6 +15,8 @@ export function LeafletRoutingMachine({ waypoints }: LeafletRoutingMachineProps)
       return
     }
 
+    let disposed = false
+
     const plan = L.Routing.plan(waypoints.map(([latitude, longitude]) => L.latLng(latitude, longitude)), {
       addWaypoints: false,
       draggableWaypoints: false,
@@ -39,8 +41,22 @@ export function LeafletRoutingMachine({ waypoints }: LeafletRoutingMachineProps)
       },
     }).addTo(map)
 
+    const safeRemove = () => {
+      if (disposed) return
+      disposed = true
+
+      try {
+        // LRM internally manipulates map layers asynchronously; guard cleanup to avoid null removeLayer access.
+        if (map && (map as unknown as { _loaded?: boolean })._loaded !== false) {
+          map.removeControl(control)
+        }
+      } catch {
+        // No-op: best effort cleanup to prevent runtime crash during fast re-renders/unmount.
+      }
+    }
+
     return () => {
-      map.removeControl(control)
+      safeRemove()
     }
   }, [map, waypoints])
 

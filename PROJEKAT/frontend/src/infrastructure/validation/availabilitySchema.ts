@@ -18,6 +18,15 @@ export const availabilitySchema = z.object({
     const s1HasStart = !!data.slot1Start
     const s1HasEnd = !!data.slot1End
 
+    if (!s1HasStart && !s1HasEnd) {
+        ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            message: "Ako sandučić nije 24/7 dostupan, unesite barem jedan vremenski period.",
+            path: ["slot1Start"]
+        })
+        return
+    }
+
     if (s1HasStart !== s1HasEnd) {
         ctx.addIssue({
             code: z.ZodIssueCode.custom,

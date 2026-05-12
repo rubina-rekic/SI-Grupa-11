@@ -29,6 +29,7 @@ public sealed class MailboxServiceTestsPBI018
         Type = MailboxType.WallSmall,
         Priority = MailboxPriority.Srednji,
         Status = MailboxStatus.Prazan,
+        IsAlwaysAvailable = true,
         Capacity = 100,
         InstallationYear = 2020,
         Notes = "stare napomene"
@@ -236,5 +237,28 @@ public sealed class MailboxServiceTestsPBI018
         await _sut.UpdateAsync(cmd, CancellationToken.None);
 
         _auditRepo.Verify(a => a.LogAsync(It.IsAny<MailboxAuditLog>(), It.IsAny<CancellationToken>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task DeleteAsync_ThrowsWhenMailboxNotFound()
+    {
+        _repo.Setup(r => r.DeleteAsync(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync(false);
+
+        var action = () => _sut.DeleteAsync(Guid.NewGuid(), CancellationToken.None);
+
+        await Assert.ThrowsAsync<InvalidOperationException>(action);
+    }
+
+    [Fact]
+    public async Task DeleteAsync_CallsRepositoryDelete()
+    {
+        var mailboxId = Guid.NewGuid();
+        _repo.Setup(r => r.DeleteAsync(mailboxId, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(true);
+
+        await _sut.DeleteAsync(mailboxId, CancellationToken.None);
+
+        _repo.Verify(r => r.DeleteAsync(mailboxId, It.IsAny<CancellationToken>()), Times.Once);
     }
 }

@@ -15,6 +15,8 @@ public class RouteService : IRouteService
     private const int SpeedKmh = 30; // Prosjek brzine u gradu
     private const int StopDurationMinutes = 5; // Vrijeme provedeno na svakom sanducicu
     private const int MaxPoints = 50; // Maksimalno stavki rute
+    private const int MediumPriorityCooldownDays = 2;
+    private const int LowPriorityCooldownDays = 4;
 
     public RouteService(IMailboxRepository mailboxRepository, IRouteRepository routeRepository)
     {
@@ -24,16 +26,27 @@ public class RouteService : IRouteService
 
     public async Task<RouteResponse> GenerateRouteAsync(GenerateRouteRequest request, CancellationToken cancellationToken = default)
     {
+        var existingRoute = await _routeRepository.GetByPostmanAndDateAsync(request.PostmanId, request.Date, cancellationToken);
+        if (existingRoute is not null)
+        {
+            return MapToResponse(existingRoute, totalMailboxesCount: null, activeMailboxesCount: null, eligibleMailboxesCount: null);
+        }
+
         var mailboxes = await _mailboxRepository.GetAllAsync(cancellationToken);
         
         // 1. Filtriranje po aktivnosti
         var activeMailboxes = mailboxes.Where(m => m.IsActive).ToList();
+        var lastIncludedByMailbox = await _routeRepository.GetLastIncludedDatesByMailboxIdsAsync(
+            activeMailboxes.Select(x => x.Id),
+            request.Date,
+            cancellationToken);
+        
+        // 2. Filtriranje po prioritetnim pravilima (bez aktivnih dana u sedmici)
+        var eligibleMailboxes = activeMailboxes
+            .Where(mailbox => IsEligibleByPriority(mailbox, request.Date, lastIncludedByMailbox))
+            .ToList();
 
-        // 2. Filtriranje po radnom danu
-        var targetDayFlag = MapDayOfWeek(request.Date.DayOfWeek);
-        var todayMailboxes = activeMailboxes.Where(m => m.WorkingDays == MailboxWorkingDays.None || (m.WorkingDays & targetDayFlag) == targetDayFlag).ToList();
-
-        var unvisited = todayMailboxes.ToList();
+        var unvisited = eligibleMailboxes.ToList();
         var routeItems = new List<RouteItem>();
         
         decimal currentLat = StartingLat;
@@ -141,7 +154,7 @@ public class RouteService : IRouteService
             ExceedsStandardTime = route.ExceedsStandardTime,
             TotalMailboxesCount = mailboxes.Count(),
             ActiveMailboxesCount = activeMailboxes.Count,
-            DayFilteredMailboxesCount = todayMailboxes.Count,
+            DayFilteredMailboxesCount = eligibleMailboxes.Count,
             RouteItems = routeItems.Select(ri => new RouteItemResponse
             {
                 Id = ri.Id,
@@ -154,6 +167,32 @@ public class RouteService : IRouteService
                 Priority = ri.Mailbox.Priority.ToString(),
                 Status = ri.Status
             }).ToList()
+        };
+    }
+
+    private bool IsEligibleByPriority(
+        Mailbox mailbox,
+        DateOnly routeDate,
+        IReadOnlyDictionary<Guid, DateOnly> lastIncludedByMailbox)
+    {
+        if (!lastIncludedByMailbox.TryGetValue(mailbox.Id, out var lastIncludedDate))
+        {
+            return true;
+        }
+
+        if (lastIncludedDate == routeDate)
+        {
+            return false;
+        }
+
+        var daysSinceLastInclude = routeDate.DayNumber - lastIncludedDate.DayNumber;
+
+        return mailbox.Priority switch
+        {
+            MailboxPriority.Visok => true,
+            MailboxPriority.Srednji => daysSinceLastInclude >= MediumPriorityCooldownDays,
+            MailboxPriority.Nizak => daysSinceLastInclude >= LowPriorityCooldownDays,
+            _ => true
         };
     }
 
@@ -184,18 +223,38 @@ public class RouteService : IRouteService
         return inSlot1 || inSlot2;
     }
 
-    private MailboxWorkingDays MapDayOfWeek(DayOfWeek dayOfWeek)
+    private static RouteResponse MapToResponse(Route route, int? totalMailboxesCount, int? activeMailboxesCount, int? eligibleMailboxesCount)
     {
-        return dayOfWeek switch
+        var orderedItems = route.RouteItems
+            .OrderBy(ri => ri.Order)
+            .ToList();
+
+        return new RouteResponse
         {
-            DayOfWeek.Monday => MailboxWorkingDays.Ponedjeljak,
-            DayOfWeek.Tuesday => MailboxWorkingDays.Utorak,
-            DayOfWeek.Wednesday => MailboxWorkingDays.Srijeda,
-            DayOfWeek.Thursday => MailboxWorkingDays.Cetvrtak,
-            DayOfWeek.Friday => MailboxWorkingDays.Petak,
-            DayOfWeek.Saturday => MailboxWorkingDays.Subota,
-            DayOfWeek.Sunday => MailboxWorkingDays.Nedjelja,
-            _ => MailboxWorkingDays.None
+            Id = route.Id,
+            PostmanId = route.PostmanId,
+            Date = route.Date,
+            PlannedStartTime = route.PlannedStartTime,
+            PlannedEndTime = route.PlannedEndTime,
+            TotalDistanceKm = Math.Round(route.TotalDistanceKm, 2),
+            TotalDurationMinutes = route.TotalDurationMinutes,
+            Status = route.Status.ToString(),
+            ExceedsStandardTime = route.ExceedsStandardTime,
+            TotalMailboxesCount = totalMailboxesCount ?? 0,
+            ActiveMailboxesCount = activeMailboxesCount ?? 0,
+            DayFilteredMailboxesCount = eligibleMailboxesCount ?? orderedItems.Count,
+            RouteItems = orderedItems.Select(ri => new RouteItemResponse
+            {
+                Id = ri.Id,
+                MailboxId = ri.MailboxId,
+                Address = ri.Mailbox.Address,
+                Latitude = ri.Mailbox.Latitude,
+                Longitude = ri.Mailbox.Longitude,
+                Order = ri.Order,
+                EstimatedArrivalTime = ri.EstimatedArrivalTime,
+                Priority = ri.Mailbox.Priority.ToString(),
+                Status = ri.Status
+            }).ToList()
         };
     }
 }

@@ -1,5 +1,4 @@
 import { httpClient } from "../httpClient"
-import { getApiBaseUrl } from "../../config/environment"
 import type { ApiResponse } from "../../../shared/types/api"
 
 export interface CreateMailboxRequest {
@@ -51,7 +50,6 @@ export interface MailboxResponse {
     createdAt: string
     updatedAt: string
     notes?: string
-
     isAlwaysAvailable: boolean
     slot1Start: string | null
     slot1End: string | null
@@ -77,8 +75,8 @@ export type MailboxType = typeof MailboxType[keyof typeof MailboxType]
 
 export const mailboxTypeLabels: Record<MailboxType, string> = {
     [MailboxType.WallSmall]: "Zidni (mali)",
-    [MailboxType.StandaloneLarge]: "Samostojeći (veliki)",
-    [MailboxType.IndoorResidential]: "Unutrašnji (stambene zgrade)",
+    [MailboxType.StandaloneLarge]: "Samostojeci (veliki)",
+    [MailboxType.IndoorResidential]: "Unutrasnji (stambene zgrade)",
     [MailboxType.SpecialPriority]: "Specijalni (prioritetni)"
 }
 
@@ -137,16 +135,18 @@ export async function createMailbox(request: CreateMailboxRequest): Promise<Mail
         method: "POST",
         body: backendRequest
     })
+
     if (response.error || !response.data) {
-        throw new Error(response.error || "Greška pri kreiranju sandučića")
+        throw new Error(response.error || "Greska pri kreiranju sanducica")
     }
+
     return response.data as MailboxResponse
 }
 
 export async function checkSerialNumberExists(serialNumber: string): Promise<boolean> {
     const response = await httpClient(`/api/mailboxes/check-serial-number/${encodeURIComponent(serialNumber)}`)
     if (response.error || response.data === null) {
-        throw new Error(response.error || "Greška pri provjeri serijskog broja")
+        throw new Error(response.error || "Greska pri provjeri serijskog broja")
     }
     return response.data as boolean
 }
@@ -162,7 +162,7 @@ export async function getAllMailboxes(query: MailboxListQuery = {}): Promise<Pag
 
     const response = await httpClient(`/api/mailboxes?${params.toString()}`)
     if (response.error || !response.data) {
-        throw new Error(response.error || "Greška pri učitavanju sandučića")
+        throw new Error(response.error || "Greska pri ucitavanju sanducica")
     }
     return response.data as PagedResponse<MailboxResponse>
 }
@@ -170,17 +170,12 @@ export async function getAllMailboxes(query: MailboxListQuery = {}): Promise<Pag
 export async function getMailboxById(id: string): Promise<MailboxResponse> {
     const response = await httpClient(`/api/mailboxes/${id}`)
     if (response.error || !response.data) {
-        throw new Error(response.error || "Greška pri učitavanju sandučića")
+        throw new Error(response.error || "Greska pri ucitavanju sanducica")
     }
     return response.data as MailboxResponse
 }
 
 export async function updateMailbox(id: string, request: UpdateMailboxRequest): Promise<MailboxResponse> {
-    console.log("=== UPDATE MAILBOX FRONTEND DEBUG ===");
-    console.log("Updating mailbox ID:", id);
-    console.log("Request data:", request);
-    console.log("API Base URL:", getApiBaseUrl());
-
     const backendRequest = {
         serialNumber: request.serialNumber,
         address: request.address,
@@ -192,7 +187,6 @@ export async function updateMailbox(id: string, request: UpdateMailboxRequest): 
         installationYear: request.installationYear,
         notes: request.notes,
         reason: request.reason,
-        // US-32
         isAlwaysAvailable: request.isAlwaysAvailable,
         slot1Start: request.slot1Start,
         slot1End: request.slot1End,
@@ -200,22 +194,23 @@ export async function updateMailbox(id: string, request: UpdateMailboxRequest): 
         slot2End: request.slot2End,
     }
 
-    console.log("Backend request:", backendRequest);
-
     const response = await httpClient(`/api/mailboxes/${id}`, {
         method: "PUT",
         body: backendRequest
     })
 
-    console.log("HTTP Response:", response);
-    console.log("Response status:", response.status);
-    console.log("Response error:", response.error);
-
     if (response.error || !response.data) {
-        console.error("Update failed:", response.error);
-        throw new Error(response.error || "Greška pri ažuriranju sandučića")
+        throw new Error(response.error || "Greska pri azuriranju sanducica")
     }
+
     return response.data as MailboxResponse
+}
+
+export async function deleteMailbox(id: string): Promise<void> {
+    const response = await httpClient(`/api/mailboxes/${id}`, { method: "DELETE" })
+    if (response.error || (response.status !== 204 && response.status !== 200)) {
+        throw new Error(response.error || "Greska pri brisanju sanducica")
+    }
 }
 
 export interface AuditLogDto {

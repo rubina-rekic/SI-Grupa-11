@@ -123,6 +123,9 @@ public class MailboxService : IMailboxService
         // Ako je 24/7, preskočiti sve provjere
         if (isAlwaysAvailable) return;
 
+        if (!slot1Start.HasValue && !slot1End.HasValue)
+            throw new InvalidOperationException("Ako sanducic nije 24/7 dostupan, morate definisati barem jedan vremenski period.");
+
         // Ako je uneseno samo jedno polje prvog termina
         if (slot1Start.HasValue != slot1End.HasValue)
             throw new InvalidOperationException("Morate unijeti i početak i kraj prvog termina.");
@@ -228,4 +231,13 @@ public class MailboxService : IMailboxService
 
     public async Task<IEnumerable<MailboxAuditLog>> GetAuditLogAsync(Guid mailboxId, CancellationToken cancellationToken)
         => await _auditLogRepository.GetByMailboxIdAsync(mailboxId, cancellationToken);
+
+    public async Task DeleteAsync(Guid mailboxId, CancellationToken cancellationToken)
+    {
+        var deleted = await _mailboxRepository.DeleteAsync(mailboxId, cancellationToken);
+        if (!deleted)
+        {
+            throw new InvalidOperationException("Sanducic nije pronadjen.");
+        }
+    }
 }

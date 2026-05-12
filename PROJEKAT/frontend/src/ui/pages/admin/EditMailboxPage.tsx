@@ -7,6 +7,7 @@ import { useNavigate, useParams } from "react-router-dom"
 import {
     getMailboxById,
     updateMailbox,
+    deleteMailbox,
     MailboxType,
     MailboxPriority,
     mailboxTypeLabels,
@@ -62,6 +63,7 @@ export default function EditMailboxPage() {
     const [loading, setLoading] = useState(true)
     const [selectedLocation, setSelectedLocation] = useState<{ lat: number; lng: number } | null>(null)
     const [originalData, setOriginalData] = useState<MailboxResponse | null>(null)
+    const [deleting, setDeleting] = useState(false)
 
     const { register, handleSubmit, setValue, watch, formState: { errors, isSubmitting }, trigger, reset } = useForm<FormData>({
         resolver: zodResolver(schema) as unknown as Resolver<FormData>,
@@ -93,7 +95,7 @@ export default function EditMailboxPage() {
                     notes: mailbox.notes || "",
                     // US-32
                     isAlwaysAvailable: mailbox.isAlwaysAvailable,
-                    hasSecondSlot: !!(mailbox.slot2Start),
+                    hasSecondSlot: !!(mailbox.slot2Start || mailbox.slot2End),
                     slot1Start: mailbox.slot1Start?.slice(0, 5) ?? "",
                     slot1End: mailbox.slot1End?.slice(0, 5) ?? "",
                     slot2Start: mailbox.slot2Start?.slice(0, 5) ?? "",
@@ -165,6 +167,25 @@ export default function EditMailboxPage() {
                 const errorMessage = error instanceof Error ? error.message : "Greška pri ažuriranju sandučića"
                 toast.error(errorMessage)
             }
+        }
+    }
+
+    const handleDelete = async () => {
+        if (!id || deleting) return
+
+        const confirmed = window.confirm("Da li ste sigurni da zelite obrisati ovaj sanducic?")
+        if (!confirmed) return
+
+        try {
+            setDeleting(true)
+            await deleteMailbox(id)
+            toast.success("Sanducic je uspjesno obrisan.")
+            navigate("/admin/mailboxes")
+        } catch (error) {
+            const message = error instanceof Error ? error.message : "Greska pri brisanju sanducica"
+            toast.error(message)
+        } finally {
+            setDeleting(false)
         }
     }
 
@@ -409,6 +430,24 @@ export default function EditMailboxPage() {
 
                         {/* Dugmad */}
                         <div className="form-actions" style={{ display: "flex", justifyContent: "flex-end", gap: "12px", marginTop: "24px" }}>
+                            <button
+                                type="button"
+                                className="btn"
+                                onClick={handleDelete}
+                                disabled={deleting || isSubmitting}
+                                style={{
+                                    padding: "12px 24px",
+                                    backgroundColor: "#b91c1c",
+                                    color: "white",
+                                    border: "none",
+                                    borderRadius: "6px",
+                                    cursor: "pointer",
+                                    fontSize: "0.9rem",
+                                    fontWeight: "500"
+                                }}
+                            >
+                                {deleting ? "Brisanje..." : "Obrisi"}
+                            </button>
                             <button
                                 type="button"
                                 className="btn"
