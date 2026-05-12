@@ -249,7 +249,7 @@ public sealed class UsersController : ControllerBase
         return Ok(response);
     }
     [HttpGet]
-    [Microsoft.AspNetCore.Authorization.Authorize(Roles = "Administrator")]
+    [Microsoft.AspNetCore.Authorization.Authorize(Roles = $"{UserRole.Administrator},{UserRole.Dispatcher}")]
     public async Task<ActionResult<IEnumerable<UserResponse>>> GetAllAsync(CancellationToken cancellationToken)
     {
         var users = await _userService.GetAllAsync(cancellationToken);

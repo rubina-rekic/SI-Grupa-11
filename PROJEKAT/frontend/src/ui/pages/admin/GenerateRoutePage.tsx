@@ -3,10 +3,11 @@ import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
 import { toast } from "sonner"
-import { MapContainer as LeafletMap, Marker, Popup, Polyline, TileLayer } from "react-leaflet"
+import { MapContainer as LeafletMap, Marker, Popup, TileLayer } from "react-leaflet"
 import L from "leaflet"
 import "leaflet/dist/leaflet.css"
 import { Layout } from "../../components/Layout/Layout"
+import { LeafletRoutingMachine } from "../../components/common/LeafletRoutingMachine"
 import { routesApi } from "../../../infrastructure/api/routesApi"
 import type { RouteResponse } from "../../../infrastructure/api/routesApi"
 import { getUsers } from "../../../infrastructure/api/users/usersApi"
@@ -33,6 +34,14 @@ type GenerateRouteFormValues = z.infer<typeof generateRouteSchema>
 
 function toDurationLabel(totalMinutes: number) {
   return `${Math.floor(totalMinutes / 60)}h ${totalMinutes % 60}m`
+}
+
+function toHoursAndMinutes(timeValue: string | null | undefined) {
+  if (!timeValue) {
+    return "--:--"
+  }
+
+  return timeValue.split(":").slice(0, 2).join(":")
 }
 
 function priorityColors(priority: string) {
@@ -110,6 +119,14 @@ export default function GenerateRoutePage() {
   const mapCenter = useMemo<[number, number]>(() => {
     if (!routeData || routeData.routeItems.length === 0) return [43.8563, 18.4131]
     return [routeData.routeItems[0].latitude, routeData.routeItems[0].longitude]
+  }, [routeData])
+
+  const routeWaypoints = useMemo<Array<[number, number]>>(() => {
+    if (!routeData) {
+      return []
+    }
+
+    return routeData.routeItems.map((item) => [item.latitude, item.longitude])
   }, [routeData])
 
   return (
@@ -191,7 +208,7 @@ export default function GenerateRoutePage() {
                     <div style={{ background: "#f8fafc", border: "1px solid #e2e8f0", borderRadius: "8px", padding: "12px" }}>
                       <div style={{ color: "#64748b", fontSize: "0.8rem" }}>Vremenski raspon</div>
                       <div style={{ color: "#1e2d3d", fontSize: "1.15rem", fontWeight: 700 }}>
-                        {routeData.plannedStartTime} - {routeData.plannedEndTime ?? "--:--:--"}
+                        {toHoursAndMinutes(routeData.plannedStartTime)} - {toHoursAndMinutes(routeData.plannedEndTime)}
                       </div>
                     </div>
                   </div>
@@ -216,9 +233,10 @@ export default function GenerateRoutePage() {
               <section className="form-card" style={{ maxWidth: "unset" }}>
                 <div className="form-card__body" style={{ gap: "12px" }}>
                   <h2 style={{ margin: 0, fontSize: "1.1rem", color: "#1e2d3d" }}>Ruta na mapi</h2>
-                  <div style={{ height: "420px", borderRadius: "8px", overflow: "hidden", border: "1px solid #e2e8f0" }}>
-                    <LeafletMap center={mapCenter} zoom={13} style={{ height: "100%", width: "100%" }}>
+                  <div className="route-map-shell" style={{ height: "420px", borderRadius: "8px", overflow: "hidden", border: "1px solid #e2e8f0" }}>
+                    <LeafletMap className="route-map" center={mapCenter} zoom={13} style={{ height: "100%", width: "100%" }}>
                       <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+                      {routeWaypoints.length >= 2 && <LeafletRoutingMachine waypoints={routeWaypoints} />}
                       {routeData.routeItems.map((item) => (
                         <Marker key={item.id} position={[item.latitude, item.longitude]}>
                           <Popup>
@@ -230,7 +248,6 @@ export default function GenerateRoutePage() {
                           </Popup>
                         </Marker>
                       ))}
-                      <Polyline positions={routeData.routeItems.map((i) => [i.latitude, i.longitude])} color="#2563a8" weight={4} />
                     </LeafletMap>
                   </div>
                 </div>
@@ -273,7 +290,7 @@ export default function GenerateRoutePage() {
                                   {item.priority}
                                 </span>
                               </td>
-                              <td style={{ padding: "12px 16px", color: "#334155", fontWeight: 600 }}>{item.estimatedArrivalTime}</td>
+                              <td style={{ padding: "12px 16px", color: "#334155", fontWeight: 600 }}>{toHoursAndMinutes(item.estimatedArrivalTime)}</td>
                             </tr>
                           )
                         })}

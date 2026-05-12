@@ -73,23 +73,19 @@ export default function MailboxListPage() {
 
     return (
         <Layout>
-            <div className="page-container">
-                <div className="form-card">
+            <div className="page-container mailbox-list-page">
+                <div className="mailbox-list-page__shell">
+                <div className="form-card mailbox-list-page__card">
                     <div className="form-card__header">
-                        <div style={{ display: "flex", gap: "8px" }}>
+                        <div className="mailbox-list-page__header-actions">
                             <button
-                                className="btn"
-                                style={{
-                                    padding: "8px 16px", backgroundColor: "#64748b",
-                                    color: "white", border: "none", borderRadius: "6px",
-                                    cursor: "pointer"
-                                }}
+                                className="btn mailbox-list-page__history-button"
                                 onClick={() => navigate("/admin/mailboxes/history")}
                             >
                                 📋 Historija promjena
                             </button>
                             <button
-                                className="btn btn--primary"
+                                className="btn btn--primary mailbox-list-page__add-button"
                                 onClick={() => navigate("/admin/mailboxes/new")}
                             >
                                 + Dodaj novi sandučić
@@ -98,23 +94,14 @@ export default function MailboxListPage() {
                     </div>
 
                     <div className="form-card__body">
-                        <div style={{ marginBottom: "16px" }}>
-                            <h2 style={{ margin: 0, fontSize: "1.1rem", color: "#1e2d3d" }}>
+                        <div className="mailbox-list-page__title-row">
+                            <h2 className="mailbox-list-page__title">
                                 Lista sandučića — ukupno {totalCount}
                             </h2>
                         </div>
 
                         {/* Filteri */}
-                        <div style={{
-                            display: "grid",
-                            gridTemplateColumns: "1fr 1fr",
-                            gap: "16px",
-                            marginBottom: "16px",
-                            padding: "16px",
-                            backgroundColor: "#f8fafc",
-                            borderRadius: "8px",
-                            border: "1px solid #e2e8f0"
-                        }}>
+                        <div className="mailbox-list-page__filter-grid">
                             <div className="form-field">
                                 <label className="form-field__label" htmlFor="filter-type">Tip</label>
                                 <select
@@ -147,17 +134,8 @@ export default function MailboxListPage() {
                         </div>
 
                         {/* Pretraga po adresi */}
-                        <div style={{
-                            display: "grid",
-                            gridTemplateColumns: "1fr auto",
-                            gap: "16px",
-                            marginBottom: "24px",
-                            padding: "16px",
-                            backgroundColor: "#f8fafc",
-                            borderRadius: "8px",
-                            border: "1px solid #e2e8f0"
-                        }}>
-                            <div>
+                        <div className="mailbox-list-page__search-row">
+                            <div className="form-field mailbox-list-page__search-field">
                                 <label className="form-field__label" htmlFor="filter-search">🔍 Pretraga po lokaciji</label>
                                 <input
                                     id="filter-search"
@@ -169,23 +147,12 @@ export default function MailboxListPage() {
                                     autoComplete="off"
                                 />
                             </div>
-                            <div style={{ display: "flex", alignItems: "flex-end" }}>
+                            <div className="mailbox-list-page__search-actions">
                                 <button
                                     type="button"
+                                    className="btn mailbox-list-page__sort-button"
                                     onClick={() => setSortByPriority(p => !p)}
                                     title="Sortiraj po prioritetu"
-                                    style={{
-                                        padding: "10px 16px",
-                                        border: sortByPriority ? "2px solid #2563a8" : "1px solid #e2e8f0",
-                                        borderRadius: "6px",
-                                        backgroundColor: sortByPriority ? "#dbeafe" : "#fff",
-                                        color: sortByPriority ? "#2563a8" : "#64748b",
-                                        cursor: "pointer",
-                                        fontWeight: 500,
-                                        fontSize: "0.85rem",
-                                        whiteSpace: "nowrap",
-                                        transition: "all 0.2s ease"
-                                    }}
                                 >
                                     {sortByPriority ? "▼ Po prioritetu" : "↕ Sortiranje"}
                                 </button>
@@ -194,32 +161,19 @@ export default function MailboxListPage() {
 
                         {/* Kartice */}
                         {mailboxes.length > 0 ? (
-                            <div style={{
-                                display: "grid",
-                                gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))",
-                                gap: "16px",
-                                marginBottom: "24px"
-                            }}>
+                            <div className="mailbox-list-page__cards-grid">
                                 {mailboxes.map((mailbox) => (
                                     <div
                                         key={mailbox.id}
-                                        style={{
-                                            backgroundColor: "#fff",
-                                            border: "1px solid #e2e8f0",
-                                            borderRadius: "8px",
-                                            padding: "16px",
-                                            boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
-                                            transition: "all 0.2s ease",
-                                            cursor: "pointer"
-                                        }}
+                                        className="mailbox-list-page__card-item"
                                         onMouseEnter={(e) => {
                                             const elem = e.currentTarget
-                                            elem.style.boxShadow = "0 4px 12px rgba(0,0,0,0.15)"
+                                            elem.style.boxShadow = "0 10px 22px rgba(15,37,64,0.12)"
                                             elem.style.transform = "translateY(-2px)"
                                         }}
                                         onMouseLeave={(e) => {
                                             const elem = e.currentTarget
-                                            elem.style.boxShadow = "0 1px 3px rgba(0,0,0,0.1)"
+                                            elem.style.boxShadow = "0 1px 3px rgba(15,37,64,0.1)"
                                             elem.style.transform = "translateY(0)"
                                         }}
                                     >
@@ -324,13 +278,7 @@ export default function MailboxListPage() {
 
                         {/* Straničenje */}
                         {totalPages > 1 && (
-                            <div style={{
-                                display: "flex",
-                                justifyContent: "center",
-                                alignItems: "center",
-                                gap: "12px",
-                                marginTop: "16px"
-                            }}>
+                            <div className="mailbox-list-page__pagination">
                                 <button
                                     className="btn"
                                     onClick={() => setPage(p => Math.max(1, p - 1))}
@@ -353,6 +301,7 @@ export default function MailboxListPage() {
                             </div>
                         )}
                     </div>
+                </div>
                 </div>
             </div>
 

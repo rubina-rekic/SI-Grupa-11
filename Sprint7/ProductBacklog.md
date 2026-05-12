@@ -27,14 +27,14 @@
 | PBI-012 | Prijava korisnika | Omogućiti korisniku prijavu u sistem putem emaila/korisničkog imena i lozinke, uz obaveznu promjenu inicijalne lozinke pri prvoj prijavi. | feature | High | 5h | Done | Sprint 5|  |
 | PBI-013 | Odjava korisnika | Omogućiti sigurno odjavljivanje iz sistema. | feature | Medium | 1h 30min | Done | Sprint 5 |  |
 | PBI-014 | Uloge i pristup po ulozi | Ograničiti pristup funkcionalnostima na osnovu uloge: administrator, dispečer, poštar. | feature | High | 5h 30min | Done | Sprint 5 |  |
-| PBI-015 | Dodavanje poštara | Omogućiti administratoru unos i evidenciju osnovnih podataka o novom poštaru u sistemu. | feature | High | 3h | To Do | Sprint 6 | Operativni podaci o poštaru |
-| PBI-016 | Pregled liste poštara | Omogućiti pregled svih poštara sa osnovnim podacima i statusom aktivnosti. | feature | Medium | 2h 30min | To Do | Sprint 6 |  |
-| PBI-017 | Dodavanje poštanskog sandučića | Omogućiti unos novog sandučića sa lokacijom, tipom i osnovnim podacima. | feature | High | 4h | To Do | Sprint 6 |  |
-| PBI-018 | Izmjena podataka o sandučiću | Omogućiti administratoru izmjenu lokacije, tipa, prioriteta i drugih podataka o sandučiću. | feature | Medium | 4h | To Do | Sprint 6 |  |
-| PBI-019 | Pregled sandučića na listi | Omogućiti pregled svih evidentiranih sandučića kroz jednostavnu tabelu/listu. | feature | Medium | 3h | To Do | Sprint 6 |  |
-| PBI-020 | Definisanje prioriteta sandučića | Omogućiti postavljanje ili izmjenu prioriteta za pražnjenje/punjenje sandučića. | feature | High | 3h 30min | To Do | Sprint 7 |  |
-| PBI-021 | Evidencija radnih pravila sandučića | Omogućiti čuvanje pravila kao što su radni dani, vremenska ograničenja ili specifične napomene. | feature | Low | 4h 30min | To Do | Sprint 7 | Ulaz za algoritam |
-| PBI-022 | Generisanje dnevne rute | Omogućiti dispečeru automatsko generisanje dnevne rute za odabranog poštara. | feature | High | 8h | To Do | Sprint 8 | Osnovna optimizacija |
+| PBI-015 | Dodavanje poštara | Omogućiti administratoru unos i evidenciju osnovnih podataka o novom poštaru u sistemu. | feature | High | 3h | Done | Sprint 6 | Operativni podaci o poštaru |
+| PBI-016 | Pregled liste poštara | Omogućiti pregled svih poštara sa osnovnim podacima i statusom aktivnosti. | feature | Medium | 2h 30min | Done | Sprint 6 |  |
+| PBI-017 | Dodavanje poštanskog sandučića | Omogućiti unos novog sandučića sa lokacijom, tipom i osnovnim podacima. | feature | High | 4h | Done | Sprint 6 |  |
+| PBI-018 | Izmjena podataka o sandučiću | Omogućiti administratoru izmjenu lokacije, tipa, prioriteta i drugih podataka o sandučiću. | feature | Medium | 4h | Done | Sprint 6 |  |
+| PBI-019 | Pregled sandučića na listi | Omogućiti pregled svih evidentiranih sandučića kroz jednostavnu tabelu/listu. | feature | Medium | 3h | Done | Sprint 6 |  |
+| PBI-020 | Definisanje prioriteta sandučića | Omogućiti postavljanje ili izmjenu prioriteta za pražnjenje/punjenje sandučića. | feature | High | 3h 30min | Done | Sprint 7 |  |
+| PBI-021 | Evidencija radnih pravila sandučića | Omogućiti čuvanje pravila kao što su radni dani, vremenska ograničenja ili specifične napomene. | feature | Low | 4h 30min | Done | Sprint 7 | Ulaz za algoritam |
+| PBI-022 | Generisanje dnevne rute | Omogućiti administratoru ili dispečeru automatsko generisanje dnevne rute za odabranog poštara. | feature | High | 8h | To Do | Sprint 8 | Osnovna optimizacija |
 | PBI-023 | Dodjela rute poštaru | Omogućiti dispečeru da dodijeli generisanu rutu konkretnom poštaru. | feature | High | 3h | To Do | Sprint 8 |  |
 | PBI-024 | Pregled detalja rute | Omogućiti pregled redoslijeda obilaska, uključenih sandučića i osnovnih detalja rute. | feature | Medium | 3h 30min | To Do | Sprint 8 |  |
 | PBI-025 | Ručna izmjena redoslijeda obilaska | Omogućiti dispečeru ručno prilagođavanje redoslijeda obilaska unutar rute. | feature | Medium | 5h | To Do | Sprint 8 |  |
