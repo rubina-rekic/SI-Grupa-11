@@ -18,6 +18,11 @@ public class MailboxAuditLogRepository : IMailboxAuditLogRepository
         await _context.SaveChangesAsync(cancellationToken);
     }
 
+    public async Task AddAsync(MailboxAuditLog auditLog, CancellationToken cancellationToken)
+    {
+        await _context.MailboxAuditLogs.AddAsync(auditLog, cancellationToken);
+    }
+
     public async Task<IEnumerable<MailboxAuditLog>> GetByMailboxIdAsync(Guid mailboxId, CancellationToken cancellationToken)
     {
         return await _context.MailboxAuditLogs

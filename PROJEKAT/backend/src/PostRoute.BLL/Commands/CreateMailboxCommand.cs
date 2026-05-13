@@ -19,5 +19,8 @@ public record CreateMailboxCommand(
     TimeOnly? Slot1Start = null,
     TimeOnly? Slot1End = null,
     TimeOnly? Slot2Start = null,
-    TimeOnly? Slot2End = null
+    TimeOnly? Slot2End = null,
+
+    // US-33: Radni dani
+    MailboxWorkingDays WorkingDays = MailboxWorkingDays.RadniDani
 );

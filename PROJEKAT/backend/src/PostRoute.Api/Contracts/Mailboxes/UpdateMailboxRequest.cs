@@ -46,4 +46,7 @@ public class UpdateMailboxRequest
     public TimeOnly? Slot1End { get; set; }
     public TimeOnly? Slot2Start { get; set; }
     public TimeOnly? Slot2End { get; set; }
+
+    // US-33: Radni dani
+    public MailboxWorkingDays WorkingDays { get; set; } = MailboxWorkingDays.RadniDani;
 }

@@ -101,7 +101,6 @@ public class MailboxRepository : IMailboxRepository
     {
         mailbox.UpdatedAt = DateTime.UtcNow;
 
-        _context.Mailboxes.Update(mailbox);
         await _context.SaveChangesAsync(cancellationToken);
 
         return mailbox;

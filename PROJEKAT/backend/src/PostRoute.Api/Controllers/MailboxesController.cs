@@ -31,7 +31,8 @@ public sealed class MailboxesController : ControllerBase
     request.Type, request.Capacity, request.InstallationYear, request.Notes,
     request.Priority, request.Reason,
     request.IsAlwaysAvailable,
-    request.Slot1Start, request.Slot1End, request.Slot2Start, request.Slot2End
+    request.Slot1Start, request.Slot1End, request.Slot2Start, request.Slot2End,
+    request.WorkingDays
 );
 
             var mailbox = await _mailboxService.CreateAsync(command, cancellationToken);
@@ -77,7 +78,8 @@ public sealed class MailboxesController : ControllerBase
      request.Type, request.Priority, request.Capacity, request.InstallationYear,
      request.Notes, userGuid, request.Reason,
      request.IsAlwaysAvailable,
-     request.Slot1Start, request.Slot1End, request.Slot2Start, request.Slot2End
+     request.Slot1Start, request.Slot1End, request.Slot2Start, request.Slot2End,
+     request.WorkingDays
  );
 
             var mailbox = await _mailboxService.UpdateAsync(command, cancellationToken);
@@ -169,6 +171,7 @@ public sealed class MailboxesController : ControllerBase
      m.Id, m.SerialNumber, m.Address, m.Latitude, m.Longitude,
      m.Type, m.Priority, m.Status, m.Capacity, m.InstallationYear,
      m.CreatedAt, m.UpdatedAt, m.Notes,
-     m.IsAlwaysAvailable, m.Slot1Start, m.Slot1End, m.Slot2Start, m.Slot2End
+     m.IsAlwaysAvailable, m.Slot1Start, m.Slot1End, m.Slot2Start, m.Slot2End,
+     m.WorkingDays
  );
 }

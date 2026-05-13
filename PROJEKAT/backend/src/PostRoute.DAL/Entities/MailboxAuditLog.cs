@@ -17,10 +17,8 @@ public class MailboxAuditLog
     [MaxLength(50)]
     public string FieldName { get; set; } = string.Empty;
 
-    [Required]
     public string? OldValue { get; set; }
 
-    [Required]
     public string? NewValue { get; set; }
 
     [Required]

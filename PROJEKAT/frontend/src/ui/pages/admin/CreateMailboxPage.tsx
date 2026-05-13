@@ -6,9 +6,11 @@ import { Layout } from "../../components/Layout/Layout"
 import OpenStreetMapPicker from "../../components/common/OpenStreetMapPicker"
 import { useState, useCallback } from "react"
 import { useNavigate } from "react-router-dom"
-import { createMailbox, checkSerialNumberExists, MailboxType, MailboxPriority, mailboxTypeLabels } from "../../../infrastructure/api/mailboxes/mailboxesApi"
+import { createMailbox, checkSerialNumberExists, MailboxType, MailboxPriority, mailboxTypeLabels, MailboxWorkingDays } from "../../../infrastructure/api/mailboxes/mailboxesApi"
 import { availabilitySchema, mapAvailabilityToRequest } from "../../../infrastructure/validation/availabilitySchema"
+import { workingDaysSchema } from "../../../infrastructure/validation/workingDaysSchema"
 import { AvailabilitySection } from "../../components/mailboxes/AvailabilitySection"
+import { WorkingDaysSection } from "../../components/mailboxes/WorkingDaysSection"
 
 const schema = z.object({
     serialNumber: z
@@ -44,7 +46,7 @@ const schema = z.object({
         .string()
         .max(500, "Napomene mogu imati najviše 500 karaktera")
         .optional()
-}).and(availabilitySchema)
+}).and(availabilitySchema).and(workingDaysSchema)
 
 type FormData = z.infer<typeof schema>
 
@@ -52,8 +54,8 @@ export default function CreateMailboxPage() {
     const navigate = useNavigate()
     const [selectedLocation, setSelectedLocation] = useState<{ lat: number; lng: number } | null>(null)
 
-        const { register, handleSubmit, setValue, watch, formState: { errors, isSubmitting } } = useForm<FormData>({
-    resolver: zodResolver(schema) as unknown as Resolver<FormData>,
+    const { register, handleSubmit, setValue, watch, formState: { errors, isSubmitting } } = useForm<FormData>({
+        resolver: zodResolver(schema) as unknown as Resolver<FormData>,
         mode: "onChange",
         defaultValues: {
             type: MailboxType.WallSmall,
@@ -66,6 +68,7 @@ export default function CreateMailboxPage() {
             slot1End: "",
             slot2Start: "",
             slot2End: "",
+            workingDays: MailboxWorkingDays.RadniDani,
         }
     })
 
@@ -94,7 +97,8 @@ export default function CreateMailboxPage() {
                 priority: data.priority,
                 capacity: data.capacity,
                 installationYear: data.installationYear,
-                notes: data.notes?.trim() || undefined,
+                workingDays: data.workingDays as MailboxWorkingDays,
+                notes: data.notes?.trim() || null,
                 ...mapAvailabilityToRequest(data),
             })
             toast.success(`Sandučić ${data.serialNumber} uspješno dodan!`)
@@ -182,6 +186,13 @@ export default function CreateMailboxPage() {
                         {/* US-32: Dostupnost */}
                         <AvailabilitySection
                             register={register as unknown as UseFormRegister<FieldValues>}
+                            watch={watch as unknown as UseFormWatch<FieldValues>}
+                            setValue={setValue as unknown as UseFormSetValue<FieldValues>}
+                            errors={errors as FieldErrors<FieldValues>}
+                        />
+
+                        {/* US-33: Radni dani */}
+                        <WorkingDaysSection
                             watch={watch as unknown as UseFormWatch<FieldValues>}
                             setValue={setValue as unknown as UseFormSetValue<FieldValues>}
                             errors={errors as FieldErrors<FieldValues>}

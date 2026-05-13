@@ -54,6 +54,8 @@ public sealed class AppDbContext : DbContext
             entity.HasKey(m => m.Id);
             entity.Property(m => m.FieldName).IsRequired().HasMaxLength(50);
             entity.Property(m => m.Action).IsRequired().HasMaxLength(20);
+            entity.Property(m => m.OldValue).IsRequired(false);
+            entity.Property(m => m.NewValue).IsRequired(false);
             entity.HasOne(m => m.Mailbox)
                 .WithMany()
                 .HasForeignKey(m => m.MailboxId)

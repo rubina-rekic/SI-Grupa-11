@@ -1,7 +1,74 @@
+/* ════════════════════════════════════════════════════════════
+   PostRoute — Global Design System
+   ════════════════════════════════════════════════════════════ */
+
+
+/* ── Varijable ─────────────────────────────────────────────── */
+
 :root {
-  font-family: "Segoe UI", "Inter", "Trebuchet MS", sans-serif;
-  color: #1e2d3d;
+  font-family: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
+  color: #1a2332;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  /* Navy */
+  --c-navy-900: #080f1a;
+  --c-navy-800: #0f1c2e;
+  --c-navy-700: #162540;
+  --c-navy-600: #1a3560;
+  --c-navy-500: #1e4175;
+  --c-navy-400: #2563a8;
+
+  /* Akcent */
+  --c-accent: #e8a308;
+  --c-accent-light: #fcd34d;
+  --c-accent-dim: rgba(232, 163, 8, .12);
+
+  /* Slate */
+  --c-slate-50: #f8fafc;
+  --c-slate-100: #f1f5f9;
+  --c-slate-200: #e2e8f0;
+  --c-slate-300: #cbd5e1;
+  --c-slate-400: #94a3b8;
+  --c-slate-500: #64748b;
+  --c-slate-600: #475569;
+  --c-slate-700: #334155;
+  --c-slate-800: #1e293b;
+
+  /* Semantičke */
+  --c-green: #3b6d11;
+  --c-green-bg: #eaf3de;
+  --c-red: #a32d2d;
+  --c-red-bg: #fcebeb;
+  --c-amber: #854f0b;
+  --c-amber-bg: #faeeda;
+  --c-blue: #185fa5;
+  --c-blue-bg: #e6f1fb;
+  --c-teal: #0f6e56;
+  --c-teal-bg: #e1f5ee;
+  --c-purple: #534ab7;
+  --c-purple-bg: #eeedfe;
+
+  /* Sjene */
+  --shadow-xs: 0 1px 2px rgba(10, 20, 40, .05);
+  --shadow-sm: 0 1px 4px rgba(10, 20, 40, .07);
+  --shadow-md: 0 4px 16px rgba(10, 20, 40, .09);
+  --shadow-lg: 0 12px 36px rgba(10, 20, 40, .12);
+
+  /* Zaobljenja */
+  --r-xs: 6px;
+  --r-sm: 8px;
+  --r-md: 10px;
+  --r-lg: 14px;
+  --r-xl: 18px;
+
+  /* Prijelazi */
+  --ease: cubic-bezier(.16, 1, .3, 1);
 }
+
+
+/* ── Reset ──────────────────────────────────────────────────── */
 
 * {
   box-sizing: border-box;
@@ -10,71 +77,127 @@
 body {
   margin: 0;
   min-height: 100vh;
-  background: #f0f4f8;
+  background: var(--c-slate-100);
 }
 
 #root {
   min-height: 100vh;
 }
 
-/* ── Standalone page (login, change-password) ── */
+
+/* ════════════════════════════════════════════════════════════
+   Stranica (login, promjena lozinke…)
+   ════════════════════════════════════════════════════════════ */
+
 .page-container {
   min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 2rem 1rem;
-  background: linear-gradient(150deg, #dce8f5 0%, #eef4f9 50%, #d8e7f4 100%);
+  background:
+    radial-gradient(ellipse at 15% 55%, rgba(30, 65, 117, .1) 0%, transparent 55%),
+    radial-gradient(ellipse at 85% 15%, rgba(232, 163, 8, .07) 0%, transparent 50%),
+    var(--c-slate-100);
 }
 
-/* Inside sidebar layout — centrirano bez full-height */
 .content-area .page-container {
   min-height: unset;
   background: none;
   padding: 0;
-  display: flex;
   align-items: flex-start;
   justify-content: center;
 }
 
-/* ── Form card ── */
+
+/* ════════════════════════════════════════════════════════════
+   Form Card
+   ════════════════════════════════════════════════════════════ */
+
 .form-card {
   width: 100%;
   max-width: 520px;
   background: #ffffff;
-  border: 1px solid #dce6f0;
-  border-radius: 16px;
-  box-shadow: 0 6px 28px rgba(27, 58, 92, 0.1);
+  border: 1px solid var(--c-slate-200);
+  border-radius: var(--r-xl);
+  box-shadow: var(--shadow-lg);
+  overflow: hidden;
+  animation: card-enter .4s var(--ease) both;
+}
+
+@keyframes card-enter {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(.985);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Header */
+.form-card__header {
+  padding: 28px 30px 24px;
+  background: var(--c-navy-800);
+  position: relative;
   overflow: hidden;
 }
 
-.form-card__header {
-  padding: 26px 28px 20px;
-  background: linear-gradient(135deg, #1b3a5c 0%, #2563a8 100%);
+.form-card__header::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 30px;
+  right: 30px;
+  height: 1px;
+  background: rgba(255, 255, 255, .06);
+}
+
+/* Dekorativni akcenat u kutu */
+.form-card__header::before {
+  content: "";
+  position: absolute;
+  width: 160px;
+  height: 160px;
+  right: -30px;
+  top: -50px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(232, 163, 8, .15) 0%, transparent 70%);
+  pointer-events: none;
 }
 
 .form-card__title {
   margin: 0;
-  font-size: 1.25rem;
+  font-size: 1.2rem;
   font-weight: 700;
   color: #ffffff;
+  letter-spacing: -.02em;
+  position: relative;
 }
 
 .form-card__subtitle {
-  margin: 6px 0 0;
-  font-size: 0.875rem;
-  color: rgba(255, 255, 255, 0.78);
+  margin: 5px 0 0;
+  font-size: .85rem;
+  color: rgba(255, 255, 255, .55);
   line-height: 1.5;
+  position: relative;
 }
 
+/* Body */
 .form-card__body {
-  padding: 24px 28px;
+  padding: 26px 30px;
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap: 16px;
 }
 
-/* ── Form fields ── */
+
+/* ════════════════════════════════════════════════════════════
+   Polja forme
+   ════════════════════════════════════════════════════════════ */
+
 .form-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -88,61 +211,75 @@ body {
 }
 
 .form-field__label {
-  font-size: 0.845rem;
+  font-size: .8rem;
   font-weight: 600;
-  color: #334155;
+  color: var(--c-slate-600);
+  letter-spacing: .01em;
 }
 
 .form-field__input {
-  padding: 9px 12px;
-  border: 1.5px solid #ccd9e6;
-  border-radius: 8px;
-  font-size: 0.9rem;
+  padding: 9px 13px;
+  border: 1px solid var(--c-slate-200);
+  border-radius: var(--r-sm);
+  font-size: .875rem;
   font-family: inherit;
-  color: #1e2d3d;
-  background: #f8fafc;
-  transition: border-color 0.15s, box-shadow 0.15s, background 0.15s;
+  color: var(--c-slate-800);
+  background: var(--c-slate-50);
   outline: none;
-}
-
-.form-field__input:focus {
-  border-color: #2563a8;
-  background: #ffffff;
-  box-shadow: 0 0 0 3px rgba(37, 99, 168, 0.1);
+  transition: border-color .15s, box-shadow .15s, background .15s;
 }
 
 .form-field__input::placeholder {
-  color: #9fb3c8;
+  color: var(--c-slate-400);
 }
 
-.form-field__input--error {
-  border-color: #dc2626;
-  background: #fef2f2;
+.form-field__input:hover:not(:disabled):not(:focus) {
+  border-color: var(--c-slate-300);
+  background: #ffffff;
 }
 
-.form-field__input--error:focus {
-  border-color: #dc2626;
-  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1);
+.form-field__input:focus {
+  border-color: var(--c-navy-400);
+  background: #ffffff;
+  box-shadow: 0 0 0 3px rgba(37, 99, 168, .1);
+}
+
+/* Greška */
+.form-field__input--error,
+.input-error {
+  border-color: #e24b4a !important;
+  background: #fcebeb !important;
+}
+
+.form-field__input--error:focus,
+.input-error:focus {
+  box-shadow: 0 0 0 3px rgba(226, 75, 74, .12) !important;
 }
 
 .form-field__error {
-  font-size: 0.79rem;
-  color: #dc2626;
   margin: 0;
+  font-size: .76rem;
+  font-weight: 500;
+  color: var(--c-red);
 }
 
+/* Uspjeh */
 .form-success {
-  font-size: 0.875rem;
-  color: #15803d;
-  font-weight: 600;
   margin: 0;
-  padding: 10px 12px;
-  background: #f0fdf4;
-  border: 1px solid #bbf7d0;
-  border-radius: 8px;
+  padding: 11px 14px;
+  font-size: .85rem;
+  font-weight: 600;
+  color: var(--c-green);
+  background: var(--c-green-bg);
+  border: 1px solid #c0dd97;
+  border-radius: var(--r-sm);
 }
 
-/* ── Buttons ── */
+
+/* ════════════════════════════════════════════════════════════
+   Dugmad
+   ════════════════════════════════════════════════════════════ */
+
 .form-actions {
   margin-top: 4px;
 }
@@ -151,39 +288,48 @@ body {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  gap: 7px;
   padding: 10px 20px;
-  border-radius: 8px;
-  font-size: 0.9rem;
+  border: none;
+  border-radius: var(--r-sm);
+  font-size: .875rem;
   font-weight: 600;
   font-family: inherit;
+  letter-spacing: .005em;
   cursor: pointer;
-  border: none;
-  transition: background 0.15s, box-shadow 0.15s, transform 0.1s;
+  transition: all .18s var(--ease);
 }
 
 .btn--primary {
-  background: #1b3a5c;
-  color: #ffffff;
   width: 100%;
-  box-shadow: 0 2px 8px rgba(27, 58, 92, 0.2);
+  background: var(--c-navy-800);
+  color: #ffffff;
+  box-shadow: var(--shadow-sm);
 }
 
 .btn--primary:hover:not(:disabled) {
-  background: #0f2540;
-  box-shadow: 0 4px 14px rgba(27, 58, 92, 0.28);
+  background: var(--c-navy-700);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-1px);
 }
 
 .btn--primary:active:not(:disabled) {
-  transform: translateY(1px);
+  transform: translateY(0);
+  box-shadow: var(--shadow-xs);
 }
 
 .btn--primary:disabled {
-  opacity: 0.55;
+  opacity: .45;
   cursor: not-allowed;
   box-shadow: none;
+  transform: none;
 }
 
-/* ── Password strength ── */
+
+/* ════════════════════════════════════════════════════════════
+   Jačina lozinke
+   ════════════════════════════════════════════════════════════ */
+
 .password-strength {
   display: flex;
   align-items: center;
@@ -193,104 +339,164 @@ body {
 
 .password-strength__bars {
   display: flex;
-  gap: 4px;
+  gap: 3px;
   flex: 1;
 }
 
 .password-strength__bar {
-  height: 4px;
+  height: 3px;
   flex: 1;
   border-radius: 2px;
-  background: #e2e8f0;
-  transition: background 0.2s;
+  background: var(--c-slate-200);
+  transition: background .2s;
 }
 
-.password-strength__bar--weak   { background: #ef4444; }
-.password-strength__bar--fair   { background: #f97316; }
-.password-strength__bar--good   { background: #84cc16; }
-.password-strength__bar--strong { background: #16a34a; }
+.password-strength__bar--weak {
+  background: #e24b4a;
+}
+
+.password-strength__bar--fair {
+  background: #ef9f27;
+}
+
+.password-strength__bar--good {
+  background: #97c459;
+}
+
+.password-strength__bar--strong {
+  background: #639922;
+}
 
 .password-strength__label {
-  font-size: 0.75rem;
+  font-size: .72rem;
   font-weight: 700;
   min-width: 3.5rem;
   text-align: right;
 }
 
-.password-strength__label--weak   { color: #ef4444; }
-.password-strength__label--fair   { color: #f97316; }
-.password-strength__label--good   { color: #65a30d; }
-.password-strength__label--strong { color: #16a34a; }
-
-/* ── Legacy ── */
-.input-error {
-  border-color: #dc2626 !important;
-  background: #fef2f2 !important;
+.password-strength__label--weak {
+  color: #e24b4a;
 }
 
-.input-error:focus {
-  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.1) !important;
+.password-strength__label--fair {
+  color: #ba7517;
 }
 
-/* ── App shell (structure overview page) ── */
+.password-strength__label--good {
+  color: #3b6d11;
+}
+
+.password-strength__label--strong {
+  color: #3b6d11;
+}
+
+
+/* ════════════════════════════════════════════════════════════
+   App Shell (overview stranica)
+   ════════════════════════════════════════════════════════════ */
+
 .app-shell {
   max-width: 960px;
   margin: 0 auto;
   padding: 1.5rem;
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
+  gap: 1rem;
 }
 
 .app-shell__header {
-  background: #ffffff;
-  border: 1px solid #d6e2ee;
-  border-radius: 14px;
+  background: #fff;
+  border: 1px solid var(--c-slate-200);
+  border-radius: var(--r-lg);
   padding: 1rem 1.25rem;
+  box-shadow: var(--shadow-xs);
 }
 
-.app-shell__title  { margin: 0; font-size: 1.1rem; font-weight: 700; }
-.app-shell__status { margin: 0.4rem 0 0; color: #1b3a5c; font-weight: 600; }
-.app-shell__timestamp { margin: 0.3rem 0 0; color: #4f657a; font-size: 0.9rem; }
+.app-shell__title {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--c-navy-800);
+}
 
+.app-shell__status {
+  margin: .35rem 0 0;
+  color: var(--c-navy-500);
+  font-weight: 600;
+  font-size: .9rem;
+}
+
+.app-shell__timestamp {
+  margin: .25rem 0 0;
+  color: var(--c-slate-500);
+  font-size: .85rem;
+}
+
+/* Overview */
 .overview {
-  background: #ffffff;
-  border: 1px solid #d6e2ee;
-  border-radius: 14px;
+  background: #fff;
+  border: 1px solid var(--c-slate-200);
+  border-radius: var(--r-lg);
   padding: 1.25rem;
+  box-shadow: var(--shadow-xs);
 }
 
-.overview__title    { margin: 0; font-size: 1.5rem; }
-.overview__subtitle { margin: 0.75rem 0 0; color: #3f556d; }
-.overview__meta     { margin: 0.75rem 0 0; color: #4f657a; font-size: 0.95rem; }
+.overview__title {
+  margin: 0;
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--c-navy-800);
+}
+
+.overview__subtitle {
+  margin: .6rem 0 0;
+  color: var(--c-slate-600);
+  font-size: .9rem;
+}
+
+.overview__meta {
+  margin: .5rem 0 0;
+  color: var(--c-slate-500);
+  font-size: .875rem;
+}
 
 .overview__grid {
   margin-top: 1rem;
   display: grid;
-  gap: 0.85rem;
+  gap: .75rem;
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
 .overview__card {
-  background: #f4f8fb;
-  border: 1px solid #d7e4ef;
-  border-radius: 10px;
-  padding: 0.85rem;
+  background: var(--c-slate-50);
+  border: 1px solid var(--c-slate-200);
+  border-radius: var(--r-md);
+  padding: .875rem;
 }
 
-.overview__card p { margin: 0.65rem 0 0; color: #374d63; }
+.overview__card p {
+  margin: .5rem 0 0;
+  color: var(--c-slate-600);
+  font-size: .875rem;
+}
 
+/* Layer tag */
 .layer-tag {
   display: inline-block;
-  font-size: 0.78rem;
+  padding: .22rem .55rem;
+  font-size: .72rem;
   font-weight: 700;
-  letter-spacing: 0.02em;
+  letter-spacing: .03em;
   text-transform: uppercase;
-  color: #0f3152;
+  color: var(--c-navy-600);
   background: #dbe9f6;
   border-radius: 999px;
-  padding: 0.28rem 0.62rem;
 }
+
+
+/* ════════════════════════════════════════════════════════════
+   Korisnici
+   ════════════════════════════════════════════════════════════ */
 
 .users-page .form-card__header {
   display: flex;
@@ -304,8 +510,8 @@ body {
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  gap: 0.6rem;
-  min-width: 250px;
+  gap: .5rem;
+  min-width: 230px;
 }
 
 .users-page__action-primary,
@@ -315,23 +521,27 @@ body {
 }
 
 .users-page .users-page__refresh {
-  background: #ffffff;
-  border: 1.5px solid rgba(255, 255, 255, 0.9);
-  color: #1b3a5c;
-  box-shadow: 0 2px 10px rgba(15, 37, 64, 0.12);
+  background: rgba(255, 255, 255, .1);
+  border: 1px solid rgba(255, 255, 255, .18);
+  color: rgba(255, 255, 255, .85);
+  backdrop-filter: blur(4px);
 }
 
 .users-page .users-page__refresh:hover:not(:disabled) {
-  background: #f8fafc;
-  border-color: #ffffff;
-  color: #0f2540;
+  background: rgba(255, 255, 255, .18);
+  color: #ffffff;
   transform: translateY(-1px);
 }
 
 .users-page .users-page__refresh:disabled {
-  opacity: 0.65;
+  opacity: .5;
   cursor: not-allowed;
 }
+
+
+/* ════════════════════════════════════════════════════════════
+   Lista sandučića
+   ════════════════════════════════════════════════════════════ */
 
 .mailbox-list-page .form-card__header {
   display: flex;
@@ -346,7 +556,7 @@ body {
   max-width: 1400px;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 18px;
 }
 
 .mailbox-list-page__card {
@@ -354,87 +564,96 @@ body {
   width: 100%;
 }
 
+/* Header akcije */
 .mailbox-list-page__header-actions {
   display: flex;
-  gap: 12px;
+  gap: 10px;
   flex-wrap: nowrap;
   align-items: center;
 }
 
 .mailbox-list-page__history-button {
   flex: 0 0 auto;
-  padding: 10px 16px;
-  background: #64748b;
+  padding: 9px 16px;
+  background: rgba(255, 255, 255, .1);
+  color: rgba(255, 255, 255, .85);
+  border: 1px solid rgba(255, 255, 255, .18);
+  border-radius: var(--r-sm);
+  backdrop-filter: blur(4px);
+  transition: all .18s var(--ease);
+}
+
+.mailbox-list-page__history-button:hover:not(:disabled) {
+  background: rgba(255, 255, 255, .18);
   color: #ffffff;
-  border: 1px solid #64748b;
-  border-radius: 12px;
-  box-shadow: 0 2px 10px rgba(100, 116, 139, 0.2);
+  transform: translateY(-1px);
+}
+
+.mailbox-list-page__history-button:focus-visible {
+  outline: 3px solid rgba(37, 99, 168, .25);
+  outline-offset: 2px;
 }
 
 .mailbox-list-page__add-button {
   flex: 0 0 auto;
   width: auto;
-  min-width: 220px;
-  padding: 12px 20px;
-  border-radius: 12px;
-  border: 1px solid #234c7a;
-  background: linear-gradient(180deg, #224c7b 0%, #17375c 100%);
-  color: #ffffff;
-  box-shadow: 0 6px 18px rgba(27, 58, 92, 0.22);
-  letter-spacing: 0.01em;
+  min-width: 200px;
+  padding: 10px 20px;
+  border: none;
+  border-radius: var(--r-sm);
+  background: var(--c-accent);
+  color: var(--c-navy-900);
+  font-weight: 700;
+  letter-spacing: .01em;
+  box-shadow: 0 2px 10px rgba(232, 163, 8, .25);
+  transition: all .18s var(--ease);
 }
 
 .mailbox-list-page__add-button:hover:not(:disabled) {
-  background: linear-gradient(180deg, #2a5d93 0%, #1b416b 100%);
-  border-color: #2a5d93;
-  box-shadow: 0 8px 22px rgba(27, 58, 92, 0.28);
+  background: var(--c-accent-light);
+  box-shadow: 0 6px 20px rgba(232, 163, 8, .3);
   transform: translateY(-1px);
 }
 
 .mailbox-list-page__add-button:active:not(:disabled) {
   transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(232, 163, 8, .2);
 }
 
-.mailbox-list-page__history-button:hover:not(:disabled) {
-  background: #556476;
-  border-color: #556476;
-}
-
+/* Naslov */
 .mailbox-list-page__title-row {
   margin-bottom: 16px;
 }
 
 .mailbox-list-page__title {
   margin: 0;
-  font-size: 1.1rem;
-  color: #1e2d3d;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--c-slate-800);
 }
 
+/* Filteri i pretraga */
 .mailbox-list-page__filter-grid,
 .mailbox-list-page__search-row {
-  margin-bottom: 16px;
-  padding: 18px;
-  background: linear-gradient(180deg, #f8fafc 0%, #f5f8fc 100%);
-  border-radius: 12px;
-  border: 1px solid #dbe6f1;
+  margin-bottom: 14px;
+  padding: 16px 18px;
+  background: var(--c-slate-50);
+  border: 1px solid var(--c-slate-200);
+  border-radius: var(--r-md);
 }
 
 .mailbox-list-page__filter-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 18px;
+  gap: 16px;
 }
 
 .mailbox-list-page__search-row {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
-  gap: 16px;
+  gap: 14px;
   align-items: end;
-  margin-bottom: 24px;
-}
-
-.mailbox-list-page__search-field {
-  gap: 8px;
+  margin-bottom: 20px;
 }
 
 .mailbox-list-page__search-field .form-field__label {
@@ -447,51 +666,112 @@ body {
 }
 
 .mailbox-list-page__sort-button {
-  padding: 10px 16px;
-  border: 1px solid #d8e3ef;
-  border-radius: 10px;
+  padding: 9px 16px;
+  border: 1px solid var(--c-slate-200);
+  border-radius: var(--r-sm);
   background: #ffffff;
-  color: #52667e;
+  color: var(--c-slate-600);
+  font-size: .875rem;
   white-space: nowrap;
-  box-shadow: 0 1px 4px rgba(15, 37, 64, 0.08);
+  box-shadow: var(--shadow-xs);
+  transition: all .18s var(--ease);
 }
 
 .mailbox-list-page__sort-button:hover:not(:disabled) {
-  border-color: #c7d7e8;
-  background: #f8fafc;
-  color: #1f4f86;
+  border-color: var(--c-slate-300);
+  color: var(--c-navy-600);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
 }
 
-.mailbox-list-page__sort-button:focus-visible,
-.mailbox-list-page__history-button:focus-visible {
-  outline: 3px solid rgba(37, 99, 168, 0.2);
+.mailbox-list-page__sort-button:focus-visible {
+  outline: 3px solid rgba(37, 99, 168, .2);
   outline-offset: 2px;
 }
 
+/* Grid kartica */
 .mailbox-list-page__cards-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 16px;
-  margin-bottom: 24px;
+  gap: 14px;
+  margin-bottom: 20px;
 }
 
 .mailbox-list-page__card-item {
+  position: relative;
+  padding: 16px 18px;
   background: #ffffff;
-  border: 1px solid #dbe6f1;
-  border-radius: 14px;
-  padding: 16px;
-  box-shadow: 0 1px 3px rgba(15, 37, 64, 0.1);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  border: 1px solid var(--c-slate-200);
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow-xs);
   cursor: pointer;
+  transition: transform .2s var(--ease), box-shadow .2s var(--ease), border-color .2s;
 }
 
+.mailbox-list-page__card-item:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+  border-color: var(--c-slate-300);
+}
+
+/* Paginacija */
 .mailbox-list-page__pagination {
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 12px;
-  margin-top: 16px;
+  gap: 10px;
+  margin-top: 14px;
 }
+
+
+/* ════════════════════════════════════════════════════════════
+   Status pillovi (globalni)
+   ════════════════════════════════════════════════════════════ */
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  padding: .2rem .55rem;
+  border-radius: 999px;
+  font-size: .72rem;
+  font-weight: 700;
+  letter-spacing: .02em;
+}
+
+.pill--green {
+  background: var(--c-green-bg);
+  color: var(--c-green);
+}
+
+.pill--amber {
+  background: var(--c-amber-bg);
+  color: var(--c-amber);
+}
+
+.pill--red {
+  background: var(--c-red-bg);
+  color: var(--c-red);
+}
+
+.pill--blue {
+  background: var(--c-blue-bg);
+  color: var(--c-blue);
+}
+
+.pill--teal {
+  background: var(--c-teal-bg);
+  color: var(--c-teal);
+}
+
+.pill--purple {
+  background: var(--c-purple-bg);
+  color: var(--c-purple);
+}
+
+
+/* ════════════════════════════════════════════════════════════
+   Mapa rute (Leaflet)
+   ════════════════════════════════════════════════════════════ */
 
 .route-map-shell .leaflet-routing-container,
 .route-map-shell .leaflet-routing-container-hide {
@@ -501,6 +781,11 @@ body {
 .route-map-shell .leaflet-control-container {
   pointer-events: auto;
 }
+
+
+/* ════════════════════════════════════════════════════════════
+   Responzivnost
+   ════════════════════════════════════════════════════════════ */
 
 @media (max-width: 560px) {
   .form-row {

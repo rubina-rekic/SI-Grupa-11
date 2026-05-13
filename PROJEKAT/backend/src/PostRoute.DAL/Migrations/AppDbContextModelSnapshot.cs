@@ -118,11 +118,9 @@ namespace PostRoute.DAL.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<string>("NewValue")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("OldValue")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Reason")

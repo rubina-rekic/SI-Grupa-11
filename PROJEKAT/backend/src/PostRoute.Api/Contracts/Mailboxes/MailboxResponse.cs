@@ -20,5 +20,6 @@ public record MailboxResponse(
     TimeOnly? Slot1Start = null,
     TimeOnly? Slot1End = null,
     TimeOnly? Slot2Start = null,
-    TimeOnly? Slot2End = null
+    TimeOnly? Slot2End = null,
+    MailboxWorkingDays WorkingDays = MailboxWorkingDays.RadniDani
 );

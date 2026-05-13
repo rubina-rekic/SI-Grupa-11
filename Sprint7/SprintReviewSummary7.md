@@ -20,10 +20,10 @@ Sve planirane stavke su završene.
 - Definisanje radnih dana sandučića s checkbox kontrolama i defaultnom vrijednošću Pon-Pet
 
 ## Glavni problemi i blokeri
-- [Bit će popunjeno nakon 2. sedmičnog sastanka tima]
+- [Bit će popunjeno nakon sedmičnog sastanka tima]
 
 ## Ključne odluke donesene u sprintu
-- [Bit će popunjeno nakon 2. sedmičnog sastanka tima]
+- [Bit će popunjeno nakon sedmičnog sastanka tima]
 
 ## Povratna informacija Product Ownera
 - [Bit će popunjeno nakon sastanka]

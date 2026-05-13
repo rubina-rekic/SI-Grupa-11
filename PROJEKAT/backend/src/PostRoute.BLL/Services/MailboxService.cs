@@ -41,6 +41,9 @@ public class MailboxService : IMailboxService
             command.Slot1Start, command.Slot1End,
             command.Slot2Start, command.Slot2End);
 
+        // US-33: Validacija radnih dana
+        ValidateWorkingDays(command.WorkingDays);
+
         var mailbox = new Mailbox
         {
             Id = Guid.NewGuid(),
@@ -60,6 +63,9 @@ public class MailboxService : IMailboxService
             Slot1End = command.IsAlwaysAvailable ? null : command.Slot1End,
             Slot2Start = command.IsAlwaysAvailable ? null : command.Slot2Start,
             Slot2End = command.IsAlwaysAvailable ? null : command.Slot2End,
+
+            // US-33
+            WorkingDays = command.WorkingDays,
         };
 
         return await _mailboxRepository.AddAsync(mailbox, cancellationToken);
@@ -89,6 +95,9 @@ public class MailboxService : IMailboxService
             command.Slot1Start, command.Slot1End,
             command.Slot2Start, command.Slot2End);
 
+        // US-33: Validacija radnih dana
+        ValidateWorkingDays(command.WorkingDays);
+
         await LogChangesAsync(existingMailbox, command, cancellationToken);
 
         existingMailbox.SerialNumber = command.SerialNumber.Trim();
@@ -108,6 +117,9 @@ public class MailboxService : IMailboxService
         existingMailbox.Slot1End = command.IsAlwaysAvailable ? null : command.Slot1End;
         existingMailbox.Slot2Start = command.IsAlwaysAvailable ? null : command.Slot2Start;
         existingMailbox.Slot2End = command.IsAlwaysAvailable ? null : command.Slot2End;
+
+        // US-33
+        existingMailbox.WorkingDays = command.WorkingDays;
 
         return await _mailboxRepository.UpdateAsync(existingMailbox, cancellationToken);
     }
@@ -153,6 +165,16 @@ public class MailboxService : IMailboxService
         }
     }
 
+    // ---------------------------------------------------------------
+    // US-33: Validacija radnih dana
+    // ---------------------------------------------------------------
+    private static void ValidateWorkingDays(MailboxWorkingDays workingDays)
+    {
+        // Mora biti odabran barem jedan dan (None = 0 znači da nije odabran nikakav dan)
+        if (workingDays == MailboxWorkingDays.None)
+            throw new InvalidOperationException("Sandučić mora imati barem jedan definisan radni dan");
+    }
+
     private async Task LogChangesAsync(Mailbox existingMailbox, UpdateMailboxCommand command, CancellationToken cancellationToken)
     {
         var changes = new List<(string FieldName, object? OldValue, object? NewValue)>
@@ -172,6 +194,8 @@ public class MailboxService : IMailboxService
             ("Slot1End",         existingMailbox.Slot1End,            command.Slot1End),
             ("Slot2Start",       existingMailbox.Slot2Start,          command.Slot2Start),
             ("Slot2End",         existingMailbox.Slot2End,            command.Slot2End),
+            // US-33
+            ("WorkingDays",      existingMailbox.WorkingDays,         command.WorkingDays),
         };
 
         foreach (var change in changes)

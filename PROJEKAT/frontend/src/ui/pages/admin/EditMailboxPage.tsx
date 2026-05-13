@@ -10,6 +10,7 @@ import {
     deleteMailbox,
     MailboxType,
     MailboxPriority,
+    MailboxWorkingDays,
     mailboxTypeLabels,
     type MailboxResponse,
     type UpdateMailboxRequest
@@ -17,7 +18,9 @@ import {
 import { Layout } from "../../components/Layout/Layout"
 import OpenStreetMapPicker from "../../components/common/OpenStreetMapPicker"
 import { availabilitySchema, mapAvailabilityToRequest } from "../../../infrastructure/validation/availabilitySchema"
+import { workingDaysSchema } from "../../../infrastructure/validation/workingDaysSchema"
 import { AvailabilitySection } from "../../components/mailboxes/AvailabilitySection"
+import { WorkingDaysSection } from "../../components/mailboxes/WorkingDaysSection"
 
 const schema = z.object({
     serialNumber: z
@@ -53,7 +56,7 @@ const schema = z.object({
         .string()
         .max(500, "Napomene mogu imati najviše 500 karaktera")
         .optional()
-}).and(availabilitySchema)
+}).and(availabilitySchema).and(workingDaysSchema)
 
 type FormData = z.infer<typeof schema>
 
@@ -100,6 +103,8 @@ export default function EditMailboxPage() {
                     slot1End: mailbox.slot1End?.slice(0, 5) ?? "",
                     slot2Start: mailbox.slot2Start?.slice(0, 5) ?? "",
                     slot2End: mailbox.slot2End?.slice(0, 5) ?? "",
+                    // US-33
+                    workingDays: mailbox.workingDays,
                 })
 
                 setSelectedLocation({ lat: mailbox.latitude, lng: mailbox.longitude })
@@ -133,9 +138,10 @@ export default function EditMailboxPage() {
                 type: data.type,
                 capacity: data.capacity,
                 installationYear: data.installationYear,
-                notes: data.notes?.trim() || undefined,
+                notes: data.notes?.trim() || null,
                 priority: data.priority,
                 reason: data.priorityReason?.trim() || undefined,
+                workingDays: data.workingDays as MailboxWorkingDays,
                 ...mapAvailabilityToRequest(data),
             }
 
@@ -300,6 +306,13 @@ export default function EditMailboxPage() {
                         {/* US-32: Dostupnost */}
                         <AvailabilitySection
                             register={register as unknown as UseFormRegister<FieldValues>}
+                            watch={watch as unknown as UseFormWatch<FieldValues>}
+                            setValue={setValue as unknown as UseFormSetValue<FieldValues>}
+                            errors={errors as FieldErrors<FieldValues>}
+                        />
+
+                        {/* US-33: Radni dani */}
+                        <WorkingDaysSection
                             watch={watch as unknown as UseFormWatch<FieldValues>}
                             setValue={setValue as unknown as UseFormSetValue<FieldValues>}
                             errors={errors as FieldErrors<FieldValues>}
