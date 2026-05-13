@@ -25,7 +25,7 @@ const schema = z.object({
     address: z
         .string()
         .min(1, "Adresa je obavezna")
-        .max(200, "Adresa može imati nejviše 200 karaktera"),
+        .max(200, "Adresa može imati najviše 200 karaktera"),
     latitude: z
         .number({ error: "Odaberite lokaciju na mapi" })
         .min(-90).max(90),

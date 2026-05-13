@@ -1,4 +1,4 @@
-import { type UseFormRegister, type UseFormWatch, type UseFormSetValue, type FieldErrors, type FieldValues } from "react-hook-form"
+import { type UseFormWatch, type UseFormSetValue, type FieldErrors, type FieldValues } from "react-hook-form"
 import { MailboxWorkingDays, workingDayBits } from "../../../infrastructure/api/mailboxes/mailboxesApi"
 
 interface Props {
