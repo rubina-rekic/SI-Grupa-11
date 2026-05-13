@@ -10,7 +10,7 @@
 | PBI-020 / US-19 | Sortiranje liste sandučića po prioritetu | Ibrahim | 2h | To Do | Dugme "Sortiraj po prioritetu", jednim klikom, desc redoslijed (Visok→Srednji→Nizak), vizuelni indikator aktivnog sortiranja |
 | PBI-020 / US-20 | Pregled historije promjena prioriteta sandučića | Faruk | 3h | To Do | Tabela s kolonama: Datum/Vrijeme, Administrator, Stari prioritet, Novi prioritet, Obrazloženje; dostupna adminu iz forme sandučića |
 | PBI-021 / US-32 | Definisanje vremenskih okvira dostupnosti sandučića | Rubina | 4h | Done | Time picker 24h format, validacija vremena, dva termina dnevno, checkbox 24/7, upozorenje pri konfliktu s rutom |
-| PBI-021 / US-33 | Definisanje radnih dana sandučića | Nejla, Aldin | 2h | To Do | Sedam checkbox kontrola, default Pon-Pet, validacija min. jedan dan, Označi sve / Odznači sve |
+| PBI-021 / US-33 | Definisanje radnih dana sandučića | Nejla, Aldin | 2h | Done | Sedam checkbox kontrola, default Pon-Pet, validacija min. jedan dan, Označi sve / Odznači sve |
 | PBI-022 / US-22 | Generisanje dnevne rute | Emrah, Kerim | 4h | Done | Na osnovu GPS koordinata i prioriteta sandučića kreirati prijedlog dnevne rute za odabranog poštara |
 
 ---
@@ -151,7 +151,7 @@ Uvođenje radnih pravila osigurava da generisane rute budu operativno izvodljive
 ##### ID storyja: US-33
 **Naziv storyja:** Definisanje radnih dana sandučića  
 **Opis:** Kao **administrator**, želim **označiti dane u sedmici kada je sandučić dostupan**, kako bi **sistem isključio te lokacije iz ruta tokom neradnih dana**.  
-**Poslovna vrijednost:** Sprečava greške u planiranju obilazaka vikendom ili specifičnim danima kada sandučići nisu u funkciji.  
+**Poslovna vrijednost:** Sprječava greške u planiranju obilazaka vikendom ili specifičnim danima kada sandučići nisu u funkciji.  
 **Prioritet:** High  
 **Pretpostavke i otvorena pitanja:**
 - *Pretpostavka:* Defaultna postavka za nove sandučiće je radna sedmica (Pon-Pet).
