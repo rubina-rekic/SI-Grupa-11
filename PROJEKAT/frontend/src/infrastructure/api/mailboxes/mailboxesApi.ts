@@ -9,13 +9,14 @@ export interface CreateMailboxRequest {
     type: MailboxType
     capacity: number
     installationYear: number
-    notes?: string
+    notes?: string | null
     priority?: MailboxPriority
     isAlwaysAvailable: boolean
     slot1Start: string | null
     slot1End: string | null
     slot2Start: string | null
     slot2End: string | null
+    workingDays: MailboxWorkingDays
 }
 
 export interface UpdateMailboxRequest {
@@ -26,7 +27,7 @@ export interface UpdateMailboxRequest {
     type: MailboxType
     capacity: number
     installationYear: number
-    notes?: string
+    notes?: string | null
     priority?: MailboxPriority
     reason?: string
     isAlwaysAvailable: boolean
@@ -34,6 +35,7 @@ export interface UpdateMailboxRequest {
     slot1End: string | null
     slot2Start: string | null
     slot2End: string | null
+    workingDays: MailboxWorkingDays
 }
 
 export interface MailboxResponse {
@@ -54,6 +56,7 @@ export interface MailboxResponse {
     slot1Start: string | null
     slot1End: string | null
     slot2Start: string | null
+    workingDays: MailboxWorkingDays
     slot2End: string | null
 }
 
@@ -104,6 +107,42 @@ export const mailboxStatusLabels: Record<MailboxStatus, string> = {
     [MailboxStatus.Pun]: "Pun"
 }
 
+// US-33: Radni dani sandučića (flags enum)
+export const MailboxWorkingDays = {
+    None: 0,
+    Ponedjeljak: 1,
+    Utorak: 2,
+    Srijeda: 4,
+    Cetvrtak: 8,
+    Petak: 16,
+    Subota: 32,
+    Nedjelja: 64,
+    RadniDani: 31, // Mon-Fri (1|2|4|8|16)
+    Vikend: 96, // Sat-Sun (32|64)
+    SvakiDan: 127 // All days (1|2|4|8|16|32|64)
+} as const
+export type MailboxWorkingDays = typeof MailboxWorkingDays[keyof typeof MailboxWorkingDays]
+
+export const workingDayLabels: Record<string, string> = {
+    "Ponedjeljak": "Ponedjeljak",
+    "Utorak": "Utorak",
+    "Srijeda": "Srijeda",
+    "Cetvrtak": "Četvrtak",
+    "Petak": "Petak",
+    "Subota": "Subota",
+    "Nedjelja": "Nedjelja"
+}
+
+export const workingDayBits = [
+    { name: "Ponedjeljak", bit: 1 },
+    { name: "Utorak", bit: 2 },
+    { name: "Srijeda", bit: 4 },
+    { name: "Cetvrtak", bit: 8 },
+    { name: "Petak", bit: 16 },
+    { name: "Subota", bit: 32 },
+    { name: "Nedjelja", bit: 64 }
+]
+
 export interface MailboxListQuery {
     page?: number
     pageSize?: number
@@ -123,12 +162,13 @@ export async function createMailbox(request: CreateMailboxRequest): Promise<Mail
         priority: request.priority ?? MailboxPriority.Srednji,
         capacity: request.capacity,
         installationYear: request.installationYear,
-        notes: request.notes,
+        notes: request.notes ?? null,
         isAlwaysAvailable: request.isAlwaysAvailable,
         slot1Start: request.slot1Start,
         slot1End: request.slot1End,
         slot2Start: request.slot2Start,
         slot2End: request.slot2End,
+        workingDays: request.workingDays,
     }
 
     const response = await httpClient("/api/mailboxes", {
@@ -185,13 +225,14 @@ export async function updateMailbox(id: string, request: UpdateMailboxRequest): 
         priority: request.priority ?? MailboxPriority.Srednji,
         capacity: request.capacity,
         installationYear: request.installationYear,
-        notes: request.notes,
+        notes: request.notes ?? null,
         reason: request.reason,
         isAlwaysAvailable: request.isAlwaysAvailable,
         slot1Start: request.slot1Start,
         slot1End: request.slot1End,
         slot2Start: request.slot2Start,
         slot2End: request.slot2End,
+        workingDays: request.workingDays,
     }
 
     const response = await httpClient(`/api/mailboxes/${id}`, {
