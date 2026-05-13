@@ -217,7 +217,7 @@ public class MailboxService : IMailboxService
                     Reason = change.FieldName == "Priority" ? command.Reason : null
                 };
 
-                await _auditLogRepository.AddAsync(auditLog, cancellationToken);
+                await _auditLogRepository.LogAsync(auditLog, cancellationToken);
             }
         }
     }
