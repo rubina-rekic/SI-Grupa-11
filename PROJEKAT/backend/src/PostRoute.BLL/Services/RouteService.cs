@@ -41,8 +41,10 @@ public class RouteService : IRouteService
             request.Date,
             cancellationToken);
         
-        // 2. Filtriranje po prioritetnim pravilima (bez aktivnih dana u sedmici)
+        // 2. Filtriranje po radnim danima i prioritetnim pravilima
+        var routeDayFlag = ToDayFlag(request.Date);
         var eligibleMailboxes = activeMailboxes
+            .Where(mailbox => (mailbox.WorkingDays & routeDayFlag) != 0)
             .Where(mailbox => IsEligibleByPriority(mailbox, request.Date, lastIncludedByMailbox))
             .ToList();
 
@@ -206,6 +208,17 @@ public class RouteService : IRouteService
         var distanceKm = distanceInDegrees * 111m;
         return (int)Math.Round((distanceKm / SpeedKmh) * 60m);
     }
+
+    private static MailboxWorkingDays ToDayFlag(DateOnly date) => date.DayOfWeek switch
+    {
+        DayOfWeek.Monday    => MailboxWorkingDays.Ponedjeljak,
+        DayOfWeek.Tuesday   => MailboxWorkingDays.Utorak,
+        DayOfWeek.Wednesday => MailboxWorkingDays.Srijeda,
+        DayOfWeek.Thursday  => MailboxWorkingDays.Cetvrtak,
+        DayOfWeek.Friday    => MailboxWorkingDays.Petak,
+        DayOfWeek.Saturday  => MailboxWorkingDays.Subota,
+        _                   => MailboxWorkingDays.Nedjelja,
+    };
 
     private bool IsAvailableAt(Mailbox m, TimeOnly arrival)
     {
