@@ -77,21 +77,69 @@ public class RouteServiceTestsPBI022
     [Fact]
     public async Task GenerateRouteAsync_ShouldExcludeMailboxesOutsideTimeWindow()
     {
+        var monday = new DateOnly(2026, 5, 19);
+
         _mailboxRepositoryMock.Setup(repo => repo.GetAllAsync(It.IsAny<CancellationToken>())).ReturnsAsync(new List<Mailbox>
         {
             new()
             {
                 Id = Guid.NewGuid(), IsActive = true, IsAlwaysAvailable = false,
+                WorkingDays = MailboxWorkingDays.SvakiDan,
                 Slot1Start = new TimeOnly(12, 0), Slot1End = new TimeOnly(14, 0),
                 Latitude = 43.85m, Longitude = 18.41m, Priority = MailboxPriority.Visok
             }
         });
 
-        var request = new GenerateRouteRequest { Date = DateOnly.FromDateTime(DateTime.UtcNow), PlannedStartTime = new TimeOnly(8, 0) };
+        var request = new GenerateRouteRequest { Date = monday, PlannedStartTime = new TimeOnly(8, 0) };
 
         var result = await _sut.GenerateRouteAsync(request);
 
         result.RouteItems.Should().BeEmpty();
+    }
+
+    [Fact]
+    public async Task GenerateRouteAsync_ShouldExcludeMailboxes_WhenNotWorkingOnRouteDay()
+    {
+        var saturday = new DateOnly(2026, 5, 17);
+
+        _mailboxRepositoryMock.Setup(repo => repo.GetAllAsync(It.IsAny<CancellationToken>())).ReturnsAsync(new List<Mailbox>
+        {
+            new()
+            {
+                Id = Guid.NewGuid(), IsActive = true, IsAlwaysAvailable = true,
+                WorkingDays = MailboxWorkingDays.RadniDani,
+                Latitude = 43.85m, Longitude = 18.41m, Priority = MailboxPriority.Visok
+            }
+        });
+
+        var request = new GenerateRouteRequest { Date = saturday, PlannedStartTime = new TimeOnly(8, 0) };
+
+        var result = await _sut.GenerateRouteAsync(request);
+
+        result.RouteItems.Should().BeEmpty();
+    }
+
+    [Fact]
+    public async Task GenerateRouteAsync_ShouldIncludeMailbox_WhenWorkingOnRouteDay()
+    {
+        var saturday = new DateOnly(2026, 5, 17);
+
+        var mailbox = new Mailbox
+        {
+            Id = Guid.NewGuid(), IsActive = true, IsAlwaysAvailable = true,
+            WorkingDays = MailboxWorkingDays.SvakiDan,
+            Latitude = 43.85m, Longitude = 18.41m, Priority = MailboxPriority.Visok
+        };
+
+        _mailboxRepositoryMock.Setup(repo => repo.GetAllAsync(It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new List<Mailbox> { mailbox });
+
+        var request = new GenerateRouteRequest { Date = saturday, PlannedStartTime = new TimeOnly(8, 0) };
+
+        var result = await _sut.GenerateRouteAsync(request);
+
+        result.RouteItems.Should().HaveCount(1);
+        result.RouteItems[0].MailboxId.Should().Be(mailbox.Id);
     }
 
     [Fact]
