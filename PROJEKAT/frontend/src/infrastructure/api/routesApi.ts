@@ -32,6 +32,16 @@ export interface GenerateRouteRequest {
 }
 
 export const routesApi = {
+    getRouteDetails: async (routeId: string): Promise<RouteResponse> => {
+        const response = await httpClient<RouteResponse>(`/api/routes/${routeId}`);
+        
+        if (response.error || !response.data) {
+            throw response;
+        }
+        
+        return response.data;
+    },
+
     generateRoute: async (request: GenerateRouteRequest): Promise<RouteResponse> => {
         const response = await httpClient<RouteResponse>('/api/routes/generate', { 
             method: 'POST', 

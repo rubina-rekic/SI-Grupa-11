@@ -36,7 +36,7 @@
 | PBI-021 | Evidencija radnih pravila sandučića | Omogućiti čuvanje pravila kao što su radni dani, vremenska ograničenja ili specifične napomene. | feature | Low | 4h 30min | Done | Sprint 7 | Ulaz za algoritam |
 | PBI-022 | Generisanje dnevne rute | Omogućiti administratoru ili dispečeru automatsko generisanje dnevne rute za odabranog poštara. | feature | High | 8h | To Do | Sprint 8 | Osnovna optimizacija |
 | PBI-023 | Dodjela rute poštaru | Omogućiti dispečeru da dodijeli generisanu rutu konkretnom poštaru. | feature | High | 3h | To Do | Sprint 8 |  |
-| PBI-024 | Pregled detalja rute | Omogućiti pregled redoslijeda obilaska, uključenih sandučića i osnovnih detalja rute. | feature | Medium | 3h 30min | To Do | Sprint 8 |  |
+| PBI-024 | Pregled detalja rute | Omogućiti pregled redoslijeda obilaska, uključenih sandučića i osnovnih detalja rute. | feature | Medium | 3h 30min | Done | Sprint 8 |  |
 | PBI-025 | Ručna izmjena redoslijeda obilaska | Omogućiti dispečeru ručno prilagođavanje redoslijeda obilaska unutar rute. | feature | Medium | 5h | To Do | Sprint 8 |  |
 | PBI-026 | Mobilni prikaz dodijeljene rute | Omogućiti poštaru da preko responzivnog web interfejsa vidi svoju dodijeljenu rutu. | feature | High | 5h 30min | To Do | Sprint 9 | Responzivni web |
 | PBI-027 | Ažuriranje statusa sandučića | Omogućiti poštaru da promijeni status sandučića tokom obilaska. | feature | High | 4h | To Do | Sprint 9 | Npr. ispražnjen, napunjen |

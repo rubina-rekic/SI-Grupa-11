@@ -187,6 +187,7 @@ export function AppRouter() {
           </PrivateRoute>
         }
       />
+
     </Routes>
   )
 }

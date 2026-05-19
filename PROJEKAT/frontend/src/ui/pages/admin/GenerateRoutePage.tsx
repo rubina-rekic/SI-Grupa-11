@@ -3,7 +3,7 @@ import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
 import { toast } from "sonner"
-import { MapContainer as LeafletMap, Marker, Popup, TileLayer } from "react-leaflet"
+import { MapContainer as LeafletMap, Marker, Popup, TileLayer, Circle } from "react-leaflet"
 import L from "leaflet"
 import "leaflet/dist/leaflet.css"
 import { Layout } from "../../components/Layout/Layout"
@@ -55,6 +55,7 @@ export default function GenerateRoutePage() {
   const [routeData, setRouteData] = useState<RouteResponse | null>(null)
   const [loading, setLoading] = useState(false)
   const [fetchingUsers, setFetchingUsers] = useState(true)
+  const [selectedItemId, setSelectedItemId] = useState<string | null>(null)
 
   const {
     register,
@@ -238,7 +239,13 @@ export default function GenerateRoutePage() {
                       <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
                       {routeWaypoints.length >= 2 && <LeafletRoutingMachine waypoints={routeWaypoints} />}
                       {routeData.routeItems.map((item) => (
-                        <Marker key={item.id} position={[item.latitude, item.longitude]}>
+                        <Marker
+                          key={item.id}
+                          position={[item.latitude, item.longitude]}
+                          eventHandlers={{
+                            click: () => setSelectedItemId(item.id),
+                          }}
+                        >
                           <Popup>
                             <strong>{item.order}.</strong> {item.address}
                             <br />
@@ -248,6 +255,16 @@ export default function GenerateRoutePage() {
                           </Popup>
                         </Marker>
                       ))}
+                      {selectedItemId && routeData.routeItems.find((item) => item.id === selectedItemId) && (
+                        <Circle
+                          center={[
+                            routeData.routeItems.find((item) => item.id === selectedItemId)!.latitude,
+                            routeData.routeItems.find((item) => item.id === selectedItemId)!.longitude,
+                          ]}
+                          radius={100}
+                          pathOptions={{ color: "#2563a8", opacity: 0.6, fillOpacity: 0.1 }}
+                        />
+                      )}
                     </LeafletMap>
                   </div>
                 </div>
@@ -271,8 +288,18 @@ export default function GenerateRoutePage() {
                       <tbody>
                         {routeData.routeItems.map((item) => {
                           const colors = priorityColors(item.priority)
+                          const isSelected = selectedItemId === item.id
                           return (
-                            <tr key={item.id} style={{ borderBottom: "1px solid #f1f5f9" }}>
+                            <tr
+                              key={item.id}
+                              onClick={() => setSelectedItemId(item.id)}
+                              style={{
+                                borderBottom: "1px solid #f1f5f9",
+                                backgroundColor: isSelected ? "#eff6ff" : "transparent",
+                                cursor: "pointer",
+                                transition: "background-color 0.2s",
+                              }}
+                            >
                               <td style={{ padding: "12px 16px", fontWeight: 700, color: "#1e2d3d" }}>{item.order}</td>
                               <td style={{ padding: "12px 16px", color: "#334155" }}>{item.address}</td>
                               <td style={{ padding: "12px 16px" }}>

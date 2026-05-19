@@ -5,6 +5,7 @@ namespace PostRoute.DAL.Repositories;
 public interface IRouteRepository
 {
     Task<Route> CreateAsync(Route route, CancellationToken cancellationToken = default);
+    Task<Route?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
     Task<Route?> GetByPostmanAndDateAsync(Guid postmanId, DateOnly date, CancellationToken cancellationToken = default);
     Task<Dictionary<Guid, DateOnly>> GetLastIncludedDatesByMailboxIdsAsync(
         IEnumerable<Guid> mailboxIds,
