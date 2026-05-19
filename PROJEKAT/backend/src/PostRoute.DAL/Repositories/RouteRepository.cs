@@ -19,6 +19,15 @@ public class RouteRepository : IRouteRepository
         return route;
     }
 
+    public async Task<Route?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
+    {
+        return await _context.Routes
+            .Include(r => r.RouteItems)
+                .ThenInclude(ri => ri.Mailbox)
+            .Include(r => r.Postman)
+            .FirstOrDefaultAsync(r => r.Id == id, cancellationToken);
+    }
+
     public async Task<Route?> GetByPostmanAndDateAsync(Guid postmanId, DateOnly date, CancellationToken cancellationToken = default)
     {
         return await _context.Routes

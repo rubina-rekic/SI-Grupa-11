@@ -24,6 +24,17 @@ public class RouteService : IRouteService
         _routeRepository = routeRepository;
     }
 
+    public async Task<RouteResponse?> GetRouteDetailsAsync(Guid routeId, CancellationToken cancellationToken = default)
+    {
+        var route = await _routeRepository.GetByIdAsync(routeId, cancellationToken);
+        if (route == null)
+        {
+            return null;
+        }
+
+        return MapToResponse(route, totalMailboxesCount: null, activeMailboxesCount: null, eligibleMailboxesCount: null);
+    }
+
     public async Task<RouteResponse> GenerateRouteAsync(GenerateRouteRequest request, CancellationToken cancellationToken = default)
     {
         var existingRoute = await _routeRepository.GetByPostmanAndDateAsync(request.PostmanId, request.Date, cancellationToken);

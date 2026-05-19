@@ -18,6 +18,19 @@ public class RoutesController : ControllerBase
         _routeService = routeService;
     }
 
+    [HttpGet("{id}")]
+    [Authorize(Roles = $"{UserRole.Administrator},{UserRole.Dispatcher}")]
+    public async Task<IActionResult> GetRouteDetails(Guid id)
+    {
+        var route = await _routeService.GetRouteDetailsAsync(id);
+        if (route == null)
+        {
+            return NotFound(new { Message = "Ruta nije pronađena." });
+        }
+
+        return Ok(route);
+    }
+
     [HttpPost("generate")]
     [Authorize(Roles = $"{UserRole.Administrator},{UserRole.Dispatcher}")]
     public async Task<IActionResult> Generate([FromBody] GenerateRouteRequest request)
