@@ -7,6 +7,7 @@
 | ID | Naziv stavke / zadatka | Odgovorna osoba | Procjena | Status | Napomena |
 |---|---|---|---|---|---|
 | PBI-022 / US-22 | Generisanje dnevne rute | Emrah, Kerim | 8h | Done | Na osnovu GPS koordinata i prioriteta sandučića kreirati prijedlog dnevne rute; Euklidska udaljenost, prioritetno ponderisanje, loader za duže proračune |
+| PBI-022 / US-40 | Filtriranje sandučića po danu dostupnosti | Emrah, Faruk | 2h | Done | Pri generisanju rute sistem uzima u obzir samo sandučiće dostupne za odabrani datum generisanja |
 | PBI-023 / US-23 | Dodjela rute poštaru | Ibrahim, Faruk | 3h | Done | Odabir poštara iz padajućeg menija, promjena statusa rute u "Dodijeljena", evidencija autora i vremena dodjele |
 | PBI-024 / US-24 | Pregled detalja rute | Nejla, Aldin | 3h 30min | Done | Interaktivna mapa s pinovima i linijom rute, hronološka lista sandučića, procijenjeno trajanje, sinhronizacija mapa–lista |
 | PBI-025 / US-25 | Ručna izmjena redoslijeda obilaska | Rubina, Emrah | 5h | Done | Dugmad ↑/↓ ili drag-and-drop, ponovna kalkulacija vremena, označavanje izmijenjenih tačaka, resetovanje na originalni redoslijed |
@@ -17,6 +18,7 @@
 
 #### User Stories
 - **US-22:** Kao administrator ili dispečer, želim pokrenuti algoritam za automatsko generisanje dnevne rute za odabranog poštara, kako bih dobio prijedlog obilaska zasnovan na lokacijama i prioritetima sandučića.
+- **US-40:** Kao dispečer, želim da sistem pri generisanju rute automatski uzme u obzir samo sandučiće koji su dostupni za odabrani dan, kako ruta ne bi sadržavala lokacije koje se tog dana ne mogu obići.
 
 #### Poslovna vrijednost
 Ovo je srce sistema. Automatizacija rute smanjuje manuelni rad administratora i dispečera, štedi vrijeme i osigurava da ključne lokacije ne budu zaboravljene.
@@ -37,16 +39,44 @@ Ovo je srce sistema. Automatizacija rute smanjuje manuelni rad administratora i 
 **Veze sa drugim storyjima:**
 - **Zavisi od:** US-14 (Uloge i pristup), US-18 (Postavljanje prioriteta sandučića), US-32 i US-33 (Radna pravila sandučića).
 - **Osnova za:** US-23 (Dodjela rute poštaru), US-24 (Pregled detalja rute), US-25 (Ručna izmjena redoslijeda obilaska).
+- **Povezano sa:** US-40 (Filtriranje sandučića po danu dostupnosti), jer koristi ista radna pravila sandučića pri izboru kandidata za rutu.
 
 #### Acceptance criteria
 
-- Kada administrator ili dispečer klikne na dugme "Generiši", tada sistem mora u obzir uzeti isključivo sandučiće koji su: aktivni (US-13), imaju označen današnji radni dan (US-33) i čiji se vremenski okvir dostupnosti (US-32) podudara sa planiranim vremenom obilaska.
+- Kada administrator ili dispečer klikne na dugme "Generiši", tada sistem mora u obzir uzeti isključivo sandučiće koji su: aktivni (US-13), imaju označen radni dan koji odgovara odabranom datumu generisanja (US-33) i čiji se vremenski okvir dostupnosti (US-32) podudara sa planiranim vremenom obilaska.
 - Sistem mora primijeniti prioritetno ponderisanje tako da sandučići sa statusom Visok prioritet (US-18) imaju prednost u redoslijedu obilaska u odnosu na one sa nižim prioritetom.
 - Kada se proces proračuna završi, tada sistem mora prikazati vizuelni prijedlog rute na interaktivnoj mapi (povezana linija između pinova) i hronološku listu adresa sa procijenjenim vremenom dolaska za svaku tačku.
 - Sistem mora izvršiti proračun unutar maksimalno 5 sekundi za rute do 50 tačaka; u suprotnom, mora prikazati indikator učitavanja (loader).
 - Kada algoritam izračuna da ukupno trajanje rute premašuje 8 sati rada, tada sistem mora prikazati narandžastu toast obavijest: "Upozorenje: Ruta premašuje standardno radno vrijeme."
 - Sistem mora za MVP verziju koristiti algoritam zasnovan na Euklidskoj udaljenosti $d = \sqrt{(x_2-x_1)^2 + (y_2-y_1)^2}$ kako bi osigurali brzinu proračuna.
 - Kada u sistemu nema dostupnih sandučića za odabrane parametre, tada sistem mora onemogućiti dugme "Generiši" i prikazati poruku: "Nema dostupnih lokacija za generisanje rute."
+
+---
+
+##### ID storyja: US-40
+**Naziv storyja:** Filtriranje sandučića po danu dostupnosti
+**Opis:** Kao **dispečer**, želim da **sistem prilikom generisanja rute provjeri dostupnost svakog sandučića za odabrani datum**, kako bi **u prijedlog rute ušli samo sandučići koji se tog dana zaista mogu obići**.
+**Poslovna vrijednost:** Sprječava planiranje obilaska lokacija koje nisu dostupne odabranog dana, čime se smanjuju promašeni obilasci i potreba za ručnim ispravkama rute.
+**Prioritet:** High
+**Odgovorne osobe:** Emrah, Faruk
+**Pretpostavke i otvorena pitanja:**
+- *Pretpostavka:* Svaki sandučić ima definisane radne dane ili podrazumijevanu dostupnost koja se može provjeriti pri generisanju rute.
+- *Pretpostavka:* Dispečer pri generisanju rute bira datum za koji se ruta planira.
+- *Otvoreno pitanje:* Da li neradni dan sandučića treba biti posebno prikazan dispečeru u statistici filtriranja ili je dovoljno da se sandučić izostavi iz prijedloga rute?
+
+**Veze sa drugim storyjima:**
+- **Zavisi od:** US-33 (Određivanje radnih dana sandučića) i US-22 (Automatizovani proračun dnevne rute).
+- **Utiče na:** US-24 (Pregled detalja rute), jer pregled prikazuje samo sandučiće koji su prošli provjeru dostupnosti za odabrani datum.
+- **Povezano sa:** US-32 (Vremenski okviri dostupnosti sandučića), jer oba pravila zajedno određuju da li lokacija može ući u rutu.
+
+#### Acceptance criteria
+
+- Kada dispečer odabere datum i pokrene generisanje rute, tada sistem mora za svaki aktivni sandučić provjeriti da li je označen kao dostupan za dan u sedmici koji odgovara odabranom datumu.
+- Ako sandučić nema označen odabrani dan kao dan dostupnosti, tada ga sistem mora izostaviti iz kandidata za rutu bez obzira na njegov prioritet.
+- Ako je sandučić dostupan za odabrani dan, tada sistem ga može uzeti u obzir u daljem algoritmu, zajedno sa pravilima prioriteta i vremenskih okvira dostupnosti.
+- Kada nijedan sandučić nije dostupan za odabrani dan, sistem mora prikazati poruku da nema dostupnih lokacija za generisanje rute.
+- Filtriranje po danu dostupnosti mora se primijeniti prije izračuna redoslijeda obilaska, kako algoritam ne bi trošio vrijeme na lokacije koje se ne mogu obići tog dana.
+- Pravilo mora vrijediti jednako za administratore i dispečere koji imaju pravo generisanja rute.
 
 ---
 
