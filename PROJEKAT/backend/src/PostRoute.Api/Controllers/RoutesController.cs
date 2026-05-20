@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using PostRoute.BLL.Models.Routes;
 using PostRoute.BLL.Services;
 using PostRoute.Domain.Entities;
+using System.Security.Claims;
 
 namespace PostRoute.Api.Controllers;
 
@@ -29,6 +30,23 @@ public class RoutesController : ControllerBase
         }
 
         return Ok(route);
+    }
+
+    [HttpPut("{id}/reorder")]
+    [Authorize(Roles = $"{UserRole.Administrator},{UserRole.Dispatcher}")]
+    public async Task<IActionResult> Reorder(Guid id, [FromBody] ReorderRouteRequest request)
+    {
+        var dispatcherName = User.FindFirst(ClaimTypes.Name)?.Value ?? "Nepoznat";
+
+        try
+        {
+            var route = await _routeService.ReorderRouteAsync(id, request, dispatcherName);
+            return Ok(route);
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(new { Message = ex.Message });
+        }
     }
 
     [HttpPost("generate")]

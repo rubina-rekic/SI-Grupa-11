@@ -13,6 +13,9 @@ public class RouteResponse
     public bool ExceedsStandardTime { get; set; }
     public List<RouteItemResponse> RouteItems { get; set; } = new();
     
+    public DateTime? LastReorderedAt { get; set; }
+    public string? LastReorderedBy { get; set; }
+
     // Debug info for transparency
     public int TotalMailboxesCount { get; set; }
     public int ActiveMailboxesCount { get; set; }
