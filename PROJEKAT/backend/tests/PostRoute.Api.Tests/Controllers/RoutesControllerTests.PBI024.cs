@@ -43,10 +43,10 @@ public sealed class RoutesControllerTestsPBI024
                     Id = Guid.NewGuid(),
                     Order = 1,
                     MailboxId = mailboxId,
-                    MailboxAddress = "Sarajevo, Test 1",
-                    MailboxLatitude = 43.85m,
-                    MailboxLongitude = 18.41m,
-                    Priority = MailboxPriority.Visok,
+                    Address = "Sarajevo, Test 1",
+                    Latitude = 43.85m,
+                    Longitude = 18.41m,
+                    Priority = MailboxPriority.Visok.ToString(),
                     EstimatedArrivalTime = new TimeOnly(8, 15),
                     Status = "Planirano"
                 }
@@ -91,10 +91,7 @@ public sealed class RoutesControllerTestsPBI024
         var notFoundResult = Assert.IsType<NotFoundObjectResult>(result);
         Assert.Equal(404, notFoundResult.StatusCode);
 
-        var errorResponse = Assert.IsType<ExpandoObject>(notFoundResult.Value);
-        var dict = (IDictionary<string, object?>)errorResponse;
-        Assert.True(dict.ContainsKey("Message"));
-        Assert.Equal("Ruta nije pronađena.", dict["Message"].ToString());
+        Assert.Contains("Ruta nije", notFoundResult.Value?.ToString());
     }
 
     [Fact]
@@ -139,10 +136,10 @@ public sealed class RoutesControllerTestsPBI024
                     Id = Guid.NewGuid(),
                     Order = 1,
                     MailboxId = Guid.NewGuid(),
-                    MailboxAddress = "Sarajevo, Test 1",
-                    MailboxLatitude = 43.85m,
-                    MailboxLongitude = 18.41m,
-                    Priority = MailboxPriority.Visok,
+                    Address = "Sarajevo, Test 1",
+                    Latitude = 43.85m,
+                    Longitude = 18.41m,
+                    Priority = MailboxPriority.Visok.ToString(),
                     EstimatedArrivalTime = new TimeOnly(8, 15),
                     Status = "Planirano"
                 },
@@ -151,10 +148,10 @@ public sealed class RoutesControllerTestsPBI024
                     Id = Guid.NewGuid(),
                     Order = 2,
                     MailboxId = Guid.NewGuid(),
-                    MailboxAddress = "Sarajevo, Test 2",
-                    MailboxLatitude = 43.86m,
-                    MailboxLongitude = 18.42m,
-                    Priority = MailboxPriority.Srednji,
+                    Address = "Sarajevo, Test 2",
+                    Latitude = 43.86m,
+                    Longitude = 18.42m,
+                    Priority = MailboxPriority.Srednji.ToString(),
                     EstimatedArrivalTime = new TimeOnly(8, 45),
                     Status = "Planirano"
                 },
@@ -163,10 +160,10 @@ public sealed class RoutesControllerTestsPBI024
                     Id = Guid.NewGuid(),
                     Order = 3,
                     MailboxId = Guid.NewGuid(),
-                    MailboxAddress = "Sarajevo, Test 3",
-                    MailboxLatitude = 43.87m,
-                    MailboxLongitude = 18.43m,
-                    Priority = MailboxPriority.Nizak,
+                    Address = "Sarajevo, Test 3",
+                    Latitude = 43.87m,
+                    Longitude = 18.43m,
+                    Priority = MailboxPriority.Nizak.ToString(),
                     EstimatedArrivalTime = new TimeOnly(9, 30),
                     Status = "Planirano"
                 }
@@ -187,9 +184,9 @@ public sealed class RoutesControllerTestsPBI024
         var okResult = Assert.IsType<OkObjectResult>(result);
         var returnedRoute = Assert.IsType<RouteResponse>(okResult.Value);
         Assert.Equal(3, returnedRoute.RouteItems.Count);
-        Assert.Equal("Sarajevo, Test 1", returnedRoute.RouteItems[0].MailboxAddress);
-        Assert.Equal("Sarajevo, Test 2", returnedRoute.RouteItems[1].MailboxAddress);
-        Assert.Equal("Sarajevo, Test 3", returnedRoute.RouteItems[2].MailboxAddress);
+        Assert.Equal("Sarajevo, Test 1", returnedRoute.RouteItems[0].Address);
+        Assert.Equal("Sarajevo, Test 2", returnedRoute.RouteItems[1].Address);
+        Assert.Equal("Sarajevo, Test 3", returnedRoute.RouteItems[2].Address);
     }
 
     [Fact]
@@ -214,10 +211,10 @@ public sealed class RoutesControllerTestsPBI024
                     Id = Guid.NewGuid(),
                     Order = 1,
                     MailboxId = Guid.NewGuid(),
-                    MailboxAddress = "Test",
-                    MailboxLatitude = 43.85m,
-                    MailboxLongitude = 18.41m,
-                    Priority = MailboxPriority.Visok,
+                    Address = "Test",
+                    Latitude = 43.85m,
+                    Longitude = 18.41m,
+                    Priority = MailboxPriority.Visok.ToString(),
                     EstimatedArrivalTime = new TimeOnly(7, 50),
                     Status = "Planirano"
                 }

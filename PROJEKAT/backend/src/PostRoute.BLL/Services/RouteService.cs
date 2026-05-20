@@ -1,6 +1,7 @@
 using PostRoute.BLL.Models.Routes;
 using PostRoute.DAL.Entities;
 using PostRoute.DAL.Repositories;
+using PostRoute.Domain.Entities;
 
 namespace PostRoute.BLL.Services;
 
@@ -8,6 +9,7 @@ public class RouteService : IRouteService
 {
     private readonly IMailboxRepository _mailboxRepository;
     private readonly IRouteRepository _routeRepository;
+    private readonly IUserRepository? _userRepository;
     
     // MVP configurable defaults
     private const decimal StartingLat = 43.8563m; // Primjer centra Sarajeva (Glavni depo)
@@ -18,10 +20,14 @@ public class RouteService : IRouteService
     private const int MediumPriorityCooldownDays = 2;
     private const int LowPriorityCooldownDays = 4;
 
-    public RouteService(IMailboxRepository mailboxRepository, IRouteRepository routeRepository)
+    public RouteService(
+        IMailboxRepository mailboxRepository,
+        IRouteRepository routeRepository,
+        IUserRepository? userRepository = null)
     {
         _mailboxRepository = mailboxRepository;
         _routeRepository = routeRepository;
+        _userRepository = userRepository;
     }
 
     public async Task<RouteResponse?> GetRouteDetailsAsync(Guid routeId, CancellationToken cancellationToken = default)
@@ -33,6 +39,98 @@ public class RouteService : IRouteService
         }
 
         return MapToResponse(route, totalMailboxesCount: null, activeMailboxesCount: null, eligibleMailboxesCount: null);
+    }
+
+    public async Task<IReadOnlyList<AvailablePostmanResponse>> GetAvailablePostmenAsync(
+        Guid routeId,
+        CancellationToken cancellationToken = default)
+    {
+        var userRepository = _userRepository
+            ?? throw new InvalidOperationException("Korisnicki repozitorij nije dostupan.");
+
+        var route = await _routeRepository.GetByIdAsync(routeId, cancellationToken)
+            ?? throw new InvalidOperationException("Ruta nije pronadjena.");
+
+        var users = await userRepository.GetAllAsync(cancellationToken);
+        var occupiedPostmanIds = await _routeRepository.GetPostmanIdsWithActiveRouteOnDateAsync(
+            route.Date,
+            route.Id,
+            cancellationToken);
+        var occupiedSet = occupiedPostmanIds.ToHashSet();
+
+        return users
+            .Where(user => user.Role == UserRole.PostalWorker && !user.IsLockedOut)
+            .Select(user =>
+            {
+                var isCurrentAssignee = route.PostmanId == user.Id && route.Status == RouteStatus.Dodijeljena;
+                var isBusy = occupiedSet.Contains(user.Id);
+
+                return new AvailablePostmanResponse
+                {
+                    Id = user.Id,
+                    FullName = ToDisplayName(user),
+                    Username = user.Username,
+                    Email = user.Email,
+                    IsCurrentAssignee = isCurrentAssignee,
+                    IsAvailable = isCurrentAssignee || !isBusy,
+                    UnavailableReason = isBusy && !isCurrentAssignee
+                        ? "Postar vec ima dodijeljenu rutu za ovaj datum."
+                        : null
+                };
+            })
+            .OrderBy(user => user.FullName)
+            .ToList();
+    }
+
+    public async Task<RouteResponse> AssignRouteAsync(
+        Guid routeId,
+        AssignRouteRequest request,
+        string assignedBy,
+        CancellationToken cancellationToken = default)
+    {
+        var userRepository = _userRepository
+            ?? throw new InvalidOperationException("Korisnicki repozitorij nije dostupan.");
+
+        if (request.PostmanId == Guid.Empty)
+        {
+            throw new InvalidOperationException("Postar je obavezan.");
+        }
+
+        var route = await _routeRepository.GetByIdAsync(routeId, cancellationToken)
+            ?? throw new InvalidOperationException("Ruta nije pronadjena.");
+
+        if (route.Status != RouteStatus.Planirana && route.Status != RouteStatus.Dodijeljena)
+        {
+            throw new InvalidOperationException("Dodjela rute je dostupna samo za prijedloge ili vec dodijeljene rute.");
+        }
+
+        var postman = await userRepository.GetByIdAsync(request.PostmanId, cancellationToken)
+            ?? throw new InvalidOperationException("Postar nije pronadjen.");
+
+        if (postman.Role != UserRole.PostalWorker || postman.IsLockedOut)
+        {
+            throw new InvalidOperationException("Odabrani korisnik nije aktivan postar.");
+        }
+
+        var occupiedPostmanIds = await _routeRepository.GetPostmanIdsWithActiveRouteOnDateAsync(
+            route.Date,
+            route.Id,
+            cancellationToken);
+
+        if (occupiedPostmanIds.Contains(postman.Id))
+        {
+            throw new InvalidOperationException("Postar vec ima dodijeljenu rutu za ovaj datum.");
+        }
+
+        route.PostmanId = postman.Id;
+        route.Postman = postman;
+        route.Status = RouteStatus.Dodijeljena;
+        route.AssignedAt = DateTime.UtcNow;
+        route.AssignedBy = assignedBy;
+
+        await _routeRepository.UpdateAsync(route, cancellationToken);
+
+        return MapToResponse(route, null, null, null);
     }
 
     public async Task<RouteResponse> GenerateRouteAsync(GenerateRouteRequest request, CancellationToken cancellationToken = default)
@@ -158,6 +256,7 @@ public class RouteService : IRouteService
         {
             Id = route.Id,
             PostmanId = route.PostmanId,
+            PostmanName = route.Postman is null ? null : ToDisplayName(route.Postman),
             Date = route.Date,
             PlannedStartTime = route.PlannedStartTime,
             PlannedEndTime = route.PlannedEndTime,
@@ -165,6 +264,8 @@ public class RouteService : IRouteService
             TotalDurationMinutes = route.TotalDurationMinutes,
             Status = route.Status.ToString(),
             ExceedsStandardTime = route.ExceedsStandardTime,
+            AssignedAt = route.AssignedAt,
+            AssignedBy = route.AssignedBy,
             TotalMailboxesCount = mailboxes.Count(),
             ActiveMailboxesCount = activeMailboxes.Count,
             DayFilteredMailboxesCount = eligibleMailboxes.Count,
@@ -299,6 +400,12 @@ public class RouteService : IRouteService
         return inSlot1 || inSlot2;
     }
 
+    private static string ToDisplayName(User user)
+    {
+        var fullName = $"{user.FirstName} {user.LastName}".Trim();
+        return string.IsNullOrWhiteSpace(fullName) ? user.Username : fullName;
+    }
+
     private static RouteResponse MapToResponse(Route route, int? totalMailboxesCount, int? activeMailboxesCount, int? eligibleMailboxesCount)
     {
         var orderedItems = route.RouteItems
@@ -309,6 +416,7 @@ public class RouteService : IRouteService
         {
             Id = route.Id,
             PostmanId = route.PostmanId,
+            PostmanName = route.Postman is null ? null : ToDisplayName(route.Postman),
             Date = route.Date,
             PlannedStartTime = route.PlannedStartTime,
             PlannedEndTime = route.PlannedEndTime,
@@ -318,6 +426,8 @@ public class RouteService : IRouteService
             ExceedsStandardTime = route.ExceedsStandardTime,
             LastReorderedAt = route.LastReorderedAt,
             LastReorderedBy = route.LastReorderedBy,
+            AssignedAt = route.AssignedAt,
+            AssignedBy = route.AssignedBy,
             TotalMailboxesCount = totalMailboxesCount ?? 0,
             ActiveMailboxesCount = activeMailboxesCount ?? 0,
             DayFilteredMailboxesCount = eligibleMailboxesCount ?? orderedItems.Count,

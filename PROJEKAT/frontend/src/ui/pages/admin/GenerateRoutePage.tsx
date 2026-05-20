@@ -9,7 +9,7 @@ import "leaflet/dist/leaflet.css"
 import { Layout } from "../../components/Layout/Layout"
 import { LeafletRoutingMachine } from "../../components/common/LeafletRoutingMachine"
 import { routesApi } from "../../../infrastructure/api/routesApi"
-import type { RouteItemResponse, RouteResponse } from "../../../infrastructure/api/routesApi"
+import type { AvailablePostmanResponse, RouteItemResponse, RouteResponse } from "../../../infrastructure/api/routesApi"
 import { getUsers } from "../../../infrastructure/api/users/usersApi"
 import type { UserListDto } from "../../../infrastructure/api/users/usersApi"
 
@@ -42,6 +42,34 @@ function toHoursAndMinutes(timeValue: string | null | undefined) {
   }
 
   return timeValue.split(":").slice(0, 2).join(":")
+}
+
+function formatDateTime(value: string | null | undefined) {
+  if (!value) {
+    return "Nije evidentirano"
+  }
+
+  return new Intl.DateTimeFormat("bs-BA", {
+    dateStyle: "medium",
+    timeStyle: "short",
+  }).format(new Date(value))
+}
+
+function routeStatusLabel(status: string) {
+  if (status === "Planirana") return "Prijedlog"
+  if (status === "Dodijeljena") return "Dodijeljena"
+  if (status === "UProgresu") return "U toku"
+  if (status === "Zavrsena") return "Završena"
+  if (status === "Otkazana") return "Otkazana"
+  return status
+}
+
+function routeStatusPillClass(status: string) {
+  if (status === "Dodijeljena") return "pill pill--blue"
+  if (status === "UProgresu") return "pill pill--amber"
+  if (status === "Zavrsena") return "pill pill--green"
+  if (status === "Otkazana") return "pill pill--red"
+  return "pill pill--purple"
 }
 
 function priorityColors(priority: string) {
@@ -88,6 +116,11 @@ export default function GenerateRoutePage() {
   const [localItems, setLocalItems] = useState<RouteItemResponse[]>([])
   const [saving, setSaving] = useState(false)
   const [hasLocalChanges, setHasLocalChanges] = useState(false)
+  const [assignmentOpen, setAssignmentOpen] = useState(false)
+  const [availablePostmen, setAvailablePostmen] = useState<AvailablePostmanResponse[]>([])
+  const [selectedAssigneeId, setSelectedAssigneeId] = useState("")
+  const [loadingPostmenAvailability, setLoadingPostmenAvailability] = useState(false)
+  const [assigningRoute, setAssigningRoute] = useState(false)
   const originalItemsRef = useRef<RouteItemResponse[]>([])
 
   const {
@@ -108,7 +141,7 @@ export default function GenerateRoutePage() {
       try {
         const res = await getUsers()
         if (res.data) {
-          setPostmen(res.data.filter((u) => u.role === "PostalWorker"))
+          setPostmen(res.data.filter((u) => u.role === "PostalWorker" && !u.isLockedOut))
         }
       } catch {
         toast.error("Greška pri učitavanju poštara")
@@ -119,6 +152,32 @@ export default function GenerateRoutePage() {
 
     void loadUsers()
   }, [])
+
+  useEffect(() => {
+    if (!routeData) {
+      setAvailablePostmen([])
+      setSelectedAssigneeId("")
+      return
+    }
+
+    async function loadAvailability() {
+      try {
+        setLoadingPostmenAvailability(true)
+        const postmenAvailability = await routesApi.getAvailablePostmen(routeData!.id)
+        setAvailablePostmen(postmenAvailability)
+
+        const currentAssignee = postmenAvailability.find((postman) => postman.isCurrentAssignee)
+        const firstAvailable = postmenAvailability.find((postman) => postman.isAvailable)
+        setSelectedAssigneeId(currentAssignee?.id ?? firstAvailable?.id ?? "")
+      } catch {
+        toast.error("Greška pri učitavanju dostupnih poštara.")
+      } finally {
+        setLoadingPostmenAvailability(false)
+      }
+    }
+
+    void loadAvailability()
+  }, [routeData])
 
   const onSubmit = async (data: GenerateRouteFormValues) => {
     try {
@@ -134,6 +193,7 @@ export default function GenerateRoutePage() {
       setRouteData(result)
       setLocalItems(sortedItems)
       setHasLocalChanges(false)
+      setAssignmentOpen(false)
       originalItemsRef.current = sortedItems
 
       if (result.exceedsStandardTime) {
@@ -155,9 +215,9 @@ export default function GenerateRoutePage() {
   }
 
   const mapCenter = useMemo<[number, number]>(() => {
-    if (!routeData || routeData.routeItems.length === 0) return [43.8563, 18.4131]
-    return [routeData.routeItems[0].latitude, routeData.routeItems[0].longitude]
-  }, [routeData])
+    if (localItems.length === 0) return [43.8563, 18.4131]
+    return [localItems[0].latitude, localItems[0].longitude]
+  }, [localItems])
 
   const routeWaypoints = useMemo<Array<[number, number]>>(() => {
     if (localItems.length === 0) return []
@@ -167,6 +227,41 @@ export default function GenerateRoutePage() {
   const isRouteEditable = routeData
     ? routeData.status !== "UProgresu" && routeData.status !== "Zavrsena"
     : false
+
+  const canAssignRoute = routeData
+    ? routeData.status === "Planirana" || routeData.status === "Dodijeljena"
+    : false
+
+  const availableAssignees = useMemo(
+    () => availablePostmen.filter((postman) => postman.isAvailable),
+    [availablePostmen]
+  )
+
+  async function assignRoute() {
+    if (!routeData || !selectedAssigneeId) return
+
+    setAssigningRoute(true)
+    try {
+      const result = await routesApi.assignRoute(routeData.id, selectedAssigneeId)
+      const sortedItems = [...result.routeItems].sort((a, b) => a.order - b.order)
+      const selectedPostman = availablePostmen.find((postman) => postman.id === selectedAssigneeId)
+
+      setRouteData(result)
+      setLocalItems(sortedItems)
+      originalItemsRef.current = sortedItems
+      setHasLocalChanges(false)
+      setAssignmentOpen(false)
+      toast.success(`Ruta je uspješno dodijeljena poštaru ${selectedPostman?.fullName ?? result.postmanName ?? ""}.`)
+    } catch (err: unknown) {
+      if (err && typeof err === "object" && "error" in err && typeof (err as Record<string, unknown>).error === "string") {
+        toast.error((err as Record<string, unknown>).error as string)
+      } else {
+        toast.error("Greška pri dodjeli rute poštaru.")
+      }
+    } finally {
+      setAssigningRoute(false)
+    }
+  }
 
   function moveItem(index: number, direction: -1 | 1) {
     const newItems = [...localItems]
@@ -294,10 +389,27 @@ export default function GenerateRoutePage() {
                       </div>
                     </div>
                     <div style={{ background: "#f8fafc", border: "1px solid #e2e8f0", borderRadius: "8px", padding: "12px" }}>
+                      <div style={{ color: "#64748b", fontSize: "0.8rem" }}>Status rute</div>
+                      <div style={{ marginTop: "4px" }}>
+                        <span className={routeStatusPillClass(routeData.status)}>{routeStatusLabel(routeData.status)}</span>
+                      </div>
+                    </div>
+                    <div style={{ background: "#f8fafc", border: "1px solid #e2e8f0", borderRadius: "8px", padding: "12px" }}>
                       <div style={{ color: "#64748b", fontSize: "0.8rem" }}>Vremenski raspon</div>
                       <div style={{ color: "#1e2d3d", fontSize: "1.15rem", fontWeight: 700 }}>
                         {toHoursAndMinutes(routeData.plannedStartTime)} - {toHoursAndMinutes(routeData.plannedEndTime)}
                       </div>
+                    </div>
+                    <div style={{ background: "#f8fafc", border: "1px solid #e2e8f0", borderRadius: "8px", padding: "12px" }}>
+                      <div style={{ color: "#64748b", fontSize: "0.8rem" }}>Dodijeljeni poštar</div>
+                      <div style={{ color: "#1e2d3d", fontSize: "1rem", fontWeight: 700 }}>
+                        {routeData.status === "Dodijeljena" ? routeData.postmanName ?? "Evidentiran poštar" : "Nije dodijeljeno"}
+                      </div>
+                      {routeData.assignedAt && (
+                        <div style={{ color: "#64748b", fontSize: "0.78rem", marginTop: "2px" }}>
+                          {formatDateTime(routeData.assignedAt)} · {routeData.assignedBy ?? "Nepoznat dispečer"}
+                        </div>
+                      )}
                     </div>
                   </div>
                   {routeData.exceedsStandardTime && (
@@ -319,13 +431,113 @@ export default function GenerateRoutePage() {
               </section>
 
               <section className="form-card" style={{ maxWidth: "unset" }}>
+                <div className="form-card__body" style={{ gap: "14px" }}>
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "flex-start",
+                      justifyContent: "space-between",
+                      gap: "12px",
+                      flexWrap: "wrap",
+                    }}
+                  >
+                    <div>
+                      <h2 style={{ margin: 0, fontSize: "1.1rem", color: "#1e2d3d" }}>Dodjela rute</h2>
+                      <p style={{ margin: "4px 0 0", color: "#64748b", fontSize: "0.88rem" }}>
+                        {routeData.status === "Dodijeljena"
+                          ? "Ruta je dodijeljena i može se preraspodijeliti dok obilazak nije počeo."
+                          : "Prijedlog rute pretvorite u operativni nalog izborom dostupnog poštara."}
+                      </p>
+                    </div>
+                    {canAssignRoute ? (
+                      <button
+                        type="button"
+                        className="btn btn--primary route-assignment__toggle"
+                        onClick={() => setAssignmentOpen((open) => !open)}
+                      >
+                        {routeData.status === "Dodijeljena" ? "Promijeni poštara" : "Dodijeli poštaru"}
+                      </button>
+                    ) : (
+                      <span className="pill pill--amber">Preraspodjela nije dostupna</span>
+                    )}
+                  </div>
+
+                  {!canAssignRoute && (
+                    <div className="route-assignment__notice">
+                      Dodjela rute je dostupna samo za prijedloge ili već dodijeljene rute.
+                    </div>
+                  )}
+
+                  {canAssignRoute && assignmentOpen && (
+                    <div className="route-assignment">
+                      {loadingPostmenAvailability ? (
+                        <div className="route-assignment__notice">Učitavanje dostupnih poštara...</div>
+                      ) : availableAssignees.length === 0 ? (
+                        <div className="route-assignment__notice">Nema dostupnih poštara za odabrani datum.</div>
+                      ) : (
+                        <>
+                          <div className="form-field">
+                            <label htmlFor="assigneeId" className="form-field__label">Poštar *</label>
+                            <select
+                              id="assigneeId"
+                              className="form-field__input"
+                              value={selectedAssigneeId}
+                              onChange={(event) => setSelectedAssigneeId(event.target.value)}
+                            >
+                              {availablePostmen.map((postman) => (
+                                <option
+                                  key={postman.id}
+                                  value={postman.id}
+                                  disabled={!postman.isAvailable}
+                                  title={postman.unavailableReason ?? undefined}
+                                >
+                                  {postman.fullName} ({postman.email})
+                                  {!postman.isAvailable ? " - zauzet" : ""}
+                                  {postman.isCurrentAssignee ? " - trenutno dodijeljen" : ""}
+                                </option>
+                              ))}
+                            </select>
+                          </div>
+
+                          {availablePostmen.some((postman) => !postman.isAvailable) && (
+                            <div className="route-assignment__hint">
+                              Poštari koji već imaju dodijeljenu rutu za ovaj datum ostaju vidljivi, ali su onemogućeni u izboru.
+                            </div>
+                          )}
+
+                          <div className="route-assignment__actions">
+                            <button
+                              type="button"
+                              className="btn-secondary"
+                              onClick={() => setAssignmentOpen(false)}
+                              disabled={assigningRoute}
+                            >
+                              Otkaži
+                            </button>
+                            <button
+                              type="button"
+                              className="btn btn--primary route-assignment__confirm"
+                              onClick={() => { void assignRoute() }}
+                              disabled={!selectedAssigneeId || assigningRoute}
+                            >
+                              {assigningRoute ? "Dodjela u toku..." : "Potvrdi dodjelu"}
+                            </button>
+                          </div>
+                        </>
+                      )}
+                    </div>
+                  )}
+                </div>
+              </section>
+
+              <section className="form-card" style={{ maxWidth: "unset" }}>
                 <div className="form-card__body" style={{ gap: "12px" }}>
                   <h2 style={{ margin: 0, fontSize: "1.1rem", color: "#1e2d3d" }}>Ruta na mapi</h2>
                   <div className="route-map-shell" style={{ height: "420px", borderRadius: "8px", overflow: "hidden", border: "1px solid #e2e8f0" }}>
                     <LeafletMap className="route-map" center={mapCenter} zoom={13} style={{ height: "100%", width: "100%" }}>
                       <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
                       {routeWaypoints.length >= 2 && <LeafletRoutingMachine waypoints={routeWaypoints} />}
-                      {routeData.routeItems.map((item) => (
+                      {localItems.map((item) => (
                         <Marker
                           key={item.id}
                           position={[item.latitude, item.longitude]}
@@ -342,11 +554,11 @@ export default function GenerateRoutePage() {
                           </Popup>
                         </Marker>
                       ))}
-                      {selectedItemId && routeData.routeItems.find((item) => item.id === selectedItemId) && (
+                      {selectedItemId && localItems.find((item) => item.id === selectedItemId) && (
                         <Circle
                           center={[
-                            routeData.routeItems.find((item) => item.id === selectedItemId)!.latitude,
-                            routeData.routeItems.find((item) => item.id === selectedItemId)!.longitude,
+                            localItems.find((item) => item.id === selectedItemId)!.latitude,
+                            localItems.find((item) => item.id === selectedItemId)!.longitude,
                           ]}
                           radius={100}
                           pathOptions={{ color: "#2563a8", opacity: 0.6, fillOpacity: 0.1 }}

@@ -16,15 +16,18 @@ export interface RouteItemResponse {
 export interface RouteResponse {
     id: string;
     postmanId: string;
+    postmanName: string | null;
     date: string;
     plannedStartTime: string;
-    plannedEndTime: string;
+    plannedEndTime: string | null;
     totalDistanceKm: number;
     totalDurationMinutes: number;
     status: string;
     exceedsStandardTime: boolean;
     lastReorderedAt: string | null;
     lastReorderedBy: string | null;
+    assignedAt: string | null;
+    assignedBy: string | null;
     routeItems: RouteItemResponse[];
 }
 
@@ -37,6 +40,16 @@ export interface GenerateRouteRequest {
     postmanId: string;
     date: string;
     plannedStartTime: string;
+}
+
+export interface AvailablePostmanResponse {
+    id: string;
+    fullName: string;
+    username: string;
+    email: string;
+    isAvailable: boolean;
+    isCurrentAssignee: boolean;
+    unavailableReason: string | null;
 }
 
 export const routesApi = {
@@ -54,6 +67,29 @@ export const routesApi = {
         const response = await httpClient<RouteResponse>('/api/routes/generate', {
             method: 'POST',
             body: request
+        });
+
+        if (response.error || !response.data) {
+            throw response;
+        }
+
+        return response.data;
+    },
+
+    getAvailablePostmen: async (routeId: string): Promise<AvailablePostmanResponse[]> => {
+        const response = await httpClient<AvailablePostmanResponse[]>(`/api/routes/${routeId}/available-postmen`);
+
+        if (response.error || !response.data) {
+            throw response;
+        }
+
+        return response.data;
+    },
+
+    assignRoute: async (routeId: string, postmanId: string): Promise<RouteResponse> => {
+        const response = await httpClient<RouteResponse>(`/api/routes/${routeId}/assign`, {
+            method: 'PUT',
+            body: { postmanId }
         });
 
         if (response.error || !response.data) {

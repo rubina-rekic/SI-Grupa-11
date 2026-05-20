@@ -24,6 +24,7 @@ const { mockMailbox } = vi.hoisted(() => ({
     slot1End: '16:00:00',
     slot2Start: null,
     slot2End: null,
+    workingDays: 31,
   }
 }))
 
@@ -38,6 +39,29 @@ vi.mock('../../../../infrastructure/api/mailboxes/mailboxesApi', () => ({
   updateMailbox: vi.fn(),
   MailboxType: { WallSmall: 1, StandaloneLarge: 2, IndoorResidential: 3, SpecialPriority: 4 },
   MailboxPriority: { Visok: 1, Srednji: 2, Nizak: 3 },
+  MailboxStatus: { Prazan: 0, Pun: 1 },
+  MailboxWorkingDays: {
+    None: 0,
+    Ponedjeljak: 1,
+    Utorak: 2,
+    Srijeda: 4,
+    Cetvrtak: 8,
+    Petak: 16,
+    Subota: 32,
+    Nedjelja: 64,
+    RadniDani: 31,
+    Vikend: 96,
+    SvakiDan: 127,
+  },
+  workingDayBits: [
+    { name: 'Ponedjeljak', bit: 1 },
+    { name: 'Utorak', bit: 2 },
+    { name: 'Srijeda', bit: 4 },
+    { name: 'Cetvrtak', bit: 8 },
+    { name: 'Petak', bit: 16 },
+    { name: 'Subota', bit: 32 },
+    { name: 'Nedjelja', bit: 64 },
+  ],
   mailboxTypeLabels: { 1: 'Zidni (mali)', 2: 'Samostojeći (veliki)', 3: 'Unutrašnji (stambene zgrade)', 4: 'Specijalni (prioritetni)' },
 }))
 

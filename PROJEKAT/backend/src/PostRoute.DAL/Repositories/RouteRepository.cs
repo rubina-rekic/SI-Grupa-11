@@ -33,7 +33,22 @@ public class RouteRepository : IRouteRepository
         return await _context.Routes
             .Include(r => r.RouteItems)
                 .ThenInclude(ri => ri.Mailbox)
+            .Include(r => r.Postman)
             .FirstOrDefaultAsync(r => r.PostmanId == postmanId && r.Date == date, cancellationToken);
+    }
+
+    public async Task<IReadOnlyList<Guid>> GetPostmanIdsWithActiveRouteOnDateAsync(
+        DateOnly date,
+        Guid? excludedRouteId = null,
+        CancellationToken cancellationToken = default)
+    {
+        return await _context.Routes
+            .Where(r => r.Date == date)
+            .Where(r => excludedRouteId == null || r.Id != excludedRouteId.Value)
+            .Where(r => r.Status == RouteStatus.Dodijeljena || r.Status == RouteStatus.UProgresu)
+            .Select(r => r.PostmanId)
+            .Distinct()
+            .ToListAsync(cancellationToken);
     }
 
     public async Task<Route> UpdateAsync(Route route, CancellationToken cancellationToken = default)

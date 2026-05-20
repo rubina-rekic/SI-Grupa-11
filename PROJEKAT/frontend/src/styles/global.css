@@ -782,6 +782,49 @@ body {
   pointer-events: auto;
 }
 
+.route-assignment {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 12px;
+  padding: 14px;
+  background: var(--c-slate-50);
+  border: 1px solid var(--c-slate-200);
+  border-radius: var(--r-sm);
+}
+
+.route-assignment__toggle {
+  width: auto;
+  min-width: 170px;
+  padding-inline: 16px;
+}
+
+.route-assignment__confirm {
+  width: auto;
+  min-width: 150px;
+}
+
+.route-assignment__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.route-assignment__notice {
+  padding: 10px 12px;
+  color: var(--c-amber);
+  background: var(--c-amber-bg);
+  border: 1px solid #e7c98c;
+  border-radius: var(--r-sm);
+  font-size: .86rem;
+  font-weight: 600;
+}
+
+.route-assignment__hint {
+  color: var(--c-slate-500);
+  font-size: .82rem;
+}
+
 
 /* ════════════════════════════════════════════════════════════
    Responzivnost
