@@ -32,6 +32,38 @@ public class RoutesController : ControllerBase
         return Ok(route);
     }
 
+    [HttpGet("{id}/available-postmen")]
+    [Authorize(Roles = $"{UserRole.Administrator},{UserRole.Dispatcher}")]
+    public async Task<IActionResult> GetAvailablePostmen(Guid id)
+    {
+        try
+        {
+            var postmen = await _routeService.GetAvailablePostmenAsync(id);
+            return Ok(postmen);
+        }
+        catch (InvalidOperationException ex)
+        {
+            return NotFound(new { Message = ex.Message });
+        }
+    }
+
+    [HttpPut("{id}/assign")]
+    [Authorize(Roles = $"{UserRole.Administrator},{UserRole.Dispatcher}")]
+    public async Task<IActionResult> Assign(Guid id, [FromBody] AssignRouteRequest request)
+    {
+        var dispatcherName = User.FindFirst(ClaimTypes.Name)?.Value ?? "Nepoznat";
+
+        try
+        {
+            var route = await _routeService.AssignRouteAsync(id, request, dispatcherName);
+            return Ok(route);
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(new { Message = ex.Message });
+        }
+    }
+
     [HttpPut("{id}/reorder")]
     [Authorize(Roles = $"{UserRole.Administrator},{UserRole.Dispatcher}")]
     public async Task<IActionResult> Reorder(Guid id, [FromBody] ReorderRouteRequest request)

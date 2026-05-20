@@ -24,6 +24,11 @@ public sealed class MailboxesController : ControllerBase
         [FromBody] CreateMailboxRequest request,
         CancellationToken cancellationToken)
     {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+
         try
         {
             var command = new CreateMailboxCommand(

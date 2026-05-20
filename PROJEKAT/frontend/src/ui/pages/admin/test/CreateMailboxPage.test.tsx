@@ -15,6 +15,29 @@ vi.mock('../../../../infrastructure/api/mailboxes/mailboxesApi', () => ({
   checkSerialNumberExists: vi.fn().mockResolvedValue(false),
   MailboxType: { WallSmall: 1, StandaloneLarge: 2, IndoorResidential: 3, SpecialPriority: 4 },
   MailboxPriority: { Visok: 1, Srednji: 2, Nizak: 3 },
+  MailboxStatus: { Prazan: 0, Pun: 1 },
+  MailboxWorkingDays: {
+    None: 0,
+    Ponedjeljak: 1,
+    Utorak: 2,
+    Srijeda: 4,
+    Cetvrtak: 8,
+    Petak: 16,
+    Subota: 32,
+    Nedjelja: 64,
+    RadniDani: 31,
+    Vikend: 96,
+    SvakiDan: 127,
+  },
+  workingDayBits: [
+    { name: 'Ponedjeljak', bit: 1 },
+    { name: 'Utorak', bit: 2 },
+    { name: 'Srijeda', bit: 4 },
+    { name: 'Cetvrtak', bit: 8 },
+    { name: 'Petak', bit: 16 },
+    { name: 'Subota', bit: 32 },
+    { name: 'Nedjelja', bit: 64 },
+  ],
   mailboxTypeLabels: {
     1: 'Zidni (mali)',
     2: 'Samostojeći (veliki)',
@@ -23,16 +46,26 @@ vi.mock('../../../../infrastructure/api/mailboxes/mailboxesApi', () => ({
   },
 }))
 
-vi.mock('../../../../infrastructure/validation/availabilitySchema', () => ({
-  availabilitySchema: { and: () => ({}) },
-  mapAvailabilityToRequest: vi.fn().mockReturnValue({
-    isAlwaysAvailable: false,
-    slot1Start: null,
-    slot1End: null,
-    slot2Start: null,
-    slot2End: null,
-  }),
-}))
+vi.mock('../../../../infrastructure/validation/availabilitySchema', async () => {
+  const { z } = await import('zod')
+  return {
+    availabilitySchema: z.object({
+      isAlwaysAvailable: z.boolean().optional(),
+      hasSecondSlot: z.boolean().optional(),
+      slot1Start: z.string().optional(),
+      slot1End: z.string().optional(),
+      slot2Start: z.string().optional(),
+      slot2End: z.string().optional(),
+    }),
+    mapAvailabilityToRequest: vi.fn().mockReturnValue({
+      isAlwaysAvailable: false,
+      slot1Start: null,
+      slot1End: null,
+      slot2Start: null,
+      slot2End: null,
+    }),
+  }
+})
 
 vi.mock('../../../components/mailboxes/AvailabilitySection', () => ({
   AvailabilitySection: () => <div data-testid="availability-section" />,
@@ -164,12 +197,17 @@ describe('CreateMailboxPage — PBI-017', () => {
       expect(screen.getByText(/odabrana lokacija/i)).toBeInTheDocument()
     })
 
-    it('automatski popunjava adresu iz mape', async () => {
+    it('Å¡alje adresu pronaÄ‘enu na mapi', async () => {
       const user = userEvent.setup()
+      vi.mocked(createMailbox).mockResolvedValue({} as MailboxResponse)
       renderPage()
       await user.click(screen.getByTestId('select-location-btn'))
-      const addressInput = screen.getByLabelText(/adresa/i) as HTMLInputElement
-      expect(addressInput.value).toBe('Titova 1, Sarajevo')
+      await user.type(screen.getByLabelText(/serijski broj/i), 'SN001')
+      await user.click(screen.getByRole('button', { name: /sačuvaj sandučić/i }))
+
+      await waitFor(() => {
+        expect(createMailbox).toHaveBeenCalledWith(expect.objectContaining({ address: 'Titova 1, Sarajevo' }))
+      })
     })
   })
 

@@ -35,12 +35,16 @@ public class Route
 
     public DateTime? LastReorderedAt { get; set; }
     public string? LastReorderedBy { get; set; }
+
+    public DateTime? AssignedAt { get; set; }
+    public string? AssignedBy { get; set; }
 }
 
 public enum RouteStatus
 {
-    Planirana,
-    UProgresu,
-    Zavrsena,
-    Otkazana
+    Planirana = 0,
+    UProgresu = 1,
+    Zavrsena = 2,
+    Otkazana = 3,
+    Dodijeljena = 4
 }

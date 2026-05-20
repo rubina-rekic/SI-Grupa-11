@@ -4,6 +4,7 @@ public class RouteResponse
 {
     public Guid Id { get; set; }
     public Guid PostmanId { get; set; }
+    public string? PostmanName { get; set; }
     public DateOnly Date { get; set; }
     public TimeOnly PlannedStartTime { get; set; }
     public TimeOnly? PlannedEndTime { get; set; }
@@ -15,6 +16,8 @@ public class RouteResponse
     
     public DateTime? LastReorderedAt { get; set; }
     public string? LastReorderedBy { get; set; }
+    public DateTime? AssignedAt { get; set; }
+    public string? AssignedBy { get; set; }
 
     // Debug info for transparency
     public int TotalMailboxesCount { get; set; }
