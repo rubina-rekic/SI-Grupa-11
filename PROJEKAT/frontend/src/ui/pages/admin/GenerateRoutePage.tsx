@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react"
+import { useEffect, useMemo, useRef, useState } from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { z } from "zod"
@@ -9,7 +9,7 @@ import "leaflet/dist/leaflet.css"
 import { Layout } from "../../components/Layout/Layout"
 import { LeafletRoutingMachine } from "../../components/common/LeafletRoutingMachine"
 import { routesApi } from "../../../infrastructure/api/routesApi"
-import type { RouteResponse } from "../../../infrastructure/api/routesApi"
+import type { RouteItemResponse, RouteResponse } from "../../../infrastructure/api/routesApi"
 import { getUsers } from "../../../infrastructure/api/users/usersApi"
 import type { UserListDto } from "../../../infrastructure/api/users/usersApi"
 
@@ -50,12 +50,44 @@ function priorityColors(priority: string) {
   return { bg: "#dcfce7", fg: "#166534" }
 }
 
+const DEPOT_LAT = 43.8563
+const DEPOT_LNG = 18.4131
+const SPEED_KMH = 30
+const STOP_MINUTES = 5
+
+function euclideanDistance(lat1: number, lng1: number, lat2: number, lng2: number) {
+  return Math.sqrt((lat2 - lat1) ** 2 + (lng2 - lng1) ** 2)
+}
+
+function recalculateArrivals(items: RouteItemResponse[], startTime: string): RouteItemResponse[] {
+  const [startH, startM] = startTime.split(":").map(Number)
+  let totalMinutes = startH * 60 + startM
+  let currentLat = DEPOT_LAT
+  let currentLng = DEPOT_LNG
+
+  return items.map((item) => {
+    const dist = euclideanDistance(currentLat, currentLng, item.latitude, item.longitude)
+    const travelMin = Math.round((dist * 111) / SPEED_KMH * 60)
+    totalMinutes += travelMin
+    const h = Math.floor(totalMinutes / 60) % 24
+    const m = totalMinutes % 60
+    const estimatedArrivalTime = `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}:00`
+    currentLat = item.latitude
+    currentLng = item.longitude
+    totalMinutes += STOP_MINUTES
+    return { ...item, estimatedArrivalTime }
+  })
+}
+
 export default function GenerateRoutePage() {
   const [postmen, setPostmen] = useState<UserListDto[]>([])
   const [routeData, setRouteData] = useState<RouteResponse | null>(null)
   const [loading, setLoading] = useState(false)
   const [fetchingUsers, setFetchingUsers] = useState(true)
   const [selectedItemId, setSelectedItemId] = useState<string | null>(null)
+  const [localItems, setLocalItems] = useState<RouteItemResponse[]>([])
+  const [saving, setSaving] = useState(false)
+  const originalItemsRef = useRef<RouteItemResponse[]>([])
 
   const {
     register,
@@ -97,7 +129,10 @@ export default function GenerateRoutePage() {
         plannedStartTime: `${data.plannedStartTime}:00`,
       })
 
+      const sortedItems = [...result.routeItems].sort((a, b) => a.order - b.order)
       setRouteData(result)
+      setLocalItems(sortedItems)
+      originalItemsRef.current = sortedItems
 
       if (result.exceedsStandardTime) {
         toast.warning("Upozorenje: Ruta premašuje standardno radno vrijeme.")
@@ -123,12 +158,64 @@ export default function GenerateRoutePage() {
   }, [routeData])
 
   const routeWaypoints = useMemo<Array<[number, number]>>(() => {
-    if (!routeData) {
-      return []
-    }
+    if (localItems.length === 0) return []
+    return localItems.map((item) => [item.latitude, item.longitude])
+  }, [localItems])
 
-    return routeData.routeItems.map((item) => [item.latitude, item.longitude])
-  }, [routeData])
+  const isRouteEditable = routeData
+    ? routeData.status !== "UProgresu" && routeData.status !== "Zavrsena"
+    : false
+
+  const hasLocalChanges = localItems.some((item, idx) => {
+    const orig = originalItemsRef.current[idx]
+    return orig && orig.id !== item.id
+  })
+
+  function moveItem(index: number, direction: -1 | 1) {
+    const newItems = [...localItems]
+    const swapWith = index + direction
+    ;[newItems[index], newItems[swapWith]] = [newItems[swapWith], newItems[index]]
+
+    const reindexed = newItems.map((item, i) => ({ ...item, order: i + 1 }))
+    const withArrivals = recalculateArrivals(reindexed, routeData!.plannedStartTime)
+
+    const origIds = originalItemsRef.current.map((i) => i.id)
+    const updated = withArrivals.map((item) => ({
+      ...item,
+      isManuallyReordered: origIds[item.order - 1] !== item.id
+    }))
+
+    setLocalItems(updated)
+  }
+
+  function resetToOriginal() {
+    const reset = originalItemsRef.current.map((item, i) => ({
+      ...item,
+      order: i + 1,
+      isManuallyReordered: false
+    }))
+    setLocalItems(recalculateArrivals(reset, routeData!.plannedStartTime))
+  }
+
+  async function saveReorder() {
+    if (!routeData) return
+    setSaving(true)
+    try {
+      const result = await routesApi.reorderRoute(
+        routeData.id,
+        localItems.map((item) => ({ routeItemId: item.id, newOrder: item.order }))
+      )
+      const sortedItems = [...result.routeItems].sort((a, b) => a.order - b.order)
+      setRouteData(result)
+      setLocalItems(sortedItems)
+      originalItemsRef.current = sortedItems
+      toast.success("Izmjene redoslijeda su uspješno sačuvane.")
+    } catch {
+      toast.error("Greška pri čuvanju izmjena redoslijeda.")
+    } finally {
+      setSaving(false)
+    }
+  }
 
   return (
     <Layout>
@@ -272,21 +359,29 @@ export default function GenerateRoutePage() {
 
               <section className="form-card" style={{ maxWidth: "unset" }}>
                 <div className="form-card__body" style={{ gap: "12px", padding: 0 }}>
-                  <div style={{ padding: "18px 24px 0 24px" }}>
+                  <div style={{ padding: "18px 24px 0 24px", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                     <h2 style={{ margin: 0, fontSize: "1.1rem", color: "#1e2d3d" }}>Hronološka lista lokacija</h2>
+                    {!isRouteEditable && (
+                      <span style={{ fontSize: "0.82rem", color: "#b45309", fontWeight: 600 }}>
+                        Izmjena redoslijeda nije dostupna za rute u toku ili završene rute.
+                      </span>
+                    )}
                   </div>
                   <div style={{ overflowX: "auto", borderTop: "1px solid #e2e8f0" }}>
                     <table style={{ width: "100%", borderCollapse: "collapse" }}>
                       <thead>
                         <tr style={{ background: "#f8fafc", color: "#334155", textAlign: "left" }}>
-                          <th style={{ padding: "12px 16px", borderBottom: "1px solid #e2e8f0", width: "70px" }}>#</th>
+                          <th style={{ padding: "12px 16px", borderBottom: "1px solid #e2e8f0", width: "80px" }}>#</th>
                           <th style={{ padding: "12px 16px", borderBottom: "1px solid #e2e8f0" }}>Adresa</th>
                           <th style={{ padding: "12px 16px", borderBottom: "1px solid #e2e8f0", width: "160px" }}>Prioritet</th>
                           <th style={{ padding: "12px 16px", borderBottom: "1px solid #e2e8f0", width: "180px" }}>Procijenjeno vrijeme</th>
+                          {isRouteEditable && (
+                            <th style={{ padding: "12px 16px", borderBottom: "1px solid #e2e8f0", width: "100px", textAlign: "center" }}>Redoslijed</th>
+                          )}
                         </tr>
                       </thead>
                       <tbody>
-                        {routeData.routeItems.map((item) => {
+                        {localItems.map((item, index) => {
                           const colors = priorityColors(item.priority)
                           const isSelected = selectedItemId === item.id
                           return (
@@ -300,7 +395,12 @@ export default function GenerateRoutePage() {
                                 transition: "background-color 0.2s",
                               }}
                             >
-                              <td style={{ padding: "12px 16px", fontWeight: 700, color: "#1e2d3d" }}>{item.order}</td>
+                              <td style={{ padding: "12px 16px", fontWeight: 700, color: "#1e2d3d" }}>
+                                {item.order}
+                                {item.isManuallyReordered && (
+                                  <span title="Ručno premješteno" style={{ marginLeft: "6px", color: "#d97706", fontSize: "0.85rem" }}>✎</span>
+                                )}
+                              </td>
                               <td style={{ padding: "12px 16px", color: "#334155" }}>{item.address}</td>
                               <td style={{ padding: "12px 16px" }}>
                                 <span
@@ -318,12 +418,72 @@ export default function GenerateRoutePage() {
                                 </span>
                               </td>
                               <td style={{ padding: "12px 16px", color: "#334155", fontWeight: 600 }}>{toHoursAndMinutes(item.estimatedArrivalTime)}</td>
+                              {isRouteEditable && (
+                                <td style={{ padding: "8px 16px", textAlign: "center" }} onClick={(e) => e.stopPropagation()}>
+                                  <div style={{ display: "flex", gap: "4px", justifyContent: "center" }}>
+                                    <button
+                                      disabled={index === 0}
+                                      onClick={() => moveItem(index, -1)}
+                                      title="Pomjeri gore"
+                                      style={{
+                                        width: "28px", height: "28px", border: "1px solid #cbd5e1",
+                                        borderRadius: "4px", background: index === 0 ? "#f1f5f9" : "#fff",
+                                        cursor: index === 0 ? "not-allowed" : "pointer",
+                                        color: index === 0 ? "#94a3b8" : "#334155",
+                                        fontWeight: 700, fontSize: "0.9rem", lineHeight: 1,
+                                      }}
+                                    >↑</button>
+                                    <button
+                                      disabled={index === localItems.length - 1}
+                                      onClick={() => moveItem(index, 1)}
+                                      title="Pomjeri dolje"
+                                      style={{
+                                        width: "28px", height: "28px", border: "1px solid #cbd5e1",
+                                        borderRadius: "4px", background: index === localItems.length - 1 ? "#f1f5f9" : "#fff",
+                                        cursor: index === localItems.length - 1 ? "not-allowed" : "pointer",
+                                        color: index === localItems.length - 1 ? "#94a3b8" : "#334155",
+                                        fontWeight: 700, fontSize: "0.9rem", lineHeight: 1,
+                                      }}
+                                    >↓</button>
+                                  </div>
+                                </td>
+                              )}
                             </tr>
                           )
                         })}
                       </tbody>
                     </table>
                   </div>
+                  {isRouteEditable && (
+                    <div style={{ padding: "16px 24px", display: "flex", gap: "12px", borderTop: "1px solid #e2e8f0" }}>
+                      <button
+                        onClick={resetToOriginal}
+                        disabled={!hasLocalChanges}
+                        style={{
+                          padding: "8px 16px", borderRadius: "6px", border: "1px solid #cbd5e1",
+                          background: hasLocalChanges ? "#fff" : "#f8fafc",
+                          color: hasLocalChanges ? "#334155" : "#94a3b8",
+                          cursor: hasLocalChanges ? "pointer" : "not-allowed",
+                          fontWeight: 600, fontSize: "0.88rem",
+                        }}
+                      >
+                        Resetuj na originalni redoslijed
+                      </button>
+                      <button
+                        onClick={saveReorder}
+                        disabled={!hasLocalChanges || saving}
+                        style={{
+                          padding: "8px 16px", borderRadius: "6px", border: "none",
+                          background: hasLocalChanges && !saving ? "#2563eb" : "#93c5fd",
+                          color: "#fff",
+                          cursor: hasLocalChanges && !saving ? "pointer" : "not-allowed",
+                          fontWeight: 600, fontSize: "0.88rem",
+                        }}
+                      >
+                        {saving ? "Čuvanje..." : "Sačuvaj izmjene"}
+                      </button>
+                    </div>
+                  )}
                 </div>
               </section>
             </>

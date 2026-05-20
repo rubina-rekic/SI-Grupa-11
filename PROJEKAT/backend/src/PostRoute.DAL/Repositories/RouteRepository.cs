@@ -36,6 +36,13 @@ public class RouteRepository : IRouteRepository
             .FirstOrDefaultAsync(r => r.PostmanId == postmanId && r.Date == date, cancellationToken);
     }
 
+    public async Task<Route> UpdateAsync(Route route, CancellationToken cancellationToken = default)
+    {
+        _context.Routes.Update(route);
+        await _context.SaveChangesAsync(cancellationToken);
+        return route;
+    }
+
     public async Task<Dictionary<Guid, DateOnly>> GetLastIncludedDatesByMailboxIdsAsync(
         IEnumerable<Guid> mailboxIds,
         DateOnly upToDate,

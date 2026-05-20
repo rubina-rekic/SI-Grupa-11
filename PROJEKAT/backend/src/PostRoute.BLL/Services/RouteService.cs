@@ -178,9 +178,61 @@ public class RouteService : IRouteService
                 Order = ri.Order,
                 EstimatedArrivalTime = ri.EstimatedArrivalTime,
                 Priority = ri.Mailbox.Priority.ToString(),
-                Status = ri.Status
+                Status = ri.Status,
+                IsManuallyReordered = false
             }).ToList()
         };
+    }
+
+    public async Task<RouteResponse> ReorderRouteAsync(Guid routeId, ReorderRouteRequest request, string reorderedBy, CancellationToken cancellationToken = default)
+    {
+        var route = await _routeRepository.GetByIdAsync(routeId, cancellationToken)
+            ?? throw new InvalidOperationException("Ruta nije pronađena.");
+
+        if (route.Status == RouteStatus.UProgresu || route.Status == RouteStatus.Zavrsena)
+            throw new InvalidOperationException("Izmjena redoslijeda nije dostupna za rute u toku ili završene rute.");
+
+        var orderMap = request.Items.ToDictionary(i => i.RouteItemId, i => i.NewOrder);
+
+        // Skup ID-ova koji su zaista premješteni (imaju drugačiji order nego što je bio)
+        var originalOrderMap = route.RouteItems.ToDictionary(ri => ri.Id, ri => ri.Order);
+
+        foreach (var item in route.RouteItems)
+        {
+            if (orderMap.TryGetValue(item.Id, out var newOrder))
+            {
+                item.IsManuallyReordered = originalOrderMap[item.Id] != newOrder;
+                item.Order = newOrder;
+            }
+        }
+
+        // Ponovna kalkulacija EstimatedArrivalTime po novom redoslijedu
+        var sorted = route.RouteItems.OrderBy(ri => ri.Order).ToList();
+        decimal currentLat = StartingLat;
+        decimal currentLng = StartingLng;
+        TimeOnly currentTime = route.PlannedStartTime;
+
+        foreach (var item in sorted)
+        {
+            var distance = CalculateEuclideanDistance(currentLat, currentLng, item.Mailbox.Latitude, item.Mailbox.Longitude);
+            int travelMinutes = CalculateTravelMinutes(distance);
+            currentTime = currentTime.AddMinutes(travelMinutes);
+            item.EstimatedArrivalTime = currentTime;
+            currentTime = currentTime.AddMinutes(StopDurationMinutes);
+            currentLat = item.Mailbox.Latitude;
+            currentLng = item.Mailbox.Longitude;
+        }
+
+        var totalDuration = (int)(currentTime - route.PlannedStartTime).TotalMinutes;
+        route.PlannedEndTime = currentTime;
+        route.TotalDurationMinutes = totalDuration;
+        route.ExceedsStandardTime = totalDuration > 480;
+        route.LastReorderedAt = DateTime.UtcNow;
+        route.LastReorderedBy = reorderedBy;
+
+        await _routeRepository.UpdateAsync(route, cancellationToken);
+
+        return MapToResponse(route, null, null, null);
     }
 
     private bool IsEligibleByPriority(
@@ -264,6 +316,8 @@ public class RouteService : IRouteService
             TotalDurationMinutes = route.TotalDurationMinutes,
             Status = route.Status.ToString(),
             ExceedsStandardTime = route.ExceedsStandardTime,
+            LastReorderedAt = route.LastReorderedAt,
+            LastReorderedBy = route.LastReorderedBy,
             TotalMailboxesCount = totalMailboxesCount ?? 0,
             ActiveMailboxesCount = activeMailboxesCount ?? 0,
             DayFilteredMailboxesCount = eligibleMailboxesCount ?? orderedItems.Count,
@@ -277,7 +331,8 @@ public class RouteService : IRouteService
                 Order = ri.Order,
                 EstimatedArrivalTime = ri.EstimatedArrivalTime,
                 Priority = ri.Mailbox.Priority.ToString(),
-                Status = ri.Status
+                Status = ri.Status,
+                IsManuallyReordered = ri.IsManuallyReordered
             }).ToList()
         };
     }

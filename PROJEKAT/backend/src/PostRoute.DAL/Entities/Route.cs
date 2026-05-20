@@ -32,6 +32,9 @@ public class Route
     public ICollection<RouteItem> RouteItems { get; set; } = new List<RouteItem>();
     
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
+    public DateTime? LastReorderedAt { get; set; }
+    public string? LastReorderedBy { get; set; }
 }
 
 public enum RouteStatus

@@ -21,4 +21,6 @@ public class RouteItem
     public TimeOnly EstimatedArrivalTime { get; set; }
 
     public string Status { get; set; } = "Planirano";
+
+    public bool IsManuallyReordered { get; set; } = false;
 }

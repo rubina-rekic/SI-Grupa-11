@@ -10,6 +10,7 @@ export interface RouteItemResponse {
     estimatedArrivalTime: string;
     priority: string;
     status: string;
+    isManuallyReordered: boolean;
 }
 
 export interface RouteResponse {
@@ -22,7 +23,14 @@ export interface RouteResponse {
     totalDurationMinutes: number;
     status: string;
     exceedsStandardTime: boolean;
+    lastReorderedAt: string | null;
+    lastReorderedBy: string | null;
     routeItems: RouteItemResponse[];
+}
+
+export interface ReorderItem {
+    routeItemId: string;
+    newOrder: number;
 }
 
 export interface GenerateRouteRequest {
@@ -43,15 +51,28 @@ export const routesApi = {
     },
 
     generateRoute: async (request: GenerateRouteRequest): Promise<RouteResponse> => {
-        const response = await httpClient<RouteResponse>('/api/routes/generate', { 
-            method: 'POST', 
-            body: request 
+        const response = await httpClient<RouteResponse>('/api/routes/generate', {
+            method: 'POST',
+            body: request
         });
-        
+
         if (response.error || !response.data) {
             throw response;
         }
-        
+
+        return response.data;
+    },
+
+    reorderRoute: async (routeId: string, items: ReorderItem[]): Promise<RouteResponse> => {
+        const response = await httpClient<RouteResponse>(`/api/routes/${routeId}/reorder`, {
+            method: 'PUT',
+            body: { items }
+        });
+
+        if (response.error || !response.data) {
+            throw response;
+        }
+
         return response.data;
     }
 };

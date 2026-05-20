@@ -6,4 +6,5 @@ public interface IRouteService
 {
     Task<RouteResponse> GenerateRouteAsync(GenerateRouteRequest request, CancellationToken cancellationToken = default);
     Task<RouteResponse?> GetRouteDetailsAsync(Guid routeId, CancellationToken cancellationToken = default);
+    Task<RouteResponse> ReorderRouteAsync(Guid routeId, ReorderRouteRequest request, string reorderedBy, CancellationToken cancellationToken = default);
 }

@@ -11,4 +11,6 @@ public interface IRouteRepository
         IEnumerable<Guid> mailboxIds,
         DateOnly upToDate,
         CancellationToken cancellationToken = default);
+
+    Task<Route> UpdateAsync(Route route, CancellationToken cancellationToken = default);
 }

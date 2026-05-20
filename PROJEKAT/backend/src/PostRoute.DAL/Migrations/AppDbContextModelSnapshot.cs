@@ -157,6 +157,12 @@ namespace PostRoute.DAL.Migrations
                     b.Property<bool>("ExceedsStandardTime")
                         .HasColumnType("boolean");
 
+                    b.Property<DateTime?>("LastReorderedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("LastReorderedBy")
+                        .HasColumnType("text");
+
                     b.Property<TimeOnly?>("PlannedEndTime")
                         .HasColumnType("time");
 
@@ -190,6 +196,9 @@ namespace PostRoute.DAL.Migrations
 
                     b.Property<TimeOnly>("EstimatedArrivalTime")
                         .HasColumnType("time");
+
+                    b.Property<bool>("IsManuallyReordered")
+                        .HasColumnType("boolean");
 
                     b.Property<Guid>("MailboxId")
                         .HasColumnType("uuid");
