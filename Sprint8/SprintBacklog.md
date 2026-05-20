@@ -7,9 +7,9 @@
 | ID | Naziv stavke / zadatka | Odgovorna osoba | Procjena | Status | Napomena |
 |---|---|---|---|---|---|
 | PBI-022 / US-22 | Generisanje dnevne rute | Emrah, Kerim | 8h | Done | Na osnovu GPS koordinata i prioriteta sandučića kreirati prijedlog dnevne rute; Euklidska udaljenost, prioritetno ponderisanje, loader za duže proračune |
-| PBI-023 / US-23 | Dodjela rute poštaru | Ibrahim, Faruk | 3h | To Do | Odabir poštara iz padajućeg menija, promjena statusa rute u "Dodijeljena", evidencija autora i vremena dodjele |
+| PBI-023 / US-23 | Dodjela rute poštaru | Ibrahim, Faruk | 3h | Done | Odabir poštara iz padajućeg menija, promjena statusa rute u "Dodijeljena", evidencija autora i vremena dodjele |
 | PBI-024 / US-24 | Pregled detalja rute | Nejla, Aldin | 3h 30min | Done | Interaktivna mapa s pinovima i linijom rute, hronološka lista sandučića, procijenjeno trajanje, sinhronizacija mapa–lista |
-| PBI-025 / US-25 | Ručna izmjena redoslijeda obilaska | Rubina, Emrah | 5h | To Do | Dugmad ↑/↓ ili drag-and-drop, ponovna kalkulacija vremena, označavanje izmijenjenih tačaka, resetovanje na originalni redoslijed |
+| PBI-025 / US-25 | Ručna izmjena redoslijeda obilaska | Rubina, Emrah | 5h | Done | Dugmad ↑/↓ ili drag-and-drop, ponovna kalkulacija vremena, označavanje izmijenjenih tačaka, resetovanje na originalni redoslijed |
 
 ---
 

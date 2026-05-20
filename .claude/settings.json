@@ -2,7 +2,15 @@
   "permissions": {
     "allow": [
       "Bash(git fetch *)",
-      "Bash(git stash *)"
+      "Bash(git stash *)",
+      "Bash(Get-ChildItem -Force)",
+      "Bash(Select-Object Name, Mode)",
+      "Bash(Get-Process -Name dotnet -ErrorAction SilentlyContinue)",
+      "Bash(Select-Object Id, ProcessName, StartTime)",
+      "PowerShell(Get-Process -Name dotnet -ErrorAction SilentlyContinue)",
+      "Bash(dotnet restore *)",
+      "Bash(docker start *)",
+      "Bash(dir \"c:\\\\Users\\\\user\\\\Documents\\\\Programiranje\\\\Repozitorij\\\\SI-Grupa-11\\\\PROJEKAT\\\\backend\\\\src\\\\PostRoute.Api\" /B)"
     ]
   }
 }
