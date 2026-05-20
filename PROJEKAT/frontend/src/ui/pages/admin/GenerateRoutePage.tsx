@@ -87,6 +87,7 @@ export default function GenerateRoutePage() {
   const [selectedItemId, setSelectedItemId] = useState<string | null>(null)
   const [localItems, setLocalItems] = useState<RouteItemResponse[]>([])
   const [saving, setSaving] = useState(false)
+  const [hasLocalChanges, setHasLocalChanges] = useState(false)
   const originalItemsRef = useRef<RouteItemResponse[]>([])
 
   const {
@@ -132,6 +133,7 @@ export default function GenerateRoutePage() {
       const sortedItems = [...result.routeItems].sort((a, b) => a.order - b.order)
       setRouteData(result)
       setLocalItems(sortedItems)
+      setHasLocalChanges(false)
       originalItemsRef.current = sortedItems
 
       if (result.exceedsStandardTime) {
@@ -166,11 +168,6 @@ export default function GenerateRoutePage() {
     ? routeData.status !== "UProgresu" && routeData.status !== "Zavrsena"
     : false
 
-  const hasLocalChanges = localItems.some((item, idx) => {
-    const orig = originalItemsRef.current[idx]
-    return orig && orig.id !== item.id
-  })
-
   function moveItem(index: number, direction: -1 | 1) {
     const newItems = [...localItems]
     const swapWith = index + direction
@@ -186,6 +183,7 @@ export default function GenerateRoutePage() {
     }))
 
     setLocalItems(updated)
+    setHasLocalChanges(true)
   }
 
   function resetToOriginal() {
@@ -195,6 +193,7 @@ export default function GenerateRoutePage() {
       isManuallyReordered: false
     }))
     setLocalItems(recalculateArrivals(reset, routeData!.plannedStartTime))
+    setHasLocalChanges(false)
   }
 
   async function saveReorder() {
@@ -208,6 +207,7 @@ export default function GenerateRoutePage() {
       const sortedItems = [...result.routeItems].sort((a, b) => a.order - b.order)
       setRouteData(result)
       setLocalItems(sortedItems)
+      setHasLocalChanges(false)
       originalItemsRef.current = sortedItems
       toast.success("Izmjene redoslijeda su uspješno sačuvane.")
     } catch {
@@ -229,7 +229,7 @@ export default function GenerateRoutePage() {
               </p>
             </div>
 
-            <form className="form-card__body" onSubmit={handleSubmit(onSubmit)} noValidate>
+            <form className="form-card__body" onSubmit={(e) => { void handleSubmit(onSubmit)(e) }} noValidate>
               <div className="form-row">
                 <div className="form-field">
                   <label htmlFor="postmanId" className="form-field__label">Poštar *</label>
