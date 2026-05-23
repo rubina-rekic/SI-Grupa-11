@@ -32,6 +32,25 @@ public class RoutesController : ControllerBase
         return Ok(route);
     }
 
+    [HttpGet("my-assigned-route/today")]
+    [Authorize(Roles = UserRole.PostalWorker)]
+    public async Task<IActionResult> GetMyAssignedRouteForToday()
+    {
+        var postmanId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (!Guid.TryParse(postmanId, out var postmanGuid))
+        {
+            return Unauthorized(new { Message = "Korisnik nije autentificiran." });
+        }
+
+        var route = await _routeService.GetPostmanAssignedRouteForTodayAsync(postmanGuid);
+        if (route == null)
+        {
+            return Ok(new { Message = "Nema dodijeljene rute za danas." });
+        }
+
+        return Ok(route);
+    }
+
     [HttpGet("{id}/available-postmen")]
     [Authorize(Roles = $"{UserRole.Administrator},{UserRole.Dispatcher}")]
     public async Task<IActionResult> GetAvailablePostmen(Guid id)

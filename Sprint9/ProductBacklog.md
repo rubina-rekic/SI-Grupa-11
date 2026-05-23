@@ -38,7 +38,7 @@
 | PBI-023 | Dodjela rute poštaru | Omogućiti dispečeru da dodijeli generisanu rutu konkretnom poštaru. | feature | High | 3h | Done | Sprint 8 |  |
 | PBI-024 | Pregled detalja rute | Omogućiti pregled redoslijeda obilaska, uključenih sandučića i osnovnih detalja rute. | feature | Medium | 3h 30min | Done | Sprint 8 |  |
 | PBI-025 | Ručna izmjena redoslijeda obilaska | Omogućiti dispečeru ručno prilagođavanje redoslijeda obilaska unutar rute. | feature | Medium | 5h | Done | Sprint 8 |  |
-| PBI-026 | Mobilni prikaz dodijeljene rute | Omogućiti poštaru da preko responzivnog web interfejsa vidi svoju dodijeljenu rutu. | feature | High | 5h 30min | To Do | Sprint 9 | Responzivni web |
+| PBI-026 | Mobilni prikaz dodijeljene rute | Omogućiti poštaru da preko responzivnog web interfejsa vidi svoju dodijeljenu rutu. | feature | High | 5h 30min | Done | Sprint 9 | Responzivni web |
 | PBI-027 | Ažuriranje statusa sandučića | Omogućiti poštaru da promijeni status sandučića tokom obilaska. | feature | High | 4h | To Do | Sprint 9 | Npr. ispražnjen, napunjen |
 | PBI-028 | Označavanje nedostupne lokacije | Omogućiti poštaru da evidentira da lokacija nije bila dostupna tokom obilaska. | feature | Low | 2h 30min | To Do | Sprint 9 |  |
 | PBI-029 | Praćenje statusa rute od strane dispečera | Omogućiti dispečeru uvid u to koji su sandučići obrađeni, preskočeni ili problematični. | feature | High | 5h | To Do | Sprint 9 |  |

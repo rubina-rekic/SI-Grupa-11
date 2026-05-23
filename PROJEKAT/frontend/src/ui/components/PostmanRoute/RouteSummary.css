@@ -1,0 +1,303 @@
+/* ════════════════════════════════════════════════════════════
+   RouteSummary — Dark Premium Card
+   ════════════════════════════════════════════════════════════ */
+
+.route-summary {
+    background: #0d1625;
+    border: 1px solid rgba(255,255,255,.07);
+    border-radius: 14px;
+    padding: 0;
+    overflow: hidden;
+    transition: border-color .2s, box-shadow .2s;
+}
+
+.route-summary:hover {
+    border-color: rgba(212,160,23,.2);
+    box-shadow: 0 0 0 1px rgba(212,160,23,.08), 0 8px 32px rgba(0,0,0,.3);
+}
+
+/* ── Header ──────────────────────────────────────────────── */
+
+.summary-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 18px 22px;
+    background: rgba(255,255,255,.03);
+    border-bottom: 1px solid rgba(255,255,255,.07);
+    margin-bottom: 0;
+}
+
+.summary-header h2 {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+    font-size: 14px;
+    font-weight: 700;
+    color: rgba(255,255,255,.8);
+    letter-spacing: .02em;
+    text-transform: uppercase;
+}
+
+.summary-header-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    background: rgba(99,102,241,.15);
+    color: #818cf8;
+    flex-shrink: 0;
+}
+
+/* ── Status pill ─────────────────────────────────────────── */
+
+.route-status {
+    padding: 5px 14px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+}
+
+.route-status.status-dodijeljena {
+    background: rgba(59,130,246,.12);
+    color: #60a5fa;
+    border: 1px solid rgba(59,130,246,.2);
+}
+
+.route-status.status-u\ toku {
+    background: rgba(245,158,11,.1);
+    color: #fbbf24;
+    border: 1px solid rgba(245,158,11,.2);
+}
+
+.route-status.status-završena {
+    background: rgba(34,197,94,.1);
+    color: #4ade80;
+    border: 1px solid rgba(34,197,94,.2);
+}
+
+/* ── Stats grid ──────────────────────────────────────────── */
+
+.summary-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0;
+    margin-bottom: 0;
+    border-bottom: 1px solid rgba(255,255,255,.07);
+}
+
+.summary-card {
+    position: relative;
+    background: transparent;
+    border-radius: 0;
+    padding: 20px 16px;
+    text-align: center;
+    transition: background .15s;
+}
+
+.summary-card:not(:last-child)::after {
+    content: "";
+    position: absolute;
+    right: 0;
+    top: 20%;
+    height: 60%;
+    width: 1px;
+    background: rgba(255,255,255,.07);
+}
+
+.summary-card:hover {
+    background: rgba(255,255,255,.03);
+}
+
+/* ── Card icons ──────────────────────────────────────────── */
+
+.summary-card-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+}
+
+.summary-card-icon--total {
+    background: rgba(59,130,246,.12);
+    color: #60a5fa;
+}
+
+.summary-card-icon--processed {
+    background: rgba(34,197,94,.1);
+    color: #4ade80;
+}
+
+.summary-card-icon--skipped {
+    background: rgba(239,68,68,.1);
+    color: #f87171;
+}
+
+.summary-card-icon--time {
+    background: rgba(245,158,11,.1);
+    color: #fbbf24;
+}
+
+/* ── Labels & values ─────────────────────────────────────── */
+
+.summary-label {
+    font-size: 11px;
+    color: rgba(255,255,255,.35);
+    font-weight: 600;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: .04em;
+}
+
+.summary-value {
+    font-size: 26px;
+    font-weight: 700;
+    color: rgba(255,255,255,.9);
+    letter-spacing: -.03em;
+    line-height: 1;
+}
+
+.summary-value.success {
+    color: #4ade80;
+}
+
+.summary-value.warning {
+    color: #fbbf24;
+}
+
+/* ── Progress section ────────────────────────────────────── */
+
+.progress-section {
+    padding: 18px 22px;
+}
+
+.progress-label {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 13px;
+    color: rgba(255,255,255,.4);
+    margin-bottom: 10px;
+    font-weight: 600;
+}
+
+.progress-percentage {
+    font-size: 13px;
+    font-weight: 700;
+    color: rgba(255,255,255,.75);
+}
+
+.progress-bar {
+    width: 100%;
+    height: 8px;
+    background: rgba(255,255,255,.08);
+    border-radius: 999px;
+    overflow: hidden;
+    position: relative;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #3b6d11, #5fa024, #7cc23a);
+    border-radius: 999px;
+    transition: width .6s cubic-bezier(.16, 1, .3, 1);
+    position: relative;
+    min-width: 0;
+}
+
+.progress-fill::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+        90deg,
+        rgba(255,255,255,0) 0%,
+        rgba(255,255,255,.2) 50%,
+        rgba(255,255,255,0) 100%
+    );
+    animation: progress-shimmer 2s ease-in-out infinite;
+}
+
+@keyframes progress-shimmer {
+    0%   { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+}
+
+/* ── Mobile responsive ───────────────────────────────────── */
+
+@media (max-width: 768px) {
+    .summary-header {
+        padding: 16px 18px;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .summary-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .summary-card {
+        padding: 16px 12px;
+    }
+
+    .summary-card:nth-child(2)::after {
+        display: none;
+    }
+
+    .summary-card:nth-child(1),
+    .summary-card:nth-child(2) {
+        border-bottom: 1px solid rgba(255,255,255,.07);
+    }
+
+    .summary-value {
+        font-size: 22px;
+    }
+
+    .summary-card-icon {
+        width: 32px;
+        height: 32px;
+        margin-bottom: 8px;
+    }
+
+    .progress-section {
+        padding: 16px 18px;
+    }
+}
+
+@media (max-width: 480px) {
+    .summary-header h2 {
+        font-size: 13px;
+    }
+
+    .summary-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .summary-card {
+        padding: 14px 10px;
+    }
+
+    .summary-value {
+        font-size: 20px;
+    }
+
+    .progress-section {
+        padding: 14px 16px;
+    }
+
+    .progress-bar {
+        height: 6px;
+    }
+}

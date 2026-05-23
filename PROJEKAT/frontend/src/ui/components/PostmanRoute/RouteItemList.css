@@ -1,0 +1,385 @@
+/* ════════════════════════════════════════════════════════════
+   RouteItemList — Timeline Design
+   ════════════════════════════════════════════════════════════ */
+
+.route-item-list {
+    background: #ffffff;
+    border: 1px solid var(--c-slate-200);
+    border-radius: var(--r-lg);
+    padding: 0;
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+    transition: box-shadow .2s;
+}
+
+.route-item-list:hover {
+    box-shadow: var(--shadow-md);
+}
+
+/* ── Header ──────────────────────────────────────────────── */
+
+.list-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 18px 22px;
+    background: var(--c-slate-50);
+    border-bottom: 1px solid var(--c-slate-200);
+    margin-bottom: 0;
+}
+
+.list-header h3 {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--c-navy-800);
+    letter-spacing: -.01em;
+}
+
+.list-header-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    background: var(--c-teal-bg);
+    color: var(--c-teal);
+    font-size: 14px;
+    flex-shrink: 0;
+}
+
+.item-count {
+    font-size: 11px;
+    color: var(--c-slate-500);
+    font-weight: 700;
+    background: var(--c-slate-200);
+    padding: 4px 10px;
+    border-radius: 999px;
+    letter-spacing: .02em;
+}
+
+/* ── Items container ─────────────────────────────────────── */
+
+.items-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    padding: 8px 0;
+}
+
+/* ── Individual route item ───────────────────────────────── */
+
+.route-item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px 22px;
+    border-radius: 0;
+    border-left: none;
+    background: transparent;
+    transition: background .15s ease;
+    position: relative;
+}
+
+.route-item:not(:last-child)::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 22px;
+    right: 22px;
+    height: 1px;
+    background: var(--c-slate-100);
+}
+
+.route-item:hover {
+    background: var(--c-slate-50);
+    transform: none;
+}
+
+/* Status-specific left accent */
+.route-item::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 8px;
+    bottom: 8px;
+    width: 3px;
+    border-radius: 0 3px 3px 0;
+    background: transparent;
+    transition: background .2s;
+}
+
+.route-item.obrađen::before,
+.route-item.obrađeno::before {
+    background: var(--c-green);
+}
+
+.route-item.nedostupan::before {
+    background: var(--c-red);
+}
+
+.route-item.čeka::before,
+.route-item.planirano::before {
+    background: var(--c-slate-300);
+}
+
+/* Processed items */
+.route-item.obrađen,
+.route-item.obrađeno {
+    opacity: 1;
+    border-left-color: transparent;
+}
+
+.route-item.nedostupan {
+    opacity: 1;
+    border-left-color: transparent;
+}
+
+/* ── Item number (circle) ────────────────────────────────── */
+
+.item-number {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 36px;
+    width: 36px;
+    height: 36px;
+    background: var(--c-navy-800);
+    border-radius: 10px;
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 14px;
+    flex-shrink: 0;
+    box-shadow: 0 2px 6px rgba(15, 28, 46, .15);
+    transition: transform .15s ease, box-shadow .15s ease;
+}
+
+.route-item:hover .item-number {
+    transform: scale(1.06);
+    box-shadow: 0 3px 10px rgba(15, 28, 46, .2);
+}
+
+/* Processed number styling */
+.route-item.obrađen .item-number,
+.route-item.obrađeno .item-number {
+    background: var(--c-green);
+}
+
+.route-item.nedostupan .item-number {
+    background: var(--c-red);
+}
+
+/* ── Content area ────────────────────────────────────────── */
+
+.item-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.item-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 4px;
+    flex-wrap: wrap;
+}
+
+.item-address {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--c-navy-800);
+    word-break: break-word;
+    line-height: 1.4;
+}
+
+/* Priority badge */
+.priority-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 22px;
+    height: 22px;
+    padding: 0 6px;
+    border-radius: 6px;
+    color: white;
+    font-weight: 700;
+    font-size: 11px;
+    flex-shrink: 0;
+    cursor: default;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, .15);
+}
+
+.item-details {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.estimated-time {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12px;
+    color: var(--c-slate-500);
+    font-weight: 500;
+}
+
+.time-icon {
+    font-size: 11px;
+    opacity: .7;
+}
+
+/* ── Status indicator ────────────────────────────────────── */
+
+.item-status {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    flex-shrink: 0;
+    min-width: 70px;
+}
+
+.status-indicator {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 9px;
+    font-size: 14px;
+    font-weight: 700;
+    color: white;
+    transition: transform .15s ease;
+}
+
+.route-item:hover .status-indicator {
+    transform: scale(1.08);
+}
+
+.status-indicator.status-čeka,
+.status-indicator.status-planirano {
+    background: var(--c-slate-300);
+    color: var(--c-slate-600);
+}
+
+.status-indicator.status-obrađen,
+.status-indicator.status-obrađeno {
+    background: var(--c-green);
+    box-shadow: 0 2px 6px rgba(59, 109, 17, .25);
+}
+
+.status-indicator.status-nedostupan {
+    background: var(--c-red);
+    box-shadow: 0 2px 6px rgba(163, 45, 45, .25);
+}
+
+.status-label {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--c-slate-500);
+    text-transform: uppercase;
+    letter-spacing: .04em;
+}
+
+/* ── Empty state ─────────────────────────────────────────── */
+
+.empty-state {
+    text-align: center;
+    padding: 48px 20px;
+    color: var(--c-slate-400);
+}
+
+.empty-state p {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+/* ── Mobile responsive ───────────────────────────────────── */
+
+@media (max-width: 768px) {
+    .list-header {
+        padding: 16px 18px;
+    }
+
+    .list-header h3 {
+        font-size: 15px;
+    }
+
+    .route-item {
+        gap: 12px;
+        padding: 14px 18px;
+    }
+
+    .route-item:not(:last-child)::after {
+        left: 18px;
+        right: 18px;
+    }
+
+    .item-number {
+        min-width: 32px;
+        width: 32px;
+        height: 32px;
+        font-size: 13px;
+        border-radius: 8px;
+    }
+
+    .item-address {
+        font-size: 13px;
+    }
+
+    .priority-badge {
+        min-width: 20px;
+        height: 20px;
+        font-size: 10px;
+    }
+
+    .estimated-time {
+        font-size: 11px;
+    }
+
+    .status-indicator {
+        width: 26px;
+        height: 26px;
+        font-size: 12px;
+        border-radius: 7px;
+    }
+
+    .status-label {
+        font-size: 9px;
+    }
+
+    .item-status {
+        min-width: 58px;
+    }
+}
+
+@media (max-width: 480px) {
+    .route-item {
+        flex-wrap: wrap;
+        gap: 10px;
+        padding: 14px 16px;
+    }
+
+    .route-item:not(:last-child)::after {
+        left: 16px;
+        right: 16px;
+    }
+
+    .item-status {
+        flex-direction: row;
+        justify-content: flex-end;
+        gap: 6px;
+        min-width: auto;
+    }
+
+    .status-indicator {
+        width: 24px;
+        height: 24px;
+    }
+}

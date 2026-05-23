@@ -11,6 +11,7 @@ import PostalWorkersListPage from "../../ui/pages/admin/PostalWorkersListPage"
 import MailboxListPage from "../../ui/pages/admin/MailboxListPage"
 import MailboxHistoryPage from "../../ui/pages/admin/MailboxHistoryPage"
 import GenerateRoutePage from "../../ui/pages/admin/GenerateRoutePage"
+import PostmanAssignedRoutePage from "../../ui/pages/PostmanAssignedRoutePage"
 
 function PrivateRoute({ children, requiredRole, requiredRoles }: { children: React.ReactNode; requiredRole?: string; requiredRoles?: string[] }) {
   const { currentUser, loading } = useAuth()
@@ -113,14 +114,7 @@ export function AppRouter() {
         path="/worker/route"
         element={
           <PrivateRoute requiredRole="PostalWorker">
-            <Layout>
-              <div className="page-container">
-                <div className="form-card">
-                  <h1>Moja današnja ruta</h1>
-                  <p>Funkcionalnost za poštare - prikaz rute</p>
-                </div>
-              </div>
-            </Layout>
+            <PostmanAssignedRoutePage />
           </PrivateRoute>
         }
       />
