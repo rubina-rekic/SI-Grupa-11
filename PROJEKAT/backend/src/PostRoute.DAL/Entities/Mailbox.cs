@@ -119,5 +119,14 @@ public enum MailboxStatus
     Prazan = 0,
 
     [Display(Name = "Pun")]
-    Pun = 1
+    Pun = 1,
+
+    [Display(Name = "Obrađen")]
+    Obraen = 2,
+
+    [Display(Name = "Napunjen")]
+    Napunjen = 3,
+
+    [Display(Name = "Ispraznjen")]
+    Ispraznjen = 4
 }

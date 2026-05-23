@@ -3,9 +3,10 @@ import { NavLink } from "react-router-dom"
 interface SidebarProps {
   userRole: string
   username: string
+  onNavClick?: () => void
 }
 
-export function Sidebar({ userRole, username }: SidebarProps) {
+export function Sidebar({ userRole, username, onNavClick }: SidebarProps) {
   const adminMenuItems = [
     { path: "/dashboard", label: "Dashboard", icon: "🏠" },
     { path: "/admin/users/new", label: "Upravljanje korisnicima", icon: "👥" },
@@ -58,6 +59,7 @@ export function Sidebar({ userRole, username }: SidebarProps) {
               <NavLink
                 to={item.path}
                 className={({ isActive }) => `nav-link ${isActive ? "active" : ""}`}
+                onClick={onNavClick}
               >
                 <span className="nav-icon">{item.icon}</span>
                 <span className="nav-label">{item.label}</span>

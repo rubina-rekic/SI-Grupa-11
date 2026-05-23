@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
+import { toast } from 'sonner';
 import { Layout } from '../components/Layout/Layout';
 import { RouteMap } from '../components/PostmanRoute/RouteMap';
 import { RouteItemList } from '../components/PostmanRoute/RouteItemList';
 import { RouteSummary } from '../components/PostmanRoute/RouteSummary';
 import { routesApi } from '../../infrastructure/api/routesApi';
 import type { RouteResponse } from '../../infrastructure/api/routesApi';
+import { updateMailboxStatus, mailboxStatusLabels } from '../../infrastructure/api/mailboxes/mailboxesApi';
 import './PostmanAssignedRoutePage.css';
 
 /* ── SVG Icons ───────────────────────────────────────────── */
@@ -79,6 +81,27 @@ const PostmanAssignedRoutePage: React.FC = () => {
         };
         loadRoute();
     }, []);
+
+    const handleStatusChange = async (mailboxId: string, status: number) => {
+        try {
+            await updateMailboxStatus(mailboxId, { status: status as 0 | 1 | 2 | 3 | 4 });
+            const label = mailboxStatusLabels[status as 0 | 1 | 2 | 3 | 4] ?? String(status);
+            setRoute(prev => {
+                if (!prev) return prev;
+                return {
+                    ...prev,
+                    routeItems: prev.routeItems.map(item =>
+                        item.mailboxId === mailboxId
+                            ? { ...item, mailboxStatus: label }
+                            : item
+                    )
+                };
+            });
+            toast.success(`Status sandučića ažuriran: ${label}`);
+        } catch (err) {
+            toast.error(err instanceof Error ? err.message : 'Greška pri ažuriranju statusa');
+        }
+    };
 
     const mjeseci = [
     'januar', 'februar', 'mart', 'april', 'maj', 'juni',
@@ -172,7 +195,7 @@ const PostmanAssignedRoutePage: React.FC = () => {
                             </div>
 
                             <div className="list-section">
-                                <RouteItemList items={route.routeItems} />
+                                <RouteItemList items={route.routeItems} onStatusChange={handleStatusChange} />
                             </div>
 
                             <div className="route-actions">

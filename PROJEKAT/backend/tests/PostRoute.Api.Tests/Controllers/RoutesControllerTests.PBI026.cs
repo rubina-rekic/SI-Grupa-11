@@ -190,7 +190,7 @@ public sealed class RoutesControllerTestsPBI026
         // Assert
         Assert.NotNull(result);
         var returnedRoute = (RouteResponse)result.Value!;
-        
+
         Assert.NotEmpty(returnedRoute.RouteItems);
         var firstItem = returnedRoute.RouteItems[0];
         Assert.NotEqual(Guid.Empty, firstItem.Id);
@@ -201,5 +201,32 @@ public sealed class RoutesControllerTestsPBI026
         Assert.Equal(1, firstItem.Order);
         Assert.NotNull(firstItem.Priority);
         Assert.NotNull(firstItem.Status);
+    }
+
+    [Fact]
+    public async Task GetMyAssignedRouteForToday_ShouldReturnOkWithMessage_WhenNoRouteAssignedToday()
+    {
+        // Arrange — service vraća null (ruta nije dodijeljena ili nije u pravom statusu)
+        var postmanId = Guid.Parse(_sut.ControllerContext.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
+
+        _routeServiceMock
+            .Setup(service => service.GetPostmanAssignedRouteForTodayAsync(postmanId, It.IsAny<CancellationToken>()))
+            .ReturnsAsync((RouteResponse?)null);
+
+        // Act
+        var result = await _sut.GetMyAssignedRouteForToday() as OkObjectResult;
+
+        // Assert — controller vraća 200 sa porukom, ne 404
+        Assert.NotNull(result);
+        Assert.Equal(200, result.StatusCode);
+
+        // Odgovor je anonimni objekat sa "message" poljem, ne RouteResponse
+        var value = result.Value;
+        Assert.NotNull(value);
+        Assert.IsNotType<RouteResponse>(value);
+
+        var message = value!.GetType().GetProperty("Message")?.GetValue(value) as string;
+        Assert.NotNull(message);
+        Assert.Contains("rute", message, StringComparison.OrdinalIgnoreCase);
     }
 }

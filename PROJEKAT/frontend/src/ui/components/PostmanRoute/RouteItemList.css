@@ -286,6 +286,59 @@
     letter-spacing: .04em;
 }
 
+/* ── Mailbox status badge ────────────────────────────────── */
+
+.mailbox-status-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-size: 11px;
+    font-weight: 600;
+    flex-shrink: 0;
+}
+
+/* ── Status action buttons ───────────────────────────────── */
+
+.mailbox-status-actions {
+    display: flex;
+    gap: 6px;
+    margin-top: 8px;
+    flex-wrap: wrap;
+}
+
+.mailbox-status-btn {
+    padding: 5px 11px;
+    border-radius: 6px;
+    border: 1.5px solid var(--c-slate-300);
+    background: #ffffff;
+    color: var(--c-slate-600);
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background .15s, color .15s, border-color .15s, transform .1s;
+    white-space: nowrap;
+}
+
+.mailbox-status-btn:hover:not(:disabled) {
+    background: var(--c-slate-100);
+    border-color: var(--c-slate-400);
+    transform: translateY(-1px);
+}
+
+.mailbox-status-btn:active:not(:disabled) {
+    transform: translateY(0);
+}
+
+.mailbox-status-btn:disabled {
+    opacity: .5;
+    cursor: not-allowed;
+}
+
+.mailbox-status-btn--active {
+    font-weight: 700;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, .12);
+}
+
 /* ── Empty state ─────────────────────────────────────────── */
 
 .empty-state {

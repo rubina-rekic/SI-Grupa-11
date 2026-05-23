@@ -19,6 +19,7 @@ public interface IMailboxService
         string? addressSearch,
         bool sortByPriority,
         CancellationToken cancellationToken);
+    Task<Mailbox> UpdateStatusAsync(UpdateMailboxStatusCommand command, CancellationToken cancellationToken);
     Task<bool> SerialNumberExistsAsync(string serialNumber, CancellationToken cancellationToken);
     Task<bool> SerialNumberExistsAsync(string serialNumber, Guid? excludeId, CancellationToken cancellationToken);
     Task<IEnumerable<MailboxAuditLog>> GetAuditLogAsync(Guid mailboxId, CancellationToken cancellationToken);

@@ -12,4 +12,5 @@ public class RouteItemResponse
     public string Priority { get; set; } = string.Empty;
     public string Status { get; set; } = string.Empty;
     public bool IsManuallyReordered { get; set; }
+    public string MailboxStatus { get; set; } = string.Empty;
 }

@@ -299,7 +299,8 @@ public class RouteService : IRouteService
                 EstimatedArrivalTime = ri.EstimatedArrivalTime,
                 Priority = ri.Mailbox.Priority.ToString(),
                 Status = ri.Status,
-                IsManuallyReordered = false
+                IsManuallyReordered = false,
+                MailboxStatus = ri.Mailbox.Status.ToString()
             }).ToList()
         };
     }
@@ -461,7 +462,8 @@ public class RouteService : IRouteService
                 EstimatedArrivalTime = ri.EstimatedArrivalTime,
                 Priority = ri.Mailbox.Priority.ToString(),
                 Status = ri.Status,
-                IsManuallyReordered = ri.IsManuallyReordered
+                IsManuallyReordered = ri.IsManuallyReordered,
+                MailboxStatus = ri.Mailbox.Status.ToString()
             }).ToList()
         };
     }
