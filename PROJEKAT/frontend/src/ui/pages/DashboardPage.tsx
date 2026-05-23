@@ -51,6 +51,12 @@ export default function DashboardPage() {
       </div>
 
       <div className="dashboard-card">
+        <h3>📡 Praćenje ruta</h3>
+        <p>Pratite status ruta i sandučića u realnom vremenu</p>
+        <button className="btn-primary" onClick={() => navigate("/admin/routes/dashboard")}>Praćenje ruta</button>
+      </div>
+
+      <div className="dashboard-card">
         <h3>📊 Statistika sistema</h3>
         <p>Analizirajte performanse i statistike</p>
         <button className="btn-primary" onClick={() => navigate("/admin/statistics")}>Statistike</button>
@@ -73,12 +79,9 @@ export default function DashboardPage() {
       </div>
 
       <div className="dashboard-card">
-        <h3>📋 Naredni koraci</h3>
-        <p>
-          Nakon generisanja rute dolaze dodjela poštaru, pregled detalja rute i ručna
-          izmjena redoslijeda obilaska.
-        </p>
-        <button className="btn-primary" type="button" onClick={() => navigate("/admin/routes/generate")}>Otvori generator</button>
+        <h3>📡 Praćenje ruta</h3>
+        <p>Pratite status ruta i sandučića u realnom vremenu</p>
+        <button className="btn-primary" onClick={() => navigate("/admin/routes/dashboard")}>Praćenje ruta</button>
       </div>
     </div>
   )

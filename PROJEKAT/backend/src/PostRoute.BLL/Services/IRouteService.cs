@@ -10,4 +10,5 @@ public interface IRouteService
     Task<IReadOnlyList<AvailablePostmanResponse>> GetAvailablePostmenAsync(Guid routeId, CancellationToken cancellationToken = default);
     Task<RouteResponse> AssignRouteAsync(Guid routeId, AssignRouteRequest request, string assignedBy, CancellationToken cancellationToken = default);
     Task<RouteResponse> ReorderRouteAsync(Guid routeId, ReorderRouteRequest request, string reorderedBy, CancellationToken cancellationToken = default);
+    Task<List<RouteResponse>> GetRoutesForDateAsync(DateOnly date, CancellationToken cancellationToken = default);
 }

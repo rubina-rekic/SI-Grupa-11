@@ -130,5 +130,15 @@ export const routesApi = {
         }
 
         return response.data;
+    },
+
+    getRoutesForDate: async (date: string): Promise<RouteResponse[]> => {
+        const response = await httpClient<RouteResponse[]>(`/api/routes?date=${date}`);
+
+        if (response.error || !response.data) {
+            throw response;
+        }
+
+        return response.data;
     }
 };

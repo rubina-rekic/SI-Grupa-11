@@ -420,6 +420,14 @@ public class RouteService : IRouteService
         return inSlot1 || inSlot2;
     }
 
+    public async Task<List<RouteResponse>> GetRoutesForDateAsync(DateOnly date, CancellationToken cancellationToken = default)
+    {
+        var routes = await _routeRepository.GetByDateAsync(date, cancellationToken);
+        return routes
+            .Select(r => MapToResponse(r, null, null, null))
+            .ToList();
+    }
+
     private static string ToDisplayName(User user)
     {
         var fullName = $"{user.FirstName} {user.LastName}".Trim();

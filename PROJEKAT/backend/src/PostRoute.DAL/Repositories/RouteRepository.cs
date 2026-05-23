@@ -58,6 +58,18 @@ public class RouteRepository : IRouteRepository
         return route;
     }
 
+    public async Task<List<Route>> GetByDateAsync(DateOnly date, CancellationToken cancellationToken = default)
+    {
+        return await _context.Routes
+            .Include(r => r.RouteItems)
+                .ThenInclude(ri => ri.Mailbox)
+            .Include(r => r.Postman)
+            .Where(r => r.Date == date)
+            .OrderBy(r => r.Status)
+            .ThenBy(r => r.PlannedStartTime)
+            .ToListAsync(cancellationToken);
+    }
+
     public async Task<Dictionary<Guid, DateOnly>> GetLastIncludedDatesByMailboxIdsAsync(
         IEnumerable<Guid> mailboxIds,
         DateOnly upToDate,

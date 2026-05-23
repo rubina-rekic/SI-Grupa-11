@@ -6,13 +6,13 @@
 
 | Nivo | US | Alat | Broj testova | Rezultat |
 | --- | --- | --- | --- | --- |
-| Unit - Backend (BLL servisi) | US-26, US-27 + regresija svih prethodnih | xUnit + Moq | 115 testova | PASS |
-| Unit - Backend (DAL repozitoriji) | Regresija svih prethodnih | xUnit + EF Core InMemory | 26 testova | PASS |
-| Unit - Backend (API kontroleri) | US-26, US-27 + regresija svih prethodnih | xUnit + Moq | 30 testova | PASS |
+| Unit - Backend (BLL servisi) | US-26, US-27, US-29 + regresija svih prethodnih | xUnit + Moq | 122 testa | PASS |
+| Unit - Backend (DAL repozitoriji) | US-29 + regresija svih prethodnih | xUnit + EF Core InMemory | 32 testa | PASS |
+| Unit - Backend (API kontroleri) | US-26, US-27, US-29 + regresija svih prethodnih | xUnit + Moq | 35 testova | PASS |
 
-**Ukupno verifikovano:** `dotnet test PostRoute.sln` prolazi — DAL 26/26, BLL 115/115, API 30/30. Postoji poznato MSB3277 upozorenje o transitive EF Core Relational 9.0.1/9.0.4 verzijama u API test buildu (prisutno od Sprint 8, ne utječe na testove).
+**Ukupno verifikovano:** `dotnet test PostRoute.sln` prolazi — DAL 32/32, BLL 122/122, API 35/35. Postoji poznato MSB3277 upozorenje o transitive EF Core Relational 9.0.1/9.0.4 verzijama u API test buildu (prisutno od Sprint 8, ne utječe na testove).
 
-**Prethodni sprint:** Sprint 8 imao BLL 92, DAL 26, API 15. Sprint 9 dodaje +23 BLL i +15 API testova kroz PBI-026 i PBI-027.
+**Prethodni sprint:** Sprint 8 imao BLL 92, DAL 26, API 15. Sprint 9 dodaje +30 BLL, +6 DAL i +20 API testova kroz PBI-026, PBI-027 i PBI-029.
 
 ---
 
@@ -76,6 +76,39 @@
 
 ---
 
+## PBI-029 - Praćenje statusa rute od strane dispečera (US-29)
+
+### Pokriveni AC
+
+| Nivo | AC | Test koji pokriva | Status |
+| --- | --- | --- | --- |
+| BLL | Vraća sve rute za zadani datum | `RouteServiceTestsPBI029.GetRoutesForDateAsync_ShouldReturnAllRoutes_ForGivenDate` | PASS |
+| BLL | Vraća praznu listu kada nema ruta za datum | `RouteServiceTestsPBI029.GetRoutesForDateAsync_ShouldReturnEmptyList_WhenNoRoutesForDate` | PASS |
+| BLL | Prosljeđuje tačan datum repozitoriju | `RouteServiceTestsPBI029.GetRoutesForDateAsync_ShouldPassCorrectDate_ToRepository` | PASS |
+| BLL | Mapira puno ime poštara (`FirstName LastName`) | `RouteServiceTestsPBI029.GetRoutesForDateAsync_ShouldMapPostmanName_WhenPostmanExists` | PASS |
+| BLL | Mapira status rute u string reprezentaciju | `RouteServiceTestsPBI029.GetRoutesForDateAsync_ShouldMapStatus_ToStringRepresentation` | PASS |
+| BLL | Uključuje stavke rute s `MailboxStatus` iz sandučića | `RouteServiceTestsPBI029.GetRoutesForDateAsync_ShouldIncludeRouteItems_WithMailboxStatus` | PASS |
+| BLL | Vraća rutu s ispravnim `Id` koji se podudara s originalnom rutom | `RouteServiceTestsPBI029.GetRoutesForDateAsync_ShouldReturnRouteWithId_MatchingOriginalRoute` | PASS |
+| DAL | Vraća rute za zadani datum | `RouteRepositoryTestsPBI029.GetByDateAsync_ShouldReturnRoutes_ForGivenDate` | PASS |
+| DAL | Isključuje rute za druge datume | `RouteRepositoryTestsPBI029.GetByDateAsync_ShouldExcludeRoutesForOtherDates` | PASS |
+| DAL | Vraća praznu listu kada nema ruta | `RouteRepositoryTestsPBI029.GetByDateAsync_ShouldReturnEmptyList_WhenNoRoutesForDate` | PASS |
+| DAL | Eager-load: uključuje poštara (`Postman`) | `RouteRepositoryTestsPBI029.GetByDateAsync_ShouldIncludePostman_InResult` | PASS |
+| DAL | Eager-load: uključuje stavke rute sa sandučićem (`RouteItems.Mailbox`) | `RouteRepositoryTestsPBI029.GetByDateAsync_ShouldIncludeRouteItems_WithMailbox` | PASS |
+| DAL | Sortiranje po statusu pa po planiranom početnom vremenu | `RouteRepositoryTestsPBI029.GetByDateAsync_ShouldOrderBy_StatusThenPlannedStartTime` | PASS |
+| API | `GET /api/routes?date=` vraća 200 s listom ruta | `RoutesControllerTestsPBI029.GetByDate_ShouldReturnOk_WithListOfRoutes` | PASS |
+| API | Vraća 200 s praznom listom kada nema ruta za datum | `RoutesControllerTestsPBI029.GetByDate_ShouldReturnOk_WithEmptyList_WhenNoRoutesExist` | PASS |
+| API | Kontroler prosljeđuje tačan datum servisu | `RoutesControllerTestsPBI029.GetByDate_ShouldCallService_WithCorrectDate` | PASS |
+| API | Vraća rute svih statusa u jednom pozivu | `RoutesControllerTestsPBI029.GetByDate_ShouldReturnAllStatuses_InSingleCall` | PASS |
+| API | Stavke rute sadrže `MailboxStatus` iz sandučića | `RoutesControllerTestsPBI029.GetByDate_ShouldReturnRouteItems_WithMailboxStatus` | PASS |
+
+### Fajlovi sa testovima
+
+- `PROJEKAT/backend/tests/PostRoute.BLL.Tests/Services/RouteServiceTests.PBI029.cs` — 7 BLL unit testova.
+- `PROJEKAT/backend/tests/PostRoute.DAL.Tests/Repositories/RouteRepositoryTests.PBI029.cs` — 6 DAL integration testova (EF Core InMemory). Ne referencira `PostRoute.Domain` — `User` entitet dostupan kroz `PostRoute.DAL.Entities`.
+- `PROJEKAT/backend/tests/PostRoute.Api.Tests/Controllers/RoutesControllerTests.PBI029.cs` — 5 API controller testova. Controller setup s `Dispatcher` ulogom u `ClaimsPrincipal`.
+
+---
+
 ## Komande izvrsene lokalno
 
 ```bash
@@ -83,7 +116,7 @@ cd PROJEKAT/backend
 dotnet test PostRoute.sln
 ```
 
-Rezultat: PASS — DAL 26/26, BLL 115/115, API 30/30.
+Rezultat: PASS — DAL 32/32, BLL 122/122, API 35/35.
 
 ---
 
@@ -95,3 +128,6 @@ Rezultat: PASS — DAL 26/26, BLL 115/115, API 30/30.
 | Unit - API kontroleri | US-26 | PBI-026 | `RoutesControllerTests.PBI026` | PASS |
 | Unit - BLL servisi | US-27 | PBI-027 | `MailboxServiceTests.PBI027` | PASS |
 | Unit - API kontroleri | US-27 | PBI-027 | `MailboxesControllerTests.PBI027` | PASS |
+| Unit - BLL servisi | US-29 | PBI-029 | `RouteServiceTests.PBI029` | PASS |
+| Unit - DAL repozitoriji | US-29 | PBI-029 | `RouteRepositoryTests.PBI029` | PASS |
+| Unit - API kontroleri | US-29 | PBI-029 | `RoutesControllerTests.PBI029` | PASS |

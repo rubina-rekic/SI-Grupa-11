@@ -19,6 +19,14 @@ public class RoutesController : ControllerBase
         _routeService = routeService;
     }
 
+    [HttpGet]
+    [Authorize(Roles = $"{UserRole.Administrator},{UserRole.Dispatcher}")]
+    public async Task<IActionResult> GetByDate([FromQuery] DateOnly date)
+    {
+        var routes = await _routeService.GetRoutesForDateAsync(date);
+        return Ok(routes);
+    }
+
     [HttpGet("{id}")]
     [Authorize(Roles = $"{UserRole.Administrator},{UserRole.Dispatcher}")]
     public async Task<IActionResult> GetRouteDetails(Guid id)
