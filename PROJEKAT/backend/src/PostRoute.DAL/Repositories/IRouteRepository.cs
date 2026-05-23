@@ -17,4 +17,5 @@ public interface IRouteRepository
         CancellationToken cancellationToken = default);
 
     Task<Route> UpdateAsync(Route route, CancellationToken cancellationToken = default);
+    Task<List<Route>> GetByDateAsync(DateOnly date, CancellationToken cancellationToken = default);
 }

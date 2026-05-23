@@ -11,6 +11,7 @@ import PostalWorkersListPage from "../../ui/pages/admin/PostalWorkersListPage"
 import MailboxListPage from "../../ui/pages/admin/MailboxListPage"
 import MailboxHistoryPage from "../../ui/pages/admin/MailboxHistoryPage"
 import GenerateRoutePage from "../../ui/pages/admin/GenerateRoutePage"
+import DispatcherRouteDashboardPage from "../../ui/pages/admin/DispatcherRouteDashboardPage"
 import PostmanAssignedRoutePage from "../../ui/pages/PostmanAssignedRoutePage"
 
 function PrivateRoute({ children, requiredRole, requiredRoles }: { children: React.ReactNode; requiredRole?: string; requiredRoles?: string[] }) {
@@ -156,7 +157,6 @@ export function AppRouter() {
           </PrivateRoute>
         }
       />
-      <Route path="*" element={<Navigate to="/login" replace />} />
       <Route
         path="/admin/users"
         element={
@@ -181,7 +181,15 @@ export function AppRouter() {
           </PrivateRoute>
         }
       />
-
+      <Route
+        path="/admin/routes/dashboard"
+        element={
+          <PrivateRoute requiredRoles={["Administrator", "Dispatcher"]}>
+            <DispatcherRouteDashboardPage />
+          </PrivateRoute>
+        }
+      />
+      <Route path="*" element={<Navigate to="/login" replace />} />
     </Routes>
   )
 }
