@@ -248,4 +248,87 @@ public class RouteServiceTestsPBI026
         result.RouteItems[0].Priority.Should().Be(mailbox1.Priority.ToString());
         result.RouteItems[1].Address.Should().Be(mailbox2.Address);
     }
+
+    [Fact]
+    public async Task GetPostmanAssignedRouteForTodayAsync_ShouldIncludeMailboxStatus_InRouteItems()
+    {
+        // Mailbox status se prenosi kroz RouteItemResponse.MailboxStatus
+        var postmanId = Guid.NewGuid();
+        var today = DateOnly.FromDateTime(DateTime.UtcNow);
+
+        var mailboxPun = MakeMailbox(43.85m, 18.41m);
+        mailboxPun.Status = MailboxStatus.Pun;
+
+        var mailboxPrazan = MakeMailbox(43.86m, 18.42m);
+        mailboxPrazan.Status = MailboxStatus.Prazan;
+
+        var route = new Route
+        {
+            Id = Guid.NewGuid(),
+            PostmanId = postmanId,
+            Date = today,
+            PlannedStartTime = new TimeOnly(8, 0),
+            TotalDistanceKm = 5m,
+            TotalDurationMinutes = 60,
+            Status = RouteStatus.Dodijeljena,
+            RouteItems = new List<RouteItem>
+            {
+                new() { Id = Guid.NewGuid(), MailboxId = mailboxPun.Id, Order = 1,
+                        EstimatedArrivalTime = new TimeOnly(8, 10), Status = "Planirano", Mailbox = mailboxPun },
+                new() { Id = Guid.NewGuid(), MailboxId = mailboxPrazan.Id, Order = 2,
+                        EstimatedArrivalTime = new TimeOnly(8, 20), Status = "Planirano", Mailbox = mailboxPrazan }
+            }
+        };
+
+        _routeRepositoryMock
+            .Setup(r => r.GetByPostmanAndDateAsync(postmanId, today, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(route);
+
+        var result = await _sut.GetPostmanAssignedRouteForTodayAsync(postmanId);
+
+        result.Should().NotBeNull();
+        result!.RouteItems[0].MailboxStatus.Should().Be(MailboxStatus.Pun.ToString());
+        result.RouteItems[1].MailboxStatus.Should().Be(MailboxStatus.Prazan.ToString());
+    }
+
+    [Fact]
+    public async Task GetPostmanAssignedRouteForTodayAsync_ShouldReturnRouteItemsOrderedByOrder_WhenStoredOutOfOrder()
+    {
+        // MapToResponse sortira po Order — testiramo da redosljed ne ovisi o redoslijedu u bazi
+        var postmanId = Guid.NewGuid();
+        var today = DateOnly.FromDateTime(DateTime.UtcNow);
+
+        var route = new Route
+        {
+            Id = Guid.NewGuid(),
+            PostmanId = postmanId,
+            Date = today,
+            PlannedStartTime = new TimeOnly(8, 0),
+            TotalDistanceKm = 5m,
+            TotalDurationMinutes = 60,
+            Status = RouteStatus.Dodijeljena,
+            RouteItems = new List<RouteItem>
+            {
+                // Namjerno obrnuti redosljed u listi
+                new() { Id = Guid.NewGuid(), MailboxId = Guid.NewGuid(), Order = 3,
+                        EstimatedArrivalTime = new TimeOnly(8, 30), Status = "Planirano", Mailbox = MakeMailbox() },
+                new() { Id = Guid.NewGuid(), MailboxId = Guid.NewGuid(), Order = 1,
+                        EstimatedArrivalTime = new TimeOnly(8, 10), Status = "Planirano", Mailbox = MakeMailbox() },
+                new() { Id = Guid.NewGuid(), MailboxId = Guid.NewGuid(), Order = 2,
+                        EstimatedArrivalTime = new TimeOnly(8, 20), Status = "Planirano", Mailbox = MakeMailbox() }
+            }
+        };
+
+        _routeRepositoryMock
+            .Setup(r => r.GetByPostmanAndDateAsync(postmanId, today, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(route);
+
+        var result = await _sut.GetPostmanAssignedRouteForTodayAsync(postmanId);
+
+        result.Should().NotBeNull();
+        result!.RouteItems.Should().HaveCount(3);
+        result.RouteItems[0].Order.Should().Be(1);
+        result.RouteItems[1].Order.Should().Be(2);
+        result.RouteItems[2].Order.Should().Be(3);
+    }
 }

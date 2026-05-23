@@ -172,6 +172,31 @@ public sealed class MailboxesController : ControllerBase
         return Ok(response);
     }
 
+    [HttpPatch("{id:guid}/status")]
+    public async Task<ActionResult<MailboxResponse>> UpdateStatusAsync(
+        Guid id,
+        [FromBody] UpdateMailboxStatusRequest request,
+        CancellationToken cancellationToken)
+    {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
+        var userId = HttpContext.Session.GetString("UserId");
+        if (string.IsNullOrEmpty(userId) || !Guid.TryParse(userId, out var userGuid))
+            return Unauthorized(new { message = "Korisnik nije autentificiran." });
+
+        try
+        {
+            var command = new UpdateMailboxStatusCommand(id, request.Status, userGuid, request.Reason);
+            var mailbox = await _mailboxService.UpdateStatusAsync(command, cancellationToken);
+            return Ok(MapToResponse(mailbox));
+        }
+        catch (InvalidOperationException ex) when (ex.Message.Contains("nije pronađen"))
+        {
+            return NotFound();
+        }
+    }
+
     private static MailboxResponse MapToResponse(Mailbox m) => new(
      m.Id, m.SerialNumber, m.Address, m.Latitude, m.Longitude,
      m.Type, m.Priority, m.Status, m.Capacity, m.InstallationYear,

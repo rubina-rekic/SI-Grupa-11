@@ -8,7 +8,7 @@ interface LayoutProps {
 
 export function Layout({ children }: LayoutProps) {
   const { currentUser, logout } = useAuth()
-  const [sidebarOpen, setSidebarOpen] = useState(true)
+  const [sidebarOpen, setSidebarOpen] = useState(() => window.innerWidth > 768)
 
   if (!currentUser) {
     return <div>Loading...</div>
@@ -21,10 +21,22 @@ export function Layout({ children }: LayoutProps) {
         ? "Dispečer"
         : "Poštar"
 
+  const closeSidebarOnMobile = () => {
+    if (window.innerWidth <= 768) setSidebarOpen(false)
+  }
+
   return (
     <div className="app-layout">
+      {sidebarOpen && (
+        <div className="sidebar-overlay" onClick={() => setSidebarOpen(false)} />
+      )}
+
       <div className={`sidebar-container ${sidebarOpen ? "open" : "closed"}`}>
-        <Sidebar userRole={currentUser.role} username={currentUser.username} />
+        <Sidebar
+          userRole={currentUser.role}
+          username={currentUser.username}
+          onNavClick={closeSidebarOnMobile}
+        />
       </div>
 
       <div className="main-content">

@@ -98,13 +98,19 @@ export const mailboxPriorityLabels: Record<MailboxPriority, string> = {
 
 export const MailboxStatus = {
     Prazan: 0,
-    Pun: 1
+    Pun: 1,
+    Obraen: 2,
+    Napunjen: 3,
+    Ispraznjen: 4
 } as const
 export type MailboxStatus = typeof MailboxStatus[keyof typeof MailboxStatus]
 
 export const mailboxStatusLabels: Record<MailboxStatus, string> = {
     [MailboxStatus.Prazan]: "Prazan",
-    [MailboxStatus.Pun]: "Pun"
+    [MailboxStatus.Pun]: "Pun",
+    [MailboxStatus.Obraen]: "Obrađen",
+    [MailboxStatus.Napunjen]: "Napunjen",
+    [MailboxStatus.Ispraznjen]: "Ispraznjen"
 }
 
 // US-33: Radni dani sandučića (flags enum)
@@ -269,4 +275,23 @@ export interface AuditLogDto {
 
 export function getMailboxHistory(id: string): Promise<ApiResponse<AuditLogDto[]>> {
     return httpClient<AuditLogDto[]>(`/api/mailboxes/${id}/history`, { method: "GET" })
+}
+
+export interface UpdateMailboxStatusRequest {
+    status: MailboxStatus
+    reason?: string
+}
+
+export async function updateMailboxStatus(
+    id: string,
+    request: UpdateMailboxStatusRequest
+): Promise<MailboxResponse> {
+    const response = await httpClient<MailboxResponse>(`/api/mailboxes/${id}/status`, {
+        method: "PATCH",
+        body: request
+    })
+    if (response.error || !response.data) {
+        throw new Error(response.error || "Greška pri ažuriranju statusa sandučića")
+    }
+    return response.data
 }

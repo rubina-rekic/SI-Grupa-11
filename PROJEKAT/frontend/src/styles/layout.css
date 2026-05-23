@@ -609,11 +609,36 @@
    Responzivnost
    ════════════════════════════════════════════════════════════ */
 
+.sidebar-overlay {
+  display: none;
+}
+
 @media (max-width: 768px) {
+  .sidebar-overlay {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 99;
+    background: rgba(10, 20, 40, .55);
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
+    animation: overlay-fade-in .2s ease both;
+  }
+
+  @keyframes overlay-fade-in {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+
   .sidebar-container {
     position: fixed;
     z-index: 100;
     height: 100vh;
+    /* Na mobilnom sidebar počinje zatvoren — width:0 je već definirano u .closed */
+  }
+
+  .sidebar-container.open {
+    box-shadow: 4px 0 24px rgba(10, 20, 40, .35);
   }
 
   .content-area {

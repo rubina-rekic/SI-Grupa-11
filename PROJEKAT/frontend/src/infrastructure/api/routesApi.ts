@@ -11,6 +11,7 @@ export interface RouteItemResponse {
     priority: string;
     status: string;
     isManuallyReordered: boolean;
+    mailboxStatus: string;
 }
 
 export interface RouteResponse {

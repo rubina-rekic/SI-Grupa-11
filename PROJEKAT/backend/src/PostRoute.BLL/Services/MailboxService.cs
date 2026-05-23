@@ -247,6 +247,30 @@ public class MailboxService : IMailboxService
         return new PagedResult<Mailbox>(items, total, page, pageSize);
     }
 
+    public async Task<Mailbox> UpdateStatusAsync(UpdateMailboxStatusCommand command, CancellationToken cancellationToken)
+    {
+        var mailbox = await _mailboxRepository.GetByIdAsync(command.MailboxId, cancellationToken)
+            ?? throw new InvalidOperationException("Sandučić nije pronađen.");
+
+        var auditLog = new MailboxAuditLog
+        {
+            Id = Guid.NewGuid(),
+            MailboxId = command.MailboxId,
+            UserId = command.UserId,
+            FieldName = "Status",
+            OldValue = mailbox.Status.ToString(),
+            NewValue = command.NewStatus.ToString(),
+            Action = "UPDATE",
+            Reason = command.Reason,
+            Timestamp = DateTime.UtcNow
+        };
+        await _auditLogRepository.LogAsync(auditLog, cancellationToken);
+
+        mailbox.Status = command.NewStatus;
+        mailbox.UpdatedAt = DateTime.UtcNow;
+        return await _mailboxRepository.UpdateAsync(mailbox, cancellationToken);
+    }
+
     public async Task<bool> SerialNumberExistsAsync(string serialNumber, CancellationToken cancellationToken)
         => await _mailboxRepository.SerialNumberExistsAsync(serialNumber, cancellationToken);
 
