@@ -1,0 +1,469 @@
+/* ════════════════════════════════════════════════════════════
+   PostmanAssignedRoutePage — Premium Dark Redesign
+   ════════════════════════════════════════════════════════════ */
+
+.postman-route-page {
+    max-width: 1060px;
+    margin: 0 auto;
+    padding: 0 0 48px;
+    animation: route-page-enter .5s cubic-bezier(.16, 1, .3, 1) both;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+@keyframes route-page-enter {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ══════════════════════════════════════════════════════════
+   HERO HEADER — poravnat sa sadržajem ispod
+   ══════════════════════════════════════════════════════════ */
+
+.route-header {
+    position: relative;
+    padding: 48px 48px 40px;
+    background: #080f1e;
+    overflow: hidden;
+    border: 1px solid rgba(255,255,255,.06);
+    border-radius: 14px;
+    margin: 0 48px 36px;
+}
+
+/* Noise texture overlay */
+.route-header::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    opacity: .4;
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* Large golden glow — top right */
+.route-header::after {
+    content: "";
+    position: absolute;
+    right: -80px;
+    top: -100px;
+    width: 420px;
+    height: 420px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(212, 160, 23, .13) 0%, transparent 60%);
+    pointer-events: none;
+    z-index: 0;
+}
+
+.route-header-inner {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 32px;
+    max-width: 1060px;
+    margin: 0 auto;
+}
+
+.route-header-left {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+/* Eyebrow label above the title */
+.route-header-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: #d4a017;
+}
+
+.route-header-eyebrow-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #d4a017;
+    box-shadow: 0 0 8px rgba(212, 160, 23, .7);
+    animation: pulse-dot 2.4s ease-in-out infinite;
+}
+
+@keyframes pulse-dot {
+    0%, 100% { box-shadow: 0 0 6px rgba(212,160,23,.6); }
+    50%       { box-shadow: 0 0 14px rgba(212,160,23,1); }
+}
+
+.route-header .page-title {
+    margin: 0;
+    font-size: 38px;
+    font-weight: 800;
+    color: #ffffff;
+    letter-spacing: -.035em;
+    line-height: 1.1;
+}
+
+/* Golden underline accent under title */
+.route-header .page-title span {
+    position: relative;
+    display: inline-block;
+}
+
+.route-header .page-title span::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -4px;
+    width: 100%;
+    height: 3px;
+    background: linear-gradient(90deg, #d4a017, transparent);
+    border-radius: 2px;
+}
+
+.route-header-date {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 16px;
+    background: rgba(255,255,255,.05);
+    border: 1px solid rgba(255,255,255,.09);
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    color: rgba(255,255,255,.5);
+    letter-spacing: .01em;
+    width: fit-content;
+}
+
+.route-header-date svg {
+    color: rgba(255,255,255,.3);
+    flex-shrink: 0;
+}
+
+/* Right side stats strip */
+.route-header-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 8px;
+    padding-bottom: 4px;
+}
+
+.route-header-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    background: rgba(212, 160, 23, .1);
+    border: 1px solid rgba(212, 160, 23, .25);
+    border-radius: 6px;
+    font-size: 11.5px;
+    font-weight: 700;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    color: #d4a017;
+}
+
+/* Horizontal golden line at bottom of header */
+.route-header-line {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent 0%, rgba(212,160,23,.35) 30%, rgba(212,160,23,.35) 70%, transparent 100%);
+    z-index: 1;
+}
+
+/* ══════════════════════════════════════════════════════════
+   PAGE BODY PADDING
+   ══════════════════════════════════════════════════════════ */
+
+.route-body {
+    padding: 0 48px;
+}
+
+/* ══════════════════════════════════════════════════════════
+   LOADING STATE
+   ══════════════════════════════════════════════════════════ */
+
+.loading-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 80px 20px;
+    background: #0d1625;
+    border: 1px solid rgba(255,255,255,.07);
+    border-radius: 14px;
+    box-shadow: 0 4px 32px rgba(0,0,0,.25);
+}
+
+.spinner {
+    width: 40px;
+    height: 40px;
+    border: 2px solid rgba(255,255,255,.08);
+    border-top: 2px solid #d4a017;
+    border-radius: 50%;
+    animation: spin .75s linear infinite;
+    margin-bottom: 18px;
+}
+
+@keyframes spin {
+    0%   { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.loading-container p {
+    margin: 0;
+    color: rgba(255,255,255,.35);
+    font-size: 14px;
+    font-weight: 500;
+}
+
+/* ══════════════════════════════════════════════════════════
+   ERROR STATE
+   ══════════════════════════════════════════════════════════ */
+
+.error-container { padding: 0; }
+
+.error-message {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    background: rgba(185, 28, 28, .08);
+    border: 1px solid rgba(185, 28, 28, .25);
+    border-radius: 12px;
+    padding: 20px 24px;
+    color: #fca5a5;
+}
+
+.error-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    background: rgba(185, 28, 28, .15);
+    flex-shrink: 0;
+    color: #f87171;
+    margin-top: 1px;
+}
+
+.error-message p {
+    margin: 0;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.55;
+    padding-top: 8px;
+}
+
+/* ══════════════════════════════════════════════════════════
+   NO ROUTE STATE
+   ══════════════════════════════════════════════════════════ */
+
+.no-route-container { padding: 0; }
+
+.no-route-message {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: #0d1625;
+    border: 1px solid rgba(255,255,255,.07);
+    border-radius: 14px;
+    padding: 80px 24px;
+    text-align: center;
+}
+
+.no-route-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 68px;
+    height: 68px;
+    border-radius: 18px;
+    background: rgba(255,255,255,.04);
+    border: 1px solid rgba(255,255,255,.08);
+    color: rgba(255,255,255,.2);
+    margin-bottom: 22px;
+}
+
+.no-route-message h2 {
+    margin: 0 0 10px 0;
+    font-size: 20px;
+    font-weight: 700;
+    color: rgba(255,255,255,.85);
+    letter-spacing: -.02em;
+}
+
+.no-route-message p {
+    margin: 4px 0;
+    color: rgba(255,255,255,.35);
+    font-size: 14px;
+    line-height: 1.55;
+}
+
+/* ══════════════════════════════════════════════════════════
+   ROUTE CONTENT LAYOUT
+   ══════════════════════════════════════════════════════════ */
+
+.route-content {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* ── Shared card base ─────────────────────────────────────── */
+
+.map-section {
+    background: #0d1625;
+    border: 1px solid rgba(255,255,255,.07);
+    border-radius: 14px;
+    padding: 22px 24px;
+    transition: border-color .2s, box-shadow .2s;
+}
+
+.map-section:hover {
+    border-color: rgba(212,160,23,.2);
+    box-shadow: 0 0 0 1px rgba(212,160,23,.08), 0 8px 32px rgba(0,0,0,.3);
+}
+
+.section-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0 0 16px 0;
+    font-size: 14px;
+    font-weight: 700;
+    color: rgba(255,255,255,.8);
+    letter-spacing: .02em;
+    text-transform: uppercase;
+}
+
+.section-title-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+    flex-shrink: 0;
+}
+
+.section-title-icon--map {
+    background: rgba(37, 99, 235, .15);
+    color: #60a5fa;
+}
+
+.map-help-text {
+    margin: 14px 0 0 0;
+    font-size: 12px;
+    color: rgba(255,255,255,.25);
+    font-style: italic;
+    padding-left: 2px;
+}
+
+.list-section {
+    background: transparent;
+    border-radius: 0;
+    box-shadow: none;
+}
+
+/* ── Bottom tip bar ─────────────────────────────────────────── */
+
+.route-actions {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    background: #0d1625;
+    border: 1px solid rgba(212,160,23,.15);
+    border-radius: 12px;
+    padding: 16px 22px;
+}
+
+.route-actions-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    background: rgba(212, 160, 23, .1);
+    color: #d4a017;
+    flex-shrink: 0;
+}
+
+.info-text {
+    margin: 0;
+    font-size: 13.5px;
+    color: rgba(255,255,255,.45);
+    font-weight: 500;
+    line-height: 1.4;
+}
+
+/* ══════════════════════════════════════════════════════════
+   MOBILE
+   ══════════════════════════════════════════════════════════ */
+
+@media (max-width: 768px) {
+    .route-header {
+        padding: 36px 24px 30px;
+        margin: 0 20px 28px;
+    }
+
+    .route-header .page-title {
+        font-size: 28px;
+    }
+
+    .route-header-inner {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 20px;
+    }
+
+    .route-header-right {
+        align-items: flex-start;
+    }
+
+    .route-body {
+        padding: 0 20px;
+    }
+
+    .map-section {
+        padding: 18px;
+    }
+}
+
+@media (max-width: 480px) {
+    .route-header {
+        padding: 28px 18px 24px;
+        margin: 0 14px 24px;
+    }
+
+    .route-header .page-title {
+        font-size: 24px;
+    }
+
+    .route-body {
+        padding: 0 14px;
+    }
+
+    .map-section {
+        padding: 14px;
+    }
+
+    .route-actions {
+        padding: 14px 16px;
+    }
+
+    .info-text {
+        font-size: 12.5px;
+    }
+}

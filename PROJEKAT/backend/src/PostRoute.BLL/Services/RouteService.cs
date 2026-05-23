@@ -41,6 +41,25 @@ public class RouteService : IRouteService
         return MapToResponse(route, totalMailboxesCount: null, activeMailboxesCount: null, eligibleMailboxesCount: null);
     }
 
+    public async Task<RouteResponse?> GetPostmanAssignedRouteForTodayAsync(Guid postmanId, CancellationToken cancellationToken = default)
+    {
+        var today = DateOnly.FromDateTime(DateTime.UtcNow);
+        var route = await _routeRepository.GetByPostmanAndDateAsync(postmanId, today, cancellationToken);
+        
+        if (route == null)
+        {
+            return null;
+        }
+
+        // Verify the route is in an accessible state for postman (assigned or in progress)
+        if (route.Status != RouteStatus.Dodijeljena && route.Status != RouteStatus.UProgresu)
+        {
+            return null;
+        }
+
+        return MapToResponse(route, totalMailboxesCount: null, activeMailboxesCount: null, eligibleMailboxesCount: null);
+    }
+
     public async Task<IReadOnlyList<AvailablePostmanResponse>> GetAvailablePostmenAsync(
         Guid routeId,
         CancellationToken cancellationToken = default)

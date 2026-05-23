@@ -63,6 +63,25 @@ export const routesApi = {
         return response.data;
     },
 
+    getMyAssignedRouteForToday: async (): Promise<RouteResponse | null> => {
+        const response = await httpClient<RouteResponse | { message: string }>('/api/routes/my-assigned-route/today');
+        
+        if (response.error) {
+            throw response;
+        }
+
+        if (!response.data) {
+            return null;
+        }
+
+        // Check if response is a message (no route assigned)
+        if ('message' in response.data) {
+            return null;
+        }
+
+        return response.data as RouteResponse;
+    },
+
     generateRoute: async (request: GenerateRouteRequest): Promise<RouteResponse> => {
         const response = await httpClient<RouteResponse>('/api/routes/generate', {
             method: 'POST',
