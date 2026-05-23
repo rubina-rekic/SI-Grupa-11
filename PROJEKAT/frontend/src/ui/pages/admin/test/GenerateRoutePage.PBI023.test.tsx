@@ -79,6 +79,7 @@ const generatedRoute = {
       priority: 'Visok',
       status: 'Planirano',
       isManuallyReordered: false,
+      mailboxStatus: 'Prazan',
     },
   ],
 }
