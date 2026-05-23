@@ -3,6 +3,7 @@ import { AppRouter } from "../infrastructure/routing/AppRouter"
 import "../styles/layout.css"
 
 function App() {
+  //novi dependency za notifikacije: sonner
   return (
     <>
       <AppRouter />

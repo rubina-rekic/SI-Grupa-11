@@ -7,6 +7,7 @@ using PostRoute.BLL.Services;
 using PostRoute.DAL.Entities;
 namespace PostRoute.Api.Controllers;
 
+// Ovaj kontroler je namijenjen samo za administratore, ali GET endpointi su javni
 [ApiController]
 [Route("api/[controller]")]
 public sealed class MailboxesController : ControllerBase
