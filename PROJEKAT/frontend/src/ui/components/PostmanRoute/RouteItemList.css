@@ -114,27 +114,32 @@
 }
 
 .route-item.obrađen::before,
-.route-item.obrađeno::before {
+.route-item.obrađeno::before,
+.route-item.processed::before {
     background: var(--c-green);
 }
 
-.route-item.nedostupan::before {
+.route-item.nedostupan::before,
+.route-item.unavailable::before {
     background: var(--c-red);
 }
 
 .route-item.čeka::before,
-.route-item.planirano::before {
+.route-item.planirano::before,
+.route-item.pending::before {
     background: var(--c-slate-300);
 }
 
 /* Processed items */
 .route-item.obrađen,
-.route-item.obrađeno {
+.route-item.obrađeno,
+.route-item.processed {
     opacity: 1;
     border-left-color: transparent;
 }
 
-.route-item.nedostupan {
+.route-item.nedostupan,
+.route-item.unavailable {
     opacity: 1;
     border-left-color: transparent;
 }
@@ -165,11 +170,13 @@
 
 /* Processed number styling */
 .route-item.obrađen .item-number,
-.route-item.obrađeno .item-number {
+.route-item.obrađeno .item-number,
+.route-item.processed .item-number {
     background: var(--c-green);
 }
 
-.route-item.nedostupan .item-number {
+.route-item.nedostupan .item-number,
+.route-item.unavailable .item-number {
     background: var(--c-red);
 }
 
@@ -262,18 +269,21 @@
 }
 
 .status-indicator.status-čeka,
-.status-indicator.status-planirano {
+.status-indicator.status-planirano,
+.status-indicator.status-pending {
     background: var(--c-slate-300);
     color: var(--c-slate-600);
 }
 
 .status-indicator.status-obrađen,
-.status-indicator.status-obrađeno {
+.status-indicator.status-obrađeno,
+.status-indicator.status-processed {
     background: var(--c-green);
     box-shadow: 0 2px 6px rgba(59, 109, 17, .25);
 }
 
-.status-indicator.status-nedostupan {
+.status-indicator.status-nedostupan,
+.status-indicator.status-unavailable {
     background: var(--c-red);
     box-shadow: 0 2px 6px rgba(163, 45, 45, .25);
 }
@@ -301,9 +311,17 @@
 
 .mailbox-status-actions {
     display: flex;
+    align-items: center;
     gap: 6px;
     margin-top: 8px;
     flex-wrap: wrap;
+}
+
+.mailbox-status-actions-label {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--c-slate-500);
+    margin-right: 2px;
 }
 
 .mailbox-status-btn {
@@ -337,6 +355,18 @@
 .mailbox-status-btn--active {
     font-weight: 700;
     box-shadow: 0 2px 6px rgba(0, 0, 0, .12);
+}
+
+.mailbox-status-locked {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    padding: 6px 8px;
+    border-radius: 6px;
+    background: #dcfce7;
+    color: #166534;
+    font-size: 12px;
+    font-weight: 600;
 }
 
 /* ── Empty state ─────────────────────────────────────────── */

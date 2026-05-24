@@ -8,13 +8,21 @@ namespace PostRoute.BLL.Services;
 
 public class MailboxService : IMailboxService
 {
+    private const string StatusAlreadyRecordedMessage =
+        "Status je već evidentiran. Kontaktirajte dispečera za ispravku.";
+
     private readonly IMailboxRepository _mailboxRepository;
     private readonly IMailboxAuditLogRepository _auditLogRepository;
+    private readonly IRouteRepository? _routeRepository;
 
-    public MailboxService(IMailboxRepository mailboxRepository, IMailboxAuditLogRepository auditLogRepository)
+    public MailboxService(
+        IMailboxRepository mailboxRepository,
+        IMailboxAuditLogRepository auditLogRepository,
+        IRouteRepository? routeRepository = null)
     {
         _mailboxRepository = mailboxRepository;
         _auditLogRepository = auditLogRepository;
+        _routeRepository = routeRepository;
     }
 
     public async Task<Mailbox> CreateAsync(CreateMailboxCommand command, CancellationToken cancellationToken)
@@ -252,6 +260,26 @@ public class MailboxService : IMailboxService
         var mailbox = await _mailboxRepository.GetByIdAsync(command.MailboxId, cancellationToken)
             ?? throw new InvalidOperationException("Sandučić nije pronađen.");
 
+        var now = DateTime.UtcNow;
+        var route = _routeRepository is null
+            ? null
+            : await _routeRepository.GetByPostmanAndDateAsync(
+                command.UserId,
+                DateOnly.FromDateTime(now),
+                cancellationToken);
+
+        var routeItem = route?.RouteItems.FirstOrDefault(item => item.MailboxId == command.MailboxId);
+
+        if (routeItem is not null && IsRouteItemProcessed(routeItem))
+        {
+            throw new InvalidOperationException(StatusAlreadyRecordedMessage);
+        }
+
+        if (routeItem is null && IsProcessedMailboxStatus(mailbox.Status))
+        {
+            throw new InvalidOperationException(StatusAlreadyRecordedMessage);
+        }
+
         var auditLog = new MailboxAuditLog
         {
             Id = Guid.NewGuid(),
@@ -262,14 +290,53 @@ public class MailboxService : IMailboxService
             NewValue = command.NewStatus.ToString(),
             Action = "UPDATE",
             Reason = command.Reason,
-            Timestamp = DateTime.UtcNow
+            Timestamp = now
         };
         await _auditLogRepository.LogAsync(auditLog, cancellationToken);
 
         mailbox.Status = command.NewStatus;
-        mailbox.UpdatedAt = DateTime.UtcNow;
-        return await _mailboxRepository.UpdateAsync(mailbox, cancellationToken);
+        mailbox.UpdatedAt = now;
+
+        if (route is not null && routeItem is not null && IsProcessedMailboxStatus(command.NewStatus))
+        {
+            routeItem.Status = "Obrađen";
+            routeItem.ProcessedAt = now;
+            routeItem.ProcessedBy = command.UserId;
+            routeItem.ProcessedStatus = command.NewStatus;
+
+            if (route.Status == RouteStatus.Dodijeljena)
+            {
+                route.Status = RouteStatus.UProgresu;
+            }
+
+            route.StartedAt ??= now;
+
+            if (route.RouteItems.All(IsRouteItemProcessed))
+            {
+                route.Status = RouteStatus.Zavrsena;
+                route.CompletedAt = now;
+            }
+        }
+
+        var updatedMailbox = await _mailboxRepository.UpdateAsync(mailbox, cancellationToken);
+
+        if (_routeRepository is not null && route is not null && routeItem is not null)
+        {
+            await _routeRepository.UpdateAsync(route, cancellationToken);
+        }
+
+        return updatedMailbox;
     }
+
+    private static bool IsProcessedMailboxStatus(MailboxStatus status) =>
+        status is MailboxStatus.Obraen or MailboxStatus.Napunjen or MailboxStatus.Ispraznjen;
+
+    private static bool IsRouteItemProcessed(RouteItem item) =>
+        item.ProcessedAt.HasValue ||
+        item.ProcessedStatus.HasValue ||
+        string.Equals(item.Status, "Obrađen", StringComparison.OrdinalIgnoreCase) ||
+        string.Equals(item.Status, "Obradjen", StringComparison.OrdinalIgnoreCase) ||
+        string.Equals(item.Status, "Obraen", StringComparison.OrdinalIgnoreCase);
 
     public async Task<bool> SerialNumberExistsAsync(string serialNumber, CancellationToken cancellationToken)
         => await _mailboxRepository.SerialNumberExistsAsync(serialNumber, cancellationToken);

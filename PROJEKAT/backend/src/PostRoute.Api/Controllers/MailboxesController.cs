@@ -196,6 +196,10 @@ public sealed class MailboxesController : ControllerBase
         {
             return NotFound();
         }
+        catch (InvalidOperationException ex)
+        {
+            return Conflict(new { message = ex.Message });
+        }
     }
 
     private static MailboxResponse MapToResponse(Mailbox m) => new(

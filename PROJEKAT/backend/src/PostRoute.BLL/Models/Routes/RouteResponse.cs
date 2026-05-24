@@ -18,6 +18,8 @@ public class RouteResponse
     public string? LastReorderedBy { get; set; }
     public DateTime? AssignedAt { get; set; }
     public string? AssignedBy { get; set; }
+    public DateTime? StartedAt { get; set; }
+    public DateTime? CompletedAt { get; set; }
 
     // Debug info for transparency
     public int TotalMailboxesCount { get; set; }

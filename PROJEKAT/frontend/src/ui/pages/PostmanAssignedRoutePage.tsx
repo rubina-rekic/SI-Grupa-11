@@ -7,6 +7,7 @@ import { RouteSummary } from '../components/PostmanRoute/RouteSummary';
 import { routesApi } from '../../infrastructure/api/routesApi';
 import type { RouteResponse } from '../../infrastructure/api/routesApi';
 import { updateMailboxStatus, mailboxStatusLabels } from '../../infrastructure/api/mailboxes/mailboxesApi';
+import { getRouteStatusLabel, isRouteItemProcessed } from '../components/PostmanRoute/statusUtils';
 import './PostmanAssignedRoutePage.css';
 
 /* ── SVG Icons ───────────────────────────────────────────── */
@@ -88,13 +89,27 @@ const PostmanAssignedRoutePage: React.FC = () => {
             const label = mailboxStatusLabels[status as 0 | 1 | 2 | 3 | 4] ?? String(status);
             setRoute(prev => {
                 if (!prev) return prev;
+                const now = new Date().toISOString();
+                const routeItems = prev.routeItems.map(item =>
+                    item.mailboxId === mailboxId
+                        ? {
+                            ...item,
+                            status: 'Obrađen',
+                            mailboxStatus: label,
+                            processedStatus: label,
+                            processedAt: now,
+                            processedBy: prev.postmanId,
+                        }
+                        : item
+                );
+                const routeFinished = routeItems.length > 0 && routeItems.every(isRouteItemProcessed);
+
                 return {
                     ...prev,
-                    routeItems: prev.routeItems.map(item =>
-                        item.mailboxId === mailboxId
-                            ? { ...item, mailboxStatus: label }
-                            : item
-                    )
+                    routeItems,
+                    status: routeFinished ? 'Zavrsena' : 'UProgresu',
+                    startedAt: prev.startedAt ?? now,
+                    completedAt: routeFinished ? now : prev.completedAt,
                 };
             });
             toast.success(`Status sandučića ažuriran: ${label}`);
@@ -135,7 +150,7 @@ const PostmanAssignedRoutePage: React.FC = () => {
                         <div className="route-header-right">
                             <div className="route-header-badge">
                                 <IconStatus />
-                                Dodijeljena
+                                {route ? getRouteStatusLabel(route.status) : 'Dodijeljena'}
                             </div>
                         </div>
                     </div>

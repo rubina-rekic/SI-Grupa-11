@@ -3,6 +3,13 @@ import { useNavigate } from 'react-router-dom';
 import { Layout } from '../../components/Layout/Layout';
 import { routesApi } from '../../../infrastructure/api/routesApi';
 import type { RouteResponse, RouteItemResponse } from '../../../infrastructure/api/routesApi';
+import {
+    getMailboxStatusLabel,
+    getVisitStatusClass,
+    getVisitStatusLabel,
+    isRouteItemProcessed,
+    isRouteItemUnavailable,
+} from '../../components/PostmanRoute/statusUtils';
 import './DispatcherRouteDashboardPage.css';
 
 // ── helpers ────────────────────────────────────────────────────
@@ -35,11 +42,11 @@ function fmtTime(t: string) {
 }
 
 function isDone(item: RouteItemResponse) {
-    return item.mailboxStatus === 'Obraen' || item.mailboxStatus === 'Ispraznjen';
+    return isRouteItemProcessed(item);
 }
 
 function isProblematic(item: RouteItemResponse) {
-    return item.mailboxStatus === 'Napunjen';
+    return isRouteItemUnavailable(item);
 }
 
 function routeProgress(route: RouteResponse) {
@@ -93,7 +100,7 @@ function RouteCard({ route, onOpen }: { route: RouteResponse; onOpen: (id: strin
 
             {problematic && (
                 <div className="rdb-card-alert">
-                    ⚠ {prob} {prob === 1 ? 'sandučić zahtijeva' : 'sandučića zahtijeva'} pažnju (Napunjen)
+                    ⚠ {prob} {prob === 1 ? 'sandučić zahtijeva' : 'sandučića zahtijeva'} pažnju
                 </div>
             )}
 
@@ -122,9 +129,15 @@ function RouteCard({ route, onOpen }: { route: RouteResponse; onOpen: (id: strin
                     >
                         <span className="rdb-item-order">{item.order}</span>
                         <span className="rdb-item-address">{item.address}</span>
-                        <span className="rdb-item-time">{fmtTime(item.estimatedArrivalTime)}</span>
-                        <span className={`rdb-item-status rdb-item-status--${(item.mailboxStatus ?? '').toLowerCase()}`}>
-                            {item.mailboxStatus || 'Prazan'}
+                        <span className="rdb-item-time">
+                            {item.processedAt
+                                ? new Date(item.processedAt).toLocaleTimeString('bs', { hour: '2-digit', minute: '2-digit' })
+                                : fmtTime(item.estimatedArrivalTime)}
+                        </span>
+                        <span className={`rdb-item-status rdb-item-status--${getVisitStatusClass(item)}`}>
+                            {isDone(item)
+                                ? getMailboxStatusLabel(item.processedStatus ?? item.mailboxStatus)
+                                : getVisitStatusLabel(item)}
                         </span>
                     </div>
                 ))}

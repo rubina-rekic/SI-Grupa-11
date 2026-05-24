@@ -285,6 +285,8 @@ public class RouteService : IRouteService
             ExceedsStandardTime = route.ExceedsStandardTime,
             AssignedAt = route.AssignedAt,
             AssignedBy = route.AssignedBy,
+            StartedAt = route.StartedAt,
+            CompletedAt = route.CompletedAt,
             TotalMailboxesCount = mailboxes.Count(),
             ActiveMailboxesCount = activeMailboxes.Count,
             DayFilteredMailboxesCount = eligibleMailboxes.Count,
@@ -300,7 +302,10 @@ public class RouteService : IRouteService
                 Priority = ri.Mailbox.Priority.ToString(),
                 Status = ri.Status,
                 IsManuallyReordered = false,
-                MailboxStatus = ri.Mailbox.Status.ToString()
+                MailboxStatus = ri.ProcessedStatus?.ToString() ?? ri.Mailbox.Status.ToString(),
+                ProcessedAt = ri.ProcessedAt,
+                ProcessedBy = ri.ProcessedBy,
+                ProcessedStatus = ri.ProcessedStatus?.ToString()
             }).ToList()
         };
     }
@@ -456,6 +461,8 @@ public class RouteService : IRouteService
             LastReorderedBy = route.LastReorderedBy,
             AssignedAt = route.AssignedAt,
             AssignedBy = route.AssignedBy,
+            StartedAt = route.StartedAt,
+            CompletedAt = route.CompletedAt,
             TotalMailboxesCount = totalMailboxesCount ?? 0,
             ActiveMailboxesCount = activeMailboxesCount ?? 0,
             DayFilteredMailboxesCount = eligibleMailboxesCount ?? orderedItems.Count,
@@ -471,7 +478,10 @@ public class RouteService : IRouteService
                 Priority = ri.Mailbox.Priority.ToString(),
                 Status = ri.Status,
                 IsManuallyReordered = ri.IsManuallyReordered,
-                MailboxStatus = ri.Mailbox.Status.ToString()
+                MailboxStatus = ri.ProcessedStatus?.ToString() ?? ri.Mailbox.Status.ToString(),
+                ProcessedAt = ri.ProcessedAt,
+                ProcessedBy = ri.ProcessedBy,
+                ProcessedStatus = ri.ProcessedStatus?.ToString()
             }).ToList()
         };
     }

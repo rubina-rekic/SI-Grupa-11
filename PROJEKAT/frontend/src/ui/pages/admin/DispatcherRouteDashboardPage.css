@@ -128,7 +128,7 @@
     font-size: 15px;
 }
 
-.rdb-summary-chip--uproresu,
+.rdb-summary-chip--uprogresu,
 .rdb-summary-chip--uproresu { background: #fef3c7; border-color: #fcd34d; color: #92400e; }
 .rdb-summary-chip--dodijeljena { background: #dbeafe; border-color: #93c5fd; color: #1e3a8a; }
 .rdb-summary-chip--planirana  { background: var(--c-slate-100, #f1f5f9); border-color: var(--c-slate-300, #cbd5e1); color: var(--c-slate-700, #334155); }
@@ -356,6 +356,9 @@
 .rdb-item-status--napunjen  { background: #fee2e2; color: #7f1d1d; }
 .rdb-item-status--pun       { background: #fef3c7; color: #92400e; }
 .rdb-item-status--prazan    { background: var(--c-slate-100, #f1f5f9); color: var(--c-slate-500, #64748b); }
+.rdb-item-status--processed { background: #dcfce7; color: #14532d; }
+.rdb-item-status--unavailable { background: #fee2e2; color: #7f1d1d; }
+.rdb-item-status--pending { background: var(--c-slate-100, #f1f5f9); color: var(--c-slate-500, #64748b); }
 
 /* Details link */
 .rdb-card-link {
@@ -385,6 +388,7 @@
     white-space: nowrap;
 }
 
+.rdb-status--uprogresu,
 .rdb-status--uproresu   { background: #fef3c7; color: #92400e; }
 .rdb-status--dodijeljena { background: #dbeafe; color: #1e3a8a; }
 .rdb-status--planirana  { background: var(--c-slate-100, #f1f5f9); color: var(--c-slate-600, #475569); }

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, Polyline } from 'react-leaflet';
 import L from 'leaflet';
 import type { RouteItemResponse } from '../../../infrastructure/api/routesApi';
+import { getMailboxStatusLabel, getVisitStatusLabel, isRouteItemProcessed, isRouteItemUnavailable } from './statusUtils';
 import './RouteMap.css';
 
 interface RouteMapProps {
@@ -9,13 +10,12 @@ interface RouteMapProps {
 }
 
 // Custom icon factory
-const createNumberedIcon = (number: number, status: string) => {
-    const statusLower = status.toLowerCase();
+const createNumberedIcon = (number: number, item: RouteItemResponse) => {
     let backgroundColor = '#999';
     
-    if (statusLower === 'obrađen' || statusLower === 'obrađeno') {
+    if (isRouteItemProcessed(item)) {
         backgroundColor = '#4caf50';
-    } else if (statusLower === 'nedostupan') {
+    } else if (isRouteItemUnavailable(item)) {
         backgroundColor = '#ff5252';
     }
 
@@ -84,7 +84,7 @@ export const RouteMap: React.FC<RouteMapProps> = ({ items }) => {
                     <Marker
                         key={item.id}
                         position={[item.latitude, item.longitude]}
-                        icon={createNumberedIcon(index + 1, item.status)}
+                        icon={createNumberedIcon(index + 1, item)}
                     >
                         <Popup>
                             <div className="popup-content">
@@ -93,7 +93,10 @@ export const RouteMap: React.FC<RouteMapProps> = ({ items }) => {
                                     <span>Redni broj: {index + 1}</span>
                                     <span>Vrijeme: {formatTime(item.estimatedArrivalTime)}</span>
                                     <span className="popup-status">
-                                        Status: <strong>{formatStatus(item.status)}</strong>
+                                        Status: <strong>{getVisitStatusLabel(item)}</strong>
+                                    </span>
+                                    <span>
+                                        Tip obrade: <strong>{getMailboxStatusLabel(item.processedStatus ?? item.mailboxStatus)}</strong>
                                     </span>
                                 </div>
                             </div>
@@ -114,10 +117,3 @@ const formatTime = (timeString: string): string => {
     return timeString;
 };
 
-const formatStatus = (status: string): string => {
-    const statusLower = status.toLowerCase();
-    if (statusLower === 'obrađen' || statusLower === 'obrađeno') return 'Obrađen';
-    if (statusLower === 'nedostupan') return 'Nedostupan';
-    if (statusLower === 'planirano') return 'Čeka';
-    return status;
-};
