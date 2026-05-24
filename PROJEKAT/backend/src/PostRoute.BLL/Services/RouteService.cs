@@ -38,12 +38,13 @@ public class RouteService : IRouteService
             return null;
         }
 
+        await NormalizeRouteExecutionStateAsync(route, cancellationToken);
         return MapToResponse(route, totalMailboxesCount: null, activeMailboxesCount: null, eligibleMailboxesCount: null);
     }
 
     public async Task<RouteResponse?> GetPostmanAssignedRouteForTodayAsync(Guid postmanId, CancellationToken cancellationToken = default)
     {
-        var today = DateOnly.FromDateTime(DateTime.UtcNow);
+        var today = DateOnly.FromDateTime(DateTime.Now);
         var route = await _routeRepository.GetByPostmanAndDateAsync(postmanId, today, cancellationToken);
         
         if (route == null)
@@ -57,6 +58,7 @@ public class RouteService : IRouteService
             return null;
         }
 
+        await NormalizeRouteExecutionStateAsync(route, cancellationToken);
         return MapToResponse(route, totalMailboxesCount: null, activeMailboxesCount: null, eligibleMailboxesCount: null);
     }
 
@@ -428,9 +430,90 @@ public class RouteService : IRouteService
     public async Task<List<RouteResponse>> GetRoutesForDateAsync(DateOnly date, CancellationToken cancellationToken = default)
     {
         var routes = await _routeRepository.GetByDateAsync(date, cancellationToken);
+        foreach (var route in routes)
+        {
+            await NormalizeRouteExecutionStateAsync(route, cancellationToken);
+        }
+
         return routes
             .Select(r => MapToResponse(r, null, null, null))
             .ToList();
+    }
+
+    private async Task NormalizeRouteExecutionStateAsync(Route route, CancellationToken cancellationToken)
+    {
+        if (route.RouteItems.Count == 0 || route.Status == RouteStatus.Otkazana)
+        {
+            return;
+        }
+
+        var processedItems = route.RouteItems
+            .Where(IsRouteItemProcessed)
+            .ToList();
+
+        if (processedItems.Count == 0)
+        {
+            return;
+        }
+
+        var now = DateTime.UtcNow;
+        var changed = false;
+        var firstProcessedAt = processedItems
+            .Where(item => item.ProcessedAt.HasValue)
+            .Select(item => item.ProcessedAt!.Value)
+            .DefaultIfEmpty(now)
+            .Min();
+
+        if (route.StartedAt is null)
+        {
+            route.StartedAt = firstProcessedAt;
+            changed = true;
+        }
+
+        if (processedItems.Count == route.RouteItems.Count)
+        {
+            var completedAt = processedItems
+                .Where(item => item.ProcessedAt.HasValue)
+                .Select(item => item.ProcessedAt!.Value)
+                .DefaultIfEmpty(now)
+                .Max();
+
+            if (route.Status != RouteStatus.Zavrsena)
+            {
+                route.Status = RouteStatus.Zavrsena;
+                changed = true;
+            }
+
+            if (route.CompletedAt is null)
+            {
+                route.CompletedAt = completedAt;
+                changed = true;
+            }
+        }
+        else if (route.Status == RouteStatus.Planirana || route.Status == RouteStatus.Dodijeljena)
+        {
+            route.Status = RouteStatus.UProgresu;
+            changed = true;
+        }
+
+        if (changed)
+        {
+            await _routeRepository.UpdateAsync(route, cancellationToken);
+        }
+    }
+
+    private static bool IsRouteItemProcessed(RouteItem item)
+    {
+        if (item.ProcessedAt.HasValue || item.ProcessedStatus.HasValue)
+        {
+            return true;
+        }
+
+        var status = (item.Status ?? string.Empty).Trim();
+        return status.Equals("Obrađen", StringComparison.OrdinalIgnoreCase) ||
+               status.Equals("Obradjen", StringComparison.OrdinalIgnoreCase) ||
+               status.Equals("Obradeno", StringComparison.OrdinalIgnoreCase) ||
+               status.Equals("Obraen", StringComparison.OrdinalIgnoreCase);
     }
 
     private static string ToDisplayName(User user)

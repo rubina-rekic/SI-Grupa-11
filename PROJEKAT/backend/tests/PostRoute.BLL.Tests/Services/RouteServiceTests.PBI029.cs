@@ -160,6 +160,75 @@ public class RouteServiceTestsPBI029
     }
 
     [Fact]
+    public async Task GetRoutesForDateAsync_ShouldNormalizeRouteToCompleted_WhenAllItemsProcessed()
+    {
+        var date = new DateOnly(2026, 5, 23);
+        var mailbox = MakeMailbox();
+        var route = MakeRoute(RouteStatus.Dodijeljena, date: date);
+        var processedAt = new DateTime(2026, 5, 23, 9, 20, 0, DateTimeKind.Utc);
+        route.RouteItems = new List<RouteItem>
+        {
+            new()
+            {
+                Id = Guid.NewGuid(),
+                MailboxId = mailbox.Id,
+                Mailbox = mailbox,
+                Order = 1,
+                EstimatedArrivalTime = new TimeOnly(8, 15),
+                Status = "Obrađen",
+                ProcessedAt = processedAt,
+                ProcessedBy = route.PostmanId,
+                ProcessedStatus = MailboxStatus.Ispraznjen
+            }
+        };
+
+        _routeRepositoryMock
+            .Setup(r => r.GetByDateAsync(date, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new List<Route> { route });
+        _routeRepositoryMock
+            .Setup(r => r.UpdateAsync(It.IsAny<Route>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync((Route r, CancellationToken _) => r);
+
+        var result = await _sut.GetRoutesForDateAsync(date);
+
+        result[0].Status.Should().Be("Zavrsena");
+        route.Status.Should().Be(RouteStatus.Zavrsena);
+        route.StartedAt.Should().Be(processedAt);
+        route.CompletedAt.Should().Be(processedAt);
+        _routeRepositoryMock.Verify(r => r.UpdateAsync(route, It.IsAny<CancellationToken>()), Times.Once);
+    }
+
+    [Fact]
+    public async Task GetRoutesForDateAsync_ShouldNotCompleteRoute_FromMailboxStatusOnly()
+    {
+        var date = new DateOnly(2026, 5, 23);
+        var mailbox = MakeMailbox();
+        mailbox.Status = MailboxStatus.Napunjen;
+        var route = MakeRoute(RouteStatus.Dodijeljena, date: date);
+        route.RouteItems = new List<RouteItem>
+        {
+            new()
+            {
+                Id = Guid.NewGuid(),
+                MailboxId = mailbox.Id,
+                Mailbox = mailbox,
+                Order = 1,
+                EstimatedArrivalTime = new TimeOnly(8, 15),
+                Status = "Planirano"
+            }
+        };
+
+        _routeRepositoryMock
+            .Setup(r => r.GetByDateAsync(date, It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new List<Route> { route });
+
+        var result = await _sut.GetRoutesForDateAsync(date);
+
+        result[0].Status.Should().Be("Dodijeljena");
+        _routeRepositoryMock.Verify(r => r.UpdateAsync(It.IsAny<Route>(), It.IsAny<CancellationToken>()), Times.Never);
+    }
+
+    [Fact]
     public async Task GetRoutesForDateAsync_ShouldIncludeRouteItems_WithMailboxStatus()
     {
         var date = new DateOnly(2026, 5, 23);

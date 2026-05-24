@@ -10,7 +10,7 @@
 | PBI-027 / US-27 | Ažuriranje statusa sandučića | Ibrahim, Emrah | 4h | Done | Dugmad za promjenu statusa (Obrađen, Napunjen, Ispraznjen) unutar mobilnog prikaza, evidentiranje timestampa i autora, real-time ažuriranje |
 | PBI-028 / US-28 | Označavanje nedostupne lokacije | Faruk | 2h 30min | To Do | Dugme "Nedostupno" s obaveznim razlogom (padajući meni), notifikacija dispečeru, vizuelno označavanje preskočene tačke na mapi |
 | PBI-029 / US-29 | Praćenje statusa rute od strane dispečera | Kerim, Aldin | 5h | Done | Dashboard za dispečera s real-time pregledom statusa po ruti i sandučiću, filtri po statusu, naglašavanje problematičnih lokacija |
-| PBI-030 / US-30 | Osnovni dnevni izvještaj | Nejla, Ibrahim | 4h | To Do | Generisanje izvještaja za odabrani datum i poštara; agregacija obrađenih, preskočenih i nedostupnih sandučića, export u PDF |
+| PBI-030 / US-30 | Osnovni dnevni izvještaj | Nejla, Ibrahim | 4h | Done | Generisanje izvještaja za odabrani datum i poštara u dashboardu "Praćenje ruta"; agregacija obrađenih, neposjećenih i nedostupnih sandučića, upozorenje ispod 80% i export u PDF |
 
 ---
 

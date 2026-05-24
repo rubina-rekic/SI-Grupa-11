@@ -217,7 +217,7 @@ public sealed class MailboxServiceTestsPBI027
     {
         var mailbox = MakeMailbox(MailboxStatus.Pun);
         var userId = Guid.NewGuid();
-        var today = DateOnly.FromDateTime(DateTime.UtcNow);
+        var today = DateOnly.FromDateTime(DateTime.Now);
         var route = new Route
         {
             Id = Guid.NewGuid(),
@@ -277,7 +277,7 @@ public sealed class MailboxServiceTestsPBI027
     {
         var mailbox = MakeMailbox(MailboxStatus.Prazan);
         var userId = Guid.NewGuid();
-        var today = DateOnly.FromDateTime(DateTime.UtcNow);
+        var today = DateOnly.FromDateTime(DateTime.Now);
         var route = new Route
         {
             Id = Guid.NewGuid(),
@@ -319,11 +319,59 @@ public sealed class MailboxServiceTestsPBI027
     }
 
     [Fact]
+    public async Task UpdateStatusAsync_ShouldFindActiveRouteByMailbox_WhenDateLookupMisses()
+    {
+        var mailbox = MakeMailbox(MailboxStatus.Prazan);
+        var userId = Guid.NewGuid();
+        var route = new Route
+        {
+            Id = Guid.NewGuid(),
+            PostmanId = userId,
+            Date = new DateOnly(2026, 5, 23),
+            PlannedStartTime = new TimeOnly(8, 0),
+            Status = RouteStatus.Dodijeljena,
+            RouteItems = new List<RouteItem>
+            {
+                new()
+                {
+                    Id = Guid.NewGuid(),
+                    MailboxId = mailbox.Id,
+                    Mailbox = mailbox,
+                    Order = 1,
+                    EstimatedArrivalTime = new TimeOnly(8, 15),
+                    Status = "Planirano"
+                }
+            }
+        };
+        var routeRepo = new Mock<IRouteRepository>();
+        var sut = new MailboxService(_repo.Object, _auditRepo.Object, routeRepo.Object);
+
+        _repo.Setup(r => r.GetByIdAsync(mailbox.Id, It.IsAny<CancellationToken>()))
+             .ReturnsAsync(mailbox);
+        _repo.Setup(r => r.UpdateAsync(It.IsAny<Mailbox>(), It.IsAny<CancellationToken>()))
+             .ReturnsAsync((Mailbox m, CancellationToken _) => m);
+        routeRepo.Setup(r => r.GetByPostmanAndDateAsync(userId, It.IsAny<DateOnly>(), It.IsAny<CancellationToken>()))
+                 .ReturnsAsync((Route?)null);
+        routeRepo.Setup(r => r.GetActiveByPostmanAndMailboxAsync(userId, mailbox.Id, It.IsAny<CancellationToken>()))
+                 .ReturnsAsync(route);
+        routeRepo.Setup(r => r.UpdateAsync(It.IsAny<Route>(), It.IsAny<CancellationToken>()))
+                 .ReturnsAsync((Route r, CancellationToken _) => r);
+
+        await sut.UpdateStatusAsync(new UpdateMailboxStatusCommand(mailbox.Id, MailboxStatus.Napunjen, userId), CancellationToken.None);
+
+        Assert.Equal(RouteStatus.Zavrsena, route.Status);
+        Assert.NotNull(route.CompletedAt);
+        Assert.Equal(MailboxStatus.Napunjen, route.RouteItems.Single().ProcessedStatus);
+        routeRepo.Verify(r => r.GetActiveByPostmanAndMailboxAsync(userId, mailbox.Id, It.IsAny<CancellationToken>()), Times.Once);
+        routeRepo.Verify(r => r.UpdateAsync(route, It.IsAny<CancellationToken>()), Times.Once);
+    }
+
+    [Fact]
     public async Task UpdateStatusAsync_ShouldReject_WhenRouteItemAlreadyProcessed()
     {
         var mailbox = MakeMailbox(MailboxStatus.Prazan);
         var userId = Guid.NewGuid();
-        var today = DateOnly.FromDateTime(DateTime.UtcNow);
+        var today = DateOnly.FromDateTime(DateTime.Now);
         var route = new Route
         {
             Id = Guid.NewGuid(),

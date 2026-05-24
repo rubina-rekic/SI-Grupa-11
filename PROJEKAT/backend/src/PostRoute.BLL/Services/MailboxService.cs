@@ -265,10 +265,19 @@ public class MailboxService : IMailboxService
             ? null
             : await _routeRepository.GetByPostmanAndDateAsync(
                 command.UserId,
-                DateOnly.FromDateTime(now),
+                DateOnly.FromDateTime(DateTime.Now),
                 cancellationToken);
 
         var routeItem = route?.RouteItems.FirstOrDefault(item => item.MailboxId == command.MailboxId);
+
+        if (_routeRepository is not null && routeItem is null)
+        {
+            route = await _routeRepository.GetActiveByPostmanAndMailboxAsync(
+                command.UserId,
+                command.MailboxId,
+                cancellationToken);
+            routeItem = route?.RouteItems.FirstOrDefault(item => item.MailboxId == command.MailboxId);
+        }
 
         if (routeItem is not null && IsRouteItemProcessed(routeItem))
         {

@@ -171,6 +171,194 @@
 
 /* ── Grid ─────────────────────────────────────────────────────── */
 
+/* Report */
+.rdb-report-panel {
+    background: #fff;
+    border: 1px solid var(--c-slate-200, #e2e8f0);
+    border-radius: 10px;
+    padding: 16px 18px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 10px rgba(15, 23, 42, .04);
+}
+
+.rdb-report-controls {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    flex-wrap: wrap;
+}
+
+.rdb-report-copy h2,
+.rdb-report-preview h3 {
+    margin: 0;
+    color: var(--navy, #0f1c2e);
+}
+
+.rdb-report-copy h2 {
+    font-size: 16px;
+}
+
+.rdb-report-copy p,
+.rdb-report-preview p {
+    margin: 3px 0 0;
+    color: var(--c-slate-500, #64748b);
+    font-size: 12.5px;
+}
+
+.rdb-report-form {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.rdb-report-select {
+    min-width: 220px;
+    padding: 8px 11px;
+    border: 1px solid var(--c-slate-200, #e2e8f0);
+    border-radius: 8px;
+    background: #fff;
+    color: var(--navy, #0f1c2e);
+    font-family: inherit;
+    font-size: 13px;
+}
+
+.rdb-report-generate,
+.rdb-report-download {
+    border: none;
+    border-radius: 8px;
+    background: var(--navy, #0f1c2e);
+    color: #fff;
+    padding: 8px 14px;
+    font-family: inherit;
+    font-size: 12.5px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.rdb-report-generate:disabled {
+    opacity: .5;
+    cursor: not-allowed;
+}
+
+.rdb-report-download {
+    background: #166534;
+}
+
+.rdb-report-message {
+    margin-top: 12px;
+    padding: 10px 12px;
+    border-radius: 8px;
+    background: var(--c-slate-100, #f1f5f9);
+    color: var(--c-slate-600, #475569);
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.rdb-report-preview {
+    margin-top: 14px;
+    border-top: 1px solid var(--c-slate-200, #e2e8f0);
+    padding-top: 14px;
+}
+
+.rdb-report-preview-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 12px;
+    flex-wrap: wrap;
+}
+
+.rdb-report-summary {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    gap: 10px;
+    margin-bottom: 12px;
+}
+
+.rdb-report-stat {
+    border: 1px solid var(--c-slate-200, #e2e8f0);
+    border-radius: 8px;
+    padding: 10px 12px;
+    background: var(--c-slate-50, #f8fafc);
+}
+
+.rdb-report-stat span {
+    display: block;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--c-slate-500, #64748b);
+    text-transform: uppercase;
+    letter-spacing: .03em;
+}
+
+.rdb-report-stat strong {
+    display: block;
+    margin-top: 3px;
+    font-size: 20px;
+    color: var(--navy, #0f1c2e);
+}
+
+.rdb-report-stat--processed strong {
+    color: #166534;
+}
+
+.rdb-report-stat--unavailable strong {
+    color: #991b1b;
+}
+
+.rdb-report-warning {
+    margin-bottom: 12px;
+    padding: 9px 11px;
+    border: 1px solid #fed7aa;
+    border-radius: 8px;
+    background: #fff7ed;
+    color: #9a3412;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.rdb-report-table-wrap {
+    overflow-x: auto;
+}
+
+.rdb-report-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 760px;
+    font-size: 12.5px;
+}
+
+.rdb-report-table th,
+.rdb-report-table td {
+    border-bottom: 1px solid var(--c-slate-200, #e2e8f0);
+    padding: 8px 9px;
+    text-align: left;
+    vertical-align: top;
+}
+
+.rdb-report-table th {
+    color: var(--c-slate-500, #64748b);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: .03em;
+    background: var(--c-slate-50, #f8fafc);
+}
+
+.rdb-report-row--processed {
+    background: #f0fdf4;
+}
+
+.rdb-report-row--unavailable {
+    background: #fef2f2;
+}
+
+.rdb-report-row--unvisited {
+    background: #f8fafc;
+    color: var(--c-slate-500, #64748b);
+}
+
 .rdb-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
@@ -444,6 +632,16 @@
 
     .rdb-grid {
         grid-template-columns: 1fr;
+    }
+
+    .rdb-report-form,
+    .rdb-report-select,
+    .rdb-report-generate {
+        width: 100%;
+    }
+
+    .rdb-report-summary {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
     .rdb-last-refresh {

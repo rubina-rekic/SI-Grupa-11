@@ -6,13 +6,14 @@
 
 | Nivo | US | Alat | Broj testova | Rezultat |
 | --- | --- | --- | --- | --- |
-| Unit - Backend (BLL servisi) | US-26, US-27, US-29 + regresija svih prethodnih | xUnit + Moq | 122 testa | PASS |
-| Unit - Backend (DAL repozitoriji) | US-29 + regresija svih prethodnih | xUnit + EF Core InMemory | 32 testa | PASS |
+| Unit - Backend (BLL servisi) | US-26, US-27, US-29 + regresija svih prethodnih | xUnit + Moq | 128 testova | PASS |
+| Unit - Backend (DAL repozitoriji) | US-29 + regresija svih prethodnih | xUnit + EF Core InMemory | 34 testa | PASS |
 | Unit - Backend (API kontroleri) | US-26, US-27, US-29 + regresija svih prethodnih | xUnit + Moq | 35 testova | PASS |
+| Unit - Frontend (React UI) | US-30 | Vitest + Testing Library | 5 testova | PASS |
 
-**Ukupno verifikovano:** `dotnet test PostRoute.sln` prolazi — DAL 32/32, BLL 122/122, API 35/35. Postoji poznato MSB3277 upozorenje o transitive EF Core Relational 9.0.1/9.0.4 verzijama u API test buildu (prisutno od Sprint 8, ne utječe na testove).
+**Ukupno verifikovano:** `dotnet test PostRoute.sln --no-build` prolazi — DAL 34/34, BLL 128/128, API 35/35. Za PBI-030 frontend testovi prolaze komandom `npm test -- --run src/ui/pages/admin/test/DispatcherRouteDashboardPage.PBI030.test.tsx` — 5/5. Postoji poznato MSB3277 upozorenje o transitive EF Core Relational 9.0.1/9.0.4 verzijama u API test buildu (prisutno od Sprint 8, ne utječe na testove).
 
-**Prethodni sprint:** Sprint 8 imao BLL 92, DAL 26, API 15. Sprint 9 dodaje +30 BLL, +6 DAL i +20 API testova kroz PBI-026, PBI-027 i PBI-029.
+**Prethodni sprint:** Sprint 8 imao BLL 92, DAL 26, API 15. Sprint 9 dodaje +36 BLL, +8 DAL, +20 API i +5 frontend testova kroz PBI-026, PBI-027, PBI-029, PBI-030 i regresijske popravke završavanja rute.
 
 ---
 
@@ -87,6 +88,8 @@
 | BLL | Prosljeđuje tačan datum repozitoriju | `RouteServiceTestsPBI029.GetRoutesForDateAsync_ShouldPassCorrectDate_ToRepository` | PASS |
 | BLL | Mapira puno ime poštara (`FirstName LastName`) | `RouteServiceTestsPBI029.GetRoutesForDateAsync_ShouldMapPostmanName_WhenPostmanExists` | PASS |
 | BLL | Mapira status rute u string reprezentaciju | `RouteServiceTestsPBI029.GetRoutesForDateAsync_ShouldMapStatus_ToStringRepresentation` | PASS |
+| BLL | Normalizuje rutu u `Zavrsena` kada su svi `RouteItem` zapisi obrađeni | `RouteServiceTestsPBI029.GetRoutesForDateAsync_ShouldNormalizeRouteToCompleted_WhenAllItemsProcessed` | PASS |
+| BLL | Ne završava rutu samo na osnovu globalnog `MailboxStatus` sandučića | `RouteServiceTestsPBI029.GetRoutesForDateAsync_ShouldNotCompleteRoute_FromMailboxStatusOnly` | PASS |
 | BLL | Uključuje stavke rute s `MailboxStatus` iz sandučića | `RouteServiceTestsPBI029.GetRoutesForDateAsync_ShouldIncludeRouteItems_WithMailboxStatus` | PASS |
 | BLL | Vraća rutu s ispravnim `Id` koji se podudara s originalnom rutom | `RouteServiceTestsPBI029.GetRoutesForDateAsync_ShouldReturnRouteWithId_MatchingOriginalRoute` | PASS |
 | DAL | Vraća rute za zadani datum | `RouteRepositoryTestsPBI029.GetByDateAsync_ShouldReturnRoutes_ForGivenDate` | PASS |
@@ -109,6 +112,26 @@
 
 ---
 
+## PBI-030 - Osnovni dnevni izvještaj (US-30)
+
+### Pokriveni AC
+
+| Nivo | AC | Test koji pokriva | Status |
+| --- | --- | --- | --- |
+| Frontend | Dispečer/administrator može izabrati poštara i kliknuti "Generiši izvještaj" | `DispatcherRouteDashboardPage.PBI030.generise dnevni izvjestaj sa zaglavljem, sumarnim blokom i detaljnom tabelom` | PASS |
+| Frontend | Izvještaj sadrži zaglavlje, sumarni blok i detaljnu tabelu sa adresom, prioritetom, finalnim statusom i timestampom | `DispatcherRouteDashboardPage.PBI030.generise dnevni izvjestaj sa zaglavljem, sumarnim blokom i detaljnom tabelom` | PASS |
+| Frontend | Obrađeni, nedostupni i neposjećeni unosi vizuelno se razlikuju u tabeli | `DispatcherRouteDashboardPage.PBI030.generise dnevni izvjestaj sa zaglavljem, sumarnim blokom i detaljnom tabelom` provjerava `rdb-report-row--processed`, `rdb-report-row--unavailable`, `rdb-report-row--unvisited` | PASS |
+| Frontend | Kada je realizacija ispod 80%, prikazuje se narandžasto upozorenje | `DispatcherRouteDashboardPage.PBI030.prikazuje upozorenje kada je realizacija ispod 80 posto` | PASS |
+| Frontend | Kada nema rute za odabrani datum i poštara, prikazuje se poruka "Nema podataka za odabrane parametre." | `DispatcherRouteDashboardPage.PBI030.prikazuje poruku kada za odabrani datum i postara nema rute` | PASS |
+| Frontend | Ruta sa 100% obrađenih sandučića prikazuje se kao završena i realizacija je 100% | `DispatcherRouteDashboardPage.PBI030.u izvjestaju i kartici prikazuje Zavrsena kada su svi sanducici obradeni` | PASS |
+| Frontend | Dugme "Preuzmi PDF" otvara print-friendly HTML izvještaj sa podacima za PDF export | `DispatcherRouteDashboardPage.PBI030.otvara print-friendly PDF prikaz sa podacima izvjestaja` | PASS |
+
+### Fajlovi sa testovima
+
+- `PROJEKAT/frontend/src/ui/pages/admin/test/DispatcherRouteDashboardPage.PBI030.test.tsx` — 5 frontend unit/integration testova sa Vitest + Testing Library.
+
+---
+
 ## Komande izvrsene lokalno
 
 ```bash
@@ -116,7 +139,14 @@ cd PROJEKAT/backend
 dotnet test PostRoute.sln
 ```
 
-Rezultat: PASS — DAL 32/32, BLL 122/122, API 35/35.
+Rezultat: PASS — DAL 34/34, BLL 128/128, API 35/35.
+
+```bash
+cd PROJEKAT/frontend
+npm test -- --run src/ui/pages/admin/test/DispatcherRouteDashboardPage.PBI030.test.tsx
+```
+
+Rezultat: PASS — 5/5 PBI-030 frontend testova.
 
 ---
 
@@ -131,3 +161,4 @@ Rezultat: PASS — DAL 32/32, BLL 122/122, API 35/35.
 | Unit - BLL servisi | US-29 | PBI-029 | `RouteServiceTests.PBI029` | PASS |
 | Unit - DAL repozitoriji | US-29 | PBI-029 | `RouteRepositoryTests.PBI029` | PASS |
 | Unit - API kontroleri | US-29 | PBI-029 | `RoutesControllerTests.PBI029` | PASS |
+| Unit/Integration - Frontend UI | US-30 | PBI-030 | `DispatcherRouteDashboardPage.PBI030.test.tsx` | PASS |

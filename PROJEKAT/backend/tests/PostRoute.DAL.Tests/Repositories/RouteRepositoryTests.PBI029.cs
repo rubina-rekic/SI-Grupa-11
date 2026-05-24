@@ -200,6 +200,73 @@ public sealed class RouteRepositoryTestsPBI029 : IDisposable
         Assert.Equal(RouteStatus.Dodijeljena, result[2].Status);
     }
 
+    // ================================================================
+    // AKTIVNA RUTA PO SANDUCICU
+    // ================================================================
+
+    [Fact]
+    public async Task GetActiveByPostmanAndMailboxAsync_ShouldReturnActiveRouteContainingMailbox()
+    {
+        var postman = MakePostman("postar1");
+        var mailbox = MakeMailbox();
+        var route = MakeRoute(postman, new DateOnly(2026, 5, 23), RouteStatus.Dodijeljena);
+        route.RouteItems = new List<RouteItem>
+        {
+            new()
+            {
+                Id = Guid.NewGuid(),
+                RouteId = route.Id,
+                MailboxId = mailbox.Id,
+                Mailbox = mailbox,
+                Order = 1,
+                EstimatedArrivalTime = new TimeOnly(8, 15),
+                Status = "Planirano"
+            }
+        };
+
+        _context.Users.Add(postman);
+        _context.Mailboxes.Add(mailbox);
+        _context.Routes.Add(route);
+        await _context.SaveChangesAsync();
+
+        var result = await _sut.GetActiveByPostmanAndMailboxAsync(postman.Id, mailbox.Id);
+
+        Assert.NotNull(result);
+        Assert.Equal(route.Id, result!.Id);
+        Assert.Single(result.RouteItems);
+        Assert.NotNull(result.RouteItems.First().Mailbox);
+    }
+
+    [Fact]
+    public async Task GetActiveByPostmanAndMailboxAsync_ShouldIgnoreCompletedRoutes()
+    {
+        var postman = MakePostman("postar1");
+        var mailbox = MakeMailbox();
+        var route = MakeRoute(postman, new DateOnly(2026, 5, 23), RouteStatus.Zavrsena);
+        route.RouteItems = new List<RouteItem>
+        {
+            new()
+            {
+                Id = Guid.NewGuid(),
+                RouteId = route.Id,
+                MailboxId = mailbox.Id,
+                Mailbox = mailbox,
+                Order = 1,
+                EstimatedArrivalTime = new TimeOnly(8, 15),
+                Status = "Obrađen"
+            }
+        };
+
+        _context.Users.Add(postman);
+        _context.Mailboxes.Add(mailbox);
+        _context.Routes.Add(route);
+        await _context.SaveChangesAsync();
+
+        var result = await _sut.GetActiveByPostmanAndMailboxAsync(postman.Id, mailbox.Id);
+
+        Assert.Null(result);
+    }
+
     public void Dispose()
     {
         _context.Dispose();

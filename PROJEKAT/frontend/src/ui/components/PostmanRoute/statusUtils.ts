@@ -25,7 +25,6 @@ export const isUnavailableStatus = (status?: string | null) =>
 export const isRouteItemProcessed = (item: RouteItemResponse) =>
     Boolean(item.processedAt) ||
     isProcessedMailboxStatus(item.processedStatus) ||
-    isProcessedMailboxStatus(item.mailboxStatus) ||
     isProcessedMailboxStatus(item.status);
 
 export const isRouteItemUnavailable = (item: RouteItemResponse) =>
