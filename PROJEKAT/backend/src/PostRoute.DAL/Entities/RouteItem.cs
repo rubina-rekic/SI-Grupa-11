@@ -23,4 +23,10 @@ public class RouteItem
     public string Status { get; set; } = "Planirano";
 
     public bool IsManuallyReordered { get; set; } = false;
+
+    public DateTime? ProcessedAt { get; set; }
+
+    public Guid? ProcessedBy { get; set; }
+
+    public MailboxStatus? ProcessedStatus { get; set; }
 }

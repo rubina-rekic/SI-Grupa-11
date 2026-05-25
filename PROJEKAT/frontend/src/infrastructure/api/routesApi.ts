@@ -12,6 +12,9 @@ export interface RouteItemResponse {
     status: string;
     isManuallyReordered: boolean;
     mailboxStatus: string;
+    processedAt?: string | null;
+    processedBy?: string | null;
+    processedStatus?: string | null;
 }
 
 export interface RouteResponse {
@@ -29,6 +32,8 @@ export interface RouteResponse {
     lastReorderedBy: string | null;
     assignedAt: string | null;
     assignedBy: string | null;
+    startedAt?: string | null;
+    completedAt?: string | null;
     routeItems: RouteItemResponse[];
 }
 

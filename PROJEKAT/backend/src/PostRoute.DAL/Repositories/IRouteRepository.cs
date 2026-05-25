@@ -7,6 +7,7 @@ public interface IRouteRepository
     Task<Route> CreateAsync(Route route, CancellationToken cancellationToken = default);
     Task<Route?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default);
     Task<Route?> GetByPostmanAndDateAsync(Guid postmanId, DateOnly date, CancellationToken cancellationToken = default);
+    Task<Route?> GetActiveByPostmanAndMailboxAsync(Guid postmanId, Guid mailboxId, CancellationToken cancellationToken = default);
     Task<IReadOnlyList<Guid>> GetPostmanIdsWithActiveRouteOnDateAsync(
         DateOnly date,
         Guid? excludedRouteId = null,

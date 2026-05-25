@@ -42,7 +42,7 @@ const schema = z.object({
         .max(128, "Lozinka može imati najviše 128 znakova")
         .regex(/[A-Z]/, "Lozinka mora sadržavati najmanje jedno veliko slovo")
         .regex(/\d/, "Lozinka mora sadržavati najmanje jedan broj"),
-    role: z.enum(["Administrator", "PostalWorker"]).refine((val) => val !== undefined, {
+    role: z.enum(["Administrator", "Dispatcher", "PostalWorker"]).refine((val) => val !== undefined, {
         message: "Uloga je obavezno polje",
     }),
 })
@@ -72,7 +72,7 @@ export function CreatePostalWorkerPage() {
 
         if (result.status === 201) {
             toast.success("Račun uspješno kreiran", {
-                description: `Poštar ${data.username} može se prijaviti s privremenom lozinkom.`,
+                description: `Korisnik ${data.username} može se prijaviti s privremenom lozinkom.`,
             })
             reset()
             return
@@ -194,6 +194,7 @@ export function CreatePostalWorkerPage() {
                             >
                                 <option value="">Odaberite ulogu</option>
                                 <option value="PostalWorker">Poštar</option>
+                                <option value="Dispatcher">Dispečer</option>
                                 <option value="Administrator">Administrator</option>
                             </select>
                             {errors.role && (

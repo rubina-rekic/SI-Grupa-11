@@ -1,5 +1,6 @@
 import React from 'react';
 import type { RouteResponse } from '../../../infrastructure/api/routesApi';
+import { getRouteStatusLabel, isRouteItemProcessed, isRouteItemUnavailable } from './statusUtils';
 import './RouteSummary.css';
 
 interface RouteSummaryProps {
@@ -49,12 +50,8 @@ const IconClock = () => (
 
 export const RouteSummary: React.FC<RouteSummaryProps> = ({ route }) => {
     const totalMailboxes = route.routeItems.length;
-    const processedMailboxes = route.routeItems.filter(
-        (item) => item.status === 'Obrađen' || item.status === 'Obrađeno'
-    ).length;
-    const skippedMailboxes = route.routeItems.filter(
-        (item) => item.status === 'Nedostupan'
-    ).length;
+    const processedMailboxes = route.routeItems.filter(isRouteItemProcessed).length;
+    const skippedMailboxes = route.routeItems.filter(isRouteItemUnavailable).length;
     const completionPercentage =
         totalMailboxes > 0 ? Math.round((processedMailboxes / totalMailboxes) * 100) : 0;
 
@@ -82,7 +79,7 @@ export const RouteSummary: React.FC<RouteSummaryProps> = ({ route }) => {
                     Pregled rute
                 </h2>
                 <span className={`route-status status-${route.status.toLowerCase()}`}>
-                    {route.status === 'Dodijeljena' ? 'Dodijeljena' : 'U toku'}
+                    {getRouteStatusLabel(route.status)}
                 </span>
             </div>
 

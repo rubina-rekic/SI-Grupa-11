@@ -1,8 +1,18 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'sonner';
 import { Layout } from '../../components/Layout/Layout';
 import { routesApi } from '../../../infrastructure/api/routesApi';
 import type { RouteResponse, RouteItemResponse } from '../../../infrastructure/api/routesApi';
+import { getUsers } from '../../../infrastructure/api/users/usersApi';
+import type { UserListDto } from '../../../infrastructure/api/users/usersApi';
+import {
+    getMailboxStatusLabel,
+    getVisitStatusClass,
+    getVisitStatusLabel,
+    isRouteItemProcessed,
+    isRouteItemUnavailable,
+} from '../../components/PostmanRoute/statusUtils';
 import './DispatcherRouteDashboardPage.css';
 
 // ── helpers ────────────────────────────────────────────────────
@@ -34,12 +44,35 @@ function fmtTime(t: string) {
     return t?.slice(0, 5) ?? '—';
 }
 
+function formatDate(date: string) {
+    const parsed = new Date(`${date}T00:00:00`);
+    if (Number.isNaN(parsed.getTime())) return date;
+    return parsed.toLocaleDateString('bs-BA', { day: '2-digit', month: '2-digit', year: 'numeric' });
+}
+
+function formatDateTime(value?: string | null) {
+    if (!value) return '—';
+    const parsed = new Date(value);
+    if (Number.isNaN(parsed.getTime())) return '—';
+    return parsed.toLocaleString('bs-BA', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+    });
+}
+
+function routeStatusLabel(status: string) {
+    return STATUS_LABELS[status] ?? status;
+}
+
 function isDone(item: RouteItemResponse) {
-    return item.mailboxStatus === 'Obraen' || item.mailboxStatus === 'Ispraznjen';
+    return isRouteItemProcessed(item);
 }
 
 function isProblematic(item: RouteItemResponse) {
-    return item.mailboxStatus === 'Napunjen';
+    return isRouteItemUnavailable(item);
 }
 
 function routeProgress(route: RouteResponse) {
@@ -49,8 +82,131 @@ function routeProgress(route: RouteResponse) {
     return { total, done, prob };
 }
 
+function getEffectiveRouteStatus(route: RouteResponse) {
+    const { total, done } = routeProgress(route);
+
+    if (total > 0 && done === total && route.status !== 'Otkazana') {
+        return 'Zavrsena';
+    }
+
+    if (done > 0 && (route.status === 'Planirana' || route.status === 'Dodijeljena')) {
+        return 'UProgresu';
+    }
+
+    return route.status;
+}
+
 function hasProblematicItems(route: RouteResponse) {
     return route.routeItems.some(isProblematic);
+}
+
+function getReportStatus(item: RouteItemResponse) {
+    if (isRouteItemUnavailable(item)) {
+        return { label: 'Nedostupan', css: 'unavailable' };
+    }
+
+    if (isRouteItemProcessed(item)) {
+        const type = getMailboxStatusLabel(item.processedStatus ?? item.mailboxStatus);
+        return {
+            label: type === 'Obrađen' ? 'Obrađen' : `Obrađen (${type})`,
+            css: 'processed',
+        };
+    }
+
+    return { label: 'Nije posjećen', css: 'unvisited' };
+}
+
+function routeName(route: RouteResponse) {
+    return `Dnevna ruta ${route.id.slice(0, 8).toUpperCase()}`;
+}
+
+function escapeHtml(value: string) {
+    return value
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#39;');
+}
+
+function buildReportMetrics(route: RouteResponse) {
+    const total = route.routeItems.length;
+    const unavailable = route.routeItems.filter(isRouteItemUnavailable).length;
+    const processed = route.routeItems.filter(item => !isRouteItemUnavailable(item) && isRouteItemProcessed(item)).length;
+    const unvisited = total - processed - unavailable;
+    const realization = total === 0 ? 0 : Math.round((processed / total) * 100);
+
+    return { total, processed, unavailable, unvisited, realization };
+}
+
+function buildReportHtml(route: RouteResponse) {
+    const metrics = buildReportMetrics(route);
+    const rows = route.routeItems.map((item) => {
+        const status = getReportStatus(item);
+        return `
+            <tr class="${status.css}">
+                <td>${item.order}</td>
+                <td>${escapeHtml(item.address)}</td>
+                <td>${escapeHtml(item.priority)}</td>
+                <td>${escapeHtml(status.label)}</td>
+                <td>-</td>
+                <td>${escapeHtml(formatDateTime(item.processedAt))}</td>
+            </tr>`;
+    }).join('');
+
+    return `<!doctype html>
+<html lang="bs">
+<head>
+    <meta charset="utf-8" />
+    <title>${escapeHtml(routeName(route))}</title>
+    <style>
+        body { font-family: Arial, sans-serif; color: #0f172a; margin: 32px; }
+        h1 { margin: 0 0 4px; font-size: 22px; }
+        .meta { color: #475569; font-size: 13px; margin-bottom: 18px; }
+        .summary { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin: 16px 0; }
+        .summary div { border: 1px solid #cbd5e1; border-radius: 6px; padding: 10px; }
+        .label { color: #64748b; font-size: 11px; text-transform: uppercase; }
+        .value { font-size: 18px; font-weight: 700; margin-top: 4px; }
+        .warning { background: #fff7ed; border: 1px solid #fed7aa; color: #9a3412; padding: 10px; border-radius: 6px; margin: 12px 0; }
+        table { border-collapse: collapse; width: 100%; margin-top: 16px; font-size: 12px; }
+        th, td { border: 1px solid #cbd5e1; padding: 7px 8px; text-align: left; vertical-align: top; }
+        th { background: #f8fafc; color: #334155; }
+        tr.processed td { background: #f0fdf4; }
+        tr.unavailable td { background: #fef2f2; }
+        tr.unvisited td { background: #f8fafc; color: #64748b; }
+    </style>
+</head>
+<body>
+    <h1>${escapeHtml(routeName(route))}</h1>
+    <div class="meta">
+        Datum: ${escapeHtml(formatDate(route.date))} &nbsp;|&nbsp;
+        Poštar: ${escapeHtml(route.postmanName ?? 'Nije dodijeljeno')} &nbsp;|&nbsp;
+        Status: ${escapeHtml(routeStatusLabel(getEffectiveRouteStatus(route)))} &nbsp;|&nbsp;
+        Završeno: ${escapeHtml(formatDateTime(route.completedAt))}
+    </div>
+    <div class="summary">
+        <div><span class="label">Ukupno</span><div class="value">${metrics.total}</div></div>
+        <div><span class="label">Obrađeno</span><div class="value">${metrics.processed}</div></div>
+        <div><span class="label">Nedostupno</span><div class="value">${metrics.unavailable}</div></div>
+        <div><span class="label">Nije posjećeno</span><div class="value">${metrics.unvisited}</div></div>
+        <div><span class="label">Realizacija</span><div class="value">${metrics.realization}%</div></div>
+    </div>
+    ${metrics.realization < 80 ? '<div class="warning">Upozorenje: Realizacija rute ispod standardnog praga (80%).</div>' : ''}
+    <table>
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Adresa</th>
+                <th>Prioritet</th>
+                <th>Finalni status</th>
+                <th>Razlog nedostupnosti</th>
+                <th>Timestamp akcije</th>
+            </tr>
+        </thead>
+        <tbody>${rows}</tbody>
+    </table>
+</body>
+</html>`;
 }
 
 // ── sub-components ─────────────────────────────────────────────
@@ -75,10 +231,11 @@ function ProgressBar({ done, total }: { done: number; total: number }) {
 function RouteCard({ route, onOpen }: { route: RouteResponse; onOpen: (id: string) => void }) {
     const { total, done, prob } = routeProgress(route);
     const problematic = hasProblematicItems(route);
+    const effectiveStatus = getEffectiveRouteStatus(route);
 
     return (
         <div
-            className={`rdb-card${problematic ? ' rdb-card--warning' : ''}${route.status === 'UProgresu' ? ' rdb-card--active' : ''}`}
+            className={`rdb-card${problematic ? ' rdb-card--warning' : ''}${effectiveStatus === 'UProgresu' ? ' rdb-card--active' : ''}`}
         >
             <div className="rdb-card-header">
                 <div className="rdb-card-postman">
@@ -88,12 +245,12 @@ function RouteCard({ route, onOpen }: { route: RouteResponse; onOpen: (id: strin
                         {route.plannedEndTime ? ` – ${fmtTime(route.plannedEndTime)}` : ''}
                     </span>
                 </div>
-                <StatusBadge status={route.status} />
+                <StatusBadge status={effectiveStatus} />
             </div>
 
             {problematic && (
                 <div className="rdb-card-alert">
-                    ⚠ {prob} {prob === 1 ? 'sandučić zahtijeva' : 'sandučića zahtijeva'} pažnju (Napunjen)
+                    ⚠ {prob} {prob === 1 ? 'sandučić zahtijeva' : 'sandučića zahtijeva'} pažnju
                 </div>
             )}
 
@@ -122,9 +279,15 @@ function RouteCard({ route, onOpen }: { route: RouteResponse; onOpen: (id: strin
                     >
                         <span className="rdb-item-order">{item.order}</span>
                         <span className="rdb-item-address">{item.address}</span>
-                        <span className="rdb-item-time">{fmtTime(item.estimatedArrivalTime)}</span>
-                        <span className={`rdb-item-status rdb-item-status--${(item.mailboxStatus ?? '').toLowerCase()}`}>
-                            {item.mailboxStatus || 'Prazan'}
+                        <span className="rdb-item-time">
+                            {item.processedAt
+                                ? new Date(item.processedAt).toLocaleTimeString('bs', { hour: '2-digit', minute: '2-digit' })
+                                : fmtTime(item.estimatedArrivalTime)}
+                        </span>
+                        <span className={`rdb-item-status rdb-item-status--${getVisitStatusClass(item)}`}>
+                            {isDone(item)
+                                ? getMailboxStatusLabel(item.processedStatus ?? item.mailboxStatus)
+                                : getVisitStatusLabel(item)}
                         </span>
                     </div>
                 ))}
@@ -133,6 +296,86 @@ function RouteCard({ route, onOpen }: { route: RouteResponse; onOpen: (id: strin
             <button className="rdb-card-link" onClick={() => onOpen(route.id)}>
                 Otvori detalje →
             </button>
+        </div>
+    );
+}
+
+function DailyReportPreview({ route, onDownloadPdf }: { route: RouteResponse; onDownloadPdf: () => void }) {
+    const metrics = buildReportMetrics(route);
+    const effectiveStatus = getEffectiveRouteStatus(route);
+
+    return (
+        <div className="rdb-report-preview">
+            <div className="rdb-report-preview-header">
+                <div>
+                    <h3>{routeName(route)}</h3>
+                    <p>
+                        {formatDate(route.date)} · {route.postmanName ?? 'Nije dodijeljeno'} · {routeStatusLabel(effectiveStatus)}
+                    </p>
+                </div>
+                <button className="rdb-report-download" onClick={onDownloadPdf}>
+                    Preuzmi PDF
+                </button>
+            </div>
+
+            <div className="rdb-report-summary">
+                <div className="rdb-report-stat">
+                    <span>Ukupno sandučića</span>
+                    <strong>{metrics.total}</strong>
+                </div>
+                <div className="rdb-report-stat rdb-report-stat--processed">
+                    <span>Obrađenih</span>
+                    <strong>{metrics.processed}</strong>
+                </div>
+                <div className="rdb-report-stat rdb-report-stat--unavailable">
+                    <span>Nedostupnih</span>
+                    <strong>{metrics.unavailable}</strong>
+                </div>
+                <div className="rdb-report-stat">
+                    <span>Nije posjećeno</span>
+                    <strong>{metrics.unvisited}</strong>
+                </div>
+                <div className="rdb-report-stat">
+                    <span>Realizacija</span>
+                    <strong>{metrics.realization}%</strong>
+                </div>
+            </div>
+
+            {metrics.realization < 80 && (
+                <div className="rdb-report-warning">
+                    Upozorenje: Realizacija rute ispod standardnog praga (80%).
+                </div>
+            )}
+
+            <div className="rdb-report-table-wrap">
+                <table className="rdb-report-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Adresa</th>
+                            <th>Prioritet</th>
+                            <th>Finalni status</th>
+                            <th>Razlog nedostupnosti</th>
+                            <th>Timestamp akcije</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {route.routeItems.map(item => {
+                            const status = getReportStatus(item);
+                            return (
+                                <tr key={item.id} className={`rdb-report-row rdb-report-row--${status.css}`}>
+                                    <td>{item.order}</td>
+                                    <td>{item.address}</td>
+                                    <td>{item.priority}</td>
+                                    <td>{status.label}</td>
+                                    <td>—</td>
+                                    <td>{formatDateTime(item.processedAt)}</td>
+                                </tr>
+                            );
+                        })}
+                    </tbody>
+                </table>
+            </div>
         </div>
     );
 }
@@ -149,6 +392,11 @@ const DispatcherRouteDashboardPage: React.FC = () => {
     const [filter, setFilter]         = useState<string>('Sve');
     const [countdown, setCountdown]   = useState(REFRESH_INTERVAL);
     const [lastRefresh, setLastRefresh] = useState<Date | null>(null);
+    const [postmen, setPostmen]       = useState<UserListDto[]>([]);
+    const [selectedPostmanId, setSelectedPostmanId] = useState('');
+    const [reportRoute, setReportRoute] = useState<RouteResponse | null>(null);
+    const [reportMessage, setReportMessage] = useState<string | null>(null);
+    const [postmenLoading, setPostmenLoading] = useState(false);
 
     const countdownRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
@@ -170,10 +418,47 @@ const DispatcherRouteDashboardPage: React.FC = () => {
         }
     }, []);
 
+    useEffect(() => {
+        let active = true;
+        setPostmenLoading(true);
+
+        getUsers()
+            .then(result => {
+                if (!active) return;
+
+                if (!result.data) {
+                    setReportMessage('Nije moguće učitati listu poštara.');
+                    return;
+                }
+
+                const workers = result.data
+                    .filter(user => user.role === 'PostalWorker')
+                    .sort((a, b) => a.username.localeCompare(b.username, 'bs'));
+
+                setPostmen(workers);
+                setSelectedPostmanId(prev => prev || workers[0]?.id || '');
+            })
+            .catch(() => {
+                if (active) setReportMessage('Nije moguće učitati listu poštara.');
+            })
+            .finally(() => {
+                if (active) setPostmenLoading(false);
+            });
+
+        return () => {
+            active = false;
+        };
+    }, []);
+
     // Initial + date-change load
     useEffect(() => {
         load(date);
     }, [date, load]);
+
+    useEffect(() => {
+        setReportRoute(null);
+        setReportMessage(null);
+    }, [date, selectedPostmanId]);
 
     // Auto-refresh countdown
     useEffect(() => {
@@ -194,12 +479,46 @@ const DispatcherRouteDashboardPage: React.FC = () => {
         };
     }, [date, load]);
 
-    const filtered = filter === 'Sve' ? routes : routes.filter(r => r.status === filter);
+    const filtered = filter === 'Sve' ? routes : routes.filter(r => getEffectiveRouteStatus(r) === filter);
 
     const summaryByStatus = STATUS_FILTER_OPTIONS.filter(s => s !== 'Sve').map(s => ({
         status: s,
-        count: routes.filter(r => r.status === s).length,
+        count: routes.filter(r => getEffectiveRouteStatus(r) === s).length,
     }));
+
+    const generateReport = () => {
+        if (!selectedPostmanId) {
+            setReportRoute(null);
+            setReportMessage('Odaberite poštara za generisanje izvještaja.');
+            return;
+        }
+
+        const route = routes.find(r => r.postmanId === selectedPostmanId);
+
+        if (!route) {
+            setReportRoute(null);
+            setReportMessage('Nema podataka za odabrane parametre.');
+            return;
+        }
+
+        setReportRoute(route);
+        setReportMessage(null);
+    };
+
+    const downloadReportPdf = () => {
+        if (!reportRoute) return;
+
+        const reportWindow = window.open('', '_blank', 'width=960,height=720');
+        if (!reportWindow) {
+            toast.error('Browser je blokirao otvaranje PDF izvještaja.');
+            return;
+        }
+
+        reportWindow.document.write(buildReportHtml(reportRoute));
+        reportWindow.document.close();
+        reportWindow.focus();
+        reportWindow.setTimeout(() => reportWindow.print(), 250);
+    };
 
     return (
         <Layout>
@@ -259,9 +578,48 @@ const DispatcherRouteDashboardPage: React.FC = () => {
                             className={`rdb-filter-btn${filter === s ? ' rdb-filter-btn--active' : ''}`}
                             onClick={() => setFilter(s)}
                         >
-                            {s === 'Sve' ? `Sve (${routes.length})` : `${STATUS_LABELS[s]} (${routes.filter(r => r.status === s).length})`}
+                            {s === 'Sve' ? `Sve (${routes.length})` : `${STATUS_LABELS[s]} (${routes.filter(r => getEffectiveRouteStatus(r) === s).length})`}
                         </button>
                     ))}
+                </div>
+
+                <div className="rdb-report-panel">
+                    <div className="rdb-report-controls">
+                        <div className="rdb-report-copy">
+                            <h2>Dnevni izvještaj</h2>
+                            <p>{formatDate(date)}</p>
+                        </div>
+                        <div className="rdb-report-form">
+                            <select
+                                className="rdb-report-select"
+                                value={selectedPostmanId}
+                                onChange={event => setSelectedPostmanId(event.target.value)}
+                                disabled={postmenLoading || postmen.length === 0}
+                            >
+                                <option value="">Odaberite poštara</option>
+                                {postmen.map(postman => (
+                                    <option key={postman.id} value={postman.id}>
+                                        {postman.username}
+                                    </option>
+                                ))}
+                            </select>
+                            <button
+                                className="rdb-report-generate"
+                                onClick={generateReport}
+                                disabled={loading || postmenLoading}
+                            >
+                                Generiši izvještaj
+                            </button>
+                        </div>
+                    </div>
+
+                    {reportMessage && (
+                        <div className="rdb-report-message">{reportMessage}</div>
+                    )}
+
+                    {reportRoute && (
+                        <DailyReportPreview route={reportRoute} onDownloadPdf={downloadReportPdf} />
+                    )}
                 </div>
 
                 {/* ── Content ─────────────────────────────── */}

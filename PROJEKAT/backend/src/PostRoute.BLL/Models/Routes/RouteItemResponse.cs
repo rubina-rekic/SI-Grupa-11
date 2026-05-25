@@ -13,4 +13,7 @@ public class RouteItemResponse
     public string Status { get; set; } = string.Empty;
     public bool IsManuallyReordered { get; set; }
     public string MailboxStatus { get; set; } = string.Empty;
+    public DateTime? ProcessedAt { get; set; }
+    public Guid? ProcessedBy { get; set; }
+    public string? ProcessedStatus { get; set; }
 }
