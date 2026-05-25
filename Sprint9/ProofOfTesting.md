@@ -11,7 +11,7 @@
 | Unit - Backend (API kontroleri) | US-26, US-27, US-29 + regresija svih prethodnih | xUnit + Moq | 35 testova | PASS |
 | Unit - Frontend (React UI) | US-30 | Vitest + Testing Library | 5 testova | PASS |
 
-**Ukupno verifikovano:** `dotnet test PostRoute.sln --no-build` prolazi — DAL 34/34, BLL 128/128, API 35/35. Za PBI-030 frontend testovi prolaze komandom `npm test -- --run src/ui/pages/admin/test/DispatcherRouteDashboardPage.PBI030.test.tsx` — 5/5. Postoji poznato MSB3277 upozorenje o transitive EF Core Relational 9.0.1/9.0.4 verzijama u API test buildu (prisutno od Sprint 8, ne utječe na testove).
+**Ukupno verifikovano:** `dotnet test PostRoute.sln --no-build` prolazi — DAL 34/34, BLL 128/128, API 35/35. Za PBI-030 frontend testovi prolaze komandom `npm test -- --run src/ui/pages/admin/test/DispatcherRouteDashboardPage.PBI030.test.tsx` — 5/5, a cijeli frontend test paket prolazi komandom `npm test -- --run` — 36/36. Postoji poznato MSB3277 upozorenje o transitive EF Core Relational 9.0.1/9.0.4 verzijama u API test buildu (prisutno od Sprint 8, ne utječe na testove).
 
 **Prethodni sprint:** Sprint 8 imao BLL 92, DAL 26, API 15. Sprint 9 dodaje +36 BLL, +8 DAL, +20 API i +5 frontend testova kroz PBI-026, PBI-027, PBI-029, PBI-030 i regresijske popravke završavanja rute.
 
@@ -98,6 +98,8 @@
 | DAL | Eager-load: uključuje poštara (`Postman`) | `RouteRepositoryTestsPBI029.GetByDateAsync_ShouldIncludePostman_InResult` | PASS |
 | DAL | Eager-load: uključuje stavke rute sa sandučićem (`RouteItems.Mailbox`) | `RouteRepositoryTestsPBI029.GetByDateAsync_ShouldIncludeRouteItems_WithMailbox` | PASS |
 | DAL | Sortiranje po statusu pa po planiranom početnom vremenu | `RouteRepositoryTestsPBI029.GetByDateAsync_ShouldOrderBy_StatusThenPlannedStartTime` | PASS |
+| DAL | Dohvata aktivnu rutu po poštaru i sandučiću kada datum lookup promaši | `RouteRepositoryTestsPBI029.GetActiveByPostmanAndMailboxAsync_ShouldReturnActiveRouteContainingMailbox` | PASS |
+| DAL | Ignoriše završene rute pri fallback dohvatu aktivne rute | `RouteRepositoryTestsPBI029.GetActiveByPostmanAndMailboxAsync_ShouldIgnoreCompletedRoutes` | PASS |
 | API | `GET /api/routes?date=` vraća 200 s listom ruta | `RoutesControllerTestsPBI029.GetByDate_ShouldReturnOk_WithListOfRoutes` | PASS |
 | API | Vraća 200 s praznom listom kada nema ruta za datum | `RoutesControllerTestsPBI029.GetByDate_ShouldReturnOk_WithEmptyList_WhenNoRoutesExist` | PASS |
 | API | Kontroler prosljeđuje tačan datum servisu | `RoutesControllerTestsPBI029.GetByDate_ShouldCallService_WithCorrectDate` | PASS |
@@ -106,8 +108,8 @@
 
 ### Fajlovi sa testovima
 
-- `PROJEKAT/backend/tests/PostRoute.BLL.Tests/Services/RouteServiceTests.PBI029.cs` — 7 BLL unit testova.
-- `PROJEKAT/backend/tests/PostRoute.DAL.Tests/Repositories/RouteRepositoryTests.PBI029.cs` — 6 DAL integration testova (EF Core InMemory). Ne referencira `PostRoute.Domain` — `User` entitet dostupan kroz `PostRoute.DAL.Entities`.
+- `PROJEKAT/backend/tests/PostRoute.BLL.Tests/Services/RouteServiceTests.PBI029.cs` — 9 BLL unit testova.
+- `PROJEKAT/backend/tests/PostRoute.DAL.Tests/Repositories/RouteRepositoryTests.PBI029.cs` — 8 DAL integration testova (EF Core InMemory). Ne referencira `PostRoute.Domain` — `User` entitet dostupan kroz `PostRoute.DAL.Entities`.
 - `PROJEKAT/backend/tests/PostRoute.Api.Tests/Controllers/RoutesControllerTests.PBI029.cs` — 5 API controller testova. Controller setup s `Dispatcher` ulogom u `ClaimsPrincipal`.
 
 ---
@@ -147,6 +149,20 @@ npm test -- --run src/ui/pages/admin/test/DispatcherRouteDashboardPage.PBI030.te
 ```
 
 Rezultat: PASS — 5/5 PBI-030 frontend testova.
+
+```bash
+cd PROJEKAT/frontend
+npm test -- --run
+```
+
+Rezultat: PASS — 36/36 frontend testova u 4 test fajla.
+
+```bash
+cd PROJEKAT/frontend
+npm run build
+```
+
+Rezultat: PASS — TypeScript i Vite produkcijski build uspješni. Vite prikazuje standardno upozorenje da je jedan chunk veći od 500 kB.
 
 ---
 
