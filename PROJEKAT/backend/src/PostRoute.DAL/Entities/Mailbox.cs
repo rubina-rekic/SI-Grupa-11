@@ -128,5 +128,8 @@ public enum MailboxStatus
     Napunjen = 3,
 
     [Display(Name = "Ispraznjen")]
-    Ispraznjen = 4
+    Ispraznjen = 4,
+
+    [Display(Name = "Nedostupan")]
+    Nedostupan = 5
 }

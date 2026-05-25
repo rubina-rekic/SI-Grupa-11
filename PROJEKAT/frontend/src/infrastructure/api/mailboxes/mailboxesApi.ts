@@ -101,7 +101,8 @@ export const MailboxStatus = {
     Pun: 1,
     Obraen: 2,
     Napunjen: 3,
-    Ispraznjen: 4
+    Ispraznjen: 4,
+    Nedostupan: 5,
 } as const
 export type MailboxStatus = typeof MailboxStatus[keyof typeof MailboxStatus]
 
@@ -110,7 +111,8 @@ export const mailboxStatusLabels: Record<MailboxStatus, string> = {
     [MailboxStatus.Pun]: "Pun",
     [MailboxStatus.Obraen]: "Obrađen",
     [MailboxStatus.Napunjen]: "Napunjen",
-    [MailboxStatus.Ispraznjen]: "Ispraznjen"
+    [MailboxStatus.Ispraznjen]: "Ispraznjen",
+    [MailboxStatus.Nedostupan]: "Nedostupan",
 }
 
 // US-33: Radni dani sandučića (flags enum)

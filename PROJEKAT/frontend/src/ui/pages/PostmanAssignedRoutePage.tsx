@@ -6,7 +6,7 @@ import { RouteItemList } from '../components/PostmanRoute/RouteItemList';
 import { RouteSummary } from '../components/PostmanRoute/RouteSummary';
 import { routesApi } from '../../infrastructure/api/routesApi';
 import type { RouteResponse } from '../../infrastructure/api/routesApi';
-import { updateMailboxStatus, mailboxStatusLabels } from '../../infrastructure/api/mailboxes/mailboxesApi';
+import { updateMailboxStatus, mailboxStatusLabels, MailboxStatus } from '../../infrastructure/api/mailboxes/mailboxesApi';
 import { getRouteStatusLabel, isRouteItemProcessed } from '../components/PostmanRoute/statusUtils';
 import './PostmanAssignedRoutePage.css';
 
@@ -85,8 +85,8 @@ const PostmanAssignedRoutePage: React.FC = () => {
 
     const handleStatusChange = async (mailboxId: string, status: number) => {
         try {
-            await updateMailboxStatus(mailboxId, { status: status as 0 | 1 | 2 | 3 | 4 });
-            const label = mailboxStatusLabels[status as 0 | 1 | 2 | 3 | 4] ?? String(status);
+            await updateMailboxStatus(mailboxId, { status: status as MailboxStatus });
+            const label = mailboxStatusLabels[status as MailboxStatus] ?? String(status);
             setRoute(prev => {
                 if (!prev) return prev;
                 const now = new Date().toISOString();
@@ -115,6 +115,31 @@ const PostmanAssignedRoutePage: React.FC = () => {
             toast.success(`Status sandučića ažuriran: ${label}`);
         } catch (err) {
             toast.error(err instanceof Error ? err.message : 'Greška pri ažuriranju statusa');
+        }
+    };
+
+    const handleUnavailableChange = async (mailboxId: string, reason: string) => {
+        try {
+            await updateMailboxStatus(mailboxId, { status: MailboxStatus.Nedostupan, reason });
+            setRoute(prev => {
+                if (!prev) return prev;
+                const now = new Date().toISOString();
+                const routeItems = prev.routeItems.map(item =>
+                    item.mailboxId === mailboxId
+                        ? {
+                            ...item,
+                            status: 'Nedostupan',
+                            mailboxStatus: 'Nedostupan',
+                            processedAt: now,
+                            processedBy: prev.postmanId,
+                        }
+                        : item
+                );
+                return { ...prev, routeItems, status: 'UProgresu', startedAt: prev.startedAt ?? now };
+            });
+            toast.warning(`Sandučić označen kao nedostupan — razlog: ${reason}`);
+        } catch (err) {
+            toast.error(err instanceof Error ? err.message : 'Greška pri označavanju nedostupnosti');
         }
     };
 
@@ -210,7 +235,7 @@ const PostmanAssignedRoutePage: React.FC = () => {
                             </div>
 
                             <div className="list-section">
-                                <RouteItemList items={route.routeItems} onStatusChange={handleStatusChange} />
+                                <RouteItemList items={route.routeItems} onStatusChange={handleStatusChange} onUnavailableChange={handleUnavailableChange} />
                             </div>
 
                             <div className="route-actions">
