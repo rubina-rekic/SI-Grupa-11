@@ -8,13 +8,23 @@ import {
     getVisitStatusLabel,
     isProcessedMailboxStatus,
     isRouteItemProcessed,
+    isRouteItemUnavailable,
     STATUS_ALREADY_RECORDED_MESSAGE,
 } from './statusUtils';
 import './RouteItemList.css';
 
+const UNAVAILABLE_REASONS = [
+    'Zaključan pristup',
+    'Sandučić oštećen',
+    'Privatni posjed nedostupan',
+    'Prirodna prepreka',
+    'Ostalo',
+] as const;
+
 interface RouteItemListProps {
     items: RouteItemResponse[];
     onStatusChange?: (mailboxId: string, status: number) => Promise<void>;
+    onUnavailableChange?: (mailboxId: string, reason: string) => Promise<void>;
 }
 
 const getPriorityColor = (priority: string): string => {
@@ -62,8 +72,11 @@ const STATUS_BUTTONS: { label: string; value: number; activeColor: string }[] = 
     { label: 'Ispraznjen', value: MailboxStatus.Ispraznjen, activeColor: '#1d4ed8' },
 ];
 
-export const RouteItemList: React.FC<RouteItemListProps> = ({ items, onStatusChange }) => {
+export const RouteItemList: React.FC<RouteItemListProps> = ({ items, onStatusChange, onUnavailableChange }) => {
     const [loadingIds, setLoadingIds] = useState<Set<string>>(new Set());
+    const [unavailableOpenId, setUnavailableOpenId] = useState<string | null>(null);
+    const [selectedReason, setSelectedReason] = useState('');
+    const [customNote, setCustomNote] = useState('');
 
     const handleStatusClick = async (item: RouteItemResponse, status: number) => {
         if (!onStatusChange || loadingIds.has(item.mailboxId) || isRouteItemProcessed(item)) return;
@@ -71,6 +84,34 @@ export const RouteItemList: React.FC<RouteItemListProps> = ({ items, onStatusCha
         setLoadingIds(prev => new Set(prev).add(mailboxId));
         try {
             await onStatusChange(mailboxId, status);
+        } finally {
+            setLoadingIds(prev => {
+                const next = new Set(prev);
+                next.delete(mailboxId);
+                return next;
+            });
+        }
+    };
+
+    const openUnavailable = (mailboxId: string) => {
+        setUnavailableOpenId(mailboxId);
+        setSelectedReason('');
+        setCustomNote('');
+    };
+
+    const closeUnavailable = () => {
+        setUnavailableOpenId(null);
+        setSelectedReason('');
+        setCustomNote('');
+    };
+
+    const handleUnavailableConfirm = async (mailboxId: string) => {
+        if (!onUnavailableChange || !selectedReason) return;
+        const reason = selectedReason === 'Ostalo' ? customNote.trim() || 'Ostalo' : selectedReason;
+        setLoadingIds(prev => new Set(prev).add(mailboxId));
+        try {
+            await onUnavailableChange(mailboxId, reason);
+            closeUnavailable();
         } finally {
             setLoadingIds(prev => {
                 const next = new Set(prev);
@@ -107,7 +148,9 @@ export const RouteItemList: React.FC<RouteItemListProps> = ({ items, onStatusCha
                     const badge = getMailboxStatusBadge(currentMailboxStatus);
                     const visitClass = getVisitStatusClass(item);
                     const isProcessed = isRouteItemProcessed(item);
+                    const isUnavailable = isRouteItemUnavailable(item);
                     const processedAt = formatDateTime(item.processedAt);
+                    const isUnavailableOpen = unavailableOpenId === item.mailboxId;
 
                     return (
                         <div
@@ -142,17 +185,57 @@ export const RouteItemList: React.FC<RouteItemListProps> = ({ items, onStatusCha
                                     </span>
                                 </div>
 
-                                {onStatusChange && (
+                                {(onStatusChange || onUnavailableChange) && (
                                     <div className="mailbox-status-actions">
-                                        {isProcessed ? (
+                                        {(isProcessed || isUnavailable) ? (
                                             <div className="mailbox-status-locked">
                                                 <span>{STATUS_ALREADY_RECORDED_MESSAGE}</span>
                                                 {processedAt && <span> Evidentirano: {processedAt}</span>}
                                             </div>
+                                        ) : isUnavailableOpen ? (
+                                            <div className="unavailable-panel">
+                                                <span className="mailbox-status-actions-label">Razlog nedostupnosti:</span>
+                                                <select
+                                                    className="unavailable-reason-select"
+                                                    value={selectedReason}
+                                                    onChange={e => { setSelectedReason(e.target.value); setCustomNote(''); }}
+                                                >
+                                                    <option value="">-- Odaberite razlog --</option>
+                                                    {UNAVAILABLE_REASONS.map(r => (
+                                                        <option key={r} value={r}>{r}</option>
+                                                    ))}
+                                                </select>
+                                                {selectedReason === 'Ostalo' && (
+                                                    <textarea
+                                                        className="unavailable-note"
+                                                        placeholder="Unesite napomenu (maks. 200 znakova)"
+                                                        maxLength={200}
+                                                        rows={2}
+                                                        value={customNote}
+                                                        onChange={e => setCustomNote(e.target.value)}
+                                                    />
+                                                )}
+                                                <div className="unavailable-panel-actions">
+                                                    <button
+                                                        className="mailbox-status-btn mailbox-status-btn--unavailable"
+                                                        disabled={isLoading || !selectedReason || (selectedReason === 'Ostalo' && !customNote.trim())}
+                                                        onClick={() => void handleUnavailableConfirm(item.mailboxId)}
+                                                    >
+                                                        {isLoading ? '...' : 'Potvrdi nedostupnost'}
+                                                    </button>
+                                                    <button
+                                                        className="mailbox-status-btn mailbox-status-btn--cancel"
+                                                        disabled={isLoading}
+                                                        onClick={closeUnavailable}
+                                                    >
+                                                        Odustani
+                                                    </button>
+                                                </div>
+                                            </div>
                                         ) : (
                                             <>
                                                 <span className="mailbox-status-actions-label">Označi kao obrađen:</span>
-                                                {STATUS_BUTTONS.map(btn => {
+                                                {onStatusChange && STATUS_BUTTONS.map(btn => {
                                                     const isActive = isProcessedMailboxStatus(currentMailboxStatus)
                                                         && getMailboxStatusLabel(currentMailboxStatus) === btn.label;
                                                     return (
@@ -168,6 +251,16 @@ export const RouteItemList: React.FC<RouteItemListProps> = ({ items, onStatusCha
                                                         </button>
                                                     );
                                                 })}
+                                                {onUnavailableChange && (
+                                                    <button
+                                                        className="mailbox-status-btn mailbox-status-btn--unavailable-trigger"
+                                                        disabled={isLoading}
+                                                        onClick={() => openUnavailable(item.mailboxId)}
+                                                        title="Označi sandučić kao nedostupan"
+                                                    >
+                                                        Nedostupno
+                                                    </button>
+                                                )}
                                             </>
                                         )}
                                     </div>

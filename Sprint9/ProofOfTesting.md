@@ -6,12 +6,12 @@
 
 | Nivo | US | Alat | Broj testova | Rezultat |
 | --- | --- | --- | --- | --- |
-| Unit - Backend (BLL servisi) | US-26, US-27, US-29 + regresija svih prethodnih | xUnit + Moq | 128 testova | PASS |
+| Unit - Backend (BLL servisi) | US-26, US-27, US-28, US-29 + regresija svih prethodnih | xUnit + Moq | 136 testova | PASS |
 | Unit - Backend (DAL repozitoriji) | US-29 + regresija svih prethodnih | xUnit + EF Core InMemory | 34 testa | PASS |
-| Unit - Backend (API kontroleri) | US-26, US-27, US-29 + regresija svih prethodnih | xUnit + Moq | 35 testova | PASS |
+| Unit - Backend (API kontroleri) | US-26, US-27, US-28, US-29 + regresija svih prethodnih | xUnit + Moq | 39 testova | PASS |
 | Unit - Frontend (React UI) | US-30 | Vitest + Testing Library | 5 testova | PASS |
 
-**Ukupno verifikovano:** `dotnet test PostRoute.sln --no-build` prolazi — DAL 34/34, BLL 128/128, API 35/35. Za PBI-030 frontend testovi prolaze komandom `npm test -- --run src/ui/pages/admin/test/DispatcherRouteDashboardPage.PBI030.test.tsx` — 5/5, a cijeli frontend test paket prolazi komandom `npm test -- --run` — 36/36. Postoji poznato MSB3277 upozorenje o transitive EF Core Relational 9.0.1/9.0.4 verzijama u API test buildu (prisutno od Sprint 8, ne utječe na testove).
+**Ukupno verifikovano:** `dotnet test PostRoute.sln --no-build` prolazi — DAL 34/34, BLL 136/136, API 39/39. Za PBI-030 frontend testovi prolaze komandom `npm test -- --run src/ui/pages/admin/test/DispatcherRouteDashboardPage.PBI030.test.tsx` — 5/5, a cijeli frontend test paket prolazi komandom `npm test -- --run` — 36/36. Postoji poznato MSB3277 upozorenje o transitive EF Core Relational 9.0.1/9.0.4 verzijama u API test buildu (prisutno od Sprint 8, ne utječe na testove).
 
 **Prethodni sprint:** Sprint 8 imao BLL 92, DAL 26, API 15. Sprint 9 dodaje +36 BLL, +8 DAL, +20 API i +5 frontend testova kroz PBI-026, PBI-027, PBI-029, PBI-030 i regresijske popravke završavanja rute.
 
@@ -74,6 +74,32 @@
 
 - `PROJEKAT/backend/tests/PostRoute.BLL.Tests/Services/MailboxServiceTests.PBI027.cs` — 14 BLL unit testova (10 metoda, od kojih 1 Theory s 5 slučaja).
 - `PROJEKAT/backend/tests/PostRoute.Api.Tests/Controllers/MailboxesControllerTests.PBI027.cs` — 9 API controller testova (7 metoda, od kojih 1 Theory s 3 slučaja). Sadrži `TestSession : ISession` helper klasu.
+
+---
+
+## PBI-028 - Označavanje nedostupne lokacije (US-28)
+
+### Pokriveni AC
+
+| Nivo | AC | Test koji pokriva | Status |
+| --- | --- | --- | --- |
+| BLL | Status se postavlja na `Nedostupan` kada poštar označi lokaciju nedostupnom | `MailboxServiceTestsPBI028.UpdateStatusAsync_ShouldSetNedostupan_WhenLocationUnavailable` | PASS |
+| BLL | Prihvata svih 5 predefinisanih razloga nedostupnosti | `MailboxServiceTestsPBI028.UpdateStatusAsync_ShouldAcceptAllUnavailableReasons` (Theory, 5 slučaja) | PASS |
+| BLL | Audit log sadrži razlog, UserId, OldValue (`Prazan`) i NewValue (`Nedostupan`) | `MailboxServiceTestsPBI028.UpdateStatusAsync_ShouldLogReason_InAuditLog_WhenUnavailable` | PASS |
+| BLL | Baca `InvalidOperationException` i ne logira audit kad sandučić ne postoji | `MailboxServiceTestsPBI028.UpdateStatusAsync_ShouldThrow_WhenMailboxNotFound_ForUnavailable` | PASS |
+| API | `PATCH /api/mailboxes/{id}/status` vraća 200 OK s razlogom nedostupnosti | `MailboxesControllerTestsPBI028.UpdateStatusAsync_ShouldReturnOk_WhenNedostupanWithReason` | PASS |
+| API | Kontroler prosljeđuje razlog servisu kroz `UpdateMailboxStatusCommand.Reason` | `MailboxesControllerTestsPBI028.UpdateStatusAsync_ShouldPassReason_ToService_WhenUnavailable` | PASS |
+| API | Vraća 401 kada sesija nema `UserId` | `MailboxesControllerTestsPBI028.UpdateStatusAsync_ShouldReturnUnauthorized_WhenNoSession_ForUnavailable` | PASS |
+| API | Vraća 404 kada sandučić ne postoji | `MailboxesControllerTestsPBI028.UpdateStatusAsync_ShouldReturnNotFound_WhenMailboxMissing_ForUnavailable` | PASS |
+
+### Napomena o AC pokrivenosti
+
+UI acceptance criteria (dropdown s razlozima, blokada bez razloga, vizuelni pin na mapi, toast obavijest) verificirana su manualnim testiranjem jer komponenta koristi Leaflet mapu i browser sesiju koji zahtijevaju E2E okruženje. Notifikacija dispečeru realizovana je kroz auto-refresh PBI-029 dashboarda svakih 30 sekundi — nema WebSocket/SignalR infrastrukture u projektu.
+
+### Fajlovi sa testovima
+
+- `PROJEKAT/backend/tests/PostRoute.BLL.Tests/Services/MailboxServiceTests.PBI028.cs` — 8 BLL unit testova (4 metode, od kojih 1 Theory s 5 slučaja).
+- `PROJEKAT/backend/tests/PostRoute.Api.Tests/Controllers/MailboxesControllerTests.PBI028.cs` — 4 API controller testova.
 
 ---
 
