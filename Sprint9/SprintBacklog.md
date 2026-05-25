@@ -28,7 +28,7 @@ Spaja dispečerovo planiranje sa terenskim izvršenjem — poštar ne mora čeka
 
 ##### ID storyja: US-26
 **Naziv storyja:** Mobilni prikaz dodijeljene rute  
-**Opis:** Kao **poštar**, želim **otvoriti svoju dodijeljenu rutu na mobilnom uređaju**, koja prikazuje **interaktivnu mapu s pinovima i hronološku listu sandučića s procijenjenim vremenima dolaska**, kako bih **mogao efikasno obilaziti lokacije bez papirnog naloga**.  
+**Opis:** Kao **poštar**, želim **otvoriti svoju dodijeljenu rutu**, koja prikazuje **interaktivnu mapu s pinovima i hronološku listu sandučića s procijenjenim vremenima dolaska**, kako bih **mogao efikasno obilaziti lokacije bez papirnog naloga**.  
 **Poslovna vrijednost:** Digitalizacija terenskog rada poštara i eliminacija papirnih naloga.  
 **Prioritet:** High  
 **Pretpostavke i otvorena pitanja:**
