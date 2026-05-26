@@ -4,17 +4,17 @@
 ## Tabela sprint backloga
 | ID | User Story | Naziv stavke / zadatka | Odgovorna osoba | Procjena | Status | Napomena |
 |---|---|---|---|---|---|---|
-| PBI-049 / US-34 | Pregled arhive realizovanih ruta | Historija obilazaka i arhiva ruta | Nejla | 4h | To Do | Arhiva realizovanih ruta; tabelarni prikaz, filtriranje po datumu i poštaru, read-only pregled arhive |
-| PBI-049 / US-35 | Detaljni uvid u arhiviranu rutu | Historija obilazaka i arhiva ruta | Aldin | 4h | To Do | Detaljan pregled statusa sandučića, timestamp aktivnosti, mapa obilaska, export u Excel, audit trail |
+| PBI-049 / US-34 | Pregled arhive realizovanih ruta | Historija obilazaka i arhiva ruta | Kerim | 4h | To Do | Arhiva realizovanih ruta; tabelarni prikaz, filtriranje po datumu i poštaru, read-only pregled arhive |
+| PBI-049 / US-35 | Detaljni uvid u arhiviranu rutu | Historija obilazaka i arhiva ruta | Kerim | 4h | To Do | Detaljan pregled statusa sandučića, timestamp aktivnosti, mapa obilaska, export u Excel, audit trail |
 | PBI-050 / US-36 | Izvještaj o učinku poštara | Prošireno operativno izvještavanje | Ibrahim | 4h | To Do | KPI tabela, procenat uspješnosti, stubni grafikon, filtriranje po periodu, export u CSV |
-| PBI-050 / US-37 | Analiza realizacije po tipu sandučića | Prošireno operativno izvještavanje | Kerim | 3h | To Do | Statistika po tipu sandučića, pie chart, analiza problema, poređenje tipova, export u Excel |
+| PBI-050 / US-37 | Analiza realizacije po tipu sandučića | Prošireno operativno izvještavanje | Aldin | 3h | To Do | Statistika po tipu sandučića, pie chart, analiza problema, poređenje tipova, export u Excel |
 | PBI-051 / US-38 | Brza pretraga sandučića | Pretraga i filtriranje sandučića | Faruk | 2h | To Do | Real-time pretraga po adresi/ID-u, case-insensitive pretraga, parcijalno pretraživanje |
 | PBI-051 / US-39 | Filtriranje po atributima | Pretraga i filtriranje sandučića | Emrah | 3h | To Do | Filteri po tipu/statusu/prioritetu, kombinovani filteri, reset dugme, integracija sa pretragom |
 | PBI-052 / US-40 | Pregled detalja problematične lokacije | Upravljanje problematičnim lokacijama | Rubina | 3h | To Do | Detaljan pregled problema, timeline aktivnosti, prikaz razloga nedostupnosti, read-only pregled incidenta |
-| PBI-052 / US-41 | Komentarisanje problema između dispečera i poštara | Upravljanje problematičnim lokacijama | Rubina | 3h | To Do | Komentari sa timestampom i autorom, conversation prikaz, real-time osvježavanje |
-| PBI-052 / US-42 | Dodjela akcije za problematičnu lokaciju | Upravljanje problematičnim lokacijama | Ibrahim | 2h | To Do | Dodjela akcije (ponovni pokušaj, drugi poštar, odgoda), evidencija akcije, prikaz trenutnog statusa |
-| PBI-052 / US-43 | Evidencija statusa rješavanja problema | Upravljanje problematičnim lokacijama | Kerim | 2h | To Do | Statusi problema (Otvoren, U obradi, Riješen), filtriranje problema, audit trail |
-| PBI-052 / US-44 | Notifikacije za ažuriranje problema | Upravljanje problematičnim lokacijama | Faruk | 2h | To Do | Real-time notifikacije poštaru, indikator nepročitanih obavijesti, historija notifikacija |
+| PBI-052 / US-41 | Komentarisanje problema između dispečera i poštara | Upravljanje problematičnim lokacijama | Rubina | 3h | Done | Komentari sa timestampom i autorom, conversation prikaz, real-time osvježavanje |
+| PBI-052 / US-42 | Dodjela akcije za problematičnu lokaciju | Upravljanje problematičnim lokacijama | Rubina | 2h | Done | Dodjela akcije (ponovni pokušaj, drugi poštar, odgoda), evidencija akcije, prikaz trenutnog statusa |
+| PBI-052 / US-43 | Evidencija statusa rješavanja problema | Upravljanje problematičnim lokacijama | Nejla| 2h | Done | Statusi problema (Otvoren, U obradi, Riješen), filtriranje problema, audit trail |
+| PBI-052 / US-44 | Notifikacije za ažuriranje problema | Upravljanje problematičnim lokacijama | Nejla | 2h | Done | Real-time notifikacije poštaru, indikator nepročitanih obavijesti, historija notifikacija |
 
 ---
 

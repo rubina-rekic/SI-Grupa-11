@@ -8,6 +8,7 @@ namespace PostRoute.BLL.Services;
 
 public class MailboxService : IMailboxService
 {
+    private readonly IIssueRepository? _issueRepository;
     private const string StatusAlreadyRecordedMessage =
         "Status je već evidentiran. Kontaktirajte dispečera za ispravku.";
 
@@ -16,13 +17,15 @@ public class MailboxService : IMailboxService
     private readonly IRouteRepository? _routeRepository;
 
     public MailboxService(
-        IMailboxRepository mailboxRepository,
-        IMailboxAuditLogRepository auditLogRepository,
-        IRouteRepository? routeRepository = null)
+    IMailboxRepository mailboxRepository,
+    IMailboxAuditLogRepository auditLogRepository,
+    IRouteRepository? routeRepository = null,
+    IIssueRepository? issueRepository = null)
     {
         _mailboxRepository = mailboxRepository;
         _auditLogRepository = auditLogRepository;
         _routeRepository = routeRepository;
+        _issueRepository = issueRepository;
     }
 
     public async Task<Mailbox> CreateAsync(CreateMailboxCommand command, CancellationToken cancellationToken)
@@ -332,6 +335,49 @@ public class MailboxService : IMailboxService
         if (_routeRepository is not null && route is not null && routeItem is not null)
         {
             await _routeRepository.UpdateAsync(route, cancellationToken);
+        }
+
+        // US-40: Automatski kreira Issue kada poštar označi sandučić kao Nedostupan
+        if (command.NewStatus == MailboxStatus.Nedostupan
+            && _issueRepository is not null
+            && routeItem is not null)
+        {
+            routeItem.Status = "Nedostupan";
+            routeItem.ProcessedAt = now;
+            routeItem.ProcessedBy = command.UserId;
+            routeItem.UnavailableReason = command.Reason;
+
+            var existingIssue = await _issueRepository.GetByRouteItemIdAsync(routeItem.Id, cancellationToken);
+            if (existingIssue is null)
+            {
+                var issue = new Issue
+                {
+                    Id = Guid.NewGuid(),
+                    RouteItemId = routeItem.Id,
+                    MailboxId = command.MailboxId,
+                    ReportedByUserId = command.UserId,
+                    UnavailableReason = command.Reason,
+                    Status = IssueStatus.Otvoren,
+                    CreatedAt = now,
+                    UpdatedAt = now,
+                    StatusHistory = new List<IssueStatusHistory>
+            {
+                new()
+                {
+                    Id = Guid.NewGuid(),
+                    ChangedByUserId = command.UserId,
+                    OldStatus = IssueStatus.Otvoren,
+                    NewStatus = IssueStatus.Otvoren,
+                    Note = "Problem automatski kreiran pri prijavi nedostupnosti",
+                    ChangedAt = now
+                }
+            }
+                };
+                await _issueRepository.AddAsync(issue, cancellationToken);
+            }
+
+            if (_routeRepository is not null && route is not null)
+                await _routeRepository.UpdateAsync(route, cancellationToken);
         }
 
         return updatedMailbox;

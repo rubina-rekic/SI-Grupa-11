@@ -13,6 +13,7 @@ import MailboxHistoryPage from "../../ui/pages/admin/MailboxHistoryPage"
 import GenerateRoutePage from "../../ui/pages/admin/GenerateRoutePage"
 import DispatcherRouteDashboardPage from "../../ui/pages/admin/DispatcherRouteDashboardPage"
 import PostmanAssignedRoutePage from "../../ui/pages/PostmanAssignedRoutePage"
+import IssueDetailPage from "../../ui/pages/admin/IssueDetailPage"
 
 function PrivateRoute({ children, requiredRole, requiredRoles }: { children: React.ReactNode; requiredRole?: string; requiredRoles?: string[] }) {
   const { currentUser, loading } = useAuth()
@@ -186,6 +187,30 @@ export function AppRouter() {
         element={
           <PrivateRoute requiredRoles={["Administrator", "Dispatcher"]}>
             <DispatcherRouteDashboardPage />
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="/admin/issues"
+        element={
+          <PrivateRoute requiredRoles={["Administrator", "Dispatcher"]}>
+            <IssueDetailPage />
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="/admin/issues/:id"
+        element={
+          <PrivateRoute requiredRoles={["Administrator", "Dispatcher"]}>
+            <IssueDetailPage />
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="/worker/issues/:id"
+        element={
+          <PrivateRoute requiredRole="PostalWorker">
+            <IssueDetailPage />
           </PrivateRoute>
         }
       />

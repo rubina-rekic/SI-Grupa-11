@@ -9,6 +9,7 @@ import type { RouteResponse } from '../../infrastructure/api/routesApi';
 import { updateMailboxStatus, mailboxStatusLabels, MailboxStatus } from '../../infrastructure/api/mailboxes/mailboxesApi';
 import { getRouteStatusLabel, isRouteItemProcessed } from '../components/PostmanRoute/statusUtils';
 import './PostmanAssignedRoutePage.css';
+import { NotificationPanel } from "../components/PostmanRoute/NotificationPanel"
 
 /* ── SVG Icons ───────────────────────────────────────────── */
 
@@ -130,8 +131,7 @@ const PostmanAssignedRoutePage: React.FC = () => {
                             ...item,
                             status: 'Nedostupan',
                             mailboxStatus: 'Nedostupan',
-                            processedAt: now,
-                            processedBy: prev.postmanId,
+                            unavailableReason: reason,
                         }
                         : item
                 );
@@ -173,6 +173,7 @@ const PostmanAssignedRoutePage: React.FC = () => {
                             </div>
                         </div>
                         <div className="route-header-right">
+                           
                             <div className="route-header-badge">
                                 <IconStatus />
                                 {route ? getRouteStatusLabel(route.status) : 'Dodijeljena'}

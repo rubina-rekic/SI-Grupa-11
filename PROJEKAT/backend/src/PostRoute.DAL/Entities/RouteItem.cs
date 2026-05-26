@@ -29,4 +29,7 @@ public class RouteItem
     public Guid? ProcessedBy { get; set; }
 
     public MailboxStatus? ProcessedStatus { get; set; }
+
+    [MaxLength(500)]
+public string? UnavailableReason { get; set; }
 }

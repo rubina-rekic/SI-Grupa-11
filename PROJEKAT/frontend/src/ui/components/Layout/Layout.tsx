@@ -1,6 +1,7 @@
 import { useState } from "react"
 import { Sidebar } from "./Sidebar"
 import { useAuth } from "../../../application/hooks/useAuth"
+import { NotificationPanel } from "../PostmanRoute/NotificationPanel"
 
 interface LayoutProps {
   children: React.ReactNode
@@ -15,11 +16,9 @@ export function Layout({ children }: LayoutProps) {
   }
 
   const roleLabel =
-    currentUser.role === "Administrator"
-      ? "Administrator"
-      : currentUser.role === "Dispatcher"
-        ? "Dispečer"
-        : "Poštar"
+    currentUser.role === "Administrator" ? "Administrator"
+    : currentUser.role === "Dispatcher" ? "Dispečer"
+    : "Poštar"
 
   const closeSidebarOnMobile = () => {
     if (window.innerWidth <= 768) setSidebarOpen(false)
@@ -49,6 +48,12 @@ export function Layout({ children }: LayoutProps) {
             <span className="welcome-message">
               Dobrodošli, {currentUser.username} ({roleLabel})
             </span>
+
+            {/* ← Zvonce samo za poštara, direktno u headeru */}
+            {currentUser.role === "PostalWorker" && (
+              <NotificationPanel />
+            )}
+
             <button onClick={logout} className="btn-secondary">
               Odjava
             </button>

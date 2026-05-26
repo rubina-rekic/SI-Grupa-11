@@ -31,14 +31,14 @@ export const isRouteItemUnavailable = (item: RouteItemResponse) =>
     isUnavailableStatus(item.status) || isUnavailableStatus(item.mailboxStatus);
 
 export const getVisitStatusClass = (item: RouteItemResponse) => {
-    if (isRouteItemProcessed(item)) return 'processed';
     if (isRouteItemUnavailable(item)) return 'unavailable';
+    if (isRouteItemProcessed(item)) return 'processed';
     return 'pending';
 };
 
 export const getVisitStatusLabel = (item: RouteItemResponse) => {
-    if (isRouteItemProcessed(item)) return 'Obrađen';
     if (isRouteItemUnavailable(item)) return 'Nedostupan';
+    if (isRouteItemProcessed(item)) return 'Obrađen';
     const normalized = normalizeStatus(item.status);
     if (normalized === 'planirano' || normalized === 'čeka' || normalized === 'ceka') {
         return 'Čeka';

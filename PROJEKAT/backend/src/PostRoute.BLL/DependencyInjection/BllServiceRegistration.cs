@@ -14,6 +14,7 @@ public static class BllServiceRegistration
         services.AddScoped<IUserSeedService, UserSeedService>();
         services.AddScoped<IMailboxService, MailboxService>();
         services.AddScoped<IRouteService, RouteService>();
+        services.AddScoped<IIssueService, IssueService>();
 
         return services;
     }

@@ -467,3 +467,100 @@
         font-size: 12.5px;
     }
 }
+
+.notif-panel { position: relative; display: inline-block; }
+
+.notif-bell {
+    background: none;
+    border: 1px solid var(--c-slate-200, #e2e8f0);
+    border-radius: 8px;
+    width: 36px;
+    height: 36px;
+    cursor: pointer;
+    font-size: 16px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.notif-badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background: #dc2626;
+    color: #fff;
+    font-size: 10px;
+    font-weight: 700;
+    border-radius: 999px;
+    min-width: 16px;
+    height: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 3px;
+}
+
+.notif-dropdown {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    width: 300px;
+    background: #fff;
+    border: 1px solid var(--c-slate-200, #e2e8f0);
+    border-radius: 10px;
+    box-shadow: 0 8px 24px rgba(10,20,40,.12);
+    z-index: 100;
+    overflow: hidden;
+}
+
+.notif-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--c-slate-100, #f1f5f9);
+    font-weight: 700;
+    font-size: 13px;
+    color: var(--navy, #0f1c2e);
+}
+
+.notif-close {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--c-slate-400, #94a3b8);
+    font-size: 14px;
+}
+
+.notif-empty {
+    padding: 16px;
+    text-align: center;
+    color: var(--c-slate-400, #94a3b8);
+    font-size: 13px;
+    margin: 0;
+}
+
+.notif-list { max-height: 320px; overflow-y: auto; }
+
+.notif-item {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    width: 100%;
+    text-align: left;
+    padding: 10px 14px;
+    background: none;
+    border: none;
+    border-bottom: 1px solid var(--c-slate-100, #f1f5f9);
+    cursor: pointer;
+    transition: background .1s;
+    font-family: inherit;
+}
+.notif-item:hover { background: var(--c-slate-50, #f8fafc); }
+.notif-item--unread { background: #eff6ff; }
+.notif-item--unread:hover { background: #dbeafe; }
+
+.notif-item-title { font-size: 13px; font-weight: 600; color: var(--navy, #0f1c2e); }
+.notif-item-msg   { font-size: 12px; color: var(--c-slate-500, #64748b); }
+.notif-item-time  { font-size: 11px; color: var(--c-slate-400, #94a3b8); }

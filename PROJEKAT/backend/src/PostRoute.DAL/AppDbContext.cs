@@ -14,6 +14,11 @@ public sealed class AppDbContext : DbContext
     public DbSet<Route> Routes => Set<Route>();
     public DbSet<RouteItem> RouteItems => Set<RouteItem>();
 
+    public DbSet<Issue> Issues => Set<Issue>();
+    public DbSet<IssueComment> IssueComments => Set<IssueComment>();
+    public DbSet<IssueStatusHistory> IssueStatusHistories => Set<IssueStatusHistory>();
+    public DbSet<IssueNotification> IssueNotifications => Set<IssueNotification>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<User>(entity =>
@@ -89,6 +94,71 @@ public sealed class AppDbContext : DbContext
             entity.HasOne(ri => ri.Mailbox)
                 .WithMany()
                 .HasForeignKey(ri => ri.MailboxId)
+                .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        modelBuilder.Entity<Issue>(entity =>
+{
+    entity.HasKey(i => i.Id);
+    entity.HasOne(i => i.RouteItem)
+        .WithMany()
+        .HasForeignKey(i => i.RouteItemId)
+        .OnDelete(DeleteBehavior.Restrict);
+    entity.HasOne(i => i.Mailbox)
+        .WithMany()
+        .HasForeignKey(i => i.MailboxId)
+        .OnDelete(DeleteBehavior.Restrict);
+    entity.HasOne(i => i.ReportedBy)
+        .WithMany()
+        .HasForeignKey(i => i.ReportedByUserId)
+        .OnDelete(DeleteBehavior.Restrict);
+    entity.HasOne(i => i.ActionAssignedToUser)
+        .WithMany()
+        .HasForeignKey(i => i.ActionAssignedToUserId)
+        .OnDelete(DeleteBehavior.Restrict);
+    entity.HasOne(i => i.ActionAssignedByUser)
+        .WithMany()
+        .HasForeignKey(i => i.ActionAssignedByUserId)
+        .OnDelete(DeleteBehavior.Restrict);
+});
+
+        modelBuilder.Entity<IssueComment>(entity =>
+        {
+            entity.HasKey(c => c.Id);
+            entity.HasOne(c => c.Issue)
+                .WithMany(i => i.Comments)
+                .HasForeignKey(c => c.IssueId)
+                .OnDelete(DeleteBehavior.Cascade);
+            entity.HasOne(c => c.Author)
+                .WithMany()
+                .HasForeignKey(c => c.AuthorId)
+                .OnDelete(DeleteBehavior.Restrict);
+            entity.Property(c => c.Content).IsRequired().HasMaxLength(1000);
+        });
+
+        modelBuilder.Entity<IssueStatusHistory>(entity =>
+        {
+            entity.HasKey(h => h.Id);
+            entity.HasOne(h => h.Issue)
+                .WithMany(i => i.StatusHistory)
+                .HasForeignKey(h => h.IssueId)
+                .OnDelete(DeleteBehavior.Cascade);
+            entity.HasOne(h => h.ChangedByUser)
+                .WithMany()
+                .HasForeignKey(h => h.ChangedByUserId)
+                .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        modelBuilder.Entity<IssueNotification>(entity =>
+        {
+            entity.HasKey(n => n.Id);
+            entity.HasOne(n => n.Issue)
+                .WithMany(i => i.Notifications)
+                .HasForeignKey(n => n.IssueId)
+                .OnDelete(DeleteBehavior.Cascade);
+            entity.HasOne(n => n.Recipient)
+                .WithMany()
+                .HasForeignKey(n => n.RecipientUserId)
                 .OnDelete(DeleteBehavior.Restrict);
         });
     }

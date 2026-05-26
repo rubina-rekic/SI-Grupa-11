@@ -229,6 +229,7 @@ function ProgressBar({ done, total }: { done: number; total: number }) {
 }
 
 function RouteCard({ route, onOpen }: { route: RouteResponse; onOpen: (id: string) => void }) {
+    const navigate = useNavigate();
     const { total, done, prob } = routeProgress(route);
     const problematic = hasProblematicItems(route);
     const effectiveStatus = getEffectiveRouteStatus(route);
@@ -274,8 +275,10 @@ function RouteCard({ route, onOpen }: { route: RouteResponse; onOpen: (id: strin
             <div className="rdb-card-items">
                 {route.routeItems.map(item => (
                     <div
-                        key={item.id}
-                        className={`rdb-item${isProblematic(item) ? ' rdb-item--problem' : isDone(item) ? ' rdb-item--done' : ''}`}
+                      key={item.id}
+                      className={`rdb-item${isProblematic(item) ? ' rdb-item--problem rdb-item--clickable' : ''}`}
+                      onClick={isProblematic(item) ? () => navigate(`/admin/issues?routeItemId=${item.id}`) : undefined}
+                      title={isProblematic(item) ? "Klikni za detalje problema" : undefined}
                     >
                         <span className="rdb-item-order">{item.order}</span>
                         <span className="rdb-item-address">{item.address}</span>
