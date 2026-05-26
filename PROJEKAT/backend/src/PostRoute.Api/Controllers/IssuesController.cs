@@ -115,6 +115,7 @@ public class IssuesController : ControllerBase
 [Authorize(Roles = UserRole.PostalWorker)]
 public async Task<IActionResult> GetByIdForWorker(Guid id, CancellationToken cancellationToken)
 {
+    // Provjeri je li korisnik autentificiran
     try
     {
         var issue = await _issueService.GetByIdAsync(id, cancellationToken);
