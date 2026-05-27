@@ -10,6 +10,7 @@ Uvođenje arhive za retrospektivnu analizu ruta, izvještavanje o učinku po raz
 - **PBI-049** — Historija obilazaka i arhiva ruta (US-34, US-35)
 - **PBI-050** — Prošireno operativno izvještavanje (US-36, US-37)
 - **PBI-051** — Pretraga i filtriranje sandučića (US-38, US-39)
+- **PBI-052** —  Hendlanje nedostupnih lokacija na terenu (US-44, US-45, US-46, US-47)
 
 ## Rizici i zavisnosti
 - PBI-049 zavisi od **US-28** (Završetak rute) — arhiviranje se pokreće tek po finalizaciji rute iz Sprinta 9.
