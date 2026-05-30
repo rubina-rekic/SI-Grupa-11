@@ -13,6 +13,7 @@ export function Sidebar({ userRole, username, onNavClick }: SidebarProps) {
     { path: "/admin/mailboxes", label: "Pregled sandučića", icon: "📬" },
     { path: "/admin/routes/generate", label: "Generisanje ruta", icon: "🗺️" },
     { path: "/admin/routes/dashboard", label: "Praćenje ruta", icon: "📡" },
+    { path: "/admin/routes/archive", label: "Arhiva ruta", icon: "📂" },
     { path: "/admin/statistics", label: "Statistika sistema", icon: "📊" },
     { path: "/admin/settings", label: "Postavke", icon: "⚙️" },
   ]
@@ -21,6 +22,7 @@ export function Sidebar({ userRole, username, onNavClick }: SidebarProps) {
     { path: "/dashboard", label: "Dashboard", icon: "🏠" },
     { path: "/admin/routes/generate", label: "Generisanje ruta", icon: "🗺️" },
     { path: "/admin/routes/dashboard", label: "Praćenje ruta", icon: "📡" },
+    { path: "/admin/routes/archive", label: "Arhiva ruta", icon: "📂" },
   ]
 
   const postalWorkerMenuItems = [

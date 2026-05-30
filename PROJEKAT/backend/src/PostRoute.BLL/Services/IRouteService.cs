@@ -11,4 +11,11 @@ public interface IRouteService
     Task<RouteResponse> AssignRouteAsync(Guid routeId, AssignRouteRequest request, string assignedBy, CancellationToken cancellationToken = default);
     Task<RouteResponse> ReorderRouteAsync(Guid routeId, ReorderRouteRequest request, string reorderedBy, CancellationToken cancellationToken = default);
     Task<List<RouteResponse>> GetRoutesForDateAsync(DateOnly date, CancellationToken cancellationToken = default);
+    Task<PostRoute.BLL.Models.PagedResult<RouteResponse>> GetArchiveAsync(
+        int page,
+        int pageSize,
+        DateOnly? fromDate,
+        DateOnly? toDate,
+        Guid? postmanId,
+        CancellationToken cancellationToken = default);
 }

@@ -14,6 +14,8 @@ import GenerateRoutePage from "../../ui/pages/admin/GenerateRoutePage"
 import DispatcherRouteDashboardPage from "../../ui/pages/admin/DispatcherRouteDashboardPage"
 import PostmanAssignedRoutePage from "../../ui/pages/PostmanAssignedRoutePage"
 import IssueDetailPage from "../../ui/pages/admin/IssueDetailPage"
+import ArchiveRouteListPage from "../../ui/pages/admin/ArchiveRouteListPage"
+import ArchiveRouteDetailsPage from "../../ui/pages/admin/ArchiveRouteDetailsPage"
 
 function PrivateRoute({ children, requiredRole, requiredRoles }: { children: React.ReactNode; requiredRole?: string; requiredRoles?: string[] }) {
   const { currentUser, loading } = useAuth()
@@ -191,6 +193,14 @@ export function AppRouter() {
         }
       />
       <Route
+        path="/admin/routes/:id"
+        element={
+          <PrivateRoute requiredRoles={["Administrator", "Dispatcher"]}>
+            <ArchiveRouteDetailsPage source="tracking" />
+          </PrivateRoute>
+        }
+      />
+      <Route
         path="/admin/issues"
         element={
           <PrivateRoute requiredRoles={["Administrator", "Dispatcher"]}>
@@ -211,6 +221,22 @@ export function AppRouter() {
         element={
           <PrivateRoute requiredRole="PostalWorker">
             <IssueDetailPage />
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="/admin/routes/archive"
+        element={
+          <PrivateRoute requiredRoles={["Administrator", "Dispatcher"]}>
+            <ArchiveRouteListPage />
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="/admin/routes/archive/:id"
+        element={
+          <PrivateRoute requiredRoles={["Administrator", "Dispatcher"]}>
+            <ArchiveRouteDetailsPage source="archive" />
           </PrivateRoute>
         }
       />

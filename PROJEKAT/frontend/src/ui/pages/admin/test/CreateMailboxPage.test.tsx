@@ -197,7 +197,7 @@ describe('CreateMailboxPage — PBI-017', () => {
       expect(screen.getByText(/odabrana lokacija/i)).toBeInTheDocument()
     })
 
-    it('Å¡alje adresu pronaÄ‘enu na mapi', async () => {
+    it('šalje adresu pronađenu na mapi', async () => {
       const user = userEvent.setup()
       vi.mocked(createMailbox).mockResolvedValue({} as MailboxResponse)
       renderPage()

@@ -650,7 +650,7 @@ const DispatcherRouteDashboardPage: React.FC = () => {
                             <RouteCard
                                 key={route.id}
                                 route={route}
-                                onOpen={id => navigate(`/admin/routes/generate?routeId=${id}`)}
+                                onOpen={id => navigate(`/admin/routes/${id}`)}
                             />
                         ))}
                     </div>

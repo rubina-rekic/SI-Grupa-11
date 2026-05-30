@@ -12,6 +12,7 @@ public interface IMailboxRepository
         int pageSize,
         MailboxType? type,
         MailboxPriority? priority,
+        MailboxStatus? status,
         string? addressSearch,
         bool sortByPriority,
         CancellationToken cancellationToken);

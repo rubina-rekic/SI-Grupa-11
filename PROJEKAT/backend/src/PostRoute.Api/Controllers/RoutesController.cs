@@ -27,6 +27,30 @@ public class RoutesController : ControllerBase
         return Ok(routes);
     }
 
+    [HttpGet("archive")]
+    [Authorize(Roles = $"{UserRole.Administrator},{UserRole.Dispatcher}")]
+    public async Task<IActionResult> GetArchive(
+        [FromQuery] int page = 1,
+        [FromQuery] int pageSize = 25,
+        [FromQuery] DateOnly? fromDate = null,
+        [FromQuery] DateOnly? toDate = null,
+        [FromQuery] Guid? postmanId = null,
+        CancellationToken cancellationToken = default)
+    {
+        var result = await _routeService.GetArchiveAsync(
+            page, pageSize, fromDate, toDate, postmanId, cancellationToken);
+        
+        var response = new PostRoute.Api.Contracts.Common.PagedResponse<RouteResponse>(
+            result.Items.ToList(),
+            result.TotalCount,
+            result.Page,
+            result.PageSize,
+            result.TotalPages
+        );
+
+        return Ok(response);
+    }
+
     [HttpGet("{id}")]
     [Authorize(Roles = $"{UserRole.Administrator},{UserRole.Dispatcher}")]
     public async Task<IActionResult> GetRouteDetails(Guid id)

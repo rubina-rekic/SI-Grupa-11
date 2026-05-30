@@ -123,6 +123,12 @@ using (var scope = app.Services.CreateScope())
     {
         var userSeedService = scope.ServiceProvider.GetRequiredService<IUserSeedService>();
         await userSeedService.SeedDefaultUsersAsync(CancellationToken.None);
+
+        if (app.Environment.IsDevelopment())
+        {
+            var devDataSeedService = scope.ServiceProvider.GetRequiredService<IDevDataSeedService>();
+            await devDataSeedService.SeedArchiveRouteAsync(CancellationToken.None);
+        }
     }
 }
 

@@ -124,7 +124,7 @@ public sealed class MailboxesControllerTestsPBI017
         };
 
         _mailboxServiceMock
-            .Setup(x => x.GetPagedAsync(1, 25, null, null, null, false, It.IsAny<CancellationToken>()))
+            .Setup(x => x.GetPagedAsync(1, 25, null, null, null, null, false, It.IsAny<CancellationToken>()))
             .ReturnsAsync(new PagedResult<Mailbox>(mailboxes, mailboxes.Count, 1, 25));
 
         var result = await _sut.GetAllAsync();
@@ -133,6 +133,38 @@ public sealed class MailboxesControllerTestsPBI017
         var response = Assert.IsType<PagedResponse<MailboxResponse>>(okResult.Value);
         Assert.Equal(2, response.Items.Count);
         Assert.Equal(2, response.TotalCount);
+    }
+
+    [Fact]
+    public async Task GetAllAsync_ShouldPassTypePriorityStatusAndSearchFilters()
+    {
+        _mailboxServiceMock
+            .Setup(x => x.GetPagedAsync(
+                1,
+                25,
+                MailboxType.WallSmall,
+                MailboxPriority.Visok,
+                MailboxStatus.Pun,
+                "SN001",
+                false,
+                It.IsAny<CancellationToken>()))
+            .ReturnsAsync(new PagedResult<Mailbox>(new List<Mailbox>(), 0, 1, 25));
+
+        await _sut.GetAllAsync(
+            type: MailboxType.WallSmall,
+            priority: MailboxPriority.Visok,
+            status: MailboxStatus.Pun,
+            search: "SN001");
+
+        _mailboxServiceMock.Verify(x => x.GetPagedAsync(
+            1,
+            25,
+            MailboxType.WallSmall,
+            MailboxPriority.Visok,
+            MailboxStatus.Pun,
+            "SN001",
+            false,
+            It.IsAny<CancellationToken>()), Times.Once);
     }
 
     [Fact]

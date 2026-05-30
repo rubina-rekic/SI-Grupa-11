@@ -1,3 +1,4 @@
+using PostRoute.BLL.Models;
 using PostRoute.BLL.Models.Routes;
 using PostRoute.DAL.Entities;
 using PostRoute.DAL.Repositories;
@@ -307,7 +308,8 @@ public class RouteService : IRouteService
                 MailboxStatus = ri.ProcessedStatus?.ToString() ?? ri.Mailbox.Status.ToString(),
                 ProcessedAt = ri.ProcessedAt,
                 ProcessedBy = ri.ProcessedBy,
-                ProcessedStatus = ri.ProcessedStatus?.ToString()
+                ProcessedStatus = ri.ProcessedStatus?.ToString(),
+                UnavailableReason = ri.UnavailableReason
             }).ToList()
         };
     }
@@ -513,7 +515,27 @@ public class RouteService : IRouteService
         return status.Equals("Obrađen", StringComparison.OrdinalIgnoreCase) ||
                status.Equals("Obradjen", StringComparison.OrdinalIgnoreCase) ||
                status.Equals("Obradeno", StringComparison.OrdinalIgnoreCase) ||
-               status.Equals("Obraen", StringComparison.OrdinalIgnoreCase);
+               status.Equals("Obraen", StringComparison.OrdinalIgnoreCase) ||
+               status.Equals("Nedostupan", StringComparison.OrdinalIgnoreCase);
+    }
+
+    public async Task<PagedResult<RouteResponse>> GetArchiveAsync(
+        int page,
+        int pageSize,
+        DateOnly? fromDate,
+        DateOnly? toDate,
+        Guid? postmanId,
+        CancellationToken cancellationToken = default)
+    {
+        if (page < 1) page = 1;
+        if (pageSize < 1) pageSize = 25;
+        if (pageSize > 100) pageSize = 100;
+
+        var (items, total) = await _routeRepository.GetPagedArchiveAsync(
+            page, pageSize, fromDate, toDate, postmanId, cancellationToken);
+
+        var list = items.Select(r => MapToResponse(r, null, null, null)).ToList();
+        return new PagedResult<RouteResponse>(list, total, page, pageSize);
     }
 
     private static string ToDisplayName(User user)
@@ -564,7 +586,8 @@ public class RouteService : IRouteService
                 MailboxStatus = ri.ProcessedStatus?.ToString() ?? ri.Mailbox.Status.ToString(),
                 ProcessedAt = ri.ProcessedAt,
                 ProcessedBy = ri.ProcessedBy,
-                ProcessedStatus = ri.ProcessedStatus?.ToString()
+                ProcessedStatus = ri.ProcessedStatus?.ToString(),
+                UnavailableReason = ri.UnavailableReason
             }).ToList()
         };
     }

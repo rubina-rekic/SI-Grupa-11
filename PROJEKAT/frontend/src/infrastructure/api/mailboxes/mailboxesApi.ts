@@ -156,6 +156,7 @@ export interface MailboxListQuery {
     pageSize?: number
     type?: MailboxType
     priority?: MailboxPriority
+    status?: MailboxStatus
     search?: string
     sortByPriority?: boolean
 }
@@ -205,6 +206,7 @@ export async function getAllMailboxes(query: MailboxListQuery = {}): Promise<Pag
     params.set("pageSize", String(query.pageSize ?? 25))
     if (query.type !== undefined) params.set("type", String(query.type))
     if (query.priority !== undefined) params.set("priority", String(query.priority))
+    if (query.status !== undefined) params.set("status", String(query.status))
     if (query.search) params.set("search", query.search)
     if (query.sortByPriority) params.set("sortByPriority", "true")
 

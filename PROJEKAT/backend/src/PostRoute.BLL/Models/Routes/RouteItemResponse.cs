@@ -16,4 +16,5 @@ public class RouteItemResponse
     public DateTime? ProcessedAt { get; set; }
     public Guid? ProcessedBy { get; set; }
     public string? ProcessedStatus { get; set; }
+    public string? UnavailableReason { get; set; }
 }

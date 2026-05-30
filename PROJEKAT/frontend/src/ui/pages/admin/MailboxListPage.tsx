@@ -23,6 +23,7 @@ export default function MailboxListPage() {
     const [loading, setLoading] = useState(true)
     const [typeFilter, setTypeFilter] = useState<MailboxType | "">("")
     const [priorityFilter, setPriorityFilter] = useState<MailboxPriority | "">("")
+    const [statusFilter, setStatusFilter] = useState<MailboxStatus | "">("")
     const [addressSearch, setAddressSearch] = useState("")
     const [sortByPriority, setSortByPriority] = useState(false)
     const [page, setPage] = useState(1)
@@ -38,6 +39,7 @@ export default function MailboxListPage() {
                 pageSize: PAGE_SIZE,
                 type: typeFilter === "" ? undefined : typeFilter,
                 priority: priorityFilter === "" ? undefined : priorityFilter,
+                status: statusFilter === "" ? undefined : statusFilter,
                 search: addressSearch.trim() || undefined,
                 sortByPriority
             })
@@ -49,14 +51,23 @@ export default function MailboxListPage() {
         } finally {
             setLoading(false)
         }
-    }, [page, typeFilter, priorityFilter, addressSearch, sortByPriority])
+    }, [page, typeFilter, priorityFilter, statusFilter, addressSearch, sortByPriority])
 
     useEffect(() => { void loadMailboxes() }, [loadMailboxes])
-    useEffect(() => { setPage(1) }, [typeFilter, priorityFilter, addressSearch, sortByPriority])
+    useEffect(() => { setPage(1) }, [typeFilter, priorityFilter, statusFilter, addressSearch, sortByPriority])
+
+    const handleResetFilters = () => {
+        setTypeFilter("")
+        setPriorityFilter("")
+        setStatusFilter("")
+        setAddressSearch("")
+        setSortByPriority(false)
+        setPage(1)
+    }
 
     const isEmptyDatabase = useMemo(
-        () => totalCount === 0 && !typeFilter && !priorityFilter && !addressSearch.trim(),
-        [totalCount, typeFilter, priorityFilter, addressSearch]
+        () => totalCount === 0 && !typeFilter && !priorityFilter && !statusFilter && !addressSearch.trim(),
+        [totalCount, typeFilter, priorityFilter, statusFilter, addressSearch]
     )
 
     if (loading && mailboxes.length === 0) {
@@ -82,7 +93,7 @@ export default function MailboxListPage() {
                                 className="btn mailbox-list-page__history-button"
                                 onClick={() => navigate("/admin/mailboxes/history")}
                             >
-                                📋 Historija promjena
+                                Historija promjena
                             </button>
                             <button
                                 className="btn btn--primary mailbox-list-page__add-button"
@@ -131,12 +142,29 @@ export default function MailboxListPage() {
                                     <option value={MailboxPriority.Nizak}>{mailboxPriorityLabels[MailboxPriority.Nizak]}</option>
                                 </select>
                             </div>
+                            <div className="form-field">
+                                <label className="form-field__label" htmlFor="filter-status">Status</label>
+                                <select
+                                    id="filter-status"
+                                    className="form-field__input"
+                                    value={statusFilter}
+                                    onChange={(e) => setStatusFilter(e.target.value === "" ? "" : Number(e.target.value) as MailboxStatus)}
+                                >
+                                    <option value="">Svi statusi</option>
+                                    <option value={MailboxStatus.Prazan}>{mailboxStatusLabels[MailboxStatus.Prazan]}</option>
+                                    <option value={MailboxStatus.Pun}>{mailboxStatusLabels[MailboxStatus.Pun]}</option>
+                                    <option value={MailboxStatus.Obraen}>{mailboxStatusLabels[MailboxStatus.Obraen]}</option>
+                                    <option value={MailboxStatus.Napunjen}>{mailboxStatusLabels[MailboxStatus.Napunjen]}</option>
+                                    <option value={MailboxStatus.Ispraznjen}>{mailboxStatusLabels[MailboxStatus.Ispraznjen]}</option>
+                                    <option value={MailboxStatus.Nedostupan}>{mailboxStatusLabels[MailboxStatus.Nedostupan]}</option>
+                                </select>
+                            </div>
                         </div>
 
-                        {/* Pretraga po adresi */}
-                        <div className="mailbox-list-page__search-row">
-                            <div className="form-field mailbox-list-page__search-field">
-                                <label className="form-field__label" htmlFor="filter-search">🔍 Pretraga po lokaciji</label>
+                        {/* Pretraga po adresi i Reset dugme */}
+                        <div className="mailbox-list-page__search-row" style={{ display: 'flex', gap: '10px', alignItems: 'flex-end' }}>
+                            <div className="form-field mailbox-list-page__search-field" style={{ flex: 1 }}>
+                                <label className="form-field__label" htmlFor="filter-search">Pretraga po lokaciji</label>
                                 <input
                                     id="filter-search"
                                     type="text"
@@ -147,7 +175,15 @@ export default function MailboxListPage() {
                                     autoComplete="off"
                                 />
                             </div>
-                            <div className="mailbox-list-page__search-actions">
+                            <div className="mailbox-list-page__search-actions" style={{ display: 'flex', gap: '8px' }}>
+                                <button
+                                    type="button"
+                                    className="btn btn--outline"
+                                    onClick={handleResetFilters}
+                                    title="Poništi filtere"
+                                >
+                                    Poništi filtere
+                                </button>
                                 <button
                                     type="button"
                                     className="btn mailbox-list-page__sort-button"
@@ -251,7 +287,7 @@ export default function MailboxListPage() {
                                                     onClick={() => setModalMailbox(mailbox)}
                                                     title="Prikaži lokaciju na mapi"
                                                 >
-                                                    🗺️
+                                                    Mapa
                                                 </button>
                                             </div>
                                         </div>
@@ -272,7 +308,7 @@ export default function MailboxListPage() {
                             </div>
                         ) : !loading ? (
                             <div style={{ textAlign: "center", padding: "30px", color: "#6b7280" }}>
-                                Nema rezultata za odabrane filtere.
+                                Nema sandučića koji odgovaraju odabranim kriterijima filtriranja.
                             </div>
                         ) : null}
 

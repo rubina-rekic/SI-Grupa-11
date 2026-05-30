@@ -244,7 +244,7 @@ public class MailboxService : IMailboxService
 
     public async Task<PagedResult<Mailbox>> GetPagedAsync(
         int page, int pageSize,
-        MailboxType? type, MailboxPriority? priority,
+        MailboxType? type, MailboxPriority? priority, MailboxStatus? status,
         string? addressSearch, bool sortByPriority,
         CancellationToken cancellationToken)
     {
@@ -253,7 +253,7 @@ public class MailboxService : IMailboxService
         if (pageSize > 100) pageSize = 100;
 
         var (items, total) = await _mailboxRepository.GetPagedAsync(
-            page, pageSize, type, priority, addressSearch, sortByPriority, cancellationToken);
+            page, pageSize, type, priority, status, addressSearch, sortByPriority, cancellationToken);
 
         return new PagedResult<Mailbox>(items, total, page, pageSize);
     }
@@ -384,14 +384,15 @@ public class MailboxService : IMailboxService
     }
 
     private static bool IsProcessedMailboxStatus(MailboxStatus status) =>
-        status is MailboxStatus.Obraen or MailboxStatus.Napunjen or MailboxStatus.Ispraznjen;
+        status is MailboxStatus.Obraen or MailboxStatus.Napunjen or MailboxStatus.Ispraznjen or MailboxStatus.Nedostupan;
 
     private static bool IsRouteItemProcessed(RouteItem item) =>
         item.ProcessedAt.HasValue ||
         item.ProcessedStatus.HasValue ||
         string.Equals(item.Status, "Obrađen", StringComparison.OrdinalIgnoreCase) ||
         string.Equals(item.Status, "Obradjen", StringComparison.OrdinalIgnoreCase) ||
-        string.Equals(item.Status, "Obraen", StringComparison.OrdinalIgnoreCase);
+        string.Equals(item.Status, "Obraen", StringComparison.OrdinalIgnoreCase) ||
+        string.Equals(item.Status, "Nedostupan", StringComparison.OrdinalIgnoreCase);
 
     public async Task<bool> SerialNumberExistsAsync(string serialNumber, CancellationToken cancellationToken)
         => await _mailboxRepository.SerialNumberExistsAsync(serialNumber, cancellationToken);

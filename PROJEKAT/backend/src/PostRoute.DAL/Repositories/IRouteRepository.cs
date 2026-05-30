@@ -19,4 +19,12 @@ public interface IRouteRepository
 
     Task<Route> UpdateAsync(Route route, CancellationToken cancellationToken = default);
     Task<List<Route>> GetByDateAsync(DateOnly date, CancellationToken cancellationToken = default);
+
+    Task<(IReadOnlyList<Route> Items, int TotalCount)> GetPagedArchiveAsync(
+        int page,
+        int pageSize,
+        DateOnly? fromDate,
+        DateOnly? toDate,
+        Guid? postmanId,
+        CancellationToken cancellationToken = default);
 }

@@ -1,6 +1,6 @@
 import { render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { BrowserRouter } from 'react-router-dom'
+import { BrowserRouter, MemoryRouter, Route, Routes } from 'react-router-dom'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import DispatcherRouteDashboardPage from '../DispatcherRouteDashboardPage'
 import type { RouteResponse } from '../../../../infrastructure/api/routesApi'
@@ -231,5 +231,24 @@ describe('DispatcherRouteDashboardPage - PBI-030 dnevni izvjestaj', () => {
     expect(write).toHaveBeenCalledWith(expect.stringContaining('Titova 1'))
     expect(write).toHaveBeenCalledWith(expect.stringContaining('Realizacija'))
     expect(print).toHaveBeenCalled()
+  })
+
+  it('otvara detalje aktivne rute umjesto stranice za generisanje', async () => {
+    const user = userEvent.setup()
+    render(
+      <MemoryRouter initialEntries={['/admin/routes/dashboard']}>
+        <Routes>
+          <Route path="/admin/routes/dashboard" element={<DispatcherRouteDashboardPage />} />
+          <Route path="/admin/routes/:id" element={<div>Detalji aktivne rute</div>} />
+          <Route path="/admin/routes/generate" element={<div>Generisanje ruta</div>} />
+        </Routes>
+      </MemoryRouter>
+    )
+
+    await screen.findByText('Titova 1')
+    await user.click(screen.getByRole('button', { name: /Otvori detalje/i }))
+
+    expect(screen.getByText('Detalji aktivne rute')).toBeInTheDocument()
+    expect(screen.queryByText('Generisanje ruta')).not.toBeInTheDocument()
   })
 })

@@ -43,9 +43,9 @@
 | PBI-028 | Označavanje nedostupne lokacije | Omogućiti poštaru da evidentira da lokacija nije bila dostupna tokom obilaska. | feature | Low | 2h 30min | Done | Sprint 9 |  |
 | PBI-029 | Praćenje statusa rute od strane dispečera | Omogućiti dispečeru uvid u to koji su sandučići obrađeni, preskočeni ili problematični. | feature | High | 5h | Done | Sprint 9 |  |
 | PBI-030 | Osnovni dnevni izvještaj | Omogućiti generisanje osnovnog dnevnog izvještaja o realizovanim i nerealizovanim obilascima. | feature | Low | 4h | Done | Sprint 9 |  |
-| PBI-049 | Historija obilazaka i arhiva ruta | Omogućiti pregled historije svih realizovanih ruta i obilazaka po datumu i poštaru. | feature | Medium | 5h | To Do | Sprint 10 | Operativno izvještavanje |
+| PBI-049 | Historija obilazaka i arhiva ruta | Omogućiti pregled historije svih realizovanih ruta i obilazaka po datumu i poštaru. | feature | Medium | 5h | Done | Sprint 10 | Operativno izvještavanje |
 | PBI-050 | Prošireno operativno izvještavanje | Omogućiti generisanje izvještaja po poštaru, periodu i tipu sandučića, ne samo dnevni pregled. | feature | Medium | 4h | To Do | Sprint 10 | Nadogradnja PBI-030 |
-| PBI-051 | Pretraga i filtriranje sandučića | Omogućiti pretragu i filtriranje liste sandučića po lokaciji, tipu, prioritetu i statusu. | feature | Medium | 3h 30min | To Do | Sprint 10 | Upotrebljivost sistema |
+| PBI-051 | Pretraga i filtriranje sandučića | Omogućiti pretragu i filtriranje liste sandučića po lokaciji, tipu, prioritetu i statusu. | feature | Medium | 3h 30min | Done | Sprint 10 | Upotrebljivost sistema |
 | PBI-052 | Stabilizacija sistema i regresijsko testiranje | Provesti regresijsko testiranje svih ključnih funkcionalnosti i otkloniti pronađene greške. | technical | High | 8h | To Do | Sprint 11 |  |
 | PBI-053 | Finalni inkrement i "bug fixing" | Provesti završne korekcije koda, UI detalja i rubnih scenarija na osnovu feedbacka iz Sprinta 11. | technical | High | 6h | To Do | Sprint 12 | Finalni kandidat za demonstraciju |
 | PBI-054 | Release Notes | Pripremiti Release Notes koji opisuju šta sistem radi, koje su poznate limitacije i šta je isporučeno u finalnoj verziji. | documentation | High | 2h | To Do | Sprint 12 | |

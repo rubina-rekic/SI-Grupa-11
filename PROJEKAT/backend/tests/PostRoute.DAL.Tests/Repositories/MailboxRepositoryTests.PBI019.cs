@@ -34,7 +34,7 @@ public sealed class MailboxRepositoryTestsPBI019 : IDisposable
     public async Task GetPagedAsync_ReturnsAllWithoutFilters()
     {
         await SeedAsync();
-        var (items, total) = await _sut.GetPagedAsync(1, 25, null, null, null, false, CancellationToken.None);
+        var (items, total) = await _sut.GetPagedAsync(1, 25, null, null, null, null, false, CancellationToken.None);
         Assert.Equal(4, total);
         Assert.Equal(4, items.Count);
     }
@@ -43,7 +43,7 @@ public sealed class MailboxRepositoryTestsPBI019 : IDisposable
     public async Task GetPagedAsync_FiltersByType()
     {
         await SeedAsync();
-        var (items, total) = await _sut.GetPagedAsync(1, 25, MailboxType.WallSmall, null, null, false, CancellationToken.None);
+        var (items, total) = await _sut.GetPagedAsync(1, 25, MailboxType.WallSmall, null, null, null, false, CancellationToken.None);
         Assert.Equal(2, total);
         Assert.All(items, m => Assert.Equal(MailboxType.WallSmall, m.Type));
     }
@@ -52,25 +52,43 @@ public sealed class MailboxRepositoryTestsPBI019 : IDisposable
     public async Task GetPagedAsync_FiltersByPriority()
     {
         await SeedAsync();
-        var (items, total) = await _sut.GetPagedAsync(1, 25, null, MailboxPriority.Visok, null, false, CancellationToken.None);
+        var (items, total) = await _sut.GetPagedAsync(1, 25, null, MailboxPriority.Visok, null, null, false, CancellationToken.None);
         Assert.Equal(2, total);
         Assert.All(items, m => Assert.Equal(MailboxPriority.Visok, m.Priority));
+    }
+
+    [Fact]
+    public async Task GetPagedAsync_FiltersByStatus()
+    {
+        await SeedAsync();
+        var (items, total) = await _sut.GetPagedAsync(1, 25, null, null, MailboxStatus.Pun, null, false, CancellationToken.None);
+        Assert.Equal(2, total);
+        Assert.All(items, m => Assert.Equal(MailboxStatus.Pun, m.Status));
     }
 
     [Fact]
     public async Task GetPagedAsync_FiltersByAddressCaseInsensitive()
     {
         await SeedAsync();
-        var (items, total) = await _sut.GetPagedAsync(1, 25, null, null, "sarajevo", false, CancellationToken.None);
+        var (items, total) = await _sut.GetPagedAsync(1, 25, null, null, null, "sarajevo", false, CancellationToken.None);
         Assert.Equal(2, total);
         Assert.All(items, m => Assert.Contains("Sarajevo", m.Address, StringComparison.OrdinalIgnoreCase));
+    }
+
+    [Fact]
+    public async Task GetPagedAsync_FiltersBySerialNumberCaseInsensitive()
+    {
+        await SeedAsync();
+        var (items, total) = await _sut.GetPagedAsync(1, 25, null, null, null, "sn003", false, CancellationToken.None);
+        Assert.Equal(1, total);
+        Assert.Equal("SN003", items[0].SerialNumber);
     }
 
     [Fact]
     public async Task GetPagedAsync_SortsByPriorityWhenFlagSet()
     {
         await SeedAsync();
-        var (items, _) = await _sut.GetPagedAsync(1, 25, null, null, null, true, CancellationToken.None);
+        var (items, _) = await _sut.GetPagedAsync(1, 25, null, null, null, null, true, CancellationToken.None);
         Assert.Equal(MailboxPriority.Visok, items[0].Priority);
         Assert.Equal(MailboxPriority.Visok, items[1].Priority);
         Assert.Equal(MailboxPriority.Srednji, items[2].Priority);
@@ -81,7 +99,7 @@ public sealed class MailboxRepositoryTestsPBI019 : IDisposable
     public async Task GetPagedAsync_DefaultSortBySerialNumberWhenFlagOff()
     {
         await SeedAsync();
-        var (items, _) = await _sut.GetPagedAsync(1, 25, null, null, null, false, CancellationToken.None);
+        var (items, _) = await _sut.GetPagedAsync(1, 25, null, null, null, null, false, CancellationToken.None);
         Assert.Equal("SN001", items[0].SerialNumber);
         Assert.Equal("SN002", items[1].SerialNumber);
         Assert.Equal("SN003", items[2].SerialNumber);
@@ -92,8 +110,8 @@ public sealed class MailboxRepositoryTestsPBI019 : IDisposable
     public async Task GetPagedAsync_PaginatesCorrectly()
     {
         await SeedAsync();
-        var (page1, total1) = await _sut.GetPagedAsync(1, 2, null, null, null, false, CancellationToken.None);
-        var (page2, total2) = await _sut.GetPagedAsync(2, 2, null, null, null, false, CancellationToken.None);
+        var (page1, total1) = await _sut.GetPagedAsync(1, 2, null, null, null, null, false, CancellationToken.None);
+        var (page2, total2) = await _sut.GetPagedAsync(2, 2, null, null, null, null, false, CancellationToken.None);
 
         Assert.Equal(4, total1);
         Assert.Equal(4, total2);
@@ -107,7 +125,7 @@ public sealed class MailboxRepositoryTestsPBI019 : IDisposable
     public async Task GetPagedAsync_CombinesFilters()
     {
         await SeedAsync();
-        var (items, total) = await _sut.GetPagedAsync(1, 25, MailboxType.WallSmall, MailboxPriority.Visok, null, false, CancellationToken.None);
+        var (items, total) = await _sut.GetPagedAsync(1, 25, MailboxType.WallSmall, MailboxPriority.Visok, MailboxStatus.Prazan, "sarajevo", false, CancellationToken.None);
         Assert.Equal(1, total);
         Assert.Equal("SN001", items[0].SerialNumber);
     }

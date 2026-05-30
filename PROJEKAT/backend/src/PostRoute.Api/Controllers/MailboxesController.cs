@@ -123,12 +123,13 @@ public sealed class MailboxesController : ControllerBase
         [FromQuery] int pageSize = 25,
         [FromQuery] MailboxType? type = null,
         [FromQuery] MailboxPriority? priority = null,
+        [FromQuery] MailboxStatus? status = null,
         [FromQuery] string? search = null,
         [FromQuery] bool sortByPriority = false,
         CancellationToken cancellationToken = default)
     {
         var result = await _mailboxService.GetPagedAsync(
-            page, pageSize, type, priority, search, sortByPriority, cancellationToken);
+            page, pageSize, type, priority, status, search, sortByPriority, cancellationToken);
 
         var response = new PagedResponse<MailboxResponse>(
             result.Items.Select(MapToResponse).ToList(),

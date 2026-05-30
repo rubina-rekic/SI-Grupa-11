@@ -105,4 +105,40 @@ public class RouteRepository : IRouteRepository
             })
             .ToDictionaryAsync(x => x.MailboxId, x => x.LastDate, cancellationToken);
     }
+
+    public async Task<(IReadOnlyList<Route> Items, int TotalCount)> GetPagedArchiveAsync(
+        int page,
+        int pageSize,
+        DateOnly? fromDate,
+        DateOnly? toDate,
+        Guid? postmanId,
+        CancellationToken cancellationToken = default)
+    {
+        var query = _context.Routes
+            .Include(r => r.Postman)
+            .Include(r => r.RouteItems)
+                .ThenInclude(ri => ri.Mailbox)
+            .Where(r => r.Status == RouteStatus.Zavrsena || r.Status == RouteStatus.Otkazana)
+            .AsQueryable();
+
+        if (fromDate.HasValue)
+            query = query.Where(r => r.Date >= fromDate.Value);
+
+        if (toDate.HasValue)
+            query = query.Where(r => r.Date <= toDate.Value);
+
+        if (postmanId.HasValue)
+            query = query.Where(r => r.PostmanId == postmanId.Value);
+
+        var totalCount = await query.CountAsync(cancellationToken);
+
+        var items = await query
+            .OrderByDescending(r => r.Date)
+            .ThenByDescending(r => r.PlannedStartTime)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync(cancellationToken);
+
+        return (items, totalCount);
+    }
 }

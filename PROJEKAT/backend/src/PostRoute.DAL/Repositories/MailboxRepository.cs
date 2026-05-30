@@ -37,6 +37,7 @@ public class MailboxRepository : IMailboxRepository
         int pageSize,
         MailboxType? type,
         MailboxPriority? priority,
+        MailboxStatus? status,
         string? addressSearch,
         bool sortByPriority,
         CancellationToken cancellationToken)
@@ -51,10 +52,16 @@ public class MailboxRepository : IMailboxRepository
         if (priority.HasValue)
             query = query.Where(m => m.Priority == priority.Value);
 
+        if (status.HasValue)
+            query = query.Where(m => m.Status == status.Value);
+
         if (!string.IsNullOrWhiteSpace(addressSearch))
         {
             var needle = addressSearch.Trim().ToLower();
-            query = query.Where(m => m.Address.ToLower().Contains(needle));
+            query = query.Where(m =>
+                m.Address.ToLower().Contains(needle) ||
+                m.SerialNumber.ToLower().Contains(needle) ||
+                m.Id.ToString().ToLower().Contains(needle));
         }
 
         var totalCount = await query.CountAsync(cancellationToken);

@@ -12,6 +12,7 @@ public static class BllServiceRegistration
         services.AddDataAccessLayer(configuration);
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IUserSeedService, UserSeedService>();
+        services.AddScoped<IDevDataSeedService, DevDataSeedService>();
         services.AddScoped<IMailboxService, MailboxService>();
         services.AddScoped<IRouteService, RouteService>();
         services.AddScoped<IIssueService, IssueService>();

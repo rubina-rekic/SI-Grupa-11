@@ -31,5 +31,5 @@ public class RouteItem
     public MailboxStatus? ProcessedStatus { get; set; }
 
     [MaxLength(500)]
-public string? UnavailableReason { get; set; }
+    public string? UnavailableReason { get; set; }
 }

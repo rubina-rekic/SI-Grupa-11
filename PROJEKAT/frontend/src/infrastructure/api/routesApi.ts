@@ -15,6 +15,15 @@ export interface RouteItemResponse {
     processedAt?: string | null;
     processedBy?: string | null;
     processedStatus?: string | null;
+    unavailableReason?: string | null;
+}
+
+export interface PagedResponse<T> {
+    items: T[];
+    totalCount: number;
+    page: number;
+    pageSize: number;
+    totalPages: number;
 }
 
 export interface RouteResponse {
@@ -59,6 +68,17 @@ export interface AvailablePostmanResponse {
 }
 
 export const routesApi = {
+    getArchiveRoutes: async (page = 1, pageSize = 25, fromDate?: string, toDate?: string, postmanId?: string) => {
+        const params = new URLSearchParams();
+        params.set("page", String(page));
+        params.set("pageSize", String(pageSize));
+        if (fromDate) params.set("fromDate", fromDate);
+        if (toDate) params.set("toDate", toDate);
+        if (postmanId) params.set("postmanId", postmanId);
+        const response = await httpClient<PagedResponse<RouteResponse>>(`/api/routes/archive?${params.toString()}`);
+        if (response.error || !response.data) throw response;
+        return response.data;
+    },
     getRouteDetails: async (routeId: string): Promise<RouteResponse> => {
         const response = await httpClient<RouteResponse>(`/api/routes/${routeId}`);
         
