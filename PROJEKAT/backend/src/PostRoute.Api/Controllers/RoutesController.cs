@@ -51,6 +51,33 @@ public class RoutesController : ControllerBase
         return Ok(response);
     }
 
+    [HttpGet("reports/postman-performance")]
+    [Authorize(Roles = $"{UserRole.Administrator},{UserRole.Dispatcher}")]
+    public async Task<IActionResult> GetPostmanPerformanceReport(
+        [FromQuery] DateOnly? fromDate,
+        [FromQuery] DateOnly? toDate,
+        CancellationToken cancellationToken = default)
+    {
+        if (!fromDate.HasValue || !toDate.HasValue)
+        {
+            return BadRequest(new { Message = "Period izvjestaja je obavezan." });
+        }
+
+        try
+        {
+            var result = await _routeService.GetPostmanPerformanceReportAsync(
+                fromDate.Value,
+                toDate.Value,
+                cancellationToken);
+
+            return Ok(result);
+        }
+        catch (InvalidOperationException ex)
+        {
+            return BadRequest(new { Message = ex.Message });
+        }
+    }
+
     [HttpGet("{id}")]
     [Authorize(Roles = $"{UserRole.Administrator},{UserRole.Dispatcher}")]
     public async Task<IActionResult> GetRouteDetails(Guid id)

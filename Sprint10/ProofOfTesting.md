@@ -8,8 +8,16 @@
 | --- | --- | --- | --- | --- |
 | Unit - Backend (BLL servisi) | US-40, US-41, US-42, US-43, US-44 | xUnit + Moq | 11 testova | PASS |
 | Unit - Backend (API kontroleri) | US-40, US-41, US-42, US-43, US-44 | xUnit + Moq | 10 testova | PASS |
+| Unit - Backend (BLL servisi) | US-36 | xUnit + Moq | 3 testa | PASS |
+| Unit - Backend (DAL repozitoriji) | US-36 | xUnit + EF Core InMemory | 1 test | PASS |
+| Unit - Backend (API kontroleri) | US-36 | xUnit + Moq | 3 testa | PASS |
+| Frontend component/integration | US-36 | Vitest + Testing Library | 4 testa | PASS |
 
 **Ukupno verifikovano:** `dotnet test tests\PostRoute.BLL.Tests\PostRoute.BLL.Tests.csproj --filter "FullyQualifiedName~PBI052"` i `dotnet test tests\PostRoute.Api.Tests\PostRoute.Api.Tests.csproj --filter "FullyQualifiedName~PBI052"` prolaze — BLL 6/6, API 5/5. PBI-044 notifikacije su također pokrivene dodatnim testovima.
+
+---
+
+**PBI-050 / US-36 verifikovano:** `dotnet test` filter `FullyQualifiedName~PBI050` prolazi za BLL, DAL i API sloj, a `npm test -- --run src/ui/pages/admin/test/PostmanPerformanceReportPage.PBI050.test.tsx` prolazi za frontend. Ukupno US-36: 11/11 testova PASS.
 
 ---
 
@@ -93,6 +101,58 @@ dotnet test tests\PostRoute.Api.Tests\PostRoute.Api.Tests.csproj --filter "Fully
 
 Rezultat: PASS — 6/6 BLL i 5/5 API testova za PBI-052. Postoji standardno upozorenje o verzijama EF Core Relational, ali testovi su uspješno prošli :)
 
+
+---
+
+## PBI-050 / US-36 - Izvjestaj o ucinku postara
+
+### Pokrivenost po user story
+
+| US | Naslov | Automatizirani testovi | Status |
+| --- | --- | --- | --- |
+| US-36 | Izvjestaj o ucinku postara | `RouteServiceTestsPBI050`, `RouteRepositoryTestsPBI050`, `RoutesControllerTestsPBI050`, `PostmanPerformanceReportPage.PBI050.test.tsx` | PASS |
+
+### Sta je verifikovano
+
+| Funkcionalnost / AC | Verifikacija | Test koji pokriva | Status |
+| --- | --- | --- | --- |
+| Tabela sa kolonama: ime postara, dodijeljeni sanducici, uspjesno ispraznjeno i nerealizovano | Frontend prikazuje KPI tabelu iz report odgovora | `PostmanPerformanceReportPage.PBI050.test.tsx` - prikazuje KPI tabelu | PASS |
+| Formula `(Ispraznjeno / Planirano) * 100` | BLL agregira broj planiranih i ispraznjenih lokacija i racuna procenat po postaru | `RouteServiceTestsPBI050.GetPostmanPerformanceReportAsync_ShouldAggregateKpis_AndSortBySuccessDescending` | PASS |
+| Filtriranje po proizvoljnom vremenskom periodu | API prima `fromDate` i `toDate`; DAL vraca samo zavrsene rute iz tog perioda; frontend salje odabrani period | `RouteRepositoryTestsPBI050.GetCompletedRoutesForPerformanceReportAsync_ShouldReturnOnlyCompletedRoutesInPeriod`, `RoutesControllerTestsPBI050.GetPostmanPerformanceReport_ShouldReturnOk_WithReport`, `PostmanPerformanceReportPage.PBI050.test.tsx` - filtrira period | PASS |
+| Stubni grafikon za poredjenje ucinka postara | Frontend renderuje CSS bar chart na osnovu procenta uspjesnosti | `PostmanPerformanceReportPage.PBI050.test.tsx` - prikazuje stubni grafikon | PASS |
+| Sortiranje tabele prema procentu uspjesnosti | BLL vraca redove sortirane opadajuce; frontend omogucava promjenu smjera sortiranja | `RouteServiceTestsPBI050.GetPostmanPerformanceReportAsync_ShouldAggregateKpis_AndSortBySuccessDescending`, `PostmanPerformanceReportPage.PBI050.test.tsx` - sortira tabelu | PASS |
+| Klik na ime postara otvara detalje ruta koje ulaze u obracun | Frontend otvara detaljni panel sa rutama, datumom, pocetkom, zavrsetkom i KPI vrijednostima po ruti | `PostmanPerformanceReportPage.PBI050.test.tsx` - otvara detalje ruta klikom na ime postara | PASS |
+| Export sumarnog izvjestaja u CSV | Frontend generise CSV datoteku iz trenutno ucitanog reporta | `PostmanPerformanceReportPage.PBI050.test.tsx` - exportuje sumarni izvjestaj u CSV | PASS |
+| Postar bez zavrsenih ruta u periodu ne ulazi u prosjek tima | BLL vraca prazne redove i timski prosjek 0 kada nema zavrsenih ruta | `RouteServiceTestsPBI050.GetPostmanPerformanceReportAsync_ShouldReturnEmptyRows_WhenNoCompletedRoutes` | PASS |
+| Validacija perioda | BLL odbija period gdje je pocetni datum poslije zavrsnog, a API vraca `BadRequest` kada period nedostaje ili je neispravan | `RouteServiceTestsPBI050.GetPostmanPerformanceReportAsync_ShouldRejectInvalidPeriod`, `RoutesControllerTestsPBI050.GetPostmanPerformanceReport_ShouldReturnBadRequest_WhenPeriodMissing`, `RoutesControllerTestsPBI050.GetPostmanPerformanceReport_ShouldReturnBadRequest_WhenServiceRejectsPeriod` | PASS |
+
+### Komande izvrsene lokalno
+
+```bash
+cd PROJEKAT/backend
+dotnet test tests\PostRoute.BLL.Tests\PostRoute.BLL.Tests.csproj --filter "FullyQualifiedName~PBI050"
+dotnet test tests\PostRoute.DAL.Tests\PostRoute.DAL.Tests.csproj --filter "FullyQualifiedName~PBI050"
+dotnet test tests\PostRoute.Api.Tests\PostRoute.Api.Tests.csproj --filter "FullyQualifiedName~PBI050"
+```
+
+```bash
+cd PROJEKAT/frontend
+npm test -- --run src/ui/pages/admin/test/PostmanPerformanceReportPage.PBI050.test.tsx
+```
+
+### Rezultati
+
+| Komanda | Rezultat |
+| --- | --- |
+| `dotnet test tests\PostRoute.BLL.Tests\PostRoute.BLL.Tests.csproj --filter "FullyQualifiedName~PBI050"` | PASS - 3/3 |
+| `dotnet test tests\PostRoute.DAL.Tests\PostRoute.DAL.Tests.csproj --filter "FullyQualifiedName~PBI050"` | PASS - 1/1 |
+| `dotnet test tests\PostRoute.Api.Tests\PostRoute.Api.Tests.csproj --filter "FullyQualifiedName~PBI050"` | PASS - 3/3 |
+| `npm test -- --run src/ui/pages/admin/test/PostmanPerformanceReportPage.PBI050.test.tsx` | PASS - 4/4 |
+
+### Napomene
+
+- API test/build projekat i dalje prikazuje postojece MSB3277 upozorenje o verzijama `Microsoft.EntityFrameworkCore.Relational`; PBI-050 API testovi prolaze.
+- CSV export je testiran kroz browser API mock (`URL.createObjectURL` i klik na privremeni link), bez uvodjenja nove biblioteke.
 
 ---
 

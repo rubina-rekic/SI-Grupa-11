@@ -538,6 +538,106 @@ public class RouteService : IRouteService
         return new PagedResult<RouteResponse>(list, total, page, pageSize);
     }
 
+    public async Task<PostmanPerformanceReportResponse> GetPostmanPerformanceReportAsync(
+        DateOnly fromDate,
+        DateOnly toDate,
+        CancellationToken cancellationToken = default)
+    {
+        if (fromDate > toDate)
+        {
+            throw new InvalidOperationException("Pocetni datum ne moze biti poslije zavrsnog datuma.");
+        }
+
+        var routes = await _routeRepository.GetCompletedRoutesForPerformanceReportAsync(
+            fromDate,
+            toDate,
+            cancellationToken);
+
+        var rows = routes
+            .GroupBy(route => route.PostmanId)
+            .Select(group =>
+            {
+                var firstRoute = group.First();
+                var routeRows = group
+                    .OrderByDescending(route => route.Date)
+                    .ThenByDescending(route => route.PlannedStartTime)
+                    .Select(MapPerformanceRoute)
+                    .ToList();
+
+                var assigned = routeRows.Sum(route => route.AssignedMailboxes);
+                var emptied = routeRows.Sum(route => route.EmptiedLocations);
+                var unrealized = assigned - emptied;
+
+                return new PostmanPerformanceRowResponse
+                {
+                    PostmanId = group.Key,
+                    PostmanName = firstRoute.Postman is null ? group.Key.ToString() : ToDisplayName(firstRoute.Postman),
+                    AssignedMailboxes = assigned,
+                    EmptiedLocations = emptied,
+                    UnrealizedLocations = unrealized,
+                    SuccessPercentage = CalculateSuccessPercentage(emptied, assigned),
+                    CompletedRoutesCount = routeRows.Count,
+                    Routes = routeRows
+                };
+            })
+            .OrderByDescending(row => row.SuccessPercentage)
+            .ThenBy(row => row.PostmanName)
+            .ToList();
+
+        return new PostmanPerformanceReportResponse
+        {
+            FromDate = fromDate,
+            ToDate = toDate,
+            TotalPostmen = rows.Count,
+            TotalAssignedMailboxes = rows.Sum(row => row.AssignedMailboxes),
+            TotalEmptiedLocations = rows.Sum(row => row.EmptiedLocations),
+            TotalUnrealizedLocations = rows.Sum(row => row.UnrealizedLocations),
+            TeamAverageSuccessPercentage = rows.Count == 0
+                ? 0
+                : Math.Round(rows.Average(row => row.SuccessPercentage), 2),
+            Rows = rows
+        };
+    }
+
+    private static PostmanPerformanceRouteResponse MapPerformanceRoute(Route route)
+    {
+        var assigned = route.RouteItems.Count;
+        var emptied = route.RouteItems.Count(IsSuccessfullyEmptied);
+        var unrealized = assigned - emptied;
+
+        return new PostmanPerformanceRouteResponse
+        {
+            RouteId = route.Id,
+            Date = route.Date,
+            PlannedStartTime = route.PlannedStartTime,
+            CompletedAt = route.CompletedAt,
+            AssignedMailboxes = assigned,
+            EmptiedLocations = emptied,
+            UnrealizedLocations = unrealized,
+            SuccessPercentage = CalculateSuccessPercentage(emptied, assigned)
+        };
+    }
+
+    private static bool IsSuccessfullyEmptied(RouteItem item)
+    {
+        if (item.ProcessedStatus == MailboxStatus.Ispraznjen)
+        {
+            return true;
+        }
+
+        return string.Equals(item.Status, nameof(MailboxStatus.Ispraznjen), StringComparison.OrdinalIgnoreCase);
+    }
+
+    private static decimal CalculateSuccessPercentage(int emptied, int assigned)
+    {
+        if (assigned == 0)
+        {
+            return 0;
+        }
+
+        return Math.Round((decimal)emptied / assigned * 100m, 2);
+    }
+
     private static string ToDisplayName(User user)
     {
         var fullName = $"{user.FirstName} {user.LastName}".Trim();

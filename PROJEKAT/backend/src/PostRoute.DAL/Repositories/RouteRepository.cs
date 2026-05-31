@@ -141,4 +141,23 @@ public class RouteRepository : IRouteRepository
 
         return (items, totalCount);
     }
+
+    public async Task<IReadOnlyList<Route>> GetCompletedRoutesForPerformanceReportAsync(
+        DateOnly fromDate,
+        DateOnly toDate,
+        CancellationToken cancellationToken = default)
+    {
+        return await _context.Routes
+            .AsNoTracking()
+            .Include(r => r.Postman)
+            .Include(r => r.RouteItems)
+                .ThenInclude(ri => ri.Mailbox)
+            .Where(r => r.Status == RouteStatus.Zavrsena)
+            .Where(r => r.Date >= fromDate && r.Date <= toDate)
+            .OrderBy(r => r.Postman.LastName)
+            .ThenBy(r => r.Postman.FirstName)
+            .ThenByDescending(r => r.Date)
+            .ThenByDescending(r => r.PlannedStartTime)
+            .ToListAsync(cancellationToken);
+    }
 }

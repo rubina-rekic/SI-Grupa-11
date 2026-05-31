@@ -16,6 +16,7 @@ import PostmanAssignedRoutePage from "../../ui/pages/PostmanAssignedRoutePage"
 import IssueDetailPage from "../../ui/pages/admin/IssueDetailPage"
 import ArchiveRouteListPage from "../../ui/pages/admin/ArchiveRouteListPage"
 import ArchiveRouteDetailsPage from "../../ui/pages/admin/ArchiveRouteDetailsPage"
+import PostmanPerformanceReportPage from "../../ui/pages/admin/PostmanPerformanceReportPage"
 
 function PrivateRoute({ children, requiredRole, requiredRoles }: { children: React.ReactNode; requiredRole?: string; requiredRoles?: string[] }) {
   const { currentUser, loading } = useAuth()
@@ -221,6 +222,14 @@ export function AppRouter() {
         element={
           <PrivateRoute requiredRole="PostalWorker">
             <IssueDetailPage />
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="/admin/reports/postman-performance"
+        element={
+          <PrivateRoute requiredRoles={["Administrator", "Dispatcher"]}>
+            <PostmanPerformanceReportPage />
           </PrivateRoute>
         }
       />
