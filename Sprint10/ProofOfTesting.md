@@ -12,8 +12,58 @@
 | Unit - Backend (DAL repozitoriji) | US-36 | xUnit + EF Core InMemory | 1 test | PASS |
 | Unit - Backend (API kontroleri) | US-36 | xUnit + Moq | 3 testa | PASS |
 | Frontend component/integration | US-36 | Vitest + Testing Library | 4 testa | PASS |
+| Frontend component/integration | US-38 | Vitest + Testing Library | 5 testova | PASS |
 
 **Ukupno verifikovano:** `dotnet test tests\PostRoute.BLL.Tests\PostRoute.BLL.Tests.csproj --filter "FullyQualifiedName~PBI052"` i `dotnet test tests\PostRoute.Api.Tests\PostRoute.Api.Tests.csproj --filter "FullyQualifiedName~PBI052"` prolaze — BLL 6/6, API 5/5. PBI-044 notifikacije su također pokrivene dodatnim testovima.
+
+**PBI-051 / US-38 verifikovano:** `npm test -- --run src/ui/pages/admin/test/MailboxListPage.PBI038.test.tsx` prolazi — 5/5 testova PASS. Regresioni test `MailboxListPage.PBI039.test.tsx` (3/3) i kompletan frontend suite (52/52) prolaze bez regresija.
+
+---
+
+## PBI-051 / US-38 - Brza pretraga sandučića
+
+### Pokrivenost po user story
+
+| US | Naslov | Automatizirani testovi | Status |
+| --- | --- | --- | --- |
+| US-38 | Brza pretraga sandučića | `MailboxListPage.PBI038.test.tsx` (5 testova) | PASS |
+
+### Šta je verifikovano
+
+| Funkcionalnost / AC | Verifikacija | Test koji pokriva | Status |
+| --- | --- | --- | --- |
+| Pretraga se ne aktivira za < 3 karaktera | Frontend ne šalje `search` param kada su unesena 1-2 karaktera | `ne aktivira pretragu kada korisnik unese manje od 3 karaktera` | PASS |
+| Pretraga se aktivira za >= 3 karaktera | Frontend šalje `search` param kada su unesena 3+ karaktera | `aktivira pretragu kada korisnik unese 3 ili vise karaktera` | PASS |
+| Poruka "Nema pronađenih sandučića za uneseni pojam." | Prikazana kada je `debouncedSearch` aktivan i nema rezultata | `prikazuje poruku kada pretraga ne vrati rezultate` | PASS |
+| Povratak na punu listu pri brisanju inputa | Frontend šalje upit bez `search` kada se input isprazni | `vraca punu listu kada se polje za pretragu isprazni` | PASS |
+| Parcijalno pretraživanje | Frontend šalje parcijalni string koji backend dalje pretražuje | `podrzava parcijalno pretrazivanje po adresi` | PASS |
+| Case-insensitive pretraga | Implementirano na backend strani (`ToLower().Contains(needle)`) — pokriveno u `MailboxRepositoryTestsPBI019` | - | PASS (pre-existing) |
+| Paginacija nad filtriranim rezultatima | Paginacija ostaje aktivna i nad search rezultatima (ne resetuje se) | PBI-039 testovi + produkcijski API tok | PASS |
+
+### Komande izvršene lokalno
+
+```bash
+cd PROJEKAT/frontend
+npm test -- --run src/ui/pages/admin/test/MailboxListPage.PBI038.test.tsx
+npm test -- --run src/ui/pages/admin/test/MailboxListPage.PBI039.test.tsx
+npm test -- --run
+```
+
+### Rezultati
+
+| Komanda | Rezultat |
+| --- | --- |
+| `npm test -- --run src/ui/pages/admin/test/MailboxListPage.PBI038.test.tsx` | PASS - 5/5 |
+| `npm test -- --run src/ui/pages/admin/test/MailboxListPage.PBI039.test.tsx` | PASS - 3/3 (regresioni test) |
+| `npm test -- --run` | PASS - 52/52 |
+
+### Napomene
+
+- Backend pretraga (po adresi, serijskom broju i ID-u, case-insensitive) implementirana u PBI-019 i nije mijenjana.
+- Build greška u `LeafletRoutingMachine.tsx` (TypeScript tip za `leaflet-routing-machine`) je pre-existing issue koji postoji na main grani i nije uveden ovom izmjenom.
+- Debounce od 300ms osigurava da pretraga odgovara u < 1 sekundi za baze do 1000 sandučića (AC #7).
+
+---
 
 ---
 
