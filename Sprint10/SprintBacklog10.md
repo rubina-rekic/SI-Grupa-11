@@ -8,7 +8,7 @@
 | PBI-049 / US-35 | Detaljni uvid u arhiviranu rutu | Historija obilazaka i arhiva ruta | Kerim | 4h | Done | Detaljan pregled statusa sandučića, timestamp aktivnosti, mapa obilaska, export u Excel, audit trail |
 | PBI-050 / US-36 | Izvještaj o učinku poštara | Prošireno operativno izvještavanje | Ibrahim | 4h | Done | KPI tabela, procenat uspješnosti, stubni grafikon, filtriranje po periodu, export u CSV |
 | PBI-050 / US-37 | Analiza realizacije po tipu sandučića | Prošireno operativno izvještavanje | Aldin | 3h | To Do | Statistika po tipu sandučića, pie chart, analiza problema, poređenje tipova, export u Excel |
-| PBI-051 / US-38 | Brza pretraga sandučića | Pretraga i filtriranje sandučića | Faruk | 2h | To Do | Real-time pretraga po adresi/ID-u, case-insensitive pretraga, parcijalno pretraživanje |
+| PBI-051 / US-38 | Brza pretraga sandučića | Pretraga i filtriranje sandučića | Faruk | 2h | Done | Real-time pretraga po adresi/ID-u, case-insensitive pretraga, parcijalno pretraživanje |
 | PBI-051 / US-39 | Filtriranje po atributima | Pretraga i filtriranje sandučića | Emrah | 3h | Done | Filteri po tipu/statusu/prioritetu, kombinovani filteri, reset dugme, integracija sa pretragom |
 | PBI-052 / US-40 | Pregled detalja problematične lokacije | Upravljanje problematičnim lokacijama | Rubina | 3h | To Do | Detaljan pregled problema, timeline aktivnosti, prikaz razloga nedostupnosti, read-only pregled incidenta |
 | PBI-052 / US-41 | Komentarisanje problema između dispečera i poštara | Upravljanje problematičnim lokacijama | Rubina | 3h | Done | Komentari sa timestampom i autorom, conversation prikaz, real-time osvježavanje |

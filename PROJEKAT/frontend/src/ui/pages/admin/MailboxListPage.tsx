@@ -25,11 +25,19 @@ export default function MailboxListPage() {
     const [priorityFilter, setPriorityFilter] = useState<MailboxPriority | "">("")
     const [statusFilter, setStatusFilter] = useState<MailboxStatus | "">("")
     const [addressSearch, setAddressSearch] = useState("")
+    const [debouncedSearch, setDebouncedSearch] = useState("")
     const [sortByPriority, setSortByPriority] = useState(false)
     const [page, setPage] = useState(1)
     const [totalCount, setTotalCount] = useState(0)
     const [totalPages, setTotalPages] = useState(0)
     const [modalMailbox, setModalMailbox] = useState<MailboxResponse | null>(null)
+
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setDebouncedSearch(addressSearch.trim().length >= 3 ? addressSearch.trim() : "")
+        }, 300)
+        return () => clearTimeout(timer)
+    }, [addressSearch])
 
     const loadMailboxes = useCallback(async () => {
         try {
@@ -40,7 +48,7 @@ export default function MailboxListPage() {
                 type: typeFilter === "" ? undefined : typeFilter,
                 priority: priorityFilter === "" ? undefined : priorityFilter,
                 status: statusFilter === "" ? undefined : statusFilter,
-                search: addressSearch.trim() || undefined,
+                search: debouncedSearch || undefined,
                 sortByPriority
             })
             setMailboxes(result.items)
@@ -51,10 +59,10 @@ export default function MailboxListPage() {
         } finally {
             setLoading(false)
         }
-    }, [page, typeFilter, priorityFilter, statusFilter, addressSearch, sortByPriority])
+    }, [page, typeFilter, priorityFilter, statusFilter, debouncedSearch, sortByPriority])
 
     useEffect(() => { void loadMailboxes() }, [loadMailboxes])
-    useEffect(() => { setPage(1) }, [typeFilter, priorityFilter, statusFilter, addressSearch, sortByPriority])
+    useEffect(() => { setPage(1) }, [typeFilter, priorityFilter, statusFilter, debouncedSearch, sortByPriority])
 
     const handleResetFilters = () => {
         setTypeFilter("")
@@ -66,8 +74,8 @@ export default function MailboxListPage() {
     }
 
     const isEmptyDatabase = useMemo(
-        () => totalCount === 0 && !typeFilter && !priorityFilter && !statusFilter && !addressSearch.trim(),
-        [totalCount, typeFilter, priorityFilter, statusFilter, addressSearch]
+        () => totalCount === 0 && !typeFilter && !priorityFilter && !statusFilter && !debouncedSearch,
+        [totalCount, typeFilter, priorityFilter, statusFilter, debouncedSearch]
     )
 
     if (loading && mailboxes.length === 0) {
@@ -308,7 +316,9 @@ export default function MailboxListPage() {
                             </div>
                         ) : !loading ? (
                             <div style={{ textAlign: "center", padding: "30px", color: "#6b7280" }}>
-                                Nema sandučića koji odgovaraju odabranim kriterijima filtriranja.
+                                {debouncedSearch
+                                    ? "Nema pronađenih sandučića za uneseni pojam."
+                                    : "Nema sandučića koji odgovaraju odabranim kriterijima filtriranja."}
                             </div>
                         ) : null}
 
