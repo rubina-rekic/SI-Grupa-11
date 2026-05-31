@@ -1,8 +1,8 @@
+import { useEffect } from "react"
+import { useLocation, useNavigate } from "react-router-dom"
+import { toast } from "sonner"
 import { useAuth } from "../../application/hooks/useAuth"
 import { Layout } from "../components/Layout/Layout"
-import { useLocation, useNavigate } from "react-router-dom"
-import { useEffect } from "react"
-import { toast } from "sonner"
 
 export default function DashboardPage() {
   const { currentUser } = useAuth()
@@ -14,7 +14,6 @@ export default function DashboardPage() {
       toast.error("Pristup odbijen", {
         description: "Nemate potrebne privilegije za pregled ove stranice.",
       })
-      // Clear the state to prevent showing toast again on refresh
       window.history.replaceState({}, document.title)
     }
   }, [location.state])
@@ -57,6 +56,12 @@ export default function DashboardPage() {
       </div>
 
       <div className="dashboard-card">
+        <h3>📊 Učinak poštara</h3>
+        <p>Pregledajte KPI izvještaj realizacije po poštaru za odabrani period</p>
+        <button className="btn-primary" onClick={() => navigate("/admin/reports/postman-performance")}>Izvještaj učinka</button>
+      </div>
+
+      <div className="dashboard-card">
         <h3>📊 Statistika sistema</h3>
         <p>Analizirajte performanse i statistike</p>
         <button className="btn-primary" onClick={() => navigate("/admin/statistics")}>Statistike</button>
@@ -82,6 +87,12 @@ export default function DashboardPage() {
         <h3>📡 Praćenje ruta</h3>
         <p>Pratite status ruta i sandučića u realnom vremenu</p>
         <button className="btn-primary" onClick={() => navigate("/admin/routes/dashboard")}>Praćenje ruta</button>
+      </div>
+
+      <div className="dashboard-card">
+        <h3>📊 Učinak poštara</h3>
+        <p>Analizirajte realizaciju poštara kroz KPI tabelu i CSV export</p>
+        <button className="btn-primary" onClick={() => navigate("/admin/reports/postman-performance")}>Izvještaj učinka</button>
       </div>
     </div>
   )

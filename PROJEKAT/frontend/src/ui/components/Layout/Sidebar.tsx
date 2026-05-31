@@ -14,6 +14,7 @@ export function Sidebar({ userRole, username, onNavClick }: SidebarProps) {
     { path: "/admin/routes/generate", label: "Generisanje ruta", icon: "🗺️" },
     { path: "/admin/routes/dashboard", label: "Praćenje ruta", icon: "📡" },
     { path: "/admin/routes/archive", label: "Arhiva ruta", icon: "📂" },
+    { path: "/admin/reports/postman-performance", label: "Učinak poštara", icon: "📊" },
     { path: "/admin/statistics", label: "Statistika sistema", icon: "📊" },
     { path: "/admin/settings", label: "Postavke", icon: "⚙️" },
   ]
@@ -23,6 +24,7 @@ export function Sidebar({ userRole, username, onNavClick }: SidebarProps) {
     { path: "/admin/routes/generate", label: "Generisanje ruta", icon: "🗺️" },
     { path: "/admin/routes/dashboard", label: "Praćenje ruta", icon: "📡" },
     { path: "/admin/routes/archive", label: "Arhiva ruta", icon: "📂" },
+    { path: "/admin/reports/postman-performance", label: "Učinak poštara", icon: "📊" },
   ]
 
   const postalWorkerMenuItems = [

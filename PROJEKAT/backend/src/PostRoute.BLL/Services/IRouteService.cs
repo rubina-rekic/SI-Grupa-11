@@ -18,4 +18,8 @@ public interface IRouteService
         DateOnly? toDate,
         Guid? postmanId,
         CancellationToken cancellationToken = default);
+    Task<PostmanPerformanceReportResponse> GetPostmanPerformanceReportAsync(
+        DateOnly fromDate,
+        DateOnly toDate,
+        CancellationToken cancellationToken = default);
 }

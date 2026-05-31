@@ -27,4 +27,9 @@ public interface IRouteRepository
         DateOnly? toDate,
         Guid? postmanId,
         CancellationToken cancellationToken = default);
+
+    Task<IReadOnlyList<Route>> GetCompletedRoutesForPerformanceReportAsync(
+        DateOnly fromDate,
+        DateOnly toDate,
+        CancellationToken cancellationToken = default);
 }

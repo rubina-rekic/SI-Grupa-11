@@ -67,6 +67,39 @@ export interface AvailablePostmanResponse {
     unavailableReason: string | null;
 }
 
+export interface PostmanPerformanceRouteResponse {
+    routeId: string;
+    date: string;
+    plannedStartTime: string;
+    completedAt: string | null;
+    assignedMailboxes: number;
+    emptiedLocations: number;
+    unrealizedLocations: number;
+    successPercentage: number;
+}
+
+export interface PostmanPerformanceRowResponse {
+    postmanId: string;
+    postmanName: string;
+    assignedMailboxes: number;
+    emptiedLocations: number;
+    unrealizedLocations: number;
+    successPercentage: number;
+    completedRoutesCount: number;
+    routes: PostmanPerformanceRouteResponse[];
+}
+
+export interface PostmanPerformanceReportResponse {
+    fromDate: string;
+    toDate: string;
+    totalPostmen: number;
+    totalAssignedMailboxes: number;
+    totalEmptiedLocations: number;
+    totalUnrealizedLocations: number;
+    teamAverageSuccessPercentage: number;
+    rows: PostmanPerformanceRowResponse[];
+}
+
 export const routesApi = {
     getArchiveRoutes: async (page = 1, pageSize = 25, fromDate?: string, toDate?: string, postmanId?: string) => {
         const params = new URLSearchParams();
@@ -159,6 +192,22 @@ export const routesApi = {
 
     getRoutesForDate: async (date: string): Promise<RouteResponse[]> => {
         const response = await httpClient<RouteResponse[]>(`/api/routes?date=${date}`);
+
+        if (response.error || !response.data) {
+            throw response;
+        }
+
+        return response.data;
+    },
+
+    getPostmanPerformanceReport: async (
+        fromDate: string,
+        toDate: string
+    ): Promise<PostmanPerformanceReportResponse> => {
+        const params = new URLSearchParams({ fromDate, toDate });
+        const response = await httpClient<PostmanPerformanceReportResponse>(
+            `/api/routes/reports/postman-performance?${params.toString()}`
+        );
 
         if (response.error || !response.data) {
             throw response;
