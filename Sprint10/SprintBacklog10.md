@@ -10,7 +10,7 @@
 | PBI-050 / US-37 | Analiza realizacije po tipu sandučića | Prošireno operativno izvještavanje | Aldin | 3h | To Do | Statistika po tipu sandučića, pie chart, analiza problema, poređenje tipova, export u Excel |
 | PBI-051 / US-38 | Brza pretraga sandučića | Pretraga i filtriranje sandučića | Faruk | 2h | Done | Real-time pretraga po adresi/ID-u, case-insensitive pretraga, parcijalno pretraživanje |
 | PBI-051 / US-39 | Filtriranje po atributima | Pretraga i filtriranje sandučića | Emrah | 3h | Done | Filteri po tipu/statusu/prioritetu, kombinovani filteri, reset dugme, integracija sa pretragom |
-| PBI-052 / US-40 | Pregled detalja problematične lokacije | Upravljanje problematičnim lokacijama | Rubina | 3h | To Do | Detaljan pregled problema, timeline aktivnosti, prikaz razloga nedostupnosti, read-only pregled incidenta |
+| PBI-052 / US-40 | Pregled detalja problematične lokacije | Upravljanje problematičnim lokacijama | Rubina | 3h | Done | Detaljan pregled problema, timeline aktivnosti, prikaz razloga nedostupnosti, read-only pregled incidenta |
 | PBI-052 / US-41 | Komentarisanje problema između dispečera i poštara | Upravljanje problematičnim lokacijama | Rubina | 3h | Done | Komentari sa timestampom i autorom, conversation prikaz, real-time osvježavanje |
 | PBI-052 / US-42 | Dodjela akcije za problematičnu lokaciju | Upravljanje problematičnim lokacijama | Rubina | 2h | Done | Dodjela akcije (ponovni pokušaj, drugi poštar, odgoda), evidencija akcije, prikaz trenutnog statusa |
 | PBI-052 / US-43 | Evidencija statusa rješavanja problema | Upravljanje problematičnim lokacijama | Nejla| 2h | Done | Statusi problema (Otvoren, U obradi, Riješen), filtriranje problema, audit trail |
