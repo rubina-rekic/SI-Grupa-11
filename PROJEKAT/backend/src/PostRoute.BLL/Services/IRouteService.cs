@@ -22,4 +22,9 @@ public interface IRouteService
         DateOnly fromDate,
         DateOnly toDate,
         CancellationToken cancellationToken = default);
+
+    Task<MailboxTypeRealizationReportResponse> GetMailboxTypeRealizationReportAsync(
+        DateOnly fromDate,
+        DateOnly toDate,
+        CancellationToken cancellationToken = default);
 }

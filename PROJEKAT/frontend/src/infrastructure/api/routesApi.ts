@@ -100,6 +100,35 @@ export interface PostmanPerformanceReportResponse {
     rows: PostmanPerformanceRowResponse[];
 }
 
+export interface MailboxTypeRealizationDetailResponse {
+    mailboxId: string;
+    address: string;
+    routeDate: string;
+    status: string;
+    notes?: string | null;
+}
+
+export interface MailboxTypeRealizationRowResponse {
+    typeId: number;
+    typeName: string;
+    plannedEmpties: number;
+    successfulEmpties: number;
+    problemReports: number;
+    failureRate: number;
+    details: MailboxTypeRealizationDetailResponse[];
+}
+
+export interface MailboxTypeRealizationReportResponse {
+    fromDate: string;
+    toDate: string;
+    totalTypes: number;
+    totalPlannedEmpties: number;
+    totalSuccessfulEmpties: number;
+    totalProblemReports: number;
+    averageFailureRate: number;
+    rows: MailboxTypeRealizationRowResponse[];
+}
+
 export const routesApi = {
     getArchiveRoutes: async (page = 1, pageSize = 25, fromDate?: string, toDate?: string, postmanId?: string) => {
         const params = new URLSearchParams();
@@ -207,6 +236,22 @@ export const routesApi = {
         const params = new URLSearchParams({ fromDate, toDate });
         const response = await httpClient<PostmanPerformanceReportResponse>(
             `/api/routes/reports/postman-performance?${params.toString()}`
+        );
+
+        if (response.error || !response.data) {
+            throw response;
+        }
+
+        return response.data;
+    },
+
+    getMailboxTypeRealizationReport: async (
+        fromDate: string,
+        toDate: string
+    ): Promise<MailboxTypeRealizationReportResponse> => {
+        const params = new URLSearchParams({ fromDate, toDate });
+        const response = await httpClient<MailboxTypeRealizationReportResponse>(
+            `/api/routes/reports/mailbox-type-realization?${params.toString()}`
         );
 
         if (response.error || !response.data) {
