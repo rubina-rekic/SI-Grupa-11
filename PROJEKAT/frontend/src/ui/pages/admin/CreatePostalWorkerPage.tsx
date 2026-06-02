@@ -28,8 +28,8 @@ const schema = z.object({
         .min(3, "Korisničko ime mora imati najmanje 3 znaka")
         .max(30, "Korisničko ime može imati najviše 30 znakova")
         .regex(
-            /^[a-zA-Z0-9._-]+$/,
-            "Dozvoljeni znakovi: slova, brojevi, tačka, crtica, donja crtica",
+            /^[a-zA-Z0-9._@-]+$/,
+            "Dozvoljeni znakovi: slova, brojevi, tačka, crtica, donja crtica i @",
         ),
     email: z
         .string()

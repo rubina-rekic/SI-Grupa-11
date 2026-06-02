@@ -282,7 +282,15 @@ public class MailboxService : IMailboxService
             routeItem = route?.RouteItems.FirstOrDefault(item => item.MailboxId == command.MailboxId);
         }
 
-        if (routeItem is not null && IsRouteItemProcessed(routeItem))
+        if (_routeRepository is not null && routeItem is null)
+        {
+            route = await _routeRepository.GetActiveByMailboxAsync(
+                command.MailboxId,
+                cancellationToken);
+            routeItem = route?.RouteItems.FirstOrDefault(item => item.MailboxId == command.MailboxId);
+        }
+
+        if (routeItem is not null && IsRouteItemProcessed(routeItem) && !CanOverrideRouteItemStatus(routeItem, command.NewStatus))
         {
             throw new InvalidOperationException(StatusAlreadyRecordedMessage);
         }
@@ -315,6 +323,7 @@ public class MailboxService : IMailboxService
             routeItem.ProcessedAt = now;
             routeItem.ProcessedBy = command.UserId;
             routeItem.ProcessedStatus = command.NewStatus;
+            routeItem.UnavailableReason = null;
 
             if (route.Status == RouteStatus.Dodijeljena)
             {
@@ -382,6 +391,14 @@ public class MailboxService : IMailboxService
 
         return updatedMailbox;
     }
+
+    private static bool CanOverrideRouteItemStatus(RouteItem routeItem, MailboxStatus newStatus)
+        => IsRouteItemUnavailable(routeItem)
+            && (newStatus == MailboxStatus.Napunjen || newStatus == MailboxStatus.Ispraznjen);
+
+    private static bool IsRouteItemUnavailable(RouteItem item)
+        => item.ProcessedStatus == MailboxStatus.Nedostupan ||
+           string.Equals(item.Status, "Nedostupan", StringComparison.OrdinalIgnoreCase);
 
     private static bool IsProcessedMailboxStatus(MailboxStatus status) =>
         status is MailboxStatus.Obraen or MailboxStatus.Napunjen or MailboxStatus.Ispraznjen or MailboxStatus.Nedostupan;

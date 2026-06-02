@@ -51,6 +51,22 @@ public class RouteRepository : IRouteRepository
             .FirstOrDefaultAsync(cancellationToken);
     }
 
+    public async Task<Route?> GetActiveByMailboxAsync(Guid mailboxId, CancellationToken cancellationToken = default)
+    {
+        var today = DateOnly.FromDateTime(DateTime.Now);
+
+        return await _context.Routes
+            .Include(r => r.RouteItems)
+                .ThenInclude(ri => ri.Mailbox)
+            .Include(r => r.Postman)
+            .Where(r => r.Date == today)
+            .Where(r => r.Status == RouteStatus.Dodijeljena || r.Status == RouteStatus.UProgresu)
+            .Where(r => r.RouteItems.Any(ri => ri.MailboxId == mailboxId))
+            .OrderByDescending(r => r.Date)
+            .ThenByDescending(r => r.PlannedStartTime)
+            .FirstOrDefaultAsync(cancellationToken);
+    }
+
     public async Task<IReadOnlyList<Guid>> GetPostmanIdsWithActiveRouteOnDateAsync(
         DateOnly date,
         Guid? excludedRouteId = null,

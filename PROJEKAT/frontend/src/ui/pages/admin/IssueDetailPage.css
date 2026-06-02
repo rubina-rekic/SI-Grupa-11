@@ -283,8 +283,70 @@
     color: var(--c-slate-400, #94a3b8);
 }
 
+.issue-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 28, 46, 0.55);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    z-index: 1000;
+}
+
+.issue-modal {
+    background: #ffffff;
+    border-radius: 18px;
+    padding: 28px;
+    width: min(520px, 100%);
+    box-shadow: 0 25px 60px rgba(15, 28, 46, 0.16);
+    max-width: 520px;
+}
+
+.issue-modal h2 {
+    margin: 0 0 8px;
+    font-size: 18px;
+    color: var(--navy, #0f1c2e);
+}
+
+.issue-modal p {
+    margin: 0 0 18px;
+    font-size: 14px;
+    color: var(--c-slate-500, #64748b);
+    line-height: 1.6;
+}
+
+.issue-modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 12px;
+    margin-top: 20px;
+    flex-wrap: wrap;
+}
+
+.issue-mailbox-status-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px 12px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--navy, #0f1c2e);
+    background: #f1f5f9;
+    margin-top: 12px;
+}
+
+.issue-mailbox-status-badge--success {
+    color: #14532d;
+    background: #dcfce7;
+}
+
 @media (max-width: 600px) {
     .issue-action-form { flex-direction: column; }
     .issue-select { min-width: unset; width: 100%; }
     .issue-btn { width: 100%; }
+    .issue-modal-footer { width: 100%; flex-direction: column; align-items: stretch; }
+    .issue-modal { max-width: 100%; }
 }

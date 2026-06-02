@@ -8,8 +8,10 @@ import {
     getIssueByIdForWorker,
 } from "../../../infrastructure/api/issues/issuesApi"
 import type { IssueDto } from "../../../infrastructure/api/issues/issuesApi"
+import { updateMailboxStatus, mailboxStatusLabels, MailboxStatus } from "../../../infrastructure/api/mailboxes/mailboxesApi"
 import { getUsers } from "../../../infrastructure/api/users/usersApi"
 import type { UserListDto } from "../../../infrastructure/api/users/usersApi"
+import { STATUS_ALREADY_RECORDED_MESSAGE } from "../../components/PostmanRoute/statusUtils"
 import "./IssueDetailPage.css"
 
 function StatusBadge({ status }: { status: IssueStatus }) {
@@ -52,6 +54,8 @@ export default function IssueDetailPage() {
     const [postmen, setPostmen] = useState<UserListDto[]>([])
     const [submittingAction, setSubmittingAction] = useState(false)
     const [resolving, setResolving] = useState(false)
+    const [showResolveModal, setShowResolveModal] = useState(false)
+    const [selectedMailboxStatus, setSelectedMailboxStatus] = useState<MailboxStatus | "">("")
 
     const loadIssue = useCallback(async () => {
         if (id) {
@@ -133,18 +137,70 @@ export default function IssueDetailPage() {
         }
     }
 
-    const handleResolve = async () => {
+    const finishResolve = async () => {
         if (!id) return
         setResolving(true)
         try {
             const updated = await resolveIssue(id)
-            setIssue(updated)
-            toast.success("Problem označen kao riješen.")
+            setIssue(prev => {
+                if (!updated) return prev
+                return {
+                    ...updated,
+                    unavailableReason: updated.status === IssueStatus.Rijesen ? null : updated.unavailableReason,
+                }
+            })
+        } finally {
+            setResolving(false)
+        }
+    }
+
+    const handleResolveConfirm = async () => {
+        if (!id || !issue || selectedMailboxStatus === "") return
+        setResolving(true)
+        let mailboxStatusHandled = false
+
+        try {
+            try {
+                await updateMailboxStatus(issue.mailboxId, { status: selectedMailboxStatus })
+                mailboxStatusHandled = true
+            } catch (err) {
+                if (err instanceof Error && err.message === STATUS_ALREADY_RECORDED_MESSAGE) {
+                    mailboxStatusHandled = true
+                    toast.warning("Status sandučića je već evidentiran. Nastavljam rješavanje problema.")
+                } else {
+                    throw err
+                }
+            }
+
+            await finishResolve()
+            setShowResolveModal(false)
+            setSelectedMailboxStatus("")
+            toast.success(
+                mailboxStatusHandled
+                    ? "Problem označen kao riješen i status sandučića ažuriran."
+                    : "Problem označen kao riješen."
+            )
         } catch (err) {
             console.error("Resolve issue failed:", err)
             toast.error(err instanceof Error ? err.message : "Greška pri rješavanju problema.")
         } finally {
             setResolving(false)
+        }
+    }
+
+    const handleResolve = async () => {
+        if (issue?.unavailableReason) {
+            setSelectedMailboxStatus(MailboxStatus.Napunjen)
+            setShowResolveModal(true)
+            return
+        }
+
+        try {
+            await finishResolve()
+            toast.success("Problem označen kao riješen.")
+        } catch (err) {
+            console.error("Resolve issue failed:", err)
+            toast.error(err instanceof Error ? err.message : "Greška pri rješavanju problema.")
         }
     }
 
@@ -274,6 +330,57 @@ export default function IssueDetailPage() {
                                 >
                                     {resolving ? "Rješavanje..." : "Označi kao riješen"}
                                 </button>
+                            </div>
+                        </div>
+                    )}
+
+                    {showResolveModal && (
+                        <div className="issue-modal-overlay">
+                            <div className="issue-modal">
+                                <h2>Odaberi status sandučića</h2>
+                                <p>Prije rješavanja označi sandučić kao napunjen ili ispraznjen.</p>
+                                <select
+                                    className="issue-select"
+                                    value={selectedMailboxStatus}
+                                    onChange={e => setSelectedMailboxStatus(e.target.value === "" ? "" : Number(e.target.value) as MailboxStatus)}
+                                >
+                                    <option value="">Odaberi status...</option>
+                                    <option value={MailboxStatus.Napunjen}>{mailboxStatusLabels[MailboxStatus.Napunjen]}</option>
+                                    <option value={MailboxStatus.Ispraznjen}>{mailboxStatusLabels[MailboxStatus.Ispraznjen]}</option>
+                                </select>
+                                {selectedMailboxStatus !== "" && (
+                                    <span
+                                        className={`issue-mailbox-status-badge ${
+                                            selectedMailboxStatus === MailboxStatus.Napunjen ||
+                                            selectedMailboxStatus === MailboxStatus.Ispraznjen
+                                                ? "issue-mailbox-status-badge--success"
+                                                : ""
+                                        }`}
+                                    >
+                                        {mailboxStatusLabels[selectedMailboxStatus as MailboxStatus]}
+                                    </span>
+                                )}
+                                <div className="issue-modal-footer">
+                                    <button
+                                        className="issue-btn"
+                                        type="button"
+                                        onClick={() => {
+                                            setShowResolveModal(false)
+                                            setSelectedMailboxStatus("")
+                                        }}
+                                        disabled={resolving}
+                                    >
+                                        Odustani
+                                    </button>
+                                    <button
+                                        className="issue-btn issue-btn--primary"
+                                        type="button"
+                                        onClick={handleResolveConfirm}
+                                        disabled={resolving || selectedMailboxStatus === ""}
+                                    >
+                                        {resolving ? "Rješavanje..." : "Potvrdi i riješi"}
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     )}

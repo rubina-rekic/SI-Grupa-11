@@ -45,7 +45,7 @@ export interface IssueTimelineEntry {
 export interface IssueDto {
     id: string
     routeItemId: string
-    mailboxId: string
+    mailboxId: string // ID sandučića povezanog s problemom
     mailboxAddress: string
     mailboxSerialNumber: string
     reportedByUserId: string
