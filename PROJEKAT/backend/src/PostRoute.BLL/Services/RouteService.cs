@@ -599,6 +599,92 @@ public class RouteService : IRouteService
         };
     }
 
+    public async Task<MailboxTypeRealizationReportResponse> GetMailboxTypeRealizationReportAsync(
+        DateOnly fromDate,
+        DateOnly toDate,
+        CancellationToken cancellationToken = default)
+    {
+        if (fromDate > toDate)
+        {
+            throw new InvalidOperationException("Pocetni datum ne moze biti poslije zavrsnog datuma.");
+        }
+
+        var routes = await _routeRepository.GetCompletedRoutesForPerformanceReportAsync(
+            fromDate,
+            toDate,
+            cancellationToken);
+
+        var typeGroups = routes
+            .SelectMany(route => route.RouteItems, (route, item) => new { route, item })
+            .GroupBy(x => x.item.Mailbox.Type)
+            .Select(group =>
+            {
+                var typeId = (int)group.Key;
+                var planned = group.Count();
+                var successful = group.Count(x => IsSuccessfullyEmptied(x.item));
+                var problems = group.Count(x => IsRouteItemProblem(x.item));
+
+                var details = group
+                    .Where(x => IsRouteItemProblem(x.item))
+                    .OrderBy(x => x.route.Date)
+                    .ThenBy(x => x.item.Mailbox.Address)
+                    .Select(x => new MailboxTypeRealizationDetailResponse
+                    {
+                        MailboxId = x.item.MailboxId,
+                        Address = x.item.Mailbox.Address,
+                        RouteDate = x.route.Date,
+                        Status = x.item.ProcessedStatus?.ToString() ?? x.item.Status,
+                        Notes = x.item.UnavailableReason
+                    })
+                    .ToList();
+
+                return new MailboxTypeRealizationRowResponse
+                {
+                    TypeId = typeId,
+                    TypeName = group.Key.ToString(),
+                    PlannedEmpties = planned,
+                    SuccessfulEmpties = successful,
+                    ProblemReports = problems,
+                    FailureRate = CalculateSuccessPercentage(problems, planned),
+                    Details = details
+                };
+            })
+            .OrderByDescending(row => row.FailureRate)
+            .ThenBy(row => row.TypeName)
+            .ToList();
+
+        var totalPlanned = typeGroups.Sum(row => row.PlannedEmpties);
+        var totalSuccessful = typeGroups.Sum(row => row.SuccessfulEmpties);
+        var totalProblems = typeGroups.Sum(row => row.ProblemReports);
+
+        return new MailboxTypeRealizationReportResponse
+        {
+            FromDate = fromDate,
+            ToDate = toDate,
+            TotalTypes = typeGroups.Count,
+            TotalPlannedEmpties = totalPlanned,
+            TotalSuccessfulEmpties = totalSuccessful,
+            TotalProblemReports = totalProblems,
+            AverageFailureRate = totalPlanned == 0 ? 0 : Math.Round((decimal)totalProblems / totalPlanned * 100m, 2),
+            Rows = typeGroups
+        };
+    }
+
+    private static bool IsRouteItemProblem(RouteItem item)
+    {
+        if (item.ProcessedStatus == MailboxStatus.Nedostupan)
+        {
+            return true;
+        }
+
+        if (string.Equals(item.Status, nameof(MailboxStatus.Nedostupan), StringComparison.OrdinalIgnoreCase))
+        {
+            return true;
+        }
+
+        return !string.IsNullOrWhiteSpace(item.UnavailableReason);
+    }
+
     private static PostmanPerformanceRouteResponse MapPerformanceRoute(Route route)
     {
         var assigned = route.RouteItems.Count;

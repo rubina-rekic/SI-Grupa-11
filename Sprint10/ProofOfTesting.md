@@ -12,6 +12,7 @@
 | Unit - Backend (DAL repozitoriji) | US-36 | xUnit + EF Core InMemory | 1 test | PASS |
 | Unit - Backend (API kontroleri) | US-36 | xUnit + Moq | 3 testa | PASS |
 | Frontend component/integration | US-36 | Vitest + Testing Library | 4 testa | PASS |
+| Frontend component/integration | US-37 | Vitest + Testing Library | 4 testa | PASS |
 | Frontend component/integration | US-38 | Vitest + Testing Library | 5 testova | PASS |
 
 **Ukupno verifikovano:** `dotnet test tests\PostRoute.BLL.Tests\PostRoute.BLL.Tests.csproj --filter "FullyQualifiedName~PBI052"` i `dotnet test tests\PostRoute.Api.Tests\PostRoute.Api.Tests.csproj --filter "FullyQualifiedName~PBI052"` prolaze — BLL 6/6, API 5/5. PBI-044 notifikacije su također pokrivene dodatnim testovima.
