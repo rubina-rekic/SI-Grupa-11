@@ -10,7 +10,11 @@
       "PowerShell(Get-Process -Name dotnet -ErrorAction SilentlyContinue)",
       "Bash(dotnet restore *)",
       "Bash(docker start *)",
-      "Bash(dir \"c:\\\\Users\\\\user\\\\Documents\\\\Programiranje\\\\Repozitorij\\\\SI-Grupa-11\\\\PROJEKAT\\\\backend\\\\src\\\\PostRoute.Api\" /B)"
+      "Bash(dir \"c:\\\\Users\\\\user\\\\Documents\\\\Programiranje\\\\Repozitorij\\\\SI-Grupa-11\\\\PROJEKAT\\\\backend\\\\src\\\\PostRoute.Api\" /B)",
+      "Bash(cd \"c:\\\\Users\\\\user\\\\Documents\\\\Programiranje\\\\Repozitorij\\\\SI-Grupa-11\" && mkdir -p Sprint11/images && echo \"created\" && ls Sprint11)"
+    ],
+    "additionalDirectories": [
+      "c:\\Users\\user\\Documents\\Programiranje\\Repozitorij\\SI-Grupa-11\\Sprint11"
     ]
   }
 }
