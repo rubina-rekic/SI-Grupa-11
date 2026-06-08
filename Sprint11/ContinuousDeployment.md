@@ -1,4 +1,4 @@
-# Continuous Deployment — PostRoute
+# Continuous Deployment 
 
 ## Pregled CD strategije
 
