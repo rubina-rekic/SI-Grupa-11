@@ -1,6 +1,6 @@
 # Završni izvještaj o radu tima
 
-**Trajanje projekta:** 10 razvojnih sprintova + završni sprint 
+**Trajanje projekta:** 10 razvojnih sprintova + završni sprint <br>
 **Produkcija:** [https://postrouteapp.netlify.app](https://postrouteapp.netlify.app)
 
 ---
