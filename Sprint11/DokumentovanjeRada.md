@@ -1,7 +1,5 @@
 # Završni izvještaj o radu tima
 
-**Projekat:** Sistem za optimizaciju ruta punjenja i pražnjenja poštanskih sandučića — **PostRoute**  
-**Tim:** Grupa 11  
 **Trajanje projekta:** 10 razvojnih sprintova + završni sprint 
 **Produkcija:** [https://postrouteapp.netlify.app](https://postrouteapp.netlify.app)
 
