@@ -258,6 +258,16 @@ Tokom razvoja zabilježen je slučaj gdje je `ShouldExcludeMailboxesOutsideTimeW
 
 Dokazi su provjerljivi i ponovljivi pokretanjem komandi iz sekcije 3. Primarni artefakti:
 
+### 7.0 Screenshot dokazi
+
+#### Backend testovi
+
+![Backend testovi](images/backend%20testovi.png)
+
+#### Frontend testovi
+
+![Frontend testovi](images/frontend%20testovi.png)
+
 ### 7.1 Log izlazi (reprezentativni)
 
 ```
