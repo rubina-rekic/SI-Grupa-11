@@ -48,7 +48,7 @@ PostRoute koristi **hibridni CD model**:
 | `VITE_API_BASE_URL` | Variable | https://si-grupa-11.onrender.com |
 
 ### Rezultat deploymenta
-Aplikacija je dostupna na: **https://postrouteapp.netlify.com**
+Aplikacija je dostupna na: **https://postrouteapp.netlify.app**
 
 ---
 
@@ -69,20 +69,23 @@ Aplikacija je dostupna na: **https://postrouteapp.netlify.com**
 | `dotnet test --configuration Release` | Pokretanje svih testova (BLL + DAL sloj) |
 
 ### Render auto-deploy
-Nakon što GitHub Actions pipeline uspješno prođe na `main` grani, **Render automatski detektuje novi commit** i pokreće deployment backend servisa. Render prati `main` granu i koristi sljedeće komande:
+Nakon što GitHub Actions pipeline uspješno prođe na `main` grani, **Render automatski detektuje novi commit** i pokreće deployment backend servisa. Render prati `main` granu i automatski primjenjuje deklarativnu konfiguraciju definisanu u `render.yaml` fajlu u korijenu repozitorija:
 
-- **Build Command:** `dotnet publish PROJEKAT/backend/src/PostRoute.Api/PostRoute.Api.csproj -c Release -o out`
-- **Start Command:** `dotnet out/PostRoute.Api.dll`
-- **Runtime:** .NET 9, Region: Frankfurt (EU)
+- **Runtime:** Docker
+- **Root Directory:** `PROJEKAT/backend`
+- **Dockerfile Path:** `./Dockerfile`
+- **Region:** Frankfurt (EU)
+
+*Napomena:* Komande za build i start se ne konfigurišu ručno na dashboardu jer su u potpunosti definisane unutar pripadajućeg `Dockerfile`-a koji Render automatski izvršava unutar izolovanog kontejnera.
 
 ### Environment varijable na Renderu
 
 | Naziv | Opis |
 |---|---|
-| `DATABASE_URL` | Neon connection string |
+| `ConnectionStrings__DefaultConnection` | Neon connection string (postavlja se kao Secret u Render Dashboardu) |
 | `ASPNETCORE_ENVIRONMENT` | Postaviti na `Production` |
-| `Cors__AllowedOrigins__0` | URL frontenda, npr. `https://postrouteapp.netlify.com` |
-| `Seeding__Enabled` | `true` za inicijalno seedovanje korisnika |
+| `Cors__AllowedOrigins__0` | URL frontenda: `https://postrouteapp.netlify.app` |
+| `Seeding__Enabled` | `true` za inicijalno seedovanje korisnika, nakon toga `false` |
 
 ---
 
@@ -106,11 +109,11 @@ Ovo znači da svaki novi deployment automatski primjenjuje sve pending migracije
 ## Kako provjeriti da je deployment uspješan
 
 ### Frontend
-1. Otvoriti https://postrouteapp.netlify.com
+1. Otvoriti https://postrouteapp.netlify.app
 2. Provjeriti da se login stranica učitava
 
 ### Backend
-1. Poslati `GET` zahtjev na `https://si-grupa-11.onrender.com`
+1. Poslati `GET` zahtjev na `https://si-grupa-11.onrender.com/health`
 2. Očekivani odgovor: `HTTP 200 OK`
 
 ### GitHub Actions
@@ -149,7 +152,7 @@ GitHub Actions okida oba workflowa paralelno
         │         │
         │    deploy na Netlify
         │         │
-        │    ✅ https://postrouteapp.netlify.com
+        │    ✅ https://postrouteapp.netlify.app
         │
         └──► backend-ci.yml
                   │
@@ -163,7 +166,7 @@ GitHub Actions okida oba workflowa paralelno
                   │
              MigrateAsync() pri startu
                   │
-             ✅ hhttps://si-grupa-11.onrender.com/health
+             ✅ https://si-grupa-11.onrender.com/health
 ```
 
 ---
@@ -186,5 +189,5 @@ GitHub Actions okida oba workflowa paralelno
 - Provjeriti da GitHub Actions `backend-ci.yml` prolazi bez grešaka
 
 ### Migracije ne prolaze pri startu
-- Provjeriti da je `DATABASE_URL` environment varijabla ispravno postavljena na Renderu
+- Provjeriti da je `ConnectionStrings__DefaultConnection` environment varijabla ispravno postavljena na Renderu
 - Provjeriti Render deployment logove za detalje greške
