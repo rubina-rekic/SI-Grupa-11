@@ -16,7 +16,7 @@ Na početku Sprinta 5 projekt je bio u skeleton fazi: frontend paketi nisu bili 
 
 Paralelno je Copilot implementovao lockout logiku (`LoginAsync` sa 5 pokušaja i HTTP 423), a ChatGPT je predložio strukturu login forme sa cooldown mehanizmom i osnovni tok za promjenu lozinke. Claude Code je zatim napravio sistematičnu provjeru svih deset user storija i pronašao pet propusta koje niko nije primjetio: `GetCurrentUser` hardkodirao `mustChangePassword: false`, `PrivateRoute` nije blokirao navigaciju za korisnike kojima je lozinka morala biti promijenjena, logout nije koristio `replace: true` i tako dalje. Sve je ispravljeno na zasebnoj grani `fix/PBI-012-013-auth-ispravke`.
 
-Faruk je kroz Claude Code uradio i sigurnosne ispravke koje su bile kritične: `ChangePasswordAsync` bez provjere stare lozinke (svako ko zna email mogao je promijeniti lozinku), login pokušaji koji se nisu logirali u `SecurityLog`, i razdvajanje generičkog `InvalidOperationException` u `AccountLockedException` i `InvalidCredentialsException` kako bi se uklonio antipattern `ex.Message.Contains("locked")`.
+Kroz Claude Code smo uradili i sigurnosne ispravke koje su bile kritične: `ChangePasswordAsync` bez provjere stare lozinke (svako ko zna email mogao je promijeniti lozinku), login pokušaji koji se nisu logirali u `SecurityLog`, i razdvajanje generičkog `InvalidOperationException` u `AccountLockedException` i `InvalidCredentialsException` kako bi se uklonio antipattern `ex.Message.Contains("locked")`.
 
 ### Sprintovi 6–7 – Sandučići
 
