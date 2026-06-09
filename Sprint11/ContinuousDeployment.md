@@ -45,7 +45,7 @@ PostRoute koristi **hibridni CD model**:
 |---|---|---|
 | `NETLIFY_AUTH_TOKEN` | Secret | Netlify Personal Access Token |
 | `NETLIFY_SITE_ID` | Secret | ID Netlify sajta |
-| `VITE_API_BASE_URL` | Variable | URL backend API-ja, npr. `https://postroute-api.onrender.com` |
+| `VITE_API_BASE_URL` | Variable | https://si-grupa-11.onrender.com |
 
 ### Rezultat deploymenta
 Aplikacija je dostupna na: **https://postrouteapp.netlify.com**
@@ -79,7 +79,7 @@ Nakon što GitHub Actions pipeline uspješno prođe na `main` grani, **Render au
 
 | Naziv | Opis |
 |---|---|
-| `DATABASE_URL` | PostgreSQL connection string |
+| `DATABASE_URL` | Neon connection string |
 | `ASPNETCORE_ENVIRONMENT` | Postaviti na `Production` |
 | `Cors__AllowedOrigins__0` | URL frontenda, npr. `https://postrouteapp.netlify.com` |
 | `Seeding__Enabled` | `true` za inicijalno seedovanje korisnika |
@@ -103,18 +103,6 @@ Ovo znači da svaki novi deployment automatski primjenjuje sve pending migracije
 
 ---
 
-## Health check
-
-Backend ekspozira `/health` endpoint koji vraća `HTTP 200 OK`:
-
-```
-GET https://postroute-api.onrender.com/health
-```
-
-Ovaj endpoint se može koristiti za provjeru da je deployment uspješan.
-
----
-
 ## Kako provjeriti da je deployment uspješan
 
 ### Frontend
@@ -122,7 +110,7 @@ Ovaj endpoint se može koristiti za provjeru da je deployment uspješan.
 2. Provjeriti da se login stranica učitava
 
 ### Backend
-1. Poslati `GET` zahtjev na `https://postroute-api.onrender.com/health`
+1. Poslati `GET` zahtjev na `https://si-grupa-11.onrender.com`
 2. Očekivani odgovor: `HTTP 200 OK`
 
 ### GitHub Actions
@@ -175,7 +163,7 @@ GitHub Actions okida oba workflowa paralelno
                   │
              MigrateAsync() pri startu
                   │
-             ✅ https://postroute-api.onrender.com/health
+             ✅ hhttps://si-grupa-11.onrender.com/health
 ```
 
 ---
@@ -183,7 +171,6 @@ GitHub Actions okida oba workflowa paralelno
 ## Poznata ograničenja
 
 - **Render free tier** — backend servis se gasi nakon 15 minuta neaktivnosti; prvi zahtjev nakon toga može trajati 30–60 sekundi (cold start)
-- **Backend CD nije eksplicitno u YAML fajlu** — Render auto-deploy je konfigurisan kroz Render dashboard, a ne kroz `render.yaml`; ovo je standardna praksa za Render deploymente
 - **Seeding u produkciji** — `Seeding__Enabled` mora biti postavljen na `true` samo pri prvom deploymentu, nakon toga ga treba isključiti ili ostaviti default (`false` u produkciji)
 
 ---
